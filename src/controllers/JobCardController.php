@@ -58,7 +58,7 @@ class JobCardController extends Controller {
 			'service_order_types.name as job_order_type',
 		])
 			->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')
-			->leftJoin('gate_passes', 'gate_passes.job_card_id', 'job_cards.id')
+			->join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
 			->leftJoin('vehicles', 'job_orders.vehicle_id', 'vehicles.id')
 			->leftJoin('models', 'models.id', 'vehicles.model_id')
 			->leftJoin('vehicle_owners', function ($join) {
@@ -149,9 +149,9 @@ class JobCardController extends Controller {
 							$output .= '<a href="#!/job-card/assign-bay/' . $job_card->job_card_id . '"  class="btn btn-secondary-dark btn-sm">Assign Bay</a>';
 						}
 					} else {
-						if ($job_card->status_id == 8224 || $job_card->status_id == 8225 || $job_card->status_id == 8226 || $job_card->status_id == 8228) {
-							$output .= '<a href="#!/job-card/split-order/' . $job_card->job_card_id . '" class=""><img class="img-responsive" src="' . $img1 . '" alt="View" /></a>';
-						}
+						// if ($job_card->status_id == 8224 || $job_card->status_id == 8225 || $job_card->status_id == 8226 || $job_card->status_id == 8228) {
+						$output .= '<a href="#!/job-card/estimate/' . $job_card->job_card_id . '" class=""><img class="img-responsive" src="' . $img1 . '" alt="View" /></a>';
+						// }
 					}
 				}
 

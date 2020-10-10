@@ -46,7 +46,7 @@
                                                     <img class="img-responsive img-center" src="./public/theme/img/content/truck-bg-grey.svg" alt="Truck" />
                                                     <h6 class="info">Bay not Assigned</h6>
                                                 </div>
-                                                <div class="text-center">
+                                                <div class="text-center" ng-if="$ctrl.hasPermission('inward-job-card-tab-bay-edit')">
                                                     <a href="#!/job-card/assign-bay/{{job_card.id}}" ng-if="job_card.status_id ==8220 || job_card.status_id ==8221" class="btn btn-secondary-dark btn-square">Edit</a>
                                                 </div>
                                             </div><!-- Column -->

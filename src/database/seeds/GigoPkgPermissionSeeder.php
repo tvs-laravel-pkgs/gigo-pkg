@@ -1624,7 +1624,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_order' => 12,
 				'parent' => 'inward-job-card-tabs',
 				'name' => 'inward-job-card-tab-other-labour-parts',
-				'display_name' => 'Other Labour & Parts',
+				'display_name' => 'Additional Labour & Parts',
 			],
 			[
 				'display_order' => 99,

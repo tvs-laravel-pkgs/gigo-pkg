@@ -96,12 +96,13 @@ class JobCardController extends Controller {
 				'service_types.name as service_type',
 				'quote_types.name as quote_type',
 				'service_order_types.name as job_order_type',
-				'gate_passes.id as gate_pass_id',
+				// 'gate_passes.id as gate_pass_id',
 
 			])
 				->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')
+				->join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
 				->leftJoin('bays', 'bays.id', 'job_cards.bay_id')
-				->leftJoin('gate_passes', 'gate_passes.job_card_id', 'job_cards.id')
+			// ->leftJoin('gate_passes', 'gate_passes.job_card_id', 'job_cards.id')
 				->leftJoin('vehicles', 'job_orders.vehicle_id', 'vehicles.id')
 				->leftJoin('models', 'models.id', 'vehicles.model_id')
 				->leftJoin('vehicle_owners', function ($join) {
