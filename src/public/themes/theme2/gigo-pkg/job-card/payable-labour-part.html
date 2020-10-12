@@ -100,7 +100,7 @@
                                                     <tr class="ptb-9">
                                                         <td>
                                                             <!-- <a ng-if="job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226" href=".#!/job-card/payable/labour/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square"> -->
-                                                            <button ng-if="job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226 && job_card.status_id != 8227 && job_card.status_id != 8228" type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showLabourForm(false)">
+                                                            <button ng-if="(job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226 && job_card.status_id != 8227 && job_card.status_id != 8228) && !$ctrl.hasPermission('inward-job-card-tab-estimate-edit')" type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showLabourForm(false)">
                                                                 Add Labour
                                                             </button>
                                                         </td>
@@ -188,7 +188,7 @@
                                                     </tr>
                                                     <tr class="ptb-9">
                                                         <td>
-                                                            <button ng-if="job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226 && job_card.status_id != 8227 && job_card.status_id != 8228" type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showPartForm(false)">
+                                                            <button ng-if="(job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226 && job_card.status_id != 8227 && job_card.status_id != 8228) && !$ctrl.hasPermission('inward-job-card-tab-estimate-edit')" type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showPartForm(false)">
                                                                 Add Part
                                                             </button>
                                                         </td>
@@ -253,7 +253,6 @@
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
 <!-- Modal Delete -->
-
 <!-- Modal -->
 <div class="modal filter fade" id="delete_labour_parts" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-sm finance-view-modal" role="document">
@@ -309,7 +308,6 @@
         </form>
     </div><!-- Modal Dialog -->
 </div><!-- Modal Content -->
-
 <div class="modal fade filter" id="labour_form_modal" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <form id="labour_form" autocomplete="off">
