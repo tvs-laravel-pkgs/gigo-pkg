@@ -1554,7 +1554,8 @@ app.component('inwardVehicleOrderDetailForm', {
                                 $scope.$apply();
                             } else {
                                 custom_noty('success', res.message);
-                                $location.path('/inward-vehicle/inventory-detail/form/' + $scope.job_order_id);
+                                // $location.path('/inward-vehicle/inventory-detail/form/' + $scope.job_order_id);
+                                $location.path('/inward-vehicle/voc-detail/form/' + $scope.job_order_id);
                                 $scope.$apply();
                             }
                         })

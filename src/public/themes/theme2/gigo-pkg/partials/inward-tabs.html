@@ -23,11 +23,11 @@
                         Order Details
                     </a>
                 </li>
-                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-inventory-edit')" ng-class="{active:active_tab == 'inventory-detail'}">
+                <!-- <li ng-if="$ctrl.hasPermission('inward-job-card-tab-inventory-edit')" ng-class="{active:active_tab == 'inventory-detail'}">
                     <a href=".#!/inward-vehicle/inventory-detail/form/{{job_order_id}}" class="filter">
                         Inventory
                     </a>
-                </li>
+                </li> -->
                 <li ng-if="$ctrl.hasPermission('inward-job-card-tab-capture-voc-edit')" ng-class="{active:active_tab == 'voc-detail'}">
                     <a href=".#!/inward-vehicle/voc-detail/form/{{job_order_id}}" class="filter">
                         Capture VOC
