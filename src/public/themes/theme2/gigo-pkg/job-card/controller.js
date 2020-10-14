@@ -3934,6 +3934,7 @@ app.component('jobCardScheduleForm', {
                     method: "POST",
                     data: {
                         id: $routeParams.job_card_id,
+                        type: 1,
                     },
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
@@ -4604,6 +4605,38 @@ app.component('jobCardSplitOrder', {
             });
         }
 
+        $scope.saveJobStatus = function() {
+            $('.job_completed').button('loading');
+            $.ajax({
+                    url: base_url + '/api/job-card/update-status',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_card_id,
+                        type: 2
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    $('.job_completed').button('reset');
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+
+                    custom_noty('success', res.message);
+                    $("#confirm_finish_work").modal('hide');
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+
+                    $scope.fetchData();
+                })
+                .fail(function(xhr) {
+                    $('.job_completed').button('reset');
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
         //Scrollable Tabs
         setTimeout(function() {
             scrollableTabs();

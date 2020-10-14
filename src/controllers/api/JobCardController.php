@@ -4,6 +4,7 @@ namespace Abs\GigoPkg\Api;
 
 use Abs\BasicPkg\Traits\CrudTrait;
 use Abs\GigoPkg\Bay;
+use Abs\GigoPkg\GateLog;
 use Abs\GigoPkg\GatePass;
 use Abs\GigoPkg\GatePassDetail;
 use Abs\GigoPkg\GatePassItem;
@@ -1827,45 +1828,123 @@ class JobCardController extends Controller {
 				]);
 			}
 
+			$job_card = JobCard::find($request->id);
+
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Job Card Not Found!'],
+				]);
+			}
+
 			DB::beginTransaction();
 
-			//Check All material items returned or not
-			$material = GatePass::where('job_card_id', $request->id)->whereIn('status_id', [8300, 8301, 8302, 8303])->count();
-			if ($material > 0) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => ['Some OSL works are not completed!'],
-				]);
-			}
-
-			//Check Floating Gatepass
-			$floating_gate_pass = FloatingGatePass::where('job_card_id', $request->id)->whereIn('status_id', [11160, 11161, 11162])->count();
-			if ($floating_gate_pass > 0) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => ['Floating Parts are not returned!'],
-				]);
-			}
-
-			$job_card = JobCard::with(['jobOrder'])->find($request->id);
-
-			//Check Parts Requsted or not
-			$job_order_parts = JobOrderPart::where('job_order_id', $job_card->jobOrder->id)->whereNull('removal_reason_id')->count();
-			if ($job_order_parts > 0) {
-				$job_card->status_id = 8227; //Waiting for Parts Confirmation
-			} else {
+			if ($request->type == 2) {
+				//Split Order Confirmation
 				$job_card->status_id = 8224; //Ready for Billing
+
+				//Check Customer Paid Labour/Parts availbale
+				$customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
+
+				// dump($customer_paid_type_id);
+				$labour_count = JobOrderRepairOrder::where('job_order_id', $job_card->job_order_id)->whereNull('removal_reason_id')->whereIn('split_order_type_id', $customer_paid_type_id)->count();
+
+				$parts_count = JobOrderPart::where('job_order_id', $job_card->job_order_id)->whereNull('removal_reason_id')->whereIn('split_order_type_id', $customer_paid_type_id)->count();
+
+				if ($labour_count == 0 && $parts_count == 0) {
+
+					$job_card->status_id = 8226; //Job Card Completed
+
+					//Generate GatePass
+					$gate_log = GateLog::where('job_order_id', $job_card->job_order_id)->first();
+
+					$gate_pass = GatePass::firstOrNew(['job_order_id' => $job_card->job_order_id, 'job_card_id' => $job_card->id, 'type_id' => 8280]); //VEHICLE GATE PASS
+
+					$gate_pass->gate_pass_of_id = 11281;
+					$gate_pass->entity_id = $job_card->id;
+
+					if ($gate_log) {
+
+						if (date('m') > 3) {
+							$year = date('Y') + 1;
+						} else {
+							$year = date('Y');
+						}
+						//GET FINANCIAL YEAR ID
+						$financial_year = FinancialYear::where('from', $year)
+							->where('company_id', $gate_log->company_id)
+							->first();
+
+						$branch = Outlet::where('id', $gate_log->outlet_id)->first();
+
+						if ($branch && $financial_year) {
+							//GENERATE GatePASS
+							$generateNumber = SerialNumberGroup::generateNumber(29, $financial_year->id, $branch->state_id, $branch->id);
+
+							if ($generateNumber['success']) {
+
+								if (!$gate_pass->exists) {
+									$gate_pass->updated_at = Carbon::now();
+								} else {
+									$gate_pass->created_at = Carbon::now();
+								}
+
+								$gate_pass->company_id = $gate_log->company_id;
+								$gate_pass->number = $generateNumber['number'];
+								$gate_pass->status_id = 8340; //GATE OUT PENDING
+								$gate_pass->save();
+
+								$gate_log->gate_pass_id = $gate_pass->id;
+								$gate_log->status_id = 8123; //GATE OUT PENDING
+								$gate_log->save();
+							}
+
+							$generate_estimate_pdf = JobCard::generateGatePassPDF($job_card->id);
+							$generate_covering_pdf = JobCard::generateCoveringLetterPDF($job_card->id);
+						}
+					}
+
+				}
+			} else {
+				//Work Completed Confirmation
+				//Check All material items returned or not
+				$material = GatePass::where('job_card_id', $request->id)->whereIn('status_id', [8300, 8301, 8302, 8303])->count();
+				if ($material > 0) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => ['Some OSL works are not completed!'],
+					]);
+				}
+
+				//Check Floating Gatepass
+				$floating_gate_pass = FloatingGatePass::where('job_card_id', $request->id)->whereIn('status_id', [11160, 11161, 11162])->count();
+				if ($floating_gate_pass > 0) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => ['Floating Parts are not returned!'],
+					]);
+				}
+
+				//Check Parts Requsted or not
+				$job_order_parts = JobOrderPart::where('job_order_id', $job_card->job_order_id)->whereNull('removal_reason_id')->count();
+				if ($job_order_parts > 0) {
+					$job_card->status_id = 8227; //Waiting for Parts Confirmation
+				} else {
+					$job_card->status_id = 8231; //Ready for Split Order
+				}
+
+				$job_card->work_completed_at = Carbon::now();
+
+				//Generate Inspection PDF
+				$generate_estimate_inspection_pdf = JobOrder::generateInspectionPDF($job_card->job_order_id);
 			}
 
 			$job_card->updated_by = Auth::user()->id;
 			$job_card->updated_at = Carbon::now();
-			$job_card->work_completed_at = Carbon::now();
 			$job_card->save();
-
-			//Generate Inspection PDF
-			$generate_estimate_inspection_pdf = JobOrder::generateInspectionPDF($job_card->jobOrder->id);
 
 			DB::commit();
 

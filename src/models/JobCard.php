@@ -913,7 +913,14 @@ class JobCard extends BaseModel {
 			}
 		}
 
+		if ($gigo_invoice) {
+			$invoice_date = date('d-m-Y', strtotime($gigo_invoice[0]->invoice_date));
+		} else {
+			$invoice_date = date('d-m-Y');
+		}
+
 		$data['gigo_invoices'] = $gigo_invoice;
+		$data['invoice_date'] = $invoice_date;
 
 		$save_path = storage_path('app/public/gigo/pdf');
 		Storage::makeDirectory($save_path, 0777);
