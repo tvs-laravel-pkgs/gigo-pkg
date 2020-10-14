@@ -3792,6 +3792,31 @@ app.component('jobCardScheduleForm', {
                 }
             }
         }
+
+        //Search Mechanic
+        $(document).on('keyup', ".search_mechanic", function() {
+            $scope.searchMechanic();
+        });
+
+        $scope.clearSearch = function() {
+            $('.search_mechanic').val('');
+            $scope.searchMechanic();
+        }
+
+        $scope.searchMechanic = function() {
+            var searchText = $('.search_mechanic').val();
+            searchText = searchText.toUpperCase();
+            $('ul > li').each(function() {
+
+                var currentLiText = $(this).text(),
+                    showCurrentLi = currentLiText.indexOf(searchText) !== -1;
+
+                $(this).toggle(showCurrentLi);
+
+            });
+        }
+
+
         //SAVE MECHANIC
         $scope.saveMechanic = function() {
             if (!$("#selectedMachanic").val()) {
@@ -5153,7 +5178,7 @@ app.component('jobCardOrderDetailView', {
                         required: true,
                     },
                 },
-                
+
                 invalidHandler: function(event, validator) {
                     custom_noty('error', 'You have errors, Please check all tabs');
                 },

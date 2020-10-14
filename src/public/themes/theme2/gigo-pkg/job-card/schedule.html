@@ -128,14 +128,22 @@
                 </div><!-- Modal Header -->
                 <div class="modal-body">
                     <div class="title-wrap border-bottom">
-                        <span class="info" id="repair_order_code">
-                            {{repair_order.code}}
-                        </span>
-                        <span class="title" id="repair_order_name">
-                            {{repair_order.name}}
-                        </span>
+                        <div class="data-wrap">
+                            <span class="info" id="repair_order_code">
+                                {{repair_order.code}}
+                            </span>
+                            <span class="title" id="repair_order_name">
+                                {{repair_order.name}}
+                            </span>
+                        </div><!-- Content Wrap -->
+                        <div class="search_filter search-wrap">
+                            <label>
+                                <input type="search" autocomplete="off" id="search_box" class="form-control search_mechanic" placeholder="Search" />
+                                <button class="btn-clear" ng-click="clearSearch()">Clear</button>
+                            </label>
+                        </div><!-- Search Filter -->
                     </div><!-- Title Wrap -->
-                    <ul class="assign-labour-list">
+                    <ul class="assign-labour-list" id="myUL">
                         <li class="assign-labour-list-item check_uncheck_{{employee.id}} " ng-repeat="(key,employee) in employee_details" ng-click="selectedEmployee(employee.id,key)">
                             <div class="left-wrap">
                                 <!-- ng-class="{'my-disable':!employee.user_id}" -->
