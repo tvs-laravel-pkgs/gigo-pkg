@@ -1005,7 +1005,7 @@ app.component('inwardVehicleCustomerDetail', {
                                 $scope.$apply();
                             } else {
                                 custom_noty('success', res.message);
-                                $location.path('/inward-vehicle/vehicle/photos/' + $routeParams.job_order_id);
+                                $location.path('/inward-vehicle/order-detail/form/' + $routeParams.job_order_id);
                                 $scope.$apply();
                             }
                         })
