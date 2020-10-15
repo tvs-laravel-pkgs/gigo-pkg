@@ -13,11 +13,11 @@
                         Customer Details
                     </a>
                 </li>
-                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-vehicle-details-edit')" ng-class="{active:active_tab == 'vehicle-photos'}">
+                <!-- <li ng-if="$ctrl.hasPermission('inward-job-card-tab-vehicle-details-edit')" ng-class="{active:active_tab == 'vehicle-photos'}">
                     <a class="filter" href=".#!/inward-vehicle/vehicle/photos/{{job_order_id}}">
                         Vehicle Photos
                     </a>
-                </li>
+                </li> -->
                 <li ng-if="$ctrl.hasPermission('inward-job-card-tab-order-details-edit')" ng-class="{active:active_tab == 'order-detail'}">
                     <a href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}" class="filter">
                         Order Details
