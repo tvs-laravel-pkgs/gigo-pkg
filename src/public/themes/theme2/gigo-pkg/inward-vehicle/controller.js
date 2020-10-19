@@ -271,6 +271,7 @@ app.component('inwardVehicleTableList', {
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
                 { data: 'date', searchable: false },
+                { data: 'outlet_code', name: 'outlets.code' },
                 { data: 'registration_type', name: 'registration_type' },
                 { data: 'registration_number', name: 'vehicles.registration_number' },
                 { data: 'customer_name', name: 'customers.name' },

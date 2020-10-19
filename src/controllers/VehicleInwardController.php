@@ -49,6 +49,7 @@ class VehicleInwardController extends Controller {
 			->leftJoin('amc_members', 'amc_members.vehicle_id', 'vehicles.id')
 			->leftJoin('amc_policies', 'amc_policies.id', 'amc_members.policy_id')
 			->join('configs', 'configs.id', 'job_orders.status_id')
+			->join('outlets', 'outlets.id', 'job_orders.outlet_id')
 			->select(
 				'job_orders.id',
 				DB::raw('IF(vehicles.is_registered = 1,"Registered Vehicle","Un-Registered Vehicle") as registration_type'),
@@ -62,6 +63,7 @@ class VehicleInwardController extends Controller {
 				'job_orders.is_customer_agreed',
 				DB::raw('COALESCE(GROUP_CONCAT(amc_policies.name), "-") as amc_policies'),
 				'configs.name as status',
+				'outlets.code as outlet_code',
 				DB::raw('COALESCE(customers.name, "-") as customer_name')
 			)
 			->where(function ($query) use ($request) {
