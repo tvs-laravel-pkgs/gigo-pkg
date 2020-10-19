@@ -5114,6 +5114,14 @@ class VehicleInwardController extends Controller {
 			if ($job_order->road_test_trade_plate_number_id != $request->road_test_trade_plate_number_id) {
 
 				if (!$request->road_test_trade_plate_number_id) {
+
+					$plate_number_update = TradePlateNumber::where('id', $job_order->road_test_trade_plate_number_id)
+						->update([
+							'status_id' => 8240, //FREE
+							'updated_by_id' => Auth::user()->id,
+							'updated_at' => Carbon::now(),
+						]);
+
 					$delete_road_test = RoadTestGatePass::where('job_order_id', $job_order->id)->forceDelete();
 				} else {
 					//Check Vehicle Road Test Status
@@ -5193,6 +5201,15 @@ class VehicleInwardController extends Controller {
 							$road_test->updated_at = Carbon::now();
 						}
 
+						$road_test->trade_plate_number_id = $request->road_test_trade_plate_number_id;
+						$road_test->road_test_done_by_id = $request->road_test_done_by_id;
+
+						if ($request->road_test_done_by_id == 8101) {
+							// EMPLOYEE
+							$road_test->road_test_performed_by_id = $request->road_test_performed_by_id;
+						} else {
+							$road_test->road_test_performed_by_id = NULL;
+						}
 						$road_test->save();
 					}
 				}
@@ -5204,6 +5221,14 @@ class VehicleInwardController extends Controller {
 				if ($request->road_test_done_by_id == 8101) {
 					// EMPLOYEE
 					$job_order->road_test_performed_by_id = $request->road_test_performed_by_id;
+
+					$road_test = RoadTestGatePass::where('job_order_id', $job_order->id)->where('status_id', 11142)->orderBy('id', 'DESC')->first();
+
+					if ($road_test) {
+						$road_test->road_test_report = $request->road_test_report;
+						$road_test->save();
+					}
+
 				} else {
 					$job_order->road_test_performed_by_id = NULL;
 					$job_order->road_test_trade_plate_number_id = NULL;

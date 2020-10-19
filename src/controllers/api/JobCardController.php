@@ -15,6 +15,7 @@ use Abs\GigoPkg\JobOrderRepairOrder;
 use Abs\GigoPkg\MechanicTimeLog;
 use Abs\GigoPkg\RepairOrder;
 use Abs\GigoPkg\RepairOrderMechanic;
+use Abs\GigoPkg\RoadTestGatePass;
 use Abs\GigoPkg\ShortUrl;
 use Abs\PartPkg\Part;
 use Abs\SerialNumberPkg\SerialNumberGroup;
@@ -41,6 +42,7 @@ use App\QuoteType;
 use App\ServiceOrderType;
 use App\ServiceType;
 use App\SplitOrderType;
+use App\TradePlateNumber;
 use App\User;
 use App\VehicleInspectionItem;
 use App\VehicleInspectionItemGroup;
@@ -2092,7 +2094,7 @@ class JobCardController extends Controller {
 				$this->saveGigoInvoice($params);
 			}
 
-			$customer_mobile = $job_card->jobOrder->customer->mobile_no;
+			$customer_mobile = $job_card->jobOrder->contact_number;
 			$vehicle_no = $job_card->jobOrder->vehicle->registration_number;
 
 			if (!$customer_mobile) {
@@ -2298,9 +2300,46 @@ class JobCardController extends Controller {
 			]);
 		}
 
+		$road_test_gate_passes = RoadTestGatePass::with([
+			'status',
+			'jobOrder',
+			'roadTestDoneBy',
+			'roadTestPreferedBy',
+			'tradePlateNumber',
+		])
+			->where('job_order_id', $job_card->jobOrder->id)
+			->get();
+
+		$trade_plate_number_list = collect(TradePlateNumber::where('status_id', 8240)->where('company_id', Auth::user()->company_id)->where('outlet_id', Auth::user()->employee->outlet_id)->whereDate('insurance_validity_to', '>=', date('Y-m-d'))->select('id', 'trade_plate_number')->get())->prepend(['id' => '', 'trade_plate_number' => 'Select Trade Plate']);
+
+		if ($job_card->jobOrder->tradePlateNumber) {
+			$trade_plate_number_list->push(['id' => $job_card->jobOrder->tradePlateNumber->id, 'trade_plate_number' => $job_card->jobOrder->tradePlateNumber->trade_plate_number]);
+		} else {
+			$job_card->jobOrder->road_test_trade_plate_number_id = $job_card->jobOrder->gatein_trade_plate_number_id ? $job_card->jobOrder->gatein_trade_plate_number_id : NULL;
+		}
+
+		//check road test gatepass available or not
+		// if($road_test_gate_passes)
+		// {
+		// 	foreach ($$road_test_gate_passes as $key => $road_test_gate_pass) {
+		// 		if($road_test_gate_passe->status_id == 11140)
+		// 		{
+
+		// 		}
+		// 	}
+		// }
+
+		$extras = [
+			'road_test_by' => Config::getDropDownList(['config_type_id' => 36, 'add_default' => false]), //ROAD TEST DONE BY
+			'user_list' => User::getUserEmployeeList(['road_test' => true]),
+			'trade_plate_number_list' => $trade_plate_number_list,
+		];
+
 		return response()->json([
 			'success' => true,
 			'job_card' => $job_card,
+			'road_test_gate_pass' => $road_test_gate_passes,
+			'extras' => $extras,
 		]);
 
 	}

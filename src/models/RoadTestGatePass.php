@@ -60,6 +60,18 @@ class RoadTestGatePass extends BaseModel {
 		return $this->belongsTo('App\JobOrder', 'job_order_id');
 	}
 
+	public function tradePlateNumber() {
+		return $this->belongsTo('App\TradePlateNumber', 'trade_plate_number_id');
+	}
+
+	public function roadTestDoneBy() {
+		return $this->belongsTo('App\Config', 'road_test_done_by_id');
+	}
+
+	public function roadTestPreferedBy() {
+		return $this->belongsTo('App\User', 'road_test_performed_by_id');
+	}
+
 	public function status() {
 		return $this->belongsTo('App\Config', 'status_id');
 	}
