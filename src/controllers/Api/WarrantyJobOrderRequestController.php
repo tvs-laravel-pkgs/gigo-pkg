@@ -31,6 +31,7 @@ class WarrantyJobOrderRequestController extends Controller {
 	}
 
 	public function list(Request $request) {
+		// dd($request->all());
 		$list_data = WarrantyJobOrderRequest::select([
 			'warranty_job_order_requests.id',
 			'warranty_job_order_requests.number',
@@ -43,8 +44,10 @@ class WarrantyJobOrderRequestController extends Controller {
 			'vehicles.registration_number',
 			// 'models.model_number',
 			'mod.model_name as mod_name',
+			DB::raw('((warranty_job_order_requests.total_labour_amount + warranty_job_order_requests.total_part_amount) - warranty_job_order_requests.total_part_cushioning_charge ) as total_claim_amount'),
 			DB::raw('CONCAT(users.name," / ",users.username) as requested_by'),
 			'warranty_job_order_requests.status_id',
+			'warranty_job_order_requests.failure_date',
 			'configs.name as status',
 			'bharat_stages.name as bharat_stage',
 		])
@@ -68,6 +71,12 @@ class WarrantyJobOrderRequestController extends Controller {
 			// $date = date('Y-m-d', strtotime($request->request_date));
 			// $list_data->whereDate('warranty_job_order_requests.created_at', $date);
 			$list_data->whereBetween('warranty_job_order_requests.created_at', [$from_date . " 00:00:00", $to_date . " 23:59:59"]);
+		}
+		if ($request->failure_date != null) {
+			$exploded_date = explode(' to ', $request->failure_date);
+			$from_date = date('Y-m-d', strtotime($exploded_date[0]));
+			$to_date = date('Y-m-d', strtotime($exploded_date[1]));
+			$list_data->whereBetween('warranty_job_order_requests.failure_date', [$from_date, $to_date]);
 		}
 		if ($request->reg_no != null) {
 			$list_data->where('vehicles.registration_number', 'like', '%' . $request->reg_no . '%');
@@ -106,6 +115,9 @@ class WarrantyJobOrderRequestController extends Controller {
 		*/
 		if (Entrust::can('all-outlet-warranty-job-order-request')) {
 
+		} elseif (Entrust::can('verify-mapped-warranty-job-order-request')) {
+			$list_data->leftJoin('business_outlet', 'business_outlet.outlet_id', 'outlets.id')
+				->where('business_outlet.warranty_manager_id', Auth::user()->id);
 		} elseif (Entrust::can('mapped-outlets-warranty-job-order-request')) {
 			$list_data->leftJoin('employee_outlet', 'employee_outlet.outlet_id', 'outlets.id')
 				->where('employee_outlet.employee_id', Auth::user()->employee->id);
@@ -114,7 +126,12 @@ class WarrantyJobOrderRequestController extends Controller {
 		}
 
 		if (Entrust::can('verify-only-warranty-job-order-request')) {
-			$list_data->whereIn('warranty_job_order_requests.status_id', [9101]);
+			$status_id = json_decode($request->statusIds);
+			if ($status_id) {
+				$list_data->where('warranty_job_order_requests.status_id', $status_id->id);
+			} else {
+				$list_data->whereIn('warranty_job_order_requests.status_id', [9101]);
+			}
 		} else {
 			// if ($request->status_ids) {
 			// $list_data->whereIn('warranty_job_order_requests.status_id', [9100, 9103]);
@@ -128,6 +145,18 @@ class WarrantyJobOrderRequestController extends Controller {
 
 		return Datatables::of($list_data)
 			->rawColumns(['action'])
+			->addColumn('status', function ($list_data) {
+				if ($list_data->status_id == 9102) {
+					$status = '<p class="text-green">' . $list_data->status . '</p>';
+				} elseif ($list_data->status_id == 9103) {
+					$status = '<p class="text-red">' . $list_data->status . '</p>';
+				} elseif ($list_data->status_id == 9101) {
+					$status = '<p class="text-blue">' . $list_data->status . '</p>';
+				} else {
+					$status = $list_data->status;
+				}
+				return $status;
+			})
 			->addColumn('action', function ($list_data) {
 
 				$view = asset('public/themes/' . $this->data['theme'] . '/img/content/table/view.svg');

@@ -78,6 +78,22 @@
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
 </div>
+<div class="modal fade alert-modal failure" id="request_confirmation_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Confirm
+                </h5>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to send to approval? </p>
+                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">No</button>
+                <button class="btn btn-rose send_approval" aria-label="Close" ng-click="sendApproval(warranty_job_order_request)">Yes</button>
+            </div>
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->
 <div class="modal fade filter" id="approve_modal">
     <div class="modal-dialog">
         <div class="modal-content">

@@ -79,27 +79,40 @@ app.component('warrantyJobOrderRequestView', {
         $scope.init();
 
         $scope.sendToApproval = function(warranty_job_order_request) {
-            $ngBootbox.confirm({
-                    message: 'Are you sure you want to send to approval?',
-                    title: 'Confirm',
-                    size: "small",
-                    className: 'text-center',
-                })
-                .then(function() {
-                    $rootScope.loading = true;
-                    WarrantyJobOrderRequestSvc.sendToApproval(warranty_job_order_request)
-                        .then(function(response) {
-                            $rootScope.loading = false;
-                            if (!response.data.success) {
-                                showErrorNoty(response.data);
-                                return;
-                            }
-                            showNoty('success', 'Warranty job order request initiated successfully');
-                            $location.path('/warranty-job-order-request/table-list');
-                            $scope.$apply();
-                        });
+            $('#request_confirmation_modal').modal('show');
+        }
+
+        $scope.sendApproval = function(warranty_job_order_request) {
+            console.log(warranty_job_order_request);
+            $(".send_approval").button('loading');
+            $('.send_approval').attr('readonly', true).text('loading');
+            // $ngBootbox.confirm({
+            //         message: 'Are you sure you want to send to approval?',
+            //         title: 'Confirm',
+            //         size: "small",
+            //         className: 'text-center',
+            //     })
+            //     .then(function() {
+            $rootScope.loading = true;
+            WarrantyJobOrderRequestSvc.sendToApproval(warranty_job_order_request)
+                .then(function(response) {
+                    $rootScope.loading = false;
+                    if (!response.data.success) {
+                        showErrorNoty(response.data);
+                        return;
+                    }
+
+                    $('#request_confirmation_modal').modal('hide');
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+                    $('.send_approval').button('reset');
+
+                    showNoty('success', 'Warranty job order request initiated successfully');
+                    $location.path('/warranty-job-order-request/table-list');
+                    $scope.$apply();
                 });
-            return;
+            //     });
+            // return;
         }
 
         $scope.confirmDelete = function(warranty_job_order_request) {

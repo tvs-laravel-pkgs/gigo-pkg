@@ -1393,6 +1393,12 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'verify-only-warranty-job-order-request',
 				'display_name' => 'Verify Only',
 			],
+			[
+				'display_order' => 12,
+				'parent' => 'warranty-job-order-requests',
+				'name' => 'verify-mapped-warranty-job-order-request',
+				'display_name' => 'Verify Mapped Outlet',
+			],
 
 			//Vehicle Service Schedule
 			[

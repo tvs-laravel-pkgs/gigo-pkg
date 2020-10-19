@@ -460,6 +460,35 @@ app.component('warrantyJobOrderRequestForm', {
                 }*/
             }, 3000);
 
+            var cause_of_failure_quill = new Quill('#editor2', {
+                modules: {
+                    toolbar: toolbarOptions
+                },
+                theme: 'snow',
+            });
+            cause_of_failure_quill.on('text-change', function() {
+                if (pageLoaded == 1) {
+                    $data = cause_of_failure_quill.root.innerHTML; //cause_of_failure_quill.getContents();
+                    console.log(cause_of_failure_quill.root.innerHTML);
+                    $("#causeOfFailure").val($data);
+                }
+            });
+            setTimeout(function() {
+
+                if ($scope.warranty_job_order_request.cause_of_failure != undefined) {
+                    var delta = cause_of_failure_quill.clipboard.convert($scope.warranty_job_order_request.cause_of_failure);
+                    cause_of_failure_quill.setContents(delta, 'silent');
+
+                    // cause_of_failure_quill.setContents([
+                    //     { insert: $scope.warranty_job_order_request.cause_of_failure }
+                    // ]);
+                }
+                /*if ($scope.warranty_job_order_request.cause_of_failure != undefined) {
+                    var delta = cause_of_failure_quill.clipboard.convert($scope.warranty_job_order_request.cause_of_failure);
+                    cause_of_failure_quill.setContents(delta, 'silent');
+                }*/
+            }, 3000);
+
             $('div[data-provide="datepicker"]').bootstrapDP({
                 format: "dd-mm-yyyy",
                 autoclose: "true",

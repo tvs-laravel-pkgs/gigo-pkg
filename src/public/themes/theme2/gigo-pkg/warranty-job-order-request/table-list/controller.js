@@ -22,6 +22,7 @@ app.component('warrantyJobOrderRequestTableList', {
             var defaultParams = {
                 filters: {
                     requestDate: $("#request_date").val(),
+                    failureDate: $("#failure_date").val(),
                     registrationNumber: $("#reg_no").val(),
                     // customer_id : $("#customer_id").val();
                     // model_id : $("#model_id").val();
@@ -81,8 +82,9 @@ app.component('warrantyJobOrderRequestTableList', {
         //     $scope.getActiveFilters();
         // }, true);
 
-        var table_scroll;
-        table_scroll = $('.page-main-content.list-page-content').height() - 37;
+        // var table_scroll;
+        // table_scroll = $('.page-main-content.list-page-content').height() - 37;
+        $('.page-main-content.list-page-content').css("overflow-y", "auto");
         var dataTable = $('#warranty_job_order_request_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {
@@ -112,9 +114,9 @@ app.component('warrantyJobOrderRequestTableList', {
                 footer: true
             },
             // scrollY: '500px',
-            scrollX: true,
-            scrollY: table_scroll + "px",
-            scrollCollapse: true,
+            // scrollX: true,
+            // scrollY: table_scroll + "px",
+            // scrollCollapse: true,
             ajax: {
                 url: base_url + '/api/warranty-job-order-request/list',
                 type: "GET",
@@ -122,6 +124,7 @@ app.component('warrantyJobOrderRequestTableList', {
                 data: function(d) {
                     // d = $scope.filters;
                     d.request_date = $("#request_date").val();
+                    d.failure_date = $("#failure_date").val();
                     d.reg_no = $("#reg_no").val();
                     d.customer_id = $("#customer_id").val();
                     d.model_id = $("#model_id").val();
@@ -137,6 +140,8 @@ app.component('warrantyJobOrderRequestTableList', {
                 { data: 'request_date', searchable: false },
                 { data: 'number', name: 'warranty_job_order_requests.number', searchable: true },
                 { data: 'job_card_number', name: 'job_cards.job_card_number' },
+                { data: 'failure_date', searchable: false },
+                { data: 'total_claim_amount', searchable: false },
                 // { data: 'job_card_number', name: 'job_orders.number' },
                 { data: 'outlet_name', name: 'outlets.code' },
                 { data: 'status', name: 'configs.name' },

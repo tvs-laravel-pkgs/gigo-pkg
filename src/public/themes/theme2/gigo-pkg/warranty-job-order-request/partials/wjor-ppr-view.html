@@ -56,7 +56,7 @@
                         Failure date
                     </span>
                     <span class="view-col-value">
-                        {{warranty_job_order_request.failure_date}}
+                        <b>{{warranty_job_order_request.failure_date}}</b>
                     </span>
                 </li>
                 <li class="view-col-3">
@@ -90,7 +90,7 @@
                         Reason for return
                     </span>
                     <span class="view-col-value">
-                        <b>
+                        <b class="text-red">
                             {{warranty_job_order_request.rejected_reason}}
                         </b>
                     </span>
@@ -500,9 +500,11 @@
                                     <span class="view-col-label">
                                         Cause of failure
                                     </span>
-                                    <span class="view-col-value">
-                                        {{warranty_job_order_request.cause_of_failure}}
+                                    <span ng-bind-html="warranty_job_order_request.cause_of_failure" class="view-col-value">
                                     </span>
+                                    <!-- <span class="view-col-value">
+                                        {{warranty_job_order_request.cause_of_failure}}
+                                    </span> -->
                                 </li>
                                 <li class="view-col-12">
                                     <span class="view-col-label">
