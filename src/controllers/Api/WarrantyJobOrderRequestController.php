@@ -48,6 +48,7 @@ class WarrantyJobOrderRequestController extends Controller {
 			DB::raw('CONCAT(users.name," / ",users.username) as requested_by'),
 			'warranty_job_order_requests.status_id',
 			'warranty_job_order_requests.failure_date',
+			'warranty_job_order_requests.created_at',
 			'configs.name as status',
 			'bharat_stages.name as bharat_stage',
 		])
@@ -152,6 +153,12 @@ class WarrantyJobOrderRequestController extends Controller {
 
 		return Datatables::of($list_data)
 			->rawColumns(['action'])
+			->editColumn('created_at', function ($list_data) {
+				return [
+					'display' => e($list_data->created_at->format('d/m/Y h:i A')),
+					'timestamp' => $list_data->created_at->timestamp,
+				];
+			})
 			->addColumn('status', function ($list_data) {
 				if ($list_data->status_id == 9102) {
 					$status = '<p class="text-green">' . $list_data->status . '</p>';

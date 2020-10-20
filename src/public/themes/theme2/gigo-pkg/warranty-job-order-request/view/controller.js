@@ -210,7 +210,7 @@ app.component('warrantyJobOrderRequestView', {
                         $('#reject_modal').modal('hide');
                         $('body').removeClass('modal-open');
                         $('.modal-backdrop').remove();
-                        showNoty('success', 'Warranty job order request rejected successfully');
+                        showNoty('success', 'Warranty job order request returned successfully');
                         $location.path('/warranty-job-order-request/table-list');
                         $(".submit").button('reset');
 

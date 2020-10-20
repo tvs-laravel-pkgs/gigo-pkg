@@ -137,7 +137,16 @@ app.component('warrantyJobOrderRequestTableList', {
             // data : response,
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'request_date', searchable: false },
+                // { data: 'request_date', searchable: false },
+                {
+                    data: 'created_at',
+                    searchable: false,
+                    type: 'num',
+                    render: {
+                        _: 'display',
+                        sort: 'timestamp'
+                    }
+                },
                 { data: 'number', name: 'warranty_job_order_requests.number', searchable: true },
                 { data: 'job_card_number', name: 'job_cards.job_card_number' },
                 { data: 'failure_date', searchable: false },
