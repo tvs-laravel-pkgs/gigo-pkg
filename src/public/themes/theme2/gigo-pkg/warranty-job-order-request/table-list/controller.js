@@ -148,9 +148,9 @@ app.component('warrantyJobOrderRequestTableList', {
                     }
                 },
                 { data: 'number', name: 'warranty_job_order_requests.number', searchable: true },
-                { data: 'job_card_number', name: 'job_cards.job_card_number' },
+                { data: 'job_card_number', name: 'job_cards.job_card_number', className: "text-right" },
                 { data: 'failure_date', searchable: false },
-                { data: 'total_claim_amount', searchable: false },
+                { data: 'total_claim_amount', searchable: false, className: "text-right" },
                 // { data: 'job_card_number', name: 'job_orders.number' },
                 { data: 'outlet_name', name: 'outlets.code' },
                 { data: 'status', name: 'configs.name' },
