@@ -128,7 +128,14 @@ class WarrantyJobOrderRequestController extends Controller {
 		if (Entrust::can('verify-only-warranty-job-order-request')) {
 			$status_id = json_decode($request->statusIds);
 			if ($status_id) {
-				$list_data->where('warranty_job_order_requests.status_id', $status_id->id);
+				if ($status_id->id == 9103) {
+					$list_data->whereIn('warranty_job_order_requests.status_id', [9103]);
+				} elseif (9102) {
+					$list_data->whereIn('warranty_job_order_requests.status_id', [9102]);
+				} else {
+					$list_data->whereIn('warranty_job_order_requests.status_id', [9101]);
+				}
+				// $list_data->where('warranty_job_order_requests.status_id', $status_id->id);
 			} else {
 				$list_data->whereIn('warranty_job_order_requests.status_id', [9101]);
 			}
