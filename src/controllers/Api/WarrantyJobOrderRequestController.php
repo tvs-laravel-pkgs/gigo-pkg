@@ -166,9 +166,9 @@ class WarrantyJobOrderRequestController extends Controller {
 					$status = '<p class="text-green">' . $list_data->status . '</p>';
 				} elseif ($list_data->status_id == 9103) {
 
-					$status = '<a href="javascript:void(0)" class="my-tooltip"  data-html="true"  data-toggle="tooltip" data-placement="top"  data-title="' . $list_data->rejected_reason . '" title="' . $list_data->rejected_reason . '">' . $list_data->status . '</a>';
+					// $status = '<a href="javascript:void(0)" class="my-tooltip"  data-html="true"  data-toggle="tooltip" data-placement="top"  data-title="' . $list_data->rejected_reason . '" title="' . $list_data->rejected_reason . '">' . $list_data->status . '</a>';
 
-					// $status = '<p class="text-red">' . $list_data->status . '</p>';
+					$status = '<p class="text-red">' . $list_data->status . '</p>';
 				} elseif ($list_data->status_id == 9101) {
 					$status = '<p class="text-blue">' . $list_data->status . '</p>';
 				} else {

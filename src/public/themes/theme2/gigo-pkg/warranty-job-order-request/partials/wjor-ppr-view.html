@@ -128,6 +128,28 @@
                         -
                     </span>
                 </li>
+                <li class="view-col-3" ng-if="warranty_job_order_request.status_id == 9102">
+                    <span class="view-col-label">
+                        Approval Rating
+                    </span>
+                    <span class="view-col-value" ng-if="warranty_job_order_request.approval_rating">
+                        <div class="rating">
+                            <input type="radio" id="star5" name="approval_ratings" disabled value="5" ng-checked="warranty_job_order_request.approval_rating == 5" />
+                            <label class="full" for="star5"></label>
+                            <input type="radio" id="star4" name="approval_ratings" disabled value="4" ng-checked="warranty_job_order_request.approval_rating == 4">
+                            <label class="full" for="star4"></label>
+                            <input type="radio" id="star3" name="approval_ratings" disabled value="3" ng-checked="warranty_job_order_request.approval_rating == 3" />
+                            <label class="full" for="star3"></label>
+                            <input type="radio" id="star2" name="approval_ratings" disabled value="2" ng-checked="warranty_job_order_request.approval_rating == 2" />
+                            <label class="full" for="star2"></label>
+                            <input type="radio" id="star1" name="approval_ratings" disabled value="1" ng-checked="warranty_job_order_request.approval_rating == 1" />
+                            <label class="full" for="star1"></label>
+                        </div>
+                    </span>
+                    <span class="view-col-value" ng-if="!warranty_job_order_request.approval_rating">
+                        -
+                    </span>
+                </li>
                 <li class="view-col-3">
                     <span class="view-col-label">
                         Created By

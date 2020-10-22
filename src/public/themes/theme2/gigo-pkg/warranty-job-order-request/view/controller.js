@@ -14,10 +14,16 @@ app.component('warrantyJobOrderRequestView', {
 
         $scope.form_type = 'manual';
 
+        /* Modal Md Select Hide */
+        $('.modal').bind('click', function(event) {
+            if ($('.md-select-menu-container').hasClass('md-active')) {
+                $mdSelect.hide();
+            }
+        });
 
         $scope.init = function() {
             $rootScope.loading = true;
-            
+
             let promises = {
                 warranty_job_order_request_read: WarrantyJobOrderRequestSvc.read($routeParams.request_id),
             };
@@ -97,6 +103,13 @@ app.component('warrantyJobOrderRequestView', {
 
                             $rootScope.loading = false;
                         });
+
+                    if ($scope.warranty_job_order_request.approval_rating) {
+                        $('#approval_rating').val($scope.warranty_job_order_request.approval_rating);
+                    } else {
+                        $scope.warranty_job_order_request.approval_rating = 5;
+                        $('#approval_rating').val('5');
+                    }
                 });
 
         };
