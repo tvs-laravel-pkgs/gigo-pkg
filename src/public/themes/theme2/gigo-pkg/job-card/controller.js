@@ -1409,8 +1409,12 @@ app.component('jobCardRoadTestObservationForm', {
                         showErrorNoty(res);
                         return;
                     }
+                    console.log(res);
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_card = res.job_card;
+                    $scope.road_test_gate_passes = res.road_test_gate_pass;
+                    $scope.extras = res.extras;
+
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1423,6 +1427,234 @@ app.component('jobCardRoadTestObservationForm', {
         setTimeout(function() {
             scrollableTabs();
         }, 1000);
+
+        $scope.showRoadTestUpdateForm = function(index, road_test_id, observations) {
+            $('#road_test_form')[0].reset();
+            $('.road_test_id').val(road_test_id);
+            $('.observations').val(observations);
+            $('#road_test_observation_modal').modal('show');
+        }
+
+        $scope.saveBillDetail = function() {
+            var form_id = '#road_test_form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'road_test_id': {
+                        required: true,
+                    },
+                    'road_test_report': {
+                        required: true,
+                    },
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.save_bill_detail').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/jobcard/road-test-observation/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $('.save_bill_detail').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            $('.save_bill_detail').button('reset');
+                            custom_noty('success', res.message);
+                            $('#road_test_observation_modal').modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                            $scope.fetchData();
+                        })
+                        .fail(function(xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+
+    }
+});
+
+//---------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------
+//Road Test Observation
+app.component('jobCardRoadTestForm', {
+    templateUrl: job_card_road_test_form_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        self.angular_routes = angular_routes;
+        self.view_only_part_indent = self.hasPermission('view-only-parts-indent');
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_card_id = $routeParams.job_card_id;
+        $scope.road_test_id = $routeParams.road_test_id;
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/jobcard/road-test-observation/get',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_card_id,
+                        road_test_id: $routeParams.road_test_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    console.log(res);
+                    $scope.job_card_id = $routeParams.job_card_id;
+                    $scope.job_card = res.job_card;
+                    $scope.road_test_gate_pass = res.road_test_gate_pass;
+                    $scope.extras = res.extras;
+
+
+                    if ($scope.road_test_gate_pass) {
+                        $scope.is_road_test_required = 1;
+                        $scope.road_test_trade_plate_number_id = $scope.road_test_gate_pass.trade_plate_number_id;
+                        $scope.road_test_performed_by_id = $scope.road_test_gate_pass.road_test_performed_by_id;
+                        $scope.road_test_done_by_id = $scope.road_test_gate_pass.road_test_done_by_id;
+                        $scope.road_test_report = $scope.road_test_gate_pass.remarks;
+                    } else {
+                        $scope.is_road_test_required = 0;
+                        $scope.road_test_done_by_id = 8101;
+                    }
+
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        $scope.roadTestChange = function(key) {
+            $scope.road_test_done_by_id = key;
+        }
+        $scope.addNewRoadTest = function() {
+            $scope.show_road_test_form = true;
+        }
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
+
+        //Save Form Data 
+        $scope.saveRoadTestDetailForm = function(id) {
+            var form_id = '#road_test_form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'is_road_test_required': {
+                        required: true,
+                    },
+                    'road_test_done_by_id': {
+                        required: true,
+                    },
+                    'road_test_performed_by_id': {
+                        required: true,
+                    },
+                    'road_test_trade_plate_number_id': {
+                        required: true,
+                    },
+                    // 'road_test_report': {
+                    //     required: true,
+                    // },
+                },
+                errorPlacement: function(error, element) {
+                    if (element.attr("name") == "is_road_test_required") {
+                        error.appendTo('#errorRoadTestRequired');
+                        return;
+                    } else if (element.attr("name") == "road_test_done_by_id") {
+                        error.appendTo('#errorRoadTestDone');
+                        return;
+                    }
+                    // else if (element.attr("name") == "road_test_report") {
+                    //     error.appendTo('#errorRoadTestObservation');
+                    //     return;
+                    // } 
+                    else {
+                        error.insertAfter(element);
+                    }
+                },
+                messages: {
+
+                },
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all tabs');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $scope.button_action(id, 1);
+                    $.ajax({
+                            url: base_url + '/api/jobcard/road-test-observation/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            $scope.button_action(id, 2);
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                return;
+                            }
+
+                            if (!res.success) {
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            $location.path('/job-card/road-test-observation/' + $scope.job_card_id);
+                            $scope.$apply();
+
+                        })
+                        .fail(function(xhr) {
+                            $scope.button_action(id, 2);
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+        $scope.button_action = function(id, type) {
+            if (type == 1) {
+                if (id == 1) {
+                    $('.submit').button('loading');
+                    $('.btn-next').attr("disabled", "disabled");
+                    $('.btn-prev').bind('click', false);
+                } else {
+                    $('.btn-next').button('loading');
+                    $('.submit').attr("disabled", "disabled");
+                    $('.btn-prev').bind('click', false);
+                }
+            } else {
+                $('.submit').button('reset');
+                $('.btn-next').button('reset');
+                $('.btn-prev').unbind('click', false);
+                $(".btn-next").removeAttr("disabled");
+                $(".submit").removeAttr("disabled");
+            }
+        }
     }
 });
 
