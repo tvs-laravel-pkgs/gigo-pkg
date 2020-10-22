@@ -17,12 +17,36 @@ app.component('warrantyJobOrderRequestView', {
 
         $scope.init = function() {
             $rootScope.loading = true;
-
+            
             let promises = {
                 warranty_job_order_request_read: WarrantyJobOrderRequestSvc.read($routeParams.request_id),
             };
 
             $scope.page = 'view';
+
+            $.ajax({
+                    url: base_url + '/api/warranty-job-order-request/get-form-data',
+                    method: "POST",
+                    data: {},
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    $rootScope.loading = false;
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.extras = res.extras;
+
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    $rootScope.loading = false;
+                    custom_noty('error', 'Something went wrong at server');
+                });
+
 
             $q.all(promises)
                 .then(function(responses) {
@@ -135,6 +159,9 @@ app.component('warrantyJobOrderRequestView', {
                 });
         }
 
+        $scope.approvalRating = function(rating) {
+            $('#approval_rating').val(rating);
+        }
 
         $scope.showApprovalForm = function(warranty_job_order_request) {
             $('#approve_modal').modal('show');
@@ -164,6 +191,8 @@ app.component('warrantyJobOrderRequestView', {
                 $(".submit").button('loading');
                 $('.sendToApproval').attr('readonly', true).text('loading');
                 // $('.sendToApproval').button('loading');
+
+                $scope.warranty_job_order_request.approval_rating = $('#approval_rating').val();
 
                 WarrantyJobOrderRequestSvc.approve($scope.warranty_job_order_request)
                     .then(function(response) {

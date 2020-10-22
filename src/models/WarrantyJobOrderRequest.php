@@ -69,6 +69,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 		"remarks_for_not_changing_lube",
 		"claim_number",
 		"failure_type_id",
+		"approval_rating",
 	];
 
 	protected $dates = [

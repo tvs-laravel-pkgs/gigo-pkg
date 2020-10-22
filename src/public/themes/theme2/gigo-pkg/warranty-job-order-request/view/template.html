@@ -94,55 +94,77 @@
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal -->
-<div class="modal fade filter" id="approve_modal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close ripple reject_close" data-dismiss="modal" aria-label="Close">
-                    <i class="icon ion-md-close"></i>
-                </button>
-                <h5 class="modal-title">
-                    Approve
-                </h5>
-            </div>
-            <form id="approval-form">
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>
-                                    PPR number
-                                    <span class="mandatory">*</span>
-                                </label>
-                                <input type="text" class="form-control" name="authorization_number" ng-model="warranty_job_order_request.authorization_number" maxlength="64">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>
-                                    Authorized Date
-                                </label>
-                                <input type="text" name="authorization_date" disabled="disabled" class="form-control" ng-model="warranty_job_order_request.authorized_date">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>
-                                    Remarks (if any)
-                                </label>
-                                <textarea class="form-control" name="remarks" ng-model="warranty_job_order_request.remarks"></textarea>
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>
-                                    Approved By
-                                </label>
-                                <input type="text" disabled="disabled" class="form-control" ng-model="user.name">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                    </div><!-- Row -->
+<div class="modal fade filter" id="approve_modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <form id="approval-form" autocomplete="off">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close ripple reject_close" data-dismiss="modal" aria-label="Close">
+                        <i class="icon ion-md-close"></i>
+                    </button>
+                    <h5 class="modal-title">
+                        Approve
+                    </h5>
                 </div>
+                <div class="modal-body">
+                    <div class="modal-form">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>
+                                        PPR number
+                                        <span class="mandatory">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" name="authorization_number" ng-model="warranty_job_order_request.authorization_number" maxlength="64">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>
+                                        Authorized Date
+                                    </label>
+                                    <input type="text" name="authorization_date" disabled="disabled" class="form-control" ng-model="warranty_job_order_request.authorized_date">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>
+                                        Approval Rating <span class="mandatory">*</span>
+                                    </label>
+                                    <div class="rating">
+                                        <input type="radio" id="star5" name="approval_ratings" value="5" checked ng-click="approvalRating(5)" />
+                                        <label class="full" for="star5"></label>
+                                        <input type="radio" id="star4" name="approval_ratings" value="4" ng-click="approvalRating(4)" />
+                                        <label class="full" for="star4"></label>
+                                        <input type="radio" id="star3" name="approval_ratings" value="3" ng-click="approvalRating(3)" />
+                                        <label class="full" for="star3"></label>
+                                        <input type="radio" id="star2" name="approval_ratings" value="2" ng-click="approvalRating(2)" />
+                                        <label class="full" for="star2"></label>
+                                        <input type="radio" id="star1" name="approval_ratings" value="1" ng-click="approvalRating(1)" />
+                                        <label class="full" for="star1"></label>
+                                    </div>
+                                    <input type="text" name="approval_rating" ng-model="warranty_job_order_request.approval_rating" id="approval_rating" value="5">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>
+                                        Remarks (if any)
+                                    </label>
+                                    <textarea class="form-control" name="remarks" ng-model="warranty_job_order_request.remarks"></textarea>
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>
+                                        Approved By
+                                    </label>
+                                    <input type="text" disabled="disabled" class="form-control" ng-model="user.name">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                        </div><!-- Row -->
+                    </div><!-- Modal Form -->
+                </div><!-- Modal Body -->
                 <div class="modal-footer">
                     <div class="row">
                         <div class="col-md-6">
@@ -157,11 +179,75 @@
                         </div><!-- Column -->
                     </div><!-- Row -->
                 </div><!-- Modal Footer -->
-            </form>
-        </div><!-- Modal Content -->
+            </div><!-- Modal Content -->
+        </form>
     </div><!-- Modal Dialog -->
 </div><!-- Modal -->
-<div class="modal fade filter" id="reject_modal">
+<div class="modal fade filter" id="reject_modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <form id="rejection-form" autocomplete="off">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close ripple reject_close" data-dismiss="modal" aria-label="Close">
+                        <i class="icon ion-md-close"></i>
+                    </button>
+                    <h5 class="modal-title">
+                        Request Resubmit
+                    </h5>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-form">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>
+                                        Resubmit Reason
+                                        <sup class="mandatory">*</sup>
+                                    </label>
+                                    <md-select ng-model="warranty_job_order_request.ppr_reject_reason_id" placeholder="Select Reason" data-md-container-class="selectdemoSelectHeader">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchSplitOrderType" type="search" placeholder="Search for a Reason.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                        </md-select-header>
+                                        <md-optgroup>
+                                            <md-option ng-value="reject_reason.id" ng-repeat="reject_reason in extras.reject_reasons | filter:searchSplitOrderType">
+                                                {{reject_reason.name}}
+                                            </md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input required type="hidden" name="ppr_reject_reason_id" value="{{warranty_job_order_request.ppr_reject_reason_id}}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>
+                                        Reason for resubmit request
+                                        <span class="mandatory">*</span>
+                                    </label>
+                                    <textarea class="form-control" name="rejected_reason" ng-model="warranty_job_order_request.rejected_reason"></textarea>
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                        </div><!-- Row -->
+                    </div><!-- Modal Form -->
+                </div><!-- Modal Body -->
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button type="button" data-dismiss="modal" class="reset-link">
+                                Cancel
+                            </button>
+                        </div><!-- Column -->
+                        <div class="col-md-6 text-right">
+                            <button type="submit" class="submit btn btn-primary btn-md">
+                                Submit
+                            </button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Modal Footer -->
+            </div><!-- Modal Content -->
+        </form>
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->
+<div class="modal fade filter" id="reject_modal1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -175,6 +261,25 @@
             <form id="rejection-form">
                 <div class="modal-body">
                     <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>
+                                    Resubmit Reason
+                                    <sup class="mandatory">*</sup>
+                                </label>
+                                <md-select ng-model="warranty_job_order_request.ppr_reject_reason_id" placeholder="Select Reason" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                    <md-select-header class="demo-select-header">
+                                        <input ng-model="searchSplitOrderType" type="search" placeholder="Search for a Reason.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                    </md-select-header>
+                                    <md-optgroup>
+                                        <md-option ng-value="reject_reason.id" ng-repeat="reject_reason in extras.reject_reasons | filter:searchSplitOrderType">
+                                            {{reject_reason.name}}
+                                        </md-option>
+                                    </md-optgroup>
+                                </md-select>
+                                <input required type="hidden" name="ppr_reject_reason_id" value="{{warranty_job_order_request.ppr_reject_reason_id}}">
+                            </div>
+                        </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>

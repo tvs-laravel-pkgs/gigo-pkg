@@ -10,6 +10,7 @@ use App\Country;
 use App\FailureType;
 use App\Http\Controllers\Controller;
 use App\Outlet;
+use App\PprRejectReason;
 use App\SplitOrderType;
 use App\User;
 use App\VehicleModel;
@@ -308,6 +309,7 @@ class WarrantyJobOrderRequestController extends Controller {
 			$warranty_job_order_request->authorization_date = date('Y-m-d');
 			$warranty_job_order_request->authorization_by = Auth::id();
 			$warranty_job_order_request->remarks = $request->remarks;
+			$warranty_job_order_request->approval_rating = $request->approval_rating;
 			$warranty_job_order_request->status_id = 9102; //approved
 			$warranty_job_order_request->save();
 
@@ -333,6 +335,7 @@ class WarrantyJobOrderRequestController extends Controller {
 		try {
 			$warranty_job_order_request = WarrantyJobOrderRequest::find($request->id);
 			$warranty_job_order_request->rejected_reason = $request->rejected_reason;
+			$warranty_job_order_request->ppr_reject_reason_id = $request->ppr_reject_reason_id;
 			$warranty_job_order_request->status_id = 9103; //rejected
 			$warranty_job_order_request->save();
 
@@ -439,12 +442,13 @@ class WarrantyJobOrderRequestController extends Controller {
 	}
 	public function getFormData() {
 		try {
-			$employee_outlets = Auth::user()->employee->employee_outlets;
+			$employee_outlets = Auth::user()->employee ? Auth::user()->employee->employee_outlets : [];
 			$models = VehicleModel::where('company_id', Auth::user()->company_id)->get();
 			$bharat_stages = BharatStage::where('company_id', Auth::user()->company_id)->get();
 			$split_order_types = SplitOrderType::where('company_id', Auth::user()->company_id)->where('claim_category_id', 11112)->get();
 			$aggregates = Aggregate::all();
 			$failure_types = FailureType::where('company_id', Auth::user()->company_id)->get()->prepend(['id' => '', 'name' => 'Select Failure Type']);
+			$reject_reasons = PprRejectReason::where('company_id', Auth::user()->company_id)->get()->prepend(['id' => '', 'name' => 'Select Reason']);
 			// $aggregates = Aggregate::where('company_id', Auth::user()->company_id)->get();
 			// $temp_data = WarrantyJobOrderRequest::where('status_id', 9104)->first();
 			// $temp_data = $temp_data->load($this->model::relationships('read'));
@@ -462,6 +466,7 @@ class WarrantyJobOrderRequestController extends Controller {
 					'split_order_types' => $split_order_types,
 					'aggregates' => $aggregates,
 					'failure_types' => $failure_types,
+					'reject_reasons' => $reject_reasons,
 					// 'temp_data' => $temp_data,
 				],
 			]);
