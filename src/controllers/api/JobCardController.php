@@ -2224,12 +2224,24 @@ class JobCardController extends Controller {
 				]);
 			}
 			DB::beginTransaction();
+			// dd($request->all());
+			if ($request->type_id && $request->type_id == 121) {
+				$type_id = [121];
+			} elseif ($request->type_id && $request->type_id == 122) {
+				$type_id = [122];
+			} else {
+				$type_id = [121, 122];
+			}
 
-			$VendorList = Vendor::where('code', 'LIKE', '%' . $request->vendor_code . '%')
-				->where(function ($query) {
-					$query->where('type_id', 121)
-						->orWhere('type_id', 122);
-				})->get();
+			// dd($type_id);
+
+			$VendorList = Vendor::where('code', 'LIKE', '%' . $request->vendor_code . '%')->whereIn('type_id', [$type_id])
+			// ->where(function ($query) use ($type_id) {
+			// 	$query->whereIn('type_id', [$type_id]);
+			// 	// $query->where('type_id', 121)
+			// 	// 	->orWhere('type_id', 122);
+			// })
+				->get();
 
 			DB::commit();
 			return response()->json([

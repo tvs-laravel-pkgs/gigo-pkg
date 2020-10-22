@@ -49,6 +49,7 @@ class WarrantyJobOrderRequestController extends Controller {
 			'warranty_job_order_requests.status_id',
 			'warranty_job_order_requests.failure_date',
 			'warranty_job_order_requests.created_at',
+			'warranty_job_order_requests.rejected_reason',
 			'configs.name as status',
 			'bharat_stages.name as bharat_stage',
 		])
@@ -163,7 +164,10 @@ class WarrantyJobOrderRequestController extends Controller {
 				if ($list_data->status_id == 9102) {
 					$status = '<p class="text-green">' . $list_data->status . '</p>';
 				} elseif ($list_data->status_id == 9103) {
-					$status = '<p class="text-red">' . $list_data->status . '</p>';
+
+					$status = '<a href="javascript:void(0)" class="my-tooltip"  data-html="true"  data-toggle="tooltip" data-placement="top"  data-title="' . $list_data->rejected_reason . '" title="' . $list_data->rejected_reason . '">' . $list_data->status . '</a>';
+
+					// $status = '<p class="text-red">' . $list_data->status . '</p>';
 				} elseif ($list_data->status_id == 9101) {
 					$status = '<p class="text-blue">' . $list_data->status . '</p>';
 				} else {

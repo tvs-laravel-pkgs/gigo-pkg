@@ -14,6 +14,7 @@ use App\Survey;
 use App\SurveyAnswer;
 use App\SurveyType;
 use App\Vehicle;
+use App\VehicleInventoryItem;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -174,11 +175,19 @@ class VehicleGatePassController extends Controller {
 			$view_vehicle_gate_pass->covering_letter_pdf = url('storage/app/public/gigo/pdf/' . $view_vehicle_gate_pass->jobOrder->id . '_covering_letter.pdf');
 			$view_vehicle_gate_pass->gate_pass_pdf = url('storage/app/public/gigo/pdf/' . $view_vehicle_gate_pass->jobOrder->id . '_gatepass.pdf');
 
+			$inventory_params['field_type_id'] = [11, 12];
+
+			$extras = [
+				'inventory_type_list' => VehicleInventoryItem::getInventoryList($view_vehicle_gate_pass->jobOrder->id, $inventory_params),
+			];
+
 			return response()->json([
 				'success' => true,
 				'view_vehicle_gate_pass' => $view_vehicle_gate_pass,
 				'pdf_link' => url('storage/app/public/gigo/pdf'),
+				'extras' => $extras,
 			]);
+
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
@@ -419,7 +428,7 @@ class VehicleGatePassController extends Controller {
 
 								$message = 'Greetings from TVS & Sons! Thank you for having your vehicle serviced from TVS & Sons.Kindly click on this link to give Service Feedback: ' . $short_url;
 
-								$msg = sendSMSNotification($gate_log->jobOrder->driver_mobile_number, $message);
+								$msg = sendSMSNotification($gate_log->jobOrder->contact_number, $message);
 							}
 						}
 					}
