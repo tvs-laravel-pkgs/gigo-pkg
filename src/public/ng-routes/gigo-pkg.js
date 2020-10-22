@@ -916,6 +916,16 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'Job Card Road Test Observation',
 
     }).
+    when('/job-card/road-test/form/:job_card_id', {
+        template: '<job-card-road-test-form></job-card-road-test-form>',
+        title: 'Job Card Road Test Form',
+
+    }).
+    when('/job-card/road-test/form/:job_card_id/:road_test_id', {
+        template: '<job-card-road-test-form></job-card-road-test-form>',
+        title: 'Job Card Road Test Form',
+
+    }).
     when('/job-card/vehicle-inspection/:job_card_id', {
         template: '<job-card-vehicle-inspection-form></job-card-vehicle-inspection-form>',
         title: 'Job Card Vehicle Inspection',

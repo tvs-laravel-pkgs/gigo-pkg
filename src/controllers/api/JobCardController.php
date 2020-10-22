@@ -2287,6 +2287,7 @@ class JobCardController extends Controller {
 	}
 
 	public function getRoadTestObservation(Request $request) {
+		// dd($request->all());
 		$job_card = JobCard::with(['status', 'jobOrder',
 			'jobOrder.type',
 			'jobOrder.vehicle',
@@ -2304,6 +2305,7 @@ class JobCardController extends Controller {
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
 			])
 			->find($request->id);
+
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -2312,34 +2314,33 @@ class JobCardController extends Controller {
 			]);
 		}
 
-		$road_test_gate_passes = RoadTestGatePass::with([
-			'status',
-			'jobOrder',
-			'roadTestDoneBy',
-			'roadTestPreferedBy',
-			'tradePlateNumber',
-		])
-			->where('job_order_id', $job_card->jobOrder->id)
-			->get();
+		$trade_plate_number_list = collect(TradePlateNumber::where('status_id', 8240)->where('company_id', Auth::user()->company_id)->where('outlet_id', $job_card->outlet_id)->whereDate('insurance_validity_to', '>=', date('Y-m-d'))->select('id', 'trade_plate_number')->get())->prepend(['id' => '', 'trade_plate_number' => 'Select Trade Plate']);
 
-		$trade_plate_number_list = collect(TradePlateNumber::where('status_id', 8240)->where('company_id', Auth::user()->company_id)->where('outlet_id', Auth::user()->employee->outlet_id)->whereDate('insurance_validity_to', '>=', date('Y-m-d'))->select('id', 'trade_plate_number')->get())->prepend(['id' => '', 'trade_plate_number' => 'Select Trade Plate']);
+		if ($request->road_test_id) {
+			$road_test_gate_passes = RoadTestGatePass::with([
+				'status',
+				'jobOrder',
+				'roadTestDoneBy',
+				'roadTestPreferedBy',
+				'tradePlateNumber',
+			])
+				->find($request->road_test_id);
 
-		if ($job_card->jobOrder->tradePlateNumber) {
-			$trade_plate_number_list->push(['id' => $job_card->jobOrder->tradePlateNumber->id, 'trade_plate_number' => $job_card->jobOrder->tradePlateNumber->trade_plate_number]);
+			if ($road_test_gate_passes->trade_plate_number_id) {
+				$trade_plate_number_list->push(['id' => $road_test_gate_passes->tradePlateNumber->id, 'trade_plate_number' => $road_test_gate_passes->tradePlateNumber->trade_plate_number]);
+			}
+
 		} else {
-			$job_card->jobOrder->road_test_trade_plate_number_id = $job_card->jobOrder->gatein_trade_plate_number_id ? $job_card->jobOrder->gatein_trade_plate_number_id : NULL;
+			$road_test_gate_passes = RoadTestGatePass::with([
+				'status',
+				'jobOrder',
+				'roadTestDoneBy',
+				'roadTestPreferedBy',
+				'tradePlateNumber',
+			])
+				->where('job_order_id', $job_card->jobOrder->id)
+				->get();
 		}
-
-		//check road test gatepass available or not
-		// if($road_test_gate_passes)
-		// {
-		// 	foreach ($$road_test_gate_passes as $key => $road_test_gate_pass) {
-		// 		if($road_test_gate_passe->status_id == 11140)
-		// 		{
-
-		// 		}
-		// 	}
-		// }
 
 		$extras = [
 			'road_test_by' => Config::getDropDownList(['config_type_id' => 36, 'add_default' => false]), //ROAD TEST DONE BY
@@ -2354,6 +2355,234 @@ class JobCardController extends Controller {
 			'extras' => $extras,
 		]);
 
+	}
+
+	//ROAD TEST OBSERVATION SAVE
+	public function saveRoadTestObservation(Request $request) {
+		// dd($request->all());
+		DB::beginTransaction();
+		try {
+
+			if ($request->type == 1) {
+				$validator = Validator::make($request->all(), [
+					'is_road_test_required' => [
+						'required',
+						'integer',
+						'max:1',
+					],
+					'job_order_id' => [
+						'required',
+						'integer',
+						'exists:job_orders,id',
+					],
+					'road_test_done_by_id' => [
+						'required_if:is_road_test_required,1',
+						'exists:configs,id',
+						'integer',
+					],
+					'road_test_performed_by_id' => [
+						'required_if:road_test_done_by_id,8101',
+						'integer',
+						'exists:users,id',
+					],
+					'road_test_trade_plate_number_id' => [
+						'required_if:road_test_done_by_id,8101',
+						'integer',
+						'exists:trade_plate_numbers,id',
+					],
+				]);
+
+				if ($validator->fails()) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
+					]);
+				}
+
+				//EMPLOYEE
+				if ($request->is_road_test_required == 1 && $request->road_test_done_by_id == 8101) {
+					if (!$request->road_test_performed_by_id) {
+						return response()->json([
+							'success' => false,
+							'error' => 'Validation Error',
+							'errors' => [
+								'Driver for Road Test is required.',
+							],
+						]);
+					}
+				}
+
+				$job_order = JobOrder::find($request->job_order_id);
+
+				$road_test = RoadTestGatePass::where('job_order_id', $job_order->id)->where('status_id', 11141)->first();
+				if ($road_test) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'Vehicle Road Test is Inprogress!.',
+						],
+					]);
+				}
+
+				if ($request->is_road_test_required == 1) {
+					if ($request->road_test_id) {
+						$road_test = RoadTestGatePass::where('id', $request->road_test_id)->first();
+
+						$road_test->updated_by_id = Auth::user()->id;
+						$road_test->updated_at = Carbon::now();
+
+						if ($road_test->trade_plate_number_id != $request->road_test_trade_plate_number_id) {
+							//Update Current Trade Plate Number Status
+							$plate_number_update = TradePlateNumber::where('id', $request->road_test_trade_plate_number_id)
+								->update([
+									'status_id' => 8241, //ASSIGNED
+									'updated_by_id' => Auth::user()->id,
+									'updated_at' => Carbon::now(),
+								]);
+
+							//Update Previous Trade Plate Number Status
+							$plate_number_update = TradePlateNumber::where('id', $road_test->trade_plate_number_id)
+								->update([
+									'status_id' => 8240, //FREE
+									'updated_by_id' => Auth::user()->id,
+									'updated_at' => Carbon::now(),
+								]);
+						}
+
+					} else {
+
+						$road_test = RoadTestGatePass::where('job_order_id', $job_order->id)->where('status_id', 11140)->first();
+						if ($road_test) {
+							return response()->json([
+								'success' => false,
+								'error' => 'Validation Error',
+								'errors' => [
+									'Vehicle Road Test is Inprogress!.',
+								],
+							]);
+						}
+
+						//Update Current Trade Plate Number Status
+						$plate_number_update = TradePlateNumber::where('id', $request->road_test_trade_plate_number_id)
+							->update([
+								'status_id' => 8241, //ASSIGNED
+								'updated_by_id' => Auth::user()->id,
+								'updated_at' => Carbon::now(),
+							]);
+
+						$road_test = new RoadTestGatePass;
+
+						//Generate Serial Number
+						if (date('m') > 3) {
+							$year = date('Y') + 1;
+						} else {
+							$year = date('Y');
+						}
+						//GET FINANCIAL YEAR ID
+						$financial_year = FinancialYear::where('from', $year)
+							->where('company_id', Auth::user()->company_id)
+							->first();
+						if (!$financial_year) {
+							return response()->json([
+								'success' => false,
+								'error' => 'Validation Error',
+								'errors' => [
+									'Fiancial Year Not Found',
+								],
+							]);
+						}
+						//GET BRANCH/OUTLET
+						$branch = Outlet::where('id', $job_order->outlet_id)->first();
+
+						//GENERATE GATE IN VEHICLE NUMBER
+						$generateNumber = SerialNumberGroup::generateNumber(105, $financial_year->id, $branch->state_id, $branch->id);
+						if (!$generateNumber['success']) {
+							return response()->json([
+								'success' => false,
+								'error' => 'Validation Error',
+								'errors' => [
+									'No Road Test Gate Pass number found for FY : ' . $financial_year->year . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
+								],
+							]);
+						}
+
+						$road_test->company_id = Auth::user()->company_id;
+						$road_test->job_order_id = $job_order->id;
+						$road_test->status_id = 11140;
+						$road_test->number = $generateNumber['number'];
+						$road_test->created_by_id = Auth::user()->id;
+						$road_test->created_at = Carbon::now();
+					}
+
+					$road_test->trade_plate_number_id = $request->road_test_trade_plate_number_id;
+					$road_test->road_test_done_by_id = $request->road_test_done_by_id;
+
+					if ($request->road_test_done_by_id == 8101) {
+						// EMPLOYEE
+						$road_test->road_test_performed_by_id = $request->road_test_performed_by_id;
+					} else {
+						$road_test->road_test_performed_by_id = NULL;
+					}
+
+					$road_test->remarks = $request->road_test_report;
+					$road_test->save();
+				} else {
+					if ($request->road_test_id) {
+						$road_test = RoadTestGatePass::where('id', $request->road_test_id)->first();
+
+						$plate_number_update = TradePlateNumber::where('id', $road_test->trade_plate_number_id)
+							->update([
+								'status_id' => 8240, //FREE
+								'updated_by_id' => Auth::user()->id,
+								'updated_at' => Carbon::now(),
+							]);
+
+						$delete_road_test = RoadTestGatePass::where('id', $request->road_test_id)->forceDelete();
+					}
+				}
+			} else {
+				$validator = Validator::make($request->all(), [
+					'road_test_id' => [
+						'required',
+						'integer',
+						'exists:road_test_gate_pass,id',
+					],
+				]);
+
+				if ($validator->fails()) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
+					]);
+				}
+
+				$road_test = RoadTestGatePass::where('id', $request->road_test_id)->first();
+
+				$road_test->updated_by_id = Auth::user()->id;
+				$road_test->updated_at = Carbon::now();
+				$road_test->remarks = $request->road_test_report;
+				$road_test->status_id = 11143;
+				$road_test->save();
+			}
+
+			DB::commit();
+			return response()->json([
+				'success' => true,
+				'message' => 'Road Test Observation Saved Successfully',
+			]);
+		} catch (\Exception $e) {
+			// DB::rollBack();
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
+			]);
+		}
 	}
 
 	public function getExpertDiagnosis(Request $request) {

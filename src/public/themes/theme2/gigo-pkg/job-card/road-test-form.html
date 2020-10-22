@@ -1,0 +1,149 @@
+<!-- Content Wrap -->
+<div class="content-wrap cndn-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/job-card/road-test-observation/{{job_card_id}}" type="button" class="btn-back btn-img">
+                        <img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" />
+                    </a>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content title-block">
+                    <h1 class="title"><b>Road Test</b></h1>
+                    <p class="subtitle">Job Card / Road Test</p>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form pb-70">
+            <jobcard-header></jobcard-header>
+            <div class="tab-form-wrap type-2 side-tab-open">
+                <jobcard-tabs ng-init="active_tab = 'road-test'"></jobcard-tabs>
+                <div class="tab-form-body side-tab-open">
+                    <div class="tab-content">
+                        <!-- TAB PANEL -->
+                        <div class="tab-pane fade in active" id="road_test_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <form id="road_test_form">
+                                        <input type="hidden" name="job_order_id" value="{{job_card.job_order_id}}">
+                                        <input type="hidden" name="road_test_id" value="{{road_test_gate_pass.id}}">
+                                        <input type="hidden" name="type" value="1">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10">
+                                                <b>
+                                                    Road Test
+                                                </b>
+                                            </h5>
+                                            <hr class="hr-15">
+                                            <div class="row">
+                                                <div class="col-md-3" id="road_test_required">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Road Test Required ?
+                                                        </label>
+                                                        <div class="common-radio-button type-4">
+                                                            <input type="radio" id="registered" name="is_road_test_required" ng-value="1" value="1" ng-model="is_road_test_required" ng-checked="is_road_test_required">
+                                                            <label for="registered">
+                                                                Yes
+                                                            </label>
+                                                            <input type="radio" id="unregistered" name="is_road_test_required" ng-value="0" value="0" ng-model="is_road_test_required" ng-checked="!is_road_test_required">
+                                                            <label for="unregistered">
+                                                                No
+                                                            </label>
+                                                        </div>
+                                                        <div id="errorRoadTestRequired"></div>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3" ng-if="is_road_test_required == 1">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Road Test by
+                                                        </label>
+                                                        <div class="common-radio-button type-4">
+                                                            <input type="radio" id="employee" name="road_test_done_by_id" ng-value="8101" ng-model="road_test_done_by_id" ng-click="roadTestChange(8101)" ng-checked="road_test_done_by_id == 8101" value="8101">
+                                                            <label for="employee">
+                                                                Employee
+                                                            </label>
+                                                            <input type="radio" id="customer" name="road_test_done_by_id" ng-value="8100" ng-model="road_test_done_by_id" ng-click="roadTestChange(8100)" ng-checked="road_test_done_by_id == 8100" value="8100">
+                                                            <label for="customer">
+                                                                Customer
+                                                            </label>
+                                                        </div>
+                                                        <div id="errorRoadTestDone"></div>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3" id="road_test_driver" ng-if="is_road_test_required == 1 && road_test_done_by_id == 8101">
+                                                    <!-- <div class="col-md-4"> -->
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Trade Plate Number
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <md-select ng-model="road_test_trade_plate_number_id" placeholder="Select Trade Plate Number" data-md-container-class="selectdemoSelectHeader">
+                                                            <md-select-header class="demo-select-header">
+                                                                <input ng-model="searchNumber" type="search" placeholder="Search for a Trade Plate Number.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                            </md-select-header>
+                                                            <md-optgroup>
+                                                                <md-option ng-value="list.id" ng-repeat="list in extras.trade_plate_number_list | filter:searchNumber">
+                                                                    {{list.trade_plate_number}}
+                                                                </md-option>
+                                                            </md-optgroup>
+                                                        </md-select>
+                                                        <input type="hidden" name="road_test_trade_plate_number_id" value="{{road_test_trade_plate_number_id}}">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3" id="road_test_driver" ng-if="is_road_test_required == 1 && road_test_done_by_id == 8101">
+                                                    <!-- <div class="col-md-4"> -->
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Select Employee for Road Test
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <md-select ng-model="road_test_performed_by_id" placeholder="Select Employee" data-md-container-class="selectdemoSelectHeader">
+                                                            <md-select-header class="demo-select-header">
+                                                                <input ng-model="searchDriver" type="search" placeholder="Search for a Employee.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                            </md-select-header>
+                                                            <md-optgroup>
+                                                                <md-option ng-value="employee.id" ng-repeat="employee in extras.user_list | filter:searchDriver">
+                                                                    {{employee.name}}
+                                                                </md-option>
+                                                            </md-optgroup>
+                                                        </md-select>
+                                                        <input type="hidden" name="road_test_performed_by_id" value="{{road_test_performed_by_id}}">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-6" ng-if="is_road_test_required == 1">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Road Test Observations
+                                                            <!-- <sup class="mandatory">*</sup> -->
+                                                        </label>
+                                                        <textarea class="form-control" rows="4" placeholder="Enter Observations" name="road_test_report">{{road_test_report}}</textarea>
+                                                        <div id="errorRoadTestObservation"></div>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                            </div><!-- Row -->
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a href=".#!/job-card/road-test-observation/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Cancel
+                                                    </a>
+                                                    <input type="submit" name="save_close" ng-click="saveRoadTestDetailForm(1)" class="btn btn-red submit" value=" Save">
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </form>
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                    </div><!-- Tab Content -->
+                </div><!-- Tab Form Body -->
+            </div><!-- Tab Form Wrap -->
+        </div><!-- Page Form -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->

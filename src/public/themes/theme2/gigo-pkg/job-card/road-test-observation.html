@@ -19,7 +19,6 @@
             </div><!-- Page Header Content Left -->
         </div><!-- Page Header Inner -->
     </div><!-- Page Header -->
-    <!-- Page Main Content -->
     <div class="page-main-content form-content type2">
         <div class="page-tab-form pb-70">
             <jobcard-header></jobcard-header>
@@ -32,76 +31,66 @@
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h5 class="color-primary mb-10"><b>Road Test</b></h5>
-                                        <div class="view-details mb-no">
-                                            <ul class="view-row pb-none">
-                                                <li class="view-col-3">
-                                                    <span class="view-col-label">
-                                                        Road Test
-                                                    </span>
-                                                    <span class="view-data-list-value">
-                                                        <b>
-                                                            {{job_card.job_order.is_road_test_required ==1 ? "Registered" : "UnRegistered"}}
-                                                        </b></span>
-                                                </li>
-                                                <li class="view-col-3" ng-if="job_card.job_order.is_road_test_required==1">
-                                                    <span class="view-col-label">
-                                                        Road Test by
-                                                    </span>
-                                                    <span class="view-col-value">
-                                                        <b>
-                                                            {{job_card.job_order.road_test_done_by.name}}
-                                                        </b>
-                                                    </span>
-                                                </li>
-                                                <li class="view-col-3" ng-if="job_card.job_order.is_road_test_required==1 && job_card.job_order.road_test_done_by_id!=8101">
-                                                    <span class="view-col-label">
-                                                        Driver Name
-                                                    </span>
-                                                    <span class="view-col-value">
-                                                        <b>
-                                                            {{job_card.job_order.driver_name}}
-                                                        </b>
-                                                    </span>
-                                                </li>
-                                                <li class="view-col-3" ng-if="job_card.job_order.is_road_test_required==1 && job_card.job_order.road_test_done_by_id==8101">
-                                                    <span class="view-col-label">
-                                                        Trade Plate Number
-                                                    </span>
-                                                    <span class="view-col-value">
-                                                        <b>
-                                                            {{job_card.job_order.trade_plate_number.trade_plate_number}}
-                                                        </b>
-                                                    </span>
-                                                </li>
-                                                <li class="view-col-3" ng-if="job_card.job_order.is_road_test_required==1 && job_card.job_order.road_test_done_by_id==8101">
-                                                    <span class="view-col-label">
-                                                        Driver Name
-                                                    </span>
-                                                    <span class="view-col-value">
-                                                        <b>
-                                                            {{job_card.job_order.road_test_prefered_by.name}}
-                                                        </b>
-                                                    </span>
-                                                </li>
-                                                <li class="view-col-12" ng-show="job_card.job_order.is_road_test_required==1">
-                                                    <span class="view-col-label">
-                                                        Observations
-                                                    </span>
-                                                    <span class="view-col-value">
-                                                        <b>
-                                                            {{job_card.job_order.road_test_report}}
-                                                        </b>
-                                                    </span>
-                                                </li>
-                                            </ul>
-                                        </div><!-- View Data -->
+                                        <h5 class="title-red">
+                                            Road Test
+                                        </h5>
+                                        <div class="row" ng-repeat="(key,road_test_gate_pass) in road_test_gate_passes" ng-if="road_test_gate_passes.length > 0">
+                                            <div class="mgatepass-wrap border" id="carousel_parent_{{road_test_gate_pass.id}}">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <div class="mgpass-address-left-wrap">
+                                                                    <span class="title mb-10">
+                                                                        Road Test Number : {{road_test_gate_pass.number}}
+                                                                    </span>
+                                                                    <span class="heading">
+                                                                        Road Test by : {{road_test_gate_pass.road_test_done_by.name}}
+                                                                    </span>
+                                                                    <span class="contact" ng-if="road_test_gate_pass.road_test_done_by_id!=8101">
+                                                                        Driver Name : {{job_card.job_order.driver_name}}
+                                                                    </span>
+                                                                    <span class="contact" ng-if="road_test_gate_pass.road_test_done_by_id==8101">
+                                                                        Employee Name : {{road_test_gate_pass.road_test_prefered_by.ecode}} / {{road_test_gate_pass.road_test_prefered_by.name}}
+                                                                    </span>
+                                                                </div>
+                                                            </div><!-- Column -->
+                                                            <div class="col-md-4">
+                                                                <div class="mgpass-address-left-wrap">
+                                                                    <span class="heading">
+                                                                        Trade Plate Number : {{road_test_gate_pass.trade_plate_number.trade_plate_number}}
+                                                                    </span>
+                                                                    <span class="contact">
+                                                                        &nbsp;
+                                                                    </span>
+                                                                    <span class="contact">
+                                                                        Status : {{road_test_gate_pass.status.name}}
+                                                                    </span>
+                                                                </div>
+                                                            </div><!-- Column -->
+                                                            <div class="col-md-4">
+                                                                <div class="mgpass-address-left-wrap">
+                                                                    <span class="heading">
+                                                                        Observations : {{road_test_gate_pass.remarks}}
+                                                                    </span>
+                                                                </div>
+                                                            </div><!-- Column -->
+                                                        </div><!-- Row -->
+                                                        <a ng-if="road_test_gate_pass.status_id == 11140" href="#!/job-card/road-test/form/{{job_card.id}}/{{road_test_gate_pass.id}}" class="btn btn-md type2 btn-secondary-dark btn-square">Edit</a>
+                                                        <a ng-if="road_test_gate_pass.status_id == 11142" ng-click="showRoadTestUpdateForm(index,road_test_gate_pass.id,road_test_gate_pass.remarks)" class="btn btn-md type2 btn-secondary-dark btn-square">Update Observations</a>
+                                                    </div><!-- Column -->
+                                                </div><!-- Row -->
+                                            </div>
+                                        </div>
+                                        <div class="text-center pt-40" ng-if="job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226 && job_card.status_id != 8227 && job_card.status_id != 8228  && job_card.status_id != 8231">
+                                            <a href="#!/job-card/road-test/form/{{job_card.id}}" class="btn btn-red">Add {{road_test_gate_passes.length > 0 ? 'Another' : ''}} Road Test</a>
+                                        </div>
                                     </div><!-- Column -->
                                     <div class="tab-pane-footer">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <a href=".#!/job-card/expert-diagnosis/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                <a href=".#!/job-card/capture-voc/{{job_card_id}}" class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                <a href=".#!/job-card/split-order/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <a href=".#!/job-card/returnable-item/{{job_card_id}}" class="btn btn-secondary-dark btn-nxt">Next</a>
                                             </div>
                                         </div>
                                     </div><!-- Tab Footer -->
@@ -114,3 +103,47 @@
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
+<div class="modal fade filter" id="road_test_observation_modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <form id="road_test_form" autocomplete="off">
+            <input type="hidden" name="type" value="2">
+            <input type="hidden" name="road_test_id" class="road_test_id">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                    <h5 class="modal-title" id="myModalLabel">
+                        Update Road Test Observations
+                    </h5>
+                </div><!-- Modal Header -->
+                <div class="modal-body">
+                    <div class="modal-form">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Observations <sup class="mandatory">
+                                            *
+                                        </sup> </label>
+                                    <textarea class="form-control requried observations" rows="4" name="road_test_report" placeholder="Enter Observations"></textarea>
+                                </div><!-- Feild -->
+                            </div>
+                        </div><!-- Row -->
+                    </div><!-- Modal Form -->
+                </div><!-- Modal Body -->
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                        </div><!-- Column -->
+                        <div class="col-md-6 text-right">
+                            <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                                Cancel
+                            </button>
+                            <button type="submit" ng-click="saveBillDetail()" class="btn btn-bordered save_bill_detail">Submit</button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Modal Footer -->
+            </div><!-- Modal Content -->
+        </form>
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->
+<!-- Drag & Drop File Upload Plugins -->
+<script src="./public/theme/js/imageuploadify-mgatepass.min.js"></script>

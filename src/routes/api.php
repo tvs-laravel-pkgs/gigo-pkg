@@ -385,6 +385,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 
 		//Job Card View
 		Route::post('jobcard/road-test-observation/get', 'JobCardController@getRoadTestObservation');
+		Route::post('jobcard/road-test-observation/save', 'JobCardController@saveRoadTestObservation');
+
 		Route::post('jobcard/expert-diagnosis/get', 'JobCardController@getExpertDiagnosis');
 		Route::post('jobcard/dms-checklist/get', 'JobCardController@getDmsCheckList');
 		Route::post('jobcard/vehicle-inspection/get', 'JobCardController@getVehicleInspection');

@@ -3,7 +3,6 @@
 namespace Abs\GigoPkg\Api;
 
 use App\Http\Controllers\Controller;
-use App\JobOrder;
 use App\RoadTestGatePass;
 use App\TradePlateNumber;
 use App\User;
@@ -198,10 +197,8 @@ class RoadTestGatePassController extends Controller {
 					$gate_pass->gate_in_date = Carbon::now();
 					$gate_pass->status_id = 11142;
 
-					$job_order = JobOrder::where('id', $gate_pass->job_order_id)->first();
-
 					//TradePlateNUmber Status Update
-					$trade_plate_number = TradePlateNumber::where('id', $job_order->road_test_trade_plate_number_id)->update(['status_id' => 8240, 'updated_at' => Carbon::now()]);
+					$trade_plate_number = TradePlateNumber::where('id', $gate_pass->trade_plate_number_id)->update(['status_id' => 8240, 'updated_at' => Carbon::now()]);
 				}
 				$gate_pass->updated_by_id = Auth::user()->id;
 				$gate_pass->updated_at = Carbon::now();

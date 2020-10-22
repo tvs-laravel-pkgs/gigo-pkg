@@ -5226,6 +5226,7 @@ class VehicleInwardController extends Controller {
 
 					if ($road_test) {
 						$road_test->road_test_report = $request->road_test_report;
+						$road_test->road_test_performed_by_id = $request->road_test_performed_by_id;
 						$road_test->save();
 					}
 
