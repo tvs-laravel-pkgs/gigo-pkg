@@ -516,7 +516,7 @@ class JobOrder extends BaseModel {
 
 		$data['date'] = date('d-m-Y h:i A');
 
-		if ($job_order->customerESign) {
+		if (count($job_order->customerESign) > 0) {
 			$job_order->esign_img = 'app/public/gigo/job_order/' . $job_order->customerESign[0]->name;
 		} else {
 			$job_order->esign_img = '';
