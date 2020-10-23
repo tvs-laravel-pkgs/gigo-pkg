@@ -475,6 +475,7 @@ app.component('vehicleGatePassView', {
                     }
                     console.log(res);
                     self.vehicle_gate_pass = res.view_vehicle_gate_pass;
+                    $scope.extras = res.extras;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -522,6 +523,30 @@ app.component('vehicleGatePassView', {
                     });
             }
         });
+
+        $('.btn-nxt').on("click", function() {
+            $('.editDetails-tabs li.active').next().children('a').trigger("click");
+            tabPaneFooter();
+        });
+        $('.btn-prev').on("click", function() {
+            $('.editDetails-tabs li.active').prev().children('a').trigger("click");
+            tabPaneFooter();
+        });
+        $('.btn-pills').on("click", function() {
+            tabPaneFooter();
+        });
+
+        $scope.showDiv = function(id) {
+            if (event.target.checked == true) {
+                $("#remarks_div_" + id).removeClass('ng-hide');
+                $("#remarks_div_" + id).val('');
+                $("#is_available_" + id).val('1');
+            } else {
+                $("#remarks_div_" + id).addClass('ng-hide');
+                $("#remarks_div_" + id).val('');
+                $("#is_available_" + id).val('0');
+            }
+        }
 
         $scope.reloadPage = function() {
             $('body').removeClass('modal-open');

@@ -1,11 +1,10 @@
-<!-- Content Wrap -->
-<div class="content-wrap">
+<div class="content-wrap bl-form-fixed">
     <!-- Page Header -->
     <div class="page-header">
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/vehicle-gate-pass/table-list" type="button" class="btn-back btn-img my-tooltip" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left">
+                    <a href="#!/gate-log/list" type="button" class="btn-back btn-img">
                         <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
                     </a>
                 </div>
@@ -16,193 +15,279 @@
             </div>
         </div><!-- Page Header Inner -->
     </div><!-- Page Header -->
-    <!-- Page Main Content -->
-    <div class="page-main-content form-content">
-        <form id="gate_pass_out" autocomplete="off">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="page-form pb-60">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tab-page-wrap">
+                <div class="tab-page-header">
+                    <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300">
+                        <ul class="nav nav-pills editDetails-tabs">
+                            <li class="active"><a class="btn-pills" data-target="#basic-information" role="tab" data-toggle="tab" aria-expanded="true">Vehicle Information</a></li>
+                            <li><a data-target="#inventory" role="tab" data-toggle="tab" aria-expanded="true" class="btn-pills">Inventory</a></li>
+                        </ul>
+                    </div><!-- Filters -->
+                </div><!-- Tab Page Wrap Header -->
+                <form id="gate_pass_out" autocomplete="off">
+                    <div class="page-main-content form-content">
+                        <div class="container">
                             <div class="row">
-                                <div class="col-lg-12">
-                                    <input type="hidden" name="gate_log_id" value="{{$ctrl.vehicle_gate_pass.id}}">
-                                    <h5 class="font-semi-dark mb-0">{{$ctrl.vehicle_gate_pass.job_order.vehicle ? $ctrl.vehicle_gate_pass.job_order.vehicle.registration_number : '--'}}</h5>
-                                    <h6 class=""><b>{{$ctrl.vehicle_gate_pass.job_order.vehicle.model ? $ctrl.vehicle_gate_pass.job_order.vehicle.model.model_number : '--'}}</b></h6>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="border-box">
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <table class="table-info">
-                                                            <tbody>
-                                                                <tr>
-                                                                    <td><b>Driver Name</b></td>
-                                                                    <td>{{$ctrl.vehicle_gate_pass.job_order.driver_name ? $ctrl.vehicle_gate_pass.job_order.driver_name : '--'}}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td><b>Driver Mobile No.</b></td>
-                                                                    <td>{{$ctrl.vehicle_gate_pass.job_order.driver_mobile_number ? $ctrl.vehicle_gate_pass.job_order.driver_mobile_number : '--'}}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td><b>Gate In No</b></td>
-                                                                    <td>{{$ctrl.vehicle_gate_pass ? $ctrl.vehicle_gate_pass.number : '--'}}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td><b>Gate In Date & Time</b></td>
-                                                                    <td>{{$ctrl.vehicle_gate_pass.gate_in_date}}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td><b>Job Card No</b></td>
-                                                                    <td>{{$ctrl.vehicle_gate_pass.job_order.job_card ? $ctrl.vehicle_gate_pass.job_order.job_card.job_card_number : '--'}}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td><b>Gatepass No</b></td>
-                                                                    <td>{{$ctrl.vehicle_gate_pass.gate_pass ? $ctrl.vehicle_gate_pass.gate_pass.number : '--'}}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td><b>Gate Out Date & Time</b></td>
-                                                                    <td>{{$ctrl.vehicle_gate_pass.gate_out_date}}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td><b>Status</b></td>
-                                                                    <td>{{$ctrl.vehicle_gate_pass.status.name}}</td>
-                                                                </tr>
-                                                                <tr ng-if="$ctrl.vehicle_gate_pass.gate_pass.status_id == 8341">
-                                                                    <td><b>Remarks</b></td>
-                                                                    <td>{{$ctrl.vehicle_gate_pass.gate_out_remarks}}</td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div><!-- Column -->
-                                                    <div class="col-md-6">
-                                                        <div class="multi-img">
-                                                            <table class="table-info">
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <td class="text-center">Vehicle Image</td>
-                                                                        <td></td>
-                                                                        <td class="text-center">KM Image</td>
-                                                                        <td></td>
-                                                                        <td class="text-center">Driver Image</td>
-                                                                        <td></td>
-                                                                        <td class="text-center">Chassis Image</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td><img class="img-responsive" src="{{$ctrl.vehicle_gate_pass.gate_in_attachment_path}}/{{$ctrl.vehicle_gate_pass.vehicle_attachment.name}}" alt="Images" /></td>
-                                                                        <td></td>
-                                                                        <td><img class="img-responsive" src="{{$ctrl.vehicle_gate_pass.gate_in_attachment_path}}/{{$ctrl.vehicle_gate_pass.km_attachment.name}}" alt="Images" /></td>
-                                                                        <td>&nbsp;&nbsp;</td>
-                                                                        <td> <img class="img-responsive" src="{{$ctrl.vehicle_gate_pass.gate_in_attachment_path}}/{{$ctrl.vehicle_gate_pass.driver_attachment.name}}" alt="Images" /></td>
-                                                                        <td></td>
-                                                                        <td><img class="img-responsive" src="{{$ctrl.vehicle_gate_pass.gate_in_attachment_path}}/{{$ctrl.vehicle_gate_pass.chassis_attachment.name}}" alt="Images" /></td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div><!-- Column -->
-                                                </div><!-- Row -->
-                                            </div><!-- Border Box -->
-                                        </div><!-- Column -->
-                                    </div><!-- Row -->
-                                    <div class="row" ng-if="$ctrl.vehicle_gate_pass.job_order.job_card">
-                                        <div class="col-md-12">
-                                            <h6 class=""><b>Returned Items</b></h6>
-                                            <ul class="flex-row type-3">
-                                                <li class="flex-col-4" ng-repeat="(index,job_card_returnable_item) in $ctrl.vehicle_gate_pass.job_order.job_card.job_card_returnable_items">
-                                                    <div class="border-box type-2">
-                                                        <div class="top-title">Break Shoe <span class="right-text">Qty : {{job_card_returnable_item.qty}}</span></div>
-                                                        <div class="mb-20"></div><!-- Spacing -->
-                                                        <table class="table-info">
-                                                            <tbody>
-                                                                <tr>
-                                                                    <td>Make</td>
-                                                                    <td>: {{job_card_returnable_item.item_make}}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>Model</td>
-                                                                    <td>: {{job_card_returnable_item.item_model}}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>Seriel no</td>
-                                                                    <td>: {{job_card_returnable_item.item_serial_no}}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>Remarks</td>
-                                                                    <td>: {{job_card_returnable_item.remarks}}</td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                        <div class="mb-10"></div><!-- Spacing -->
-                                                        <div class="row" ng-if="job_card_returnable_item.attachment.length > 0">
-                                                            <div class="col-md-12">
-                                                                <div class="col-md-4" ng-repeat="(indexx, attach) in job_card_returnable_item.attachment">
-                                                                    <img class="img-responsive wid-60" src="storage/app/public/gigo/returnable_items/{{attach.name}}" alt="Image" />
+                                <div class="col-sm-12">
+                                    <div class="page-form pb-60">
+                                        <div class="tab-page-body">
+                                            <div class="tab-content">
+                                                <!-- TAB PANEL -->
+                                                <div class="tab-pane fade in active" id="basic-information" data-animation="fadeInUp" data-animation-delay="300">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-page">
+                                                                <div class="row">
+                                                                    <div class="col-lg-12">
+                                                                        <input type="hidden" name="gate_log_id" value="{{$ctrl.vehicle_gate_pass.id}}">
+                                                                        <h5 class="font-semi-dark mb-0">{{$ctrl.vehicle_gate_pass.job_order.vehicle ? $ctrl.vehicle_gate_pass.job_order.vehicle.registration_number : '--'}}</h5>
+                                                                        <h6 class=""><b>{{$ctrl.vehicle_gate_pass.job_order.vehicle.model ? $ctrl.vehicle_gate_pass.job_order.vehicle.model.model_number : '--'}}</b></h6>
+                                                                        <div class="row">
+                                                                            <div class="col-md-12">
+                                                                                <div class="border-box">
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-6">
+                                                                                            <table class="table-info">
+                                                                                                <tbody>
+                                                                                                    <tr>
+                                                                                                        <td><b>Driver Name</b></td>
+                                                                                                        <td>{{$ctrl.vehicle_gate_pass.job_order.driver_name ? $ctrl.vehicle_gate_pass.job_order.driver_name : '--'}}</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td><b>Driver Mobile No.</b></td>
+                                                                                                        <td>{{$ctrl.vehicle_gate_pass.job_order.driver_mobile_number ? $ctrl.vehicle_gate_pass.job_order.driver_mobile_number : '--'}}</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td><b>Gate In No</b></td>
+                                                                                                        <td>{{$ctrl.vehicle_gate_pass ? $ctrl.vehicle_gate_pass.number : '--'}}</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td><b>Gate In Date & Time</b></td>
+                                                                                                        <td>{{$ctrl.vehicle_gate_pass.gate_in_date}}</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td><b>Job Card No</b></td>
+                                                                                                        <td>{{$ctrl.vehicle_gate_pass.job_order.job_card ? $ctrl.vehicle_gate_pass.job_order.job_card.job_card_number : '--'}}</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td><b>Gatepass No</b></td>
+                                                                                                        <td>{{$ctrl.vehicle_gate_pass.gate_pass ? $ctrl.vehicle_gate_pass.gate_pass.number : '--'}}</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td><b>Gate Out Date & Time</b></td>
+                                                                                                        <td>{{$ctrl.vehicle_gate_pass.gate_out_date}}</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td><b>Status</b></td>
+                                                                                                        <td>{{$ctrl.vehicle_gate_pass.status.name}}</td>
+                                                                                                    </tr>
+                                                                                                    <tr ng-if="$ctrl.vehicle_gate_pass.gate_pass.status_id == 8341">
+                                                                                                        <td><b>Remarks</b></td>
+                                                                                                        <td>{{$ctrl.vehicle_gate_pass.gate_out_remarks}}</td>
+                                                                                                    </tr>
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                        </div><!-- Column -->
+                                                                                        <div class="col-md-6">
+                                                                                            <div class="multi-img">
+                                                                                                <table class="table-info">
+                                                                                                    <tbody>
+                                                                                                        <tr>
+                                                                                                            <td class="text-center">Vehicle Image</td>
+                                                                                                            <td></td>
+                                                                                                            <td class="text-center">KM Image</td>
+                                                                                                            <td></td>
+                                                                                                            <td class="text-center">Driver Image</td>
+                                                                                                            <td></td>
+                                                                                                            <td class="text-center">Chassis Image</td>
+                                                                                                        </tr>
+                                                                                                        <tr>
+                                                                                                            <td><img class="img-responsive" src="{{$ctrl.vehicle_gate_pass.gate_in_attachment_path}}/{{$ctrl.vehicle_gate_pass.vehicle_attachment.name}}" alt="Images" /></td>
+                                                                                                            <td></td>
+                                                                                                            <td><img class="img-responsive" src="{{$ctrl.vehicle_gate_pass.gate_in_attachment_path}}/{{$ctrl.vehicle_gate_pass.km_attachment.name}}" alt="Images" /></td>
+                                                                                                            <td>&nbsp;&nbsp;</td>
+                                                                                                            <td> <img class="img-responsive" src="{{$ctrl.vehicle_gate_pass.gate_in_attachment_path}}/{{$ctrl.vehicle_gate_pass.driver_attachment.name}}" alt="Images" /></td>
+                                                                                                            <td></td>
+                                                                                                            <td><img class="img-responsive" src="{{$ctrl.vehicle_gate_pass.gate_in_attachment_path}}/{{$ctrl.vehicle_gate_pass.chassis_attachment.name}}" alt="Images" /></td>
+                                                                                                        </tr>
+                                                                                                    </tbody>
+                                                                                                </table>
+                                                                                            </div>
+                                                                                        </div><!-- Column -->
+                                                                                    </div><!-- Row -->
+                                                                                </div><!-- Border Box -->
+                                                                            </div><!-- Column -->
+                                                                        </div><!-- Row -->
+                                                                        <div class="row" ng-if="$ctrl.vehicle_gate_pass.job_order.job_card">
+                                                                            <div class="col-md-12">
+                                                                                <h6 class=""><b>Returned Items</b></h6>
+                                                                                <ul class="flex-row type-3">
+                                                                                    <li class="flex-col-4" ng-repeat="(index,job_card_returnable_item) in $ctrl.vehicle_gate_pass.job_order.job_card.job_card_returnable_items">
+                                                                                        <div class="border-box type-2">
+                                                                                            <div class="top-title">Break Shoe <span class="right-text">Qty : {{job_card_returnable_item.qty}}</span></div>
+                                                                                            <div class="mb-20"></div><!-- Spacing -->
+                                                                                            <table class="table-info">
+                                                                                                <tbody>
+                                                                                                    <tr>
+                                                                                                        <td>Make</td>
+                                                                                                        <td>: {{job_card_returnable_item.item_make}}</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td>Model</td>
+                                                                                                        <td>: {{job_card_returnable_item.item_model}}</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td>Seriel no</td>
+                                                                                                        <td>: {{job_card_returnable_item.item_serial_no}}</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td>Remarks</td>
+                                                                                                        <td>: {{job_card_returnable_item.remarks}}</td>
+                                                                                                    </tr>
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                            <div class="mb-10"></div><!-- Spacing -->
+                                                                                            <div class="row" ng-if="job_card_returnable_item.attachment.length > 0">
+                                                                                                <div class="col-md-12">
+                                                                                                    <div class="col-md-4" ng-repeat="(indexx, attach) in job_card_returnable_item.attachment">
+                                                                                                        <img class="img-responsive wid-60" src="storage/app/public/gigo/returnable_items/{{attach.name}}" alt="Image" />
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div><!-- Border Box -->
+                                                                                    </li>
+                                                                                    <li class="flex-col-4" ng-if="$ctrl.vehicle_gate_pass.job_order.job_card.job_card_returnable_items.length == 0">
+                                                                                        No Items Returned
+                                                                                    </li>
+                                                                                </ul><!-- Flex Row -->
+                                                                            </div><!-- Column -->
+                                                                        </div><!-- Row -->
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <div class="checklist-form-wrap">
+                                                                                    <h6 class=""><b>Documents</b></h6>
+                                                                                    <ul class="checklist-form-ul">
+                                                                                        <li>
+                                                                                            <div class="checklist-item-wrap pad-big">
+                                                                                                <div class="checklist-item-value">
+                                                                                                    Covering Letter
+                                                                                                </div>
+                                                                                                <div class="checklist-item-value-sm" ng-if="$ctrl.vehicle_gate_pass.covering_letter_pdf">
+                                                                                                    <a target="_blank" href="{{$ctrl.vehicle_gate_pass.covering_letter_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </li>
+                                                                                        <li>
+                                                                                            <div class="checklist-item-wrap pad-big">
+                                                                                                <div class="checklist-item-value">
+                                                                                                    Gatepass
+                                                                                                </div>
+                                                                                                <div class="checklist-item-value-sm" ng-if="$ctrl.vehicle_gate_pass.gate_pass_pdf">
+                                                                                                    <a target="_blank" href="{{$ctrl.vehicle_gate_pass.gate_pass_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </li>
+                                                                                    </ul>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row" ng-if="$ctrl.vehicle_gate_pass.gate_pass.status_id == 8340">
+                                                                        <div class="col-md-8">
+                                                                            <div class="form-group">
+                                                                                <label>Remarks</label>
+                                                                                <textarea class="form-control" ng-model="$ctrl.vehicle_gate_pass.gate_out_remarks" rows="4" placeholder="Enter Remarks" name="remarks"></textarea>
+                                                                            </div><!-- Feild -->
+                                                                        </div><!-- Column -->
+                                                                    </div><!-- Row -->
+                                                                </div><!-- Column -->
+                                                            </div><!-- Form Page -->
+                                                            <div class="tab-pane-footer">
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <button class="btn btn-primary btn-nxt" type='button'>Next</button>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                        </div>
-                                                    </div><!-- Border Box -->
-                                                </li>
-                                                <li class="flex-col-4" ng-if="$ctrl.vehicle_gate_pass.job_order.job_card.job_card_returnable_items.length == 0">
-                                                    No Items Returned
-                                                </li>
-                                            </ul><!-- Flex Row -->
-                                        </div><!-- Column -->
-                                    </div><!-- Row -->
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="checklist-form-wrap">
-                                                <h6 class=""><b>Documents</b></h6>
-                                                <ul class="checklist-form-ul">
-                                                    <li>
-                                                        <div class="checklist-item-wrap pad-big">
-                                                            <div class="checklist-item-value">
-                                                                Covering Letter
-                                                            </div>
-                                                            <div class="checklist-item-value-sm" ng-if="$ctrl.vehicle_gate_pass.covering_letter_pdf">
-                                                                <a target="_blank" href="{{$ctrl.vehicle_gate_pass.covering_letter_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="checklist-item-wrap pad-big">
-                                                            <div class="checklist-item-value">
-                                                                Gatepass
-                                                            </div>
-                                                            <div class="checklist-item-value-sm" ng-if="$ctrl.vehicle_gate_pass.gate_pass_pdf">
-                                                                <a target="_blank" href="{{$ctrl.vehicle_gate_pass.gate_pass_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row" ng-if="$ctrl.vehicle_gate_pass.gate_pass.status_id == 8340">
-                                    <div class="col-md-8">
-                                        <div class="form-group">
-                                            <label>Remarks</label>
-                                            <textarea class="form-control" ng-model="$ctrl.vehicle_gate_pass.gate_out_remarks" rows="4" placeholder="Enter Remarks" name="remarks"></textarea>
-                                        </div><!-- Feild -->
-                                    </div><!-- Column -->
-                                </div><!-- Row -->
-                            </div><!-- Column -->
-                        </div><!-- Row -->
-                    </div><!-- Page Form -->
-                </div><!-- Column -->
-            </div><!-- Row -->
-            <div class="page-form-footer">
-                <div class="row">
-                    <div class="col-md-12">
-                        <a href="#!/vehicle-gate-pass/table-list" class="btn btn-bordered btn-grey my-tooltip" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left">Cancel</a>
-                        <button type="submit" class="btn btn-secondary-dark submit" ng-show="$ctrl.vehicle_gate_pass.gate_pass.status_id == 8340">Confirm Gate Out</button>
-                    </div>
-                </div>
-            </div><!-- Page Form Footer -->
-        </form>
-    </div><!-- Container -->
-</div><!-- Page Main Content -->
+                                                            </div><!-- Tab Footer -->
+                                                        </div><!-- Column -->
+                                                    </div><!-- Row -->
+                                                </div><!-- Tabe Pane -->
+                                                <div class="tab-pane fade" id="inventory" data-animation="fadeInUp" data-animation-delay="300">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-page">
+                                                                <div class="row">
+                                                                    <h5 class="color-primary mb-10"><b>Inventory Details</b></h5>
+                                                                    <hr class="hr-15"><!-- Separater -->
+                                                                    <div class="checklist-form-wrap">
+                                                                        <ul class="checklist-form-ul">
+                                                                            <!-- 1{{extras.inventory_type_list | json}} 0 -->
+                                                                            <li ng-repeat="(index,inventory) in extras.inventory_type_list" ng-if="inventory.field_type_id==11">
+                                                                                <div class="checklist-form-item-wrap">
+                                                                                    <div class="checklist-form-item">
+                                                                                        <input type="checkbox" id="checkbox_{{inventory.id}}" ng-model="chkselct[inventory.id]" name="vehicle_inventory_items[{{index}}][inventory_item_id]" value="{{inventory.id}}" ng-checked="inventory.checked" ng-click="showDiv(inventory.id)" class="inventory_items" />
+                                                                                        <label for="checkbox_{{inventory.id}}">{{inventory.name}}</label>
+                                                                                        <input ng-show="inventory.checked" id="remarks_div_{{inventory.id}}" type="text" name="vehicle_inventory_items[{{index}}][remarks]" value="{{inventory.remarks}}" class="checklist-form-item-control remarks" placeholder="Enter Remarks if any" autocomplete="off" />
+                                                                                        <input type="hidden" id="is_available_{{inventory.id}}" name="vehicle_inventory_items[{{index}}][is_available]" value="{{inventory.is_available == 1 ? '1' : '0' }}" />
+                                                                                    </div>
+                                                                                </div>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </div>
+                                                                    <div class="mb-30"></div><!-- Space -->
+                                                                    <div class="row" ng-repeat="(index,inventory) in extras.inventory_type_list" ng-if="inventory.field_type_id==12">
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label>{{inventory.name}}</label>
+                                                                                <div class="slider-container">
+                                                                                    <input type="hidden" name="vehicle_inventory_items[{{index}}][inventory_item_id]" value="{{inventory.id}}" />
+                                                                                    <input type="hidden" name="vehicle_inventory_items[{{index}}][is_available]" value="1" />
+                                                                                    <input type="range" min="0" max="100" id="slide_val_{{index}}" class="slider" name="vehicle_inventory_items[{{index}}][remarks]" value="{{inventory.remarks}}" oninput="document.getElementById('range_val').value = this.value" />
+                                                                                    <!-- <input type="range" min="0" max="100" id="slide_val" class="slider" name="vehicle_inventory_items[{{index}}][remarks]" value="{{inventory.remarks}}" oninput="document.getElementById('range_val').innerHTML = this.value" /> -->
+                                                                                    <!-- <label id="range_val">{{inventory.remarks}}</label> -->
+                                                                                    <input type="hidden" id="range_val">
+                                                                                    <div class="slider-lower-fill"></div>
+                                                                                    <div class="slider-upper-fill"></div>
+                                                                                    <div class="grid">
+                                                                                        <span class="first grid-item">E</span>
+                                                                                        <span class="middle grid-item"></span>
+                                                                                        <span class="middle grid-item">1/2</span>
+                                                                                        <span class="middle grid-item"></span>
+                                                                                        <span class="last grid-item">F</span>
+                                                                                    </div>
+                                                                                </div><!-- Slider -->
+                                                                            </div><!-- Feild -->
+                                                                        </div><!-- Column -->
+                                                                    </div><!-- Row -->
+                                                                    <div class="mb-30"></div><!-- Space -->
+                                                                </div>
+                                                            </div><!-- Form Page -->
+                                                            <div class="tab-pane-footer">
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <button type="button" class="btn btn-primary btn-prev">Previous</button>
+                                                                        <button type="submit" class="btn btn-secondary-dark submit" ng-show="$ctrl.vehicle_gate_pass.gate_pass.status_id == 8340">Confirm Gate Out</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div><!-- Tab Footer -->
+                                                        </div><!-- Column -->
+                                                    </div><!-- Row -->
+                                                </div><!-- Tabe Pane -->
+                                            </div><!-- Tab Content -->
+                                        </div><!-- Tab Page Body -->
+                                    </div><!-- Page Form -->
+                                </div><!-- Column -->
+                            </div><!-- Row -->
+                        </div><!-- Container -->
+                    </div><!-- Page Main Content -->
+                </form>
+            </div><!-- Tab Page Wrap -->
+        </div><!-- Column -->
+    </div><!-- Row -->
 </div><!-- Content Wrap -->
+<script src="./public/theme/js/imageuploadify-gatein.min.js"></script>
 <!-- Submit Alert Modal -->
 <div class="modal modal-success alert-modal fade" id="confirm_notification" data-keyboard="false" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-sm" role="document">

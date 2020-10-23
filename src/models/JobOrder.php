@@ -198,7 +198,7 @@ class JobOrder extends BaseModel {
 	}
 
 	public function vehicleInventoryItem() {
-		return $this->belongsToMany('App\VehicleInventoryItem', 'job_order_vehicle_inventory_item', 'job_order_id', 'vehicle_inventory_item_id')->withPivot(['is_available', 'remarks', 'gate_log_id']);
+		return $this->belongsToMany('App\VehicleInventoryItem', 'job_order_vehicle_inventory_item', 'job_order_id', 'vehicle_inventory_item_id')->withPivot(['is_available', 'remarks', 'gate_log_id', 'entry_type_id']);
 	}
 
 	public function inwardProcessChecks() {
@@ -449,7 +449,7 @@ class JobOrder extends BaseModel {
 		return $list;
 	}
 
-	public static function generateInventoryPDF($job_order_id) {
+	public static function generateInventoryPDF($job_order_id, $type) {
 		$job_order = JobOrder::with([
 			'vehicle',
 			'vehicle.model',
@@ -469,9 +469,43 @@ class JobOrder extends BaseModel {
 
 		$params['field_type_id'] = [11, 12];
 		$company_id = $job_order->company_id;
-		$data['extras'] = [
-			'inventory_type_list' => VehicleInventoryItem::getInventoryList($job_order_id, $params, '', '', $company_id),
-		];
+
+		// $data['extras'] = [
+		// 	'inventory_type_list' => VehicleInventoryItem::getInventoryList($job_order_id, $params, '', '', $company_id),
+		// ];
+
+		$vehicle_inventories = [];
+
+		$inventory_list = VehicleInventoryItem::where('company_id', $company_id)->whereIn('field_type_id', [11, 12])->orderBy('id')->get();
+
+		if ($inventory_list) {
+			foreach ($inventory_list as $key => $inventory) {
+				$vehicle_inventories[$key]['id'] = $inventory['id'];
+				$vehicle_inventories[$key]['name'] = $inventory['name'];
+
+				//Check GateIn
+				$gate_in_inventory = DB::table('job_order_vehicle_inventory_item')->where('job_order_id', $job_order_id)->where('gate_log_id', $job_order->gateLog->id)->where('vehicle_inventory_item_id', $inventory['id'])->where('entry_type_id', 11300)->first();
+				if ($gate_in_inventory) {
+					$vehicle_inventories[$key]['gate_in_checked'] = true;
+					$vehicle_inventories[$key]['gate_in_remarks'] = $gate_in_inventory->remarks;
+				} else {
+					$vehicle_inventories[$key]['gate_in_checked'] = false;
+					$vehicle_inventories[$key]['gate_in_remarks'] = '';
+				}
+
+				//Check GateOut
+				$gate_out_inventory = DB::table('job_order_vehicle_inventory_item')->where('job_order_id', $job_order_id)->where('gate_log_id', $job_order->gateLog->id)->where('vehicle_inventory_item_id', $inventory['id'])->where('entry_type_id', 11301)->first();
+				if ($gate_out_inventory) {
+					$vehicle_inventories[$key]['gate_out_checked'] = true;
+					$vehicle_inventories[$key]['gate_out_remarks'] = $gate_out_inventory->remarks;
+				} else {
+					$vehicle_inventories[$key]['gate_out_checked'] = false;
+					$vehicle_inventories[$key]['gate_out_remarks'] = '';
+				}
+			}
+		}
+
+		$data['type'] = $type;
 
 		$save_path = storage_path('app/public/gigo/pdf');
 		Storage::makeDirectory($save_path, 0777);
@@ -489,6 +523,7 @@ class JobOrder extends BaseModel {
 		}
 
 		$data['gate_pass'] = $job_order;
+		$data['vehicle_inventories'] = $vehicle_inventories;
 
 		$name = $job_order_id . '_inward_inventory.pdf';
 
@@ -738,7 +773,7 @@ class JobOrder extends BaseModel {
 		return true;
 	}
 
-	public static function generateEstimateGatePassPDF($job_order_id) {
+	public static function generateEstimateGatePassPDF($job_order_id, $type) {
 		$data['gate_pass'] = $job_order = JobOrder::with([
 			'type',
 			'quoteType',
@@ -768,9 +803,43 @@ class JobOrder extends BaseModel {
 
 		$params['field_type_id'] = [11, 12];
 		$company_id = $job_order->company_id;
-		$data['extras'] = [
-			'inventory_type_list' => VehicleInventoryItem::getInventoryList($job_order_id, $params, '', '', $company_id),
-		];
+		// $data['extras'] = [
+		// 	'inventory_type_list' => VehicleInventoryItem::getInventoryList($job_order_id, $params, '', '', $company_id),
+		// ];
+
+		$vehicle_inventories = [];
+
+		$inventory_list = VehicleInventoryItem::where('company_id', $company_id)->whereIn('field_type_id', [11, 12])->orderBy('id')->get();
+
+		if ($inventory_list) {
+			foreach ($inventory_list as $key => $inventory) {
+				$vehicle_inventories[$key]['id'] = $inventory['id'];
+				$vehicle_inventories[$key]['name'] = $inventory['name'];
+
+				//Check GateIn
+				$gate_in_inventory = DB::table('job_order_vehicle_inventory_item')->where('job_order_id', $job_order_id)->where('gate_log_id', $job_order->gateLog->id)->where('vehicle_inventory_item_id', $inventory['id'])->where('entry_type_id', 11300)->first();
+				if ($gate_in_inventory) {
+					$vehicle_inventories[$key]['gate_in_checked'] = true;
+					$vehicle_inventories[$key]['gate_in_remarks'] = $gate_in_inventory->remarks;
+				} else {
+					$vehicle_inventories[$key]['gate_in_checked'] = false;
+					$vehicle_inventories[$key]['gate_in_remarks'] = '';
+				}
+
+				//Check GateOut
+				$gate_out_inventory = DB::table('job_order_vehicle_inventory_item')->where('job_order_id', $job_order_id)->where('gate_log_id', $job_order->gateLog->id)->where('vehicle_inventory_item_id', $inventory['id'])->where('entry_type_id', 11301)->first();
+				if ($gate_out_inventory) {
+					$vehicle_inventories[$key]['gate_out_checked'] = true;
+					$vehicle_inventories[$key]['gate_out_remarks'] = $gate_out_inventory->remarks;
+				} else {
+					$vehicle_inventories[$key]['gate_out_checked'] = false;
+					$vehicle_inventories[$key]['gate_out_remarks'] = '';
+				}
+			}
+		}
+
+		$data['type'] = $type;
+		$data['vehicle_inventories'] = $vehicle_inventories;
 
 		$save_path = storage_path('app/public/gigo/pdf');
 		Storage::makeDirectory($save_path, 0777);

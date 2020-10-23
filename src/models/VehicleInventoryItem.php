@@ -239,7 +239,7 @@ class VehicleInventoryItem extends BaseModel {
 			$gate_log = GateLog::where('job_order_id', $job_order_id)->orderBy('id', 'DESC')->first();
 
 			if ($gate_log) {
-				$vehicle_inventory_items = DB::table('job_order_vehicle_inventory_item')->where('job_order_id', $job_order_id)->where('gate_log_id', $gate_log->id)->orderBy('vehicle_inventory_item_id')->get();
+				$vehicle_inventory_items = DB::table('job_order_vehicle_inventory_item')->where('job_order_id', $job_order_id)->where('gate_log_id', $gate_log->id)->where('entry_type_id', 11300)->orderBy('vehicle_inventory_item_id')->get();
 
 				if (count($vehicle_inventory_items) > 0) {
 					foreach ($vehicle_inventory_items as $value) {

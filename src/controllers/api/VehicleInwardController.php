@@ -6883,7 +6883,7 @@ class VehicleInwardController extends Controller {
 				$generate_estimate_inspection_pdf = JobOrder::generateManualJoPDF($job_order->id);
 
 				//Generate Inventory PDF
-				$generate_inventory_pdf = JobOrder::generateInventoryPDF($job_order->id);
+				$generate_inventory_pdf = JobOrder::generateInventoryPDF($job_order->id, $type = 'GateIn');
 
 				// //Generate Inspection PDF
 				// $generate_estimate_inspection_pdf = JobOrder::generateInspectionPDF($job_order->id);

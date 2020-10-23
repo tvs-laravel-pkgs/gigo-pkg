@@ -8,6 +8,8 @@ use App\FinancialYear;
 use App\GateLog;
 use App\GatePass;
 use App\Http\Controllers\Controller;
+use App\JobCard;
+use App\JobOrder;
 use App\Outlet;
 use App\ShortUrl;
 use App\Survey;
@@ -178,7 +180,7 @@ class VehicleGatePassController extends Controller {
 			$inventory_params['field_type_id'] = [11, 12];
 
 			$extras = [
-				'inventory_type_list' => VehicleInventoryItem::getInventoryList($view_vehicle_gate_pass->jobOrder->id, $inventory_params),
+				'inventory_type_list' => VehicleInventoryItem::getInventoryList($view_vehicle_gate_pass->jobOrder->id, $inventory_params, $type = [11300]),
 			];
 
 			return response()->json([
@@ -229,6 +231,30 @@ class VehicleGatePassController extends Controller {
 				'jobOrder',
 				'jobOrder.vehicle',
 			])->find($request->gate_log_id);
+
+			$job_order = JobOrder::find($gate_log->jobOrder->id);
+
+			if ($job_order) {
+
+				$inventories = DB::table('job_order_vehicle_inventory_item')->where('gate_log_id', $gate_log->id)->where('entry_type_id', 11301)->delete();
+
+				if ($request->vehicle_inventory_items) {
+					foreach ($request->vehicle_inventory_items as $key => $vehicle_inventory_item) {
+						if (isset($vehicle_inventory_item['inventory_item_id']) && $vehicle_inventory_item['is_available'] == 1) {
+							$job_order->vehicleInventoryItem()
+								->attach(
+									$vehicle_inventory_item['inventory_item_id'],
+									[
+										'is_available' => 1,
+										'remarks' => $vehicle_inventory_item['remarks'],
+										'gate_log_id' => $gate_log->id,
+										'entry_type_id' => 11301,
+									]
+								);
+						}
+					}
+				}
+			}
 
 			$gate_log_update = GateLog::where('id', $request->gate_log_id)
 				->update([
@@ -436,6 +462,16 @@ class VehicleGatePassController extends Controller {
 			}
 
 			DB::commit();
+
+			//Generate Inventory PDF
+			$generate_inventory_pdf = JobOrder::generateInventoryPDF($job_order->id, $type = 'GateOut');
+
+			//Generate GatePass PDF
+			if ($gate_pass->job_card_id) {
+				$generate_estimate_pdf = JobCard::generateGatePassPDF($gate_pass->job_card_id, $type = 'GateOut');
+			} else {
+				$generate_estimate_gatepass_pdf = JobOrder::generateEstimateGatePassPDF($job_order->id, $type = 'GateOut');
+			}
 
 			$gate_out_data['gate_pass_no'] = !empty($gate_pass->number) ? $gate_pass->number : NULL;
 			$gate_out_data['registration_number'] = !empty($gate_log->jobOrder->vehicle) ? $gate_log->jobOrder->vehicle->registration_number : NULL;
