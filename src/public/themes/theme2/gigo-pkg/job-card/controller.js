@@ -1526,7 +1526,6 @@ app.component('jobCardRoadTestForm', {
                     $scope.road_test_gate_pass = res.road_test_gate_pass;
                     $scope.extras = res.extras;
 
-
                     if ($scope.road_test_gate_pass) {
                         $scope.is_road_test_required = 1;
                         $scope.road_test_trade_plate_number_id = $scope.road_test_gate_pass.trade_plate_number_id;

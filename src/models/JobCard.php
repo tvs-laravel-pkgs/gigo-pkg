@@ -914,7 +914,7 @@ class JobCard extends BaseModel {
 		}
 
 		if ($gigo_invoice) {
-			$invoice_date = date('d-m-Y', strtotime($gigo_invoice[0]->invoice_date));
+			$invoice_date = date('d-m-Y', strtotime($gigo_invoice[0]['bill_date']));
 		} else {
 			$invoice_date = date('d-m-Y');
 		}

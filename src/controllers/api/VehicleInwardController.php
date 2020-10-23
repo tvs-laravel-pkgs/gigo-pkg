@@ -7053,17 +7053,17 @@ class VehicleInwardController extends Controller {
 				->orderBy('customer_voices.name')
 				->get()->toArray();
 
-			$customer_voice_other = CustomerVoice::where('code', 'OTH')->get()->toArray();
+			// $customer_voice_other = CustomerVoice::where('code', 'OTH')->get()->toArray();
 
-			if ($customer_voice_other) {
+			// if ($customer_voice_other) {
 
-				//GET CUSTOMER VOICE OTHERS ID OF OTH
-				$customer_voice_other_id = $customer_voice_other[0]['id'];
-				$job_order['OTH_ID'] = $customer_voice_other_id;
+			// 	//GET CUSTOMER VOICE OTHERS ID OF OTH
+			// 	$customer_voice_other_id = $customer_voice_other[0]['id'];
+			// 	$job_order['OTH_ID'] = $customer_voice_other_id;
 
-				$customer_voice_list_merge = array_merge($list, $customer_voice_other);
-				$list = collect($customer_voice_list_merge);
-			}
+			// 	$customer_voice_list_merge = array_merge($list, $customer_voice_other);
+			// 	$list = collect($customer_voice_list_merge);
+			// }
 		}
 
 		return response()->json($list);
