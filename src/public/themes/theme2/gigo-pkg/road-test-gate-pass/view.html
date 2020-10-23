@@ -39,13 +39,21 @@
                                                     <div class="col-md-6">
                                                         <table class="table-info">
                                                             <tbody>
-                                                                <tr>
+                                                                <tr ng-if="$ctrl.road_test_gate_pass.road_test_done_by_id == 8101">
                                                                     <td><b>Driver Name</b></td>
-                                                                    <td>{{$ctrl.road_test_gate_pass.job_order.road_test_prefered_by.name}}</td>
+                                                                    <td>{{$ctrl.road_test_gate_pass.road_test_prefered_by.name}}</td>
                                                                 </tr>
-                                                                <tr>
+                                                                <tr ng-if="$ctrl.road_test_gate_pass.road_test_done_by_id == 8101">
                                                                     <td><b>Driver Mobile No</b></td>
-                                                                    <td>{{$ctrl.road_test_gate_pass.job_order.road_test_prefered_by.contact_number}}</td>
+                                                                    <td>{{$ctrl.road_test_gate_pass.road_test_prefered_by.contact_number}}</td>
+                                                                </tr>
+                                                                <tr ng-if="$ctrl.road_test_gate_pass.road_test_done_by_id != 8101">
+                                                                    <td><b>Driver Name</b></td>
+                                                                    <td>{{$ctrl.road_test_gate_pass.job_order.driver_name}}</td>
+                                                                </tr>
+                                                                <tr ng-if="$ctrl.road_test_gate_pass.road_test_done_by_id != 8101">
+                                                                    <td><b>Driver Mobile No</b></td>
+                                                                    <td>{{$ctrl.road_test_gate_pass.job_order.driver_mobile_number}}</td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td><b>Gate Pass No</b></td>

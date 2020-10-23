@@ -5225,11 +5225,11 @@ class VehicleInwardController extends Controller {
 					$road_test = RoadTestGatePass::where('job_order_id', $job_order->id)->where('status_id', 11142)->orderBy('id', 'DESC')->first();
 
 					if ($road_test) {
-						$road_test->road_test_report = $request->road_test_report;
+						$road_test->remarks = $request->road_test_report;
 						$road_test->road_test_performed_by_id = $request->road_test_performed_by_id;
+						$road_test->status_id = 11143;
 						$road_test->save();
 					}
-
 				} else {
 					$job_order->road_test_performed_by_id = NULL;
 					$job_order->road_test_trade_plate_number_id = NULL;
