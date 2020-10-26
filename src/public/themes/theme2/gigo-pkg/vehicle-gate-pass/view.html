@@ -4,13 +4,13 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/gate-log/list" type="button" class="btn-back btn-img">
+                    <a href="#!/vehicle-gate-pass/table-list" type="button" class="btn-back btn-img">
                         <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
                     </a>
                 </div>
                 <div class="page-header-content title-block">
                     <h1 class="title">Vehicle Gate Out</h1>
-                    <p class="subtitle"><a href="#!/vehicle-gate-pass/card-list">Vehicle Gate Out </a> / View </p>
+                    <p class="subtitle"><a href="#!/vehicle-gate-pass/table-list">Vehicle Gate Out </a> / View </p>
                 </div>
             </div>
         </div><!-- Page Header Inner -->
@@ -22,7 +22,7 @@
                     <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300">
                         <ul class="nav nav-pills editDetails-tabs">
                             <li class="active"><a class="btn-pills" data-target="#basic-information" role="tab" data-toggle="tab" aria-expanded="true">Vehicle Information</a></li>
-                            <li><a data-target="#inventory" role="tab" data-toggle="tab" aria-expanded="true" class="btn-pills">Inventory</a></li>
+                            <li ng-if="$ctrl.vehicle_gate_pass.gate_pass.status_id == 8340"><a data-target="#inventory" role="tab" data-toggle="tab" aria-expanded="true" class="btn-pills">Inventory</a></li>
                         </ul>
                     </div><!-- Filters -->
                 </div><!-- Tab Page Wrap Header -->
@@ -207,7 +207,8 @@
                                                             <div class="tab-pane-footer">
                                                                 <div class="row">
                                                                     <div class="col-md-12">
-                                                                        <button class="btn btn-primary btn-nxt" type='button'>Next</button>
+                                                                        <a href=".#!/vehicle-gate-pass/table-list" class="btn btn-bordered btn-grey btn-min-wdth" ng-if="$ctrl.vehicle_gate_pass.gate_pass.status_id == 8341">Cancel</a>
+                                                                        <button class="btn btn-primary btn-nxt" ng-show="$ctrl.vehicle_gate_pass.gate_pass.status_id == 8340" type='button'>Next</button>
                                                                     </div>
                                                                 </div>
                                                             </div><!-- Tab Footer -->
