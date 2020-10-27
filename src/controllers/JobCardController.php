@@ -129,7 +129,7 @@ class JobCardController extends Controller {
 			}
 		}
 
-		$job_cards->groupBy('job_cards.id')
+		$job_cards->whereNotNull('job_cards.status_id')->groupBy('job_cards.id')
 			->orderBy('job_cards.created_at', 'DESC');
 		//dd($job_cards);
 		return Datatables::of($job_cards)

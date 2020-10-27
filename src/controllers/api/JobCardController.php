@@ -188,7 +188,7 @@ class JobCardController extends Controller {
 				}
 			}
 
-			$job_card_list->groupBy('job_cards.id')
+			$job_card_list->whereNotNull('job_cards.status_id')->groupBy('job_cards.id')
 				->orderBy('job_cards.created_at', 'DESC');
 
 			$total_records = $job_card_list->get()->count();
