@@ -210,7 +210,7 @@ input[type=number] {
                                                             <a ng-if="log.transaction_type == 'Regular Part Issued' && job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227 && job_order.job_card.status_id != 8228 && job_order.job_card.status_id != 8231" href=".#!/part-indent/issue-part/form/{{job_order.id}}/{{log.job_order_part_increment_id}}" class="btn img-btn btn-delete">
                                                                 <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                                             </a>
-                                                            <button ng-if="log.transaction_type == 'Return' && job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227 && job_order.job_card.status_id != 8228 && job_order.job_card.status_id != 8231" type="button" class="btn img-btn btn-delete" ng-click="showReturnPartForm(index,log)">
+                                                            <button ng-if="log.transaction_type == 'Regular Part Returned' && job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227 && job_order.job_card.status_id != 8228 && job_order.job_card.status_id != 8231" type="button" class="btn img-btn btn-delete" ng-click="showReturnPartForm(index,log)">
                                                                 <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                                             </button>
                                                             <button ng-if="job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227 && job_order.job_card.status_id != 8228 && job_order.job_card.status_id != 8231" type="button" class="btn img-btn btn-delete" ng-click="removeLog(index,log)">
@@ -384,18 +384,18 @@ input[type=number] {
                                     <label>
                                         Part <sup class="mandatory">*</sup>
                                     </label>
-                                    <md-select ng-model="parts_indent.return_part" placeholder="Select Part" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                    <md-select ng-model="parts_indent.return_part.job_order_part_id" placeholder="Select Part" data-md-container-class="selectdemoSelectHeader">
                                         <md-select-header class="demo-select-header">
                                             <input ng-model="searchreturnPartKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
                                         </md-select-header>
                                         <md-optgroup>
-                                            <md-option ng-value="return_part" ng-repeat="return_part in issued_parts_list | filter:searchreturnPartKey">
+                                            <md-option ng-value="return_part.job_order_part_id" ng-repeat="return_part in issued_parts_list | filter:searchreturnPartKey">
                                                 {{return_part.name}} / {{return_part.code}}
                                             </md-option>
                                         </md-optgroup>
                                     </md-select>
                                     <input type="hidden" name="job_order_part_id" value="{{parts_indent.return_part.job_order_part_id}}">
-                                    <input type="hidden" name="part_id" value="{{parts_indent.return_part.id}}">
+                                    <!-- <input type="hidden" name="part_id" value="{{parts_indent.return_part.id}}"> -->
                                 </div><!-- Field -->
                             </div><!-- Column -->
                             <div class="col-md-6" ng-if="$ctrl.part_type != 1">

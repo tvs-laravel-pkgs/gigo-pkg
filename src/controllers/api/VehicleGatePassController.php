@@ -4,6 +4,7 @@ namespace Abs\GigoPkg\Api;
 
 use Abs\SerialNumberPkg\SerialNumberGroup;
 use App\Bay;
+use App\Config;
 use App\FinancialYear;
 use App\GateLog;
 use App\GatePass;
@@ -122,10 +123,21 @@ class VehicleGatePassController extends Controller {
 
 			$vehicle_gate_passes = $vehicle_gate_pass_list->get();
 
+			$params = [
+				'config_type_id' => 48,
+				'add_default' => true,
+				'default_text' => "Select Status",
+			];
+
+			$extras = [
+				'status_list' => Config::getDropDownList($params),
+			];
+
 			return response()->json([
 				'success' => true,
 				'vehicle_gate_passes' => $vehicle_gate_passes,
 				'total_records' => $total_records,
+				'extras' => $extras,
 			]);
 		} catch (Exception $e) {
 			return response()->json([

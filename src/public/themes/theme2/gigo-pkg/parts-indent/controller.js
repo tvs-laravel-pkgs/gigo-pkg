@@ -61,6 +61,7 @@ app.component('partsIndentList', {
                 { data: 'action', class: 'action', name: 'action', searchable: false },
                 { data: 'job_order_number', name: 'job_orders.number', searchable: true },
                 { data: 'job_order_date_time', searchable: false },
+                { data: 'vehicle', searchable: false },
                 // { data: 'job_card_number', name: 'job_cards.job_card_number' , searchable: true },
                 // { data: 'job_card_date_time', searchable: false },
                 { data: 'requested_qty', searchable: false },
@@ -883,6 +884,7 @@ app.component('partsIndentPartsView', {
                         $('#return_part_form_modal').modal('hide');
                         $('body').removeClass('modal-open');
                         $('.modal-backdrop').remove();
+                        $('#return-part-form')[0].reset();
                         $scope.fetchData();
                         // $location.path('/inward-parts-indent/view/' + $scope.job_order_id);
                         $scope.$apply();
@@ -1240,6 +1242,7 @@ app.component('partsIndentIssuePartForm', {
                         data: {
                             code: part.code,
                             job_order_id: $routeParams.job_order_id,
+                            job_order_part_id: part.job_order_part_id,
                         },
                         beforeSend: function(xhr) {
                             xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);

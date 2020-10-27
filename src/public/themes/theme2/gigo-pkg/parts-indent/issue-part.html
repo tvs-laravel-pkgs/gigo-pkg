@@ -65,7 +65,7 @@ input[type=number] {
                                                         <div class="col-md-4" ng-show="$ctrl.part_type == 1">
                                                             <div class="input-text form-group">
                                                                 <label>Part No <sup class="mandatory">*</sup></label>
-                                                                <md-select ng-model="return_part" placeholder="Select Part" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }" ng-change="issuedPartSelected(return_part)">
+                                                                <md-select ng-model="return_part" placeholder="Select Part" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.job_order_part_id' }" ng-change="issuedPartSelected(return_part)">
                                                                     <md-select-header class="demo-select-header">
                                                                         <input ng-model="searchreturnPartKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
                                                                     </md-select-header>
@@ -76,7 +76,7 @@ input[type=number] {
                                                                     </md-optgroup>
                                                                 </md-select>
                                                                 <input type="hidden" name="job_order_part_id" value="{{return_part.job_order_part_id}}">
-                                                                <input type="hidden" name="part_id" value="{{return_part.id}}">
+                                                                <!-- <input type="hidden" name="part_id" value="{{return_part.id}}"> -->
                                                             </div><!-- Form Group -->
                                                         </div><!-- Column -->
                                                         <div class="col-md-4" ng-show="$ctrl.part_type != 1">

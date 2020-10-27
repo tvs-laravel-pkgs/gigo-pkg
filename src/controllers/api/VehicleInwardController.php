@@ -1195,7 +1195,7 @@ class VehicleInwardController extends Controller {
 		// dd($request->all());
 		try {
 			DB::beginTransaction();
-			if ($request->type == 'Return') {
+			if ($request->type == 'Regular Part Returned') {
 				$validator = Validator::make($request->all(), [
 					'id' => [
 						'required',
@@ -1288,7 +1288,7 @@ class VehicleInwardController extends Controller {
 		// dd($request->all());
 		try {
 
-			$job_order_parts = Part::join('job_order_parts', 'job_order_parts.part_id', 'parts.id')->where('job_order_parts.job_order_id', $request->id)->whereNull('removal_reason_id')->where('job_order_parts.is_customer_approved', 1)->select('parts.*', 'job_order_parts.id as job_order_part_id')->get();
+			$job_order_parts = Part::join('job_order_parts', 'job_order_parts.part_id', 'parts.id')->where('job_order_parts.job_order_id', $request->id)->whereNull('removal_reason_id')->where('job_order_parts.is_customer_approved', 1)->select('job_order_parts.id as job_order_part_id', 'parts.code', 'parts.name')->get();
 
 			$repair_order_mechanics = User::leftJoin('repair_order_mechanics', 'repair_order_mechanics.mechanic_id', 'users.id')
 				->leftJoin('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')->select('users.*')
@@ -1346,29 +1346,33 @@ class VehicleInwardController extends Controller {
 				->where('code', $request->code)
 				->first();
 
-			$job_order_parts = JobOrderPart::where('part_id', $part->id)
-				->pluck('id')->toArray();
+			// $job_order_parts = JobOrderPart::where('part_id', $part->id)
+			// 	->pluck('id')->toArray();
 
 			//ISSUED PARTS
-			$issued_datas = JobOrderIssuedPart::where('issued_mode_id', 8480)
-				->whereDate('created_at', Carbon::today())
-				->get();
-			$part_issued_qty = 0;
-			foreach ($issued_datas as $issued_data) {
-				if (in_array($issued_data->job_order_part_id, $job_order_parts)) {
-					$part_issued_qty += $issued_data->issued_qty;
-				}
-			}
+			$part_issued_qty = JobOrderIssuedPart::where('job_order_part_id', $request->job_order_part_id)->sum('issued_qty');
+			// $issued_datas = JobOrderIssuedPart::where('issued_mode_id', 8480)
+			// 	->whereDate('created_at', Carbon::today())
+			// 	->get();
+			// $part_issued_qty = 0;
+			// foreach ($issued_datas as $issued_data) {
+			// 	if (in_array($issued_data->job_order_part_id, $job_order_parts)) {
+			// 		$part_issued_qty += $issued_data->issued_qty;
+			// 	}
+			// }
 
 			//RETURNED PARTS
-			$returned_datas = JobOrderReturnedPart::whereDate('created_at', Carbon::today())
-				->get();
-			$part_returned_qty = 0;
-			foreach ($returned_datas as $returned_data) {
-				if (in_array($returned_data->job_order_part_id, $job_order_parts)) {
-					$part_returned_qty += $returned_data->returned_qty;
-				}
-			}
+			$part_returned_qty = JobOrderReturnedPart::where('job_order_part_id', $request->job_order_part_id)->sum('returned_qty');
+
+			// dd($part_returned_qty);
+			// $returned_datas = JobOrderReturnedPart::whereDate('created_at', Carbon::today())
+			// 	->get();
+			// $part_returned_qty = 0;
+			// foreach ($returned_datas as $returned_data) {
+			// 	if (in_array($returned_data->job_order_part_id, $job_order_parts)) {
+			// 		$part_returned_qty += $returned_data->returned_qty;
+			// 	}
+			// }
 
 			if (!$part) {
 				$error = 'Part';
@@ -1394,7 +1398,7 @@ class VehicleInwardController extends Controller {
 
 			if ($available_qty > 0) {
 				if ($available_qty > $part_issued_qty) {
-					$available_qty = $available_qty - $part_issued_qty + $part_returned_qty;
+					$available_qty = ($available_qty + $part_returned_qty) - $part_issued_qty;
 				} elseif ($available_qty < $part_issued_qty) {
 					return response()->json([
 						'success' => false,
@@ -1405,10 +1409,12 @@ class VehicleInwardController extends Controller {
 			}
 
 			//Mentioned Parts Total Request Quantity
-			$total_request_qty = JobOrderPart::join('parts', 'parts.id', 'job_order_parts.part_id')->where('job_order_parts.job_order_id', $request->job_order_id)->where('parts.code', $request->code)->pluck('job_order_parts.qty')->first();
+			// $total_request_qty = JobOrderPart::join('parts', 'parts.id', 'job_order_parts.part_id')->where('job_order_parts.job_order_id', $request->job_order_id)->where('parts.code', $request->code)->pluck('job_order_parts.qty')->first();
+			$total_request_qty = JobOrderPart::join('parts', 'parts.id', 'job_order_parts.part_id')->where('job_order_parts.id', $request->job_order_part_id)->pluck('job_order_parts.qty')->first();
 
 			//Mentioned Parts Total Issued Quantity
-			$total_issued_qty = JobOrderPart::join('parts', 'parts.id', 'job_order_parts.part_id')->join('job_order_issued_parts', 'job_order_issued_parts.job_order_part_id', 'job_order_parts.id')->where('job_order_parts.job_order_id', $request->job_order_id)->where('parts.code', $request->code)->sum('job_order_issued_parts.issued_qty');
+			// $total_issued_qty = JobOrderPart::join('parts', 'parts.id', 'job_order_parts.part_id')->join('job_order_issued_parts', 'job_order_issued_parts.job_order_part_id', 'job_order_parts.id')->where('job_order_parts.job_order_id', $request->job_order_id)->where('parts.code', $request->code)->sum('job_order_issued_parts.issued_qty');
+			$total_issued_qty = $part_issued_qty - $part_returned_qty;
 
 			$total_balance_qty = $total_request_qty - $total_issued_qty;
 
@@ -1479,7 +1485,9 @@ class VehicleInwardController extends Controller {
 					]);
 				}
 
-				$part = Part::with(['partType', 'partStock'])->find($request->part_id);
+				$issued_part = JobOrderPart::find($request->job_order_part_id);
+
+				$part = Part::with(['partType', 'partStock'])->find($issued_part->part_id);
 
 				if (!$part) {
 					return response()->json([
@@ -7053,17 +7061,17 @@ class VehicleInwardController extends Controller {
 				->orderBy('customer_voices.name')
 				->get()->toArray();
 
-			// $customer_voice_other = CustomerVoice::where('code', 'OTH')->get()->toArray();
+			$customer_voice_other = CustomerVoice::where('code', 'OTH')->get()->toArray();
 
-			// if ($customer_voice_other) {
+			if ($customer_voice_other) {
 
-			// 	//GET CUSTOMER VOICE OTHERS ID OF OTH
-			// 	$customer_voice_other_id = $customer_voice_other[0]['id'];
-			// 	$job_order['OTH_ID'] = $customer_voice_other_id;
+				//GET CUSTOMER VOICE OTHERS ID OF OTH
+				$customer_voice_other_id = $customer_voice_other[0]['id'];
+				$job_order['OTH_ID'] = $customer_voice_other_id;
 
-			// 	$customer_voice_list_merge = array_merge($list, $customer_voice_other);
-			// 	$list = collect($customer_voice_list_merge);
-			// }
+				$customer_voice_list_merge = array_merge($list, $customer_voice_other);
+				$list = collect($customer_voice_list_merge);
+			}
 		}
 
 		return response()->json($list);
