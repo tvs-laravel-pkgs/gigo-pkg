@@ -9,6 +9,7 @@ app.component('warrantyJobOrderRequestForm', {
         $scope.remarksForNotChangingLube = true;
         $rootScope.loading = true;
         var pageLoaded = 0;
+        var ppr_request_save = 1;
         $('#search').focus();
         var self = this;
         $scope.business_data = [];
@@ -1391,41 +1392,46 @@ app.component('warrantyJobOrderRequestForm', {
                 $scope.failedAtKeyup();
                 $scope.checkLabourPart();
                 if ($isValidFailedAt == true) {
-                    let formData = new FormData($(form_id1)[0]);
-                    $('.submit').button('loading');
-                    $.ajax({
-                            url: base_url + '/api/warranty-job-order-request/save',
-                            method: "POST",
-                            data: formData,
-                            beforeSend: function(xhr) {
-                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                            },
-                            processData: false,
-                            contentType: false,
-                        })
-                        .done(function(res) {
-                            if (!res.success) {
-                                showErrorNoty(res);
+                    if (ppr_request_save == 1) {
+                        ppr_request_save = 0;
+                        let formData = new FormData($(form_id1)[0]);
+                        $('.submit').button('loading');
+                        $.ajax({
+                                url: base_url + '/api/warranty-job-order-request/save',
+                                method: "POST",
+                                data: formData,
+                                beforeSend: function(xhr) {
+                                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                                },
+                                processData: false,
+                                contentType: false,
+                            })
+                            .done(function(res) {
+                                ppr_request_save = 1;
+                                if (!res.success) {
+                                    showErrorNoty(res);
+                                    $('.submit').button('reset');
+
+                                    return;
+                                }
                                 $('.submit').button('reset');
 
-                                return;
-                            }
-                            $('.submit').button('reset');
+                                showNoty('success', 'Warranty job order request saved successfully');
+                                if ($routeParams.request_id == undefined) {
+                                    $localstorage.remove('ppr');
+                                    self.is_temp_saved = true;
+                                }
 
-                            showNoty('success', 'Warranty job order request saved successfully');
-                            if ($routeParams.request_id == undefined) {
-                                $localstorage.remove('ppr');
-                                self.is_temp_saved = true;
-                            }
+                                $location.path('/warranty-job-order-request/table-list');
+                                $scope.$apply();
+                            })
+                            .fail(function(xhr) {
+                                ppr_request_save = 1;
+                                $('.submit').button('reset');
 
-                            $location.path('/warranty-job-order-request/table-list');
-                            $scope.$apply();
-                        })
-                        .fail(function(xhr) {
-                            $('.submit').button('reset');
-
-                            custom_noty('error', 'Something went wrong at server');
-                        });
+                                custom_noty('error', 'Something went wrong at server');
+                            });
+                    }
                 }
                 // WarrantyJobOrderRequestSvc.save($scope.warranty_job_order_request)
                 //     .then(function(response) {

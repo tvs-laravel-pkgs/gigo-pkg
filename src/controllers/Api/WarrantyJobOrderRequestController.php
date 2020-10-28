@@ -51,6 +51,7 @@ class WarrantyJobOrderRequestController extends Controller {
 			'warranty_job_order_requests.failure_date',
 			'warranty_job_order_requests.created_at',
 			'warranty_job_order_requests.rejected_reason',
+			'warranty_job_order_requests.approval_rating',
 			'configs.name as status',
 			'bharat_stages.name as bharat_stage',
 		])
@@ -149,9 +150,9 @@ class WarrantyJobOrderRequestController extends Controller {
 		}
 
 		// dump($request->all());
-		$list_data->whereNotIn('warranty_job_order_requests.status_id', [9104]);
+		$list_data->whereNotIn('warranty_job_order_requests.status_id', [9104])
 		// $list_data->orderBy('warranty_job_order_requests.status_id', 'ASC');
-		// $list_data->orderBy('warranty_job_order_requests.id', 'DESC');
+			->orderBy('warranty_job_order_requests.created_at', 'DESC');
 
 		return Datatables::of($list_data)
 			->rawColumns(['action'])
