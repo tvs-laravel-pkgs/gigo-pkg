@@ -345,7 +345,7 @@ app.component('warrantyJobOrderRequestForm', {
                         theme: 'fas',
                         overwriteInitial: true,
                         // minFileCount: 1,
-                        maxFileSize: 5120, //2048,
+                        maxFileSize: 12000, //2048,
                         // required: true,
                         showUpload: false,
                         browseOnZoneClick: true,
@@ -371,7 +371,7 @@ app.component('warrantyJobOrderRequestForm', {
                         theme: 'fas',
                         overwriteInitial: true,
                         // minFileCount: 1,
-                        maxFileSize: 2048,
+                        maxFileSize: 12000,
                         // required: true,
                         showUpload: false,
                         browseOnZoneClick: true,
@@ -410,12 +410,16 @@ app.component('warrantyJobOrderRequestForm', {
         $scope.init();
 
         self.attachment_removal_id = [];
-        $scope.remove_attachment = function(attachment_id, index) {
+        $scope.remove_attachment = function(attachment_id, index, type) {
             if (attachment_id) {
                 self.attachment_removal_id.push(attachment_id);
                 $('#attachment_removal_ids').val(JSON.stringify(self.attachment_removal_id));
             }
-            $scope.warranty_job_order_request.photos.splice(index, 1);
+            if (type == 1) {
+                $scope.warranty_job_order_request.photos.splice(index, 1);
+            } else {
+                $scope.warranty_job_order_request.reference_attachments.splice(index, 1);
+            }
         }
 
         setTimeout(function() {
