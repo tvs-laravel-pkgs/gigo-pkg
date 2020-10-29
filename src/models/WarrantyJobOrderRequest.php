@@ -689,6 +689,13 @@ class WarrantyJobOrderRequest extends BaseModel {
 				$record->syncParts($wjorPartsInput);
 			}
 
+			//REMOVE ATTACHMENTS
+			if (isset($input['attachment_removal_ids'])) {
+				$attachment_removal_ids = json_decode($input['attachment_removal_ids']);
+				if (!empty($attachment_removal_ids)) {
+					Attachment::whereIn('id', $attachment_removal_ids)->forceDelete();
+				}
+			}
 			//SAVE ATTACHMENTS
 			$attachement_path = storage_path('app/public/wjor/');
 			Storage::makeDirectory($attachement_path, 0777);

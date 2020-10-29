@@ -62,9 +62,9 @@ app.component('warrantyJobOrderRequestView', {
                         $scope.warranty_job_order_request.authorized_date = HelperService.getCurrentDate();
                     }
                     // $scope.service_types = [];
-// angular.forEach($scope.warranty_job_order_request.service_types, function(service_type) {
-//     $scope.service_types.push(service_type.name);
-// });
+                    // angular.forEach($scope.warranty_job_order_request.service_types, function(service_type) {
+                    //     $scope.service_types.push(service_type.name);
+                    // });
 
                     let promises2 = {
                         customer_service: CustomerSvc.read($scope.warranty_job_order_request.job_order.customer_id),

@@ -409,6 +409,15 @@ app.component('warrantyJobOrderRequestForm', {
         };
         $scope.init();
 
+        self.attachment_removal_id = [];
+        $scope.remove_attachment = function(attachment_id, index) {
+            if (attachment_id) {
+                self.attachment_removal_id.push(attachment_id);
+                $('#attachment_removal_ids').val(JSON.stringify(self.attachment_removal_id));
+            }
+            $scope.warranty_job_order_request.photos.splice(index, 1);
+        }
+
         setTimeout(function() {
 
             var toolbarOptions = [

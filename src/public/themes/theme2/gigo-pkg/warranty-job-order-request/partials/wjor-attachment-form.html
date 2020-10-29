@@ -46,20 +46,36 @@
             </h5>
             <hr class="hr-15"> -->
             <!-- Separater -->
-            <div class="row">
+            <div class="row ng-hide">
                 <div class="col-xs-6 col-md-3" ng-repeat="(key, photo) in warranty_job_order_request.photos">
                     <!-- <a href="./storage/app/public/wjor/{{photo.name}}" target="_blank" class="thumbnail">
                         <img ng-src="./storage/app/public/wjor/{{photo.name}}" />
                     </a> -->
-                    <a ng-if="photo.name.substr(photo.name.length - 3)=='jpg'  || photo.name.substr(photo.name.length - 3)=='jpeg' || photo.name.substr(photo.name.length - 3)=='png' || photo.name.substr(photo.name.length - 3)=='bmp'" href="./storage/app/public/wjor/{{photo.name}}" target="_blank" class="thumbnail">
+                    <!-- <a ng-if="photo.name.substr(photo.name.length - 3)=='jpg'  || photo.name.substr(photo.name.length - 3)=='jpeg' || photo.name.substr(photo.name.length - 3)=='png' || photo.name.substr(photo.name.length - 3)=='bmp'" href="./storage/app/public/wjor/{{photo.name}}" target="_blank" class="thumbnail">
                         <img ng-src="./storage/app/public/wjor/{{photo.name}}" />
                     </a>
                     <a ng-if="photo.name.substr(photo.name.length - 3)!='jpg'  && photo.name.substr(photo.name.length - 3)!='jpeg' && photo.name.substr(photo.name.length - 3)!='png' && photo.name.substr(photo.name.length - 3)!='bmp'" href="./storage/app/public/wjor/{{photo.name}}" target="_blank" class="thumbnail">
                         {{photo.name}}
                     </a>
-                    <p>{{photo.path}}</p>
+                    <p>{{photo.path}}</p> -->
                 </div>
             </div>
+            <div class="row">
+                <div class="col-xs-6 col-md-3" ng-repeat="(key, photo) in warranty_job_order_request.photos">
+                    <div style="position: relative">
+                        <a href="" style="position: absolute; top: 4px; right: 5px" ng-click="remove_attachment(photo.id,indexx)"> <img src="./public/theme/img/content/icons/delete.svg" style="width: 25px;" /></a>
+                        <!-- <span style="position: absolute; top: 4px; right: 5px" ng-click="remove_attachment(photo.id,indexx)"> <img src="./public/theme/img/content/icons/delete.svg" style="width: 25px;" /></span> -->
+                        <a ng-if="photo.name.substr(photo.name.length - 3)=='jpg'  || photo.name.substr(photo.name.length - 3)=='jpeg' || photo.name.substr(photo.name.length - 3)=='png' || photo.name.substr(photo.name.length - 3)=='bmp'" href="./storage/app/public/wjor/{{photo.name}}" target="_blank" class="thumbnail">
+                            <img ng-src="./storage/app/public/wjor/{{photo.name}}" />
+                        </a>
+                        <a ng-if="photo.name.substr(photo.name.length - 3)!='jpg'  && photo.name.substr(photo.name.length - 3)!='jpeg' && photo.name.substr(photo.name.length - 3)!='png' && photo.name.substr(photo.name.length - 3)!='bmp'" href="./storage/app/public/wjor/{{photo.name}}" target="_blank" class="thumbnail">
+                            {{photo.name}}
+                        </a>
+                        <p>{{photo.path}}</p>
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" name="attachment_removal_ids" id="attachment_removal_ids" value="">
         </div><!-- Column -->
     </div><!-- Row -->
 </div><!-- Tab Pane Wrap -->
