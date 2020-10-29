@@ -223,8 +223,9 @@
                                     </span>
                                     <span class="view-col-value" ng-if="warranty_job_order_request.service_types.length != 0">
                                         <ul>
-                                            <li ng-repeat="service_type in service_types">
-                                                - {{service_type}}
+                                            <!-- {{warranty_job_order_request.service_types}} -->
+                                            <li ng-repeat="service_type in warranty_job_order_request.service_types" ng-if="service_type.is_free == 1">
+                                                - {{service_type.name}}
                                             </li>
                                         </ul>
                                     </span>
