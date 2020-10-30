@@ -274,6 +274,8 @@ class WarrantyJobOrderRequestController extends Controller {
 				]);
 			}
 
+			$warranty_manager->message = 'Kindly review product performance report by clicking the link provided below';
+
 			$warranty_manager->notify(new WjorNotification([
 				'wjor' => $warranty_job_order_request,
 			]));
@@ -359,12 +361,14 @@ class WarrantyJobOrderRequestController extends Controller {
 			}
 			$warranty_job_order_request->cc_emails = $cc_emails;
 
-			$warranty_manager = User::find($warranty_job_order_request->jobOrder->outlet->business->pivot->warranty_manager_id);
+			// $warranty_manager = User::find($warranty_job_order_request->jobOrder->outlet->business->pivot->warranty_manager_id);
+			$warranty_manager = User::find($warranty_job_order_request->created_by_id);
 
+			$warranty_manager->message = 'Your product performance report has been returned. Review and resubmit for approval';
 			if (!$warranty_manager) {
 				return [
 					'success' => false,
-					'error' => 'Warranty manager not configured : Outlet Code - ' . $warranty_job_order_request->jobOrder->outlet->code . ', Business : ' . $warranty_job_order_request->jobOrder->outlet->business->name,
+					'error' => 'Request User Email Not found',
 				];
 
 			}
