@@ -27,4 +27,22 @@ class PartController extends Controller {
 
 	}
 
+	public function getFormData(Request $request) {
+		// dd($request->all());
+
+		$part = Part::with([
+			'uom',
+			'partStock' => function ($query) use ($request) {
+				$query->where('outlet_id', $request->outletId);
+			},
+			'jobOrderParts',
+			'taxCode',
+			'taxCode.taxes',
+			'repair_order_parts',
+		])
+			->find($request->partId);
+
+		return response()->json(['success' => true, 'part' => $part]);
+	}
+
 }

@@ -39,6 +39,7 @@ use App\PartsGrnDetail;
 use App\PartsRequest;
 use App\PartsRequestDetail;
 use App\PartsRequestPart;
+use App\PartStock;
 use App\QuoteType;
 use App\RepairOrderType;
 use App\RoadTestGatePass;
@@ -1330,6 +1331,86 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
+
+	//BULK ISSUE PART FORM DATA
+	public function getBulkIssuePartFormData(Request $request) {
+		// dd($request->all());
+		try {
+
+			$job_order = JobOrder::find($request->id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found!',
+					],
+				]);
+			}
+
+			$job_order_parts = Part::join('job_order_parts', 'job_order_parts.part_id', 'parts.id')->where('job_order_parts.job_order_id', $request->id)->whereNull('removal_reason_id')->where('job_order_parts.is_customer_approved', 1)->select('job_order_parts.id as job_order_part_id', 'job_order_parts.qty', 'parts.code', 'parts.name', 'parts.id')->get();
+
+			$parts_data = array();
+
+			// dump($job_order_parts);
+			if ($job_order_parts) {
+				foreach ($job_order_parts as $key => $parts) {
+					// dump($parts->code, $parts->id);
+
+					//Issued Qty
+					$issued_qty = JobOrderIssuedPart::where('job_order_part_id', $parts->job_order_part_id)->sum('issued_qty');
+
+					//Returned Qty
+					$returned_qty = JobOrderReturnedPart::where('job_order_part_id', $parts->job_order_part_id)->sum('returned_qty');
+
+					//Available Qty
+					$avail_qty = PartStock::where('part_id', $parts->id)->where('outlet_id', $job_order->outlet_id)->pluck('stock')->first();
+
+					$total_remain_qty = ($parts->qty + $returned_qty) - $issued_qty;
+					$total_issued_qty = $issued_qty - $returned_qty;
+
+					// dump($avail_qty, $total_remain_qty);
+					if ($avail_qty && $avail_qty > 0 && $total_remain_qty > 0) {
+						$parts_data[$key]['part_id'] = $parts->id;
+						$parts_data[$key]['code'] = $parts->code;
+						$parts_data[$key]['name'] = $parts->name;
+						$parts_data[$key]['job_order_part_id'] = $parts->job_order_part_id;
+						$parts_data[$key]['total_avail_qty'] = $avail_qty;
+						$parts_data[$key]['total_request_qty'] = $parts->qty;
+						$parts_data[$key]['total_issued_qty'] = $total_issued_qty;
+						$parts_data[$key]['total_remaining_qty'] = $total_remain_qty;
+					}
+				}
+			}
+
+			// dd($parts_data);
+
+			$repair_order_mechanics = User::leftJoin('repair_order_mechanics', 'repair_order_mechanics.mechanic_id', 'users.id')
+				->leftJoin('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')->select('users.*')
+				->whereNull('job_order_repair_orders.removal_reason_id')
+				->where('job_order_repair_orders.job_order_id', $request->id)->groupBy('users.id')->get();
+
+			$issue_modes = Config::where('config_type_id', 109)->select('id', 'name')->get();
+
+			$responseArr = array(
+				'success' => true,
+				'job_order_parts' => $parts_data,
+				'repair_order_mechanics' => $repair_order_mechanics,
+				'issue_modes' => $issue_modes,
+			);
+
+			return response()->json($responseArr);
+		} catch (\Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
+			]);
+		}
+	}
 	public function getPartDetailPias(Request $request) {
 		// dd($request->all());
 		try {
@@ -1668,6 +1749,54 @@ class VehicleInwardController extends Controller {
 						'message' => 'Part Issued Successfully!!',
 					]);
 				}
+			}
+			if ($request->part_type == 3) {
+				$validator = Validator::make($request->all(), [
+					'job_order_id' => [
+						'required',
+						'exists:job_orders,id',
+					],
+
+				]);
+
+				if ($validator->fails()) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
+					]);
+				}
+
+				DB::beginTransaction();
+
+				// dd(11);
+				if ($request->issued_part) {
+					foreach ($request->issued_part as $key => $issued_part) {
+						if (isset($issued_part['qty'])) {
+							$job_order_isssued_part = new JobOrderIssuedPart;
+							$job_order_isssued_part->job_order_part_id = $issued_part['job_order_part_id'];
+
+							$job_order_isssued_part->issued_qty = $issued_part['qty'];
+							$job_order_isssued_part->issued_mode_id = 8480;
+							$job_order_isssued_part->issued_to_id = $request->issued_to_id;
+							$job_order_isssued_part->created_by_id = Auth::user()->id;
+							$job_order_isssued_part->created_at = Carbon::now();
+							$job_order_isssued_part->save();
+
+							$job_order_part = JobOrderPart::find($issued_part['job_order_part_id']);
+							$job_order_part->status_id = 8202; //Issued
+							$job_order_part->save();
+						}
+					}
+				}
+
+				DB::commit();
+
+				return response()->json([
+					'success' => true,
+					'message' => 'Part Issued Successfully!!',
+				]);
+
 			} else {
 				$validator = Validator::make($request->all(), [
 					'job_order_id' => [

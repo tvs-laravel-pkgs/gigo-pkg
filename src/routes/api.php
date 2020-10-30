@@ -72,6 +72,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 			Route::post('remove', $controller . 'Controller@remove');
 			Route::get('options', $controller . 'Controller@options');
 			Route::post('stock_data', $controller . 'Controller@stock_data');
+			Route::post('get-from-data', $controller . 'Controller@getFormData');
 		});
 
 		Route::group(['prefix' => 'job-order'], function () {
@@ -196,6 +197,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('vehicle-inward/part-logs/delete', 'VehicleInwardController@deletePartLogs');
 
 		Route::post('inward-part-indent/get-issue-part-form-data', 'VehicleInwardController@getInwardPartIndentIssuePartFormData');
+		Route::post('inward-part-indent/bulk-form-data', 'VehicleInwardController@getBulkIssuePartFormData');
 		Route::post('inward-part-indent/save-issued-part', 'VehicleInwardController@saveIssuedPart');
 		Route::post('inward-part-indent/get-part-detail-pias', 'VehicleInwardController@getPartDetailPias');
 

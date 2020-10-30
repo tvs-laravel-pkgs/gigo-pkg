@@ -94,6 +94,7 @@
     var parts_indent_repair_order_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/repair-order.html')}}";
     var parts_indent_parts_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/parts.html')}}";
     var parts_indent_issue_part_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/issue-part.html')}}";
+    var parts_indent_issue_bulk_part_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/issue-bulk-part.html')}}";
     var parts_indent_edit_parts_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/edit-parts.html')}}";
 
      //Vehicle Service Schedule

@@ -631,13 +631,25 @@ app.component('partsIndentPartsView', {
                         });
                 }
                 if (part.uom == undefined) {
-                    PartSvc.read(part.id)
+                    // PartSvc.getFormData(part.id, '16')
+                    //     .then(function(response) {
+                    //         $scope.parts_indent.part = response.data.part;
+                    //         $scope.parts_indent.part.qty = part.qty;
+                    //         $scope.parts_indent.part.job_order_part_id = $job_order_part_id;
+                    //         $scope.parts_indent.repair_order_parts = $scope.repair_orders;
+                    //         // $scope.calculatePartAmount();
+                    //     });
+                    console.log(PartSvc);
+                    PartSvc.getFormData({ outletId: $scope.job_order.outlet_id, partId: part.id })
                         .then(function(response) {
+                            // $scope.warranty_job_order_request.job_order.outlet.business = response.data.business;
                             $scope.parts_indent.part = response.data.part;
                             $scope.parts_indent.part.qty = part.qty;
                             $scope.parts_indent.part.job_order_part_id = $job_order_part_id;
                             $scope.parts_indent.repair_order_parts = $scope.repair_orders;
                             // $scope.calculatePartAmount();
+                        }).catch(function(error) {
+                            console.log(error);
                         });
                 }
             }
@@ -713,7 +725,23 @@ app.component('partsIndentPartsView', {
                     $qty = part.qty;
                 }
             }
-            PartSvc.read(part.id)
+            // PartSvc.read(part.id)
+            // PartSvc.getFormData(part.id, '16')
+            //     .then(function(response) {
+            //         // $scope.parts_indent.part.mrp = response.data.part.part_stock ? (response.data.part.part_stock.stock != 0 ? response.data.part.part_stock.mrp : (response.data.part.job_order_parts.length != 0 ? response.data.part.job_order_parts[0].rate : '0')) : '0';
+            //         $scope.parts_indent.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.stock > 0 ? response.data.part.part_stock.mrp : '0' : '0';
+
+            //         if (part.id == $scope.part_id) {
+            //             $scope.parts_indent.part.mrp = $scope.part_mrp;
+            //         }
+
+            //         $scope.parts_indent.part.total_amount = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
+            //         $scope.available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
+            //         $scope.parts_indent.part.qty = $qty;
+            //         $scope.calculatePartAmount();
+            //     });
+            console.log(PartSvc);
+            PartSvc.getFormData({ outletId: $scope.job_order.outlet_id, partId: part.id })
                 .then(function(response) {
                     // $scope.parts_indent.part.mrp = response.data.part.part_stock ? (response.data.part.part_stock.stock != 0 ? response.data.part.part_stock.mrp : (response.data.part.job_order_parts.length != 0 ? response.data.part.job_order_parts[0].rate : '0')) : '0';
                     $scope.parts_indent.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.stock > 0 ? response.data.part.part_stock.mrp : '0' : '0';
@@ -726,6 +754,8 @@ app.component('partsIndentPartsView', {
                     $scope.available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
                     $scope.parts_indent.part.qty = $qty;
                     $scope.calculatePartAmount();
+                }).catch(function(error) {
+                    console.log(error);
                 });
 
         }
@@ -1079,8 +1109,10 @@ app.component('partsIndentIssuePartForm', {
                     if ($scope.issued_part) {
                         PartSvc.read($scope.issued_part.part_id)
                             .then(function(response) {
+                                console.log(response.data.part);
                                 $scope.return_part = response.data.part;
-                                $scope.issuedPartSelected($scope.return_part);
+                                console.log($scope.return_part);
+                                $scope.issuedPartSelected(response.data.part);
                                 $scope.return_part.job_order_part_id = res.issue_data.job_order_part_id;
                             });
                         $scope.issued_to = res.issue_to_user;
@@ -1235,6 +1267,235 @@ app.component('partsIndentIssuePartForm', {
             }
         }
         $scope.issuedPartSelected = function(part) {
+            // console.log(part);
+            // alert(part.job_order_part_id);
+            // alert(part.code);
+            // if (!part.job_order_part_id) {
+            //     var job_order_part_id = $routeParams.id;
+            // } else {
+            //     var job_order_part_id = part.job_order_part_id;
+            // }
+
+            // alert(job_order_part_id);
+            if (part) {
+                console.log(part);
+                console.log(part.job_order_part_id);
+
+                $.ajax({
+                        url: base_url + '/api/inward-part-indent/get-part-detail-pias',
+                        method: "POST",
+                        data: {
+                            code: part.code,
+                            job_order_id: $routeParams.job_order_id,
+                            job_order_part_id: part.job_order_part_id,
+                        },
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                    })
+                    .done(function(res) {
+                        if (!res.success) {
+                            showErrorNoty(res);
+                            return;
+                        }
+                        $scope.part = res.part;
+                        if ($scope.part) {
+                            console.log($scope.part.part_type);
+                            if ($scope.part.part_type && $scope.part.part_type.name == 'Lubricants') {
+                                custom_noty('error', 'Lubricant items are cannot be issued multiple times. Kindly issue only one time!');
+                            }
+                        }
+                        $scope.available_quantity = res.available_quantity;
+                        $scope.total_request_qty = res.total_request_qty;
+                        $scope.total_issued_qty = res.total_issued_qty;
+                        $scope.total_balance_qty = res.total_balance_qty;
+
+                        if ($scope.available_quantity >= 1) {
+                            // $scope.issued_mode_id = 8480;
+                            self.mrp = 0;
+                        } else {
+                            // $scope.issued_mode_id = 8481;
+                            self.mrp = 1;
+                        }
+                        // $scope.disabled = 1;
+
+                        $scope.$apply();
+                    })
+                    .fail(function(xhr) {
+                        custom_noty('error', 'Something went wrong at server');
+                    });
+            }
+        }
+    }
+});
+
+app.component('partsIndentIssueBulkPartForm', {
+    templateUrl: parts_indent_issue_bulk_part_form_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, PartSvc, VendorSvc) {
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        self.angular_routes = angular_routes;
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+        $scope.job_order_id = $routeParams.job_order_id;
+        self.job_order_issued_part_id = $routeParams.id;
+        $scope.issue_part = {};
+        self.part_type = 1;
+
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/inward-part-indent/bulk-form-data',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_order_id,
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+
+                    $scope.job_order_parts = res.job_order_parts;
+                    $scope.repair_order_mechanics = res.repair_order_mechanics;
+                    $scope.issue_modes = res.issue_modes
+
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        $(document).on('click', '.select_all_parts', function() {
+            if (event.target.checked == true) {
+                $('.partcheckbox').prop('checked', true);
+                $.each($('.partcheckbox:checked'), function() {
+                    $scope.checkCheckbox($(this).val());
+                    $('.parts_details_table tbody tr #in_' + $(this).val()).removeClass('ng-hide');
+                    $('.parts_details_table tbody tr #checked_' + $(this).val()).val('1');
+                    $('.parts_details_table tbody tr #in_' + $(this).val()).addClass('error');
+                    $('.parts_details_table tbody tr #in_' + $(this).val()).addClass('required');
+                });
+            } else {
+                $('.partcheckbox').prop('checked', false);
+                $.each($('.partcheckbox'), function() {
+                    $('.parts_details_table tbody tr #in_' + $(this).val()).addClass('ng-hide');
+                    $('.parts_details_table tbody tr #in_' + $(this).val() + '-error').remove();
+                    $('.parts_details_table tbody tr #in_' + $(this).val()).removeClass('error');
+                    $('.parts_details_table tbody tr #in_' + $(this).val()).removeClass('required');
+                    $('.parts_details_table tbody tr #in_' + $(this).val()).closest('.form-group').find('label.error').remove();
+                    $('.parts_details_table tbody tr #in_' + $(this).val()).val('');
+                    $('.parts_details_table tbody tr #checked_' + $(this).val()).val('0');
+                });
+            }
+        });
+
+
+        $scope.checkCheckbox = function(id) {
+            checkval = $('#check' + id).is(":checked");
+            if (checkval == true) {
+                $("#in_" + id).removeClass('ng-hide');
+                $("#in_" + id).addClass('required');
+                $("#in_" + id).addClass('error');
+            } else {
+                $("#in_" + id).addClass('ng-hide');
+                $("#in_" + id).val(" ");
+                $("#in_" + id).removeClass('required');
+                $("#in_" + id).removeClass('error');
+                $("#in_" + id).closest('.form-group').find('label.error').remove();
+                $("#in_" + id).val('');
+                $('#in_' + id + '-error').remove();
+            }
+        }
+
+        $scope.saveIssueForm = function() {
+            var form = '#issue_bulk_part_form';
+            var v = jQuery(form).validate({
+                ignore: '',
+                rules: {
+                    'job_order_part_id': {
+                        required: true,
+                    },
+                },
+                messages: {
+
+                },
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Kindly fix');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form)[0]);
+                    $('.submit').button('loading');
+
+                    $.ajax({
+                            url: base_url + '/api/inward-part-indent/save-issued-part',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            $('.submit').button('reset');
+                            if (!res.success) {
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            $location.path('/part-indent/parts/view/' + $scope.job_order_id);
+
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+        $scope.searchVendor = function(query) {
+            return new Promise(function(resolve, reject) {
+                VendorSvc.options({ filter: { search: query } })
+                    .then(function(response) {
+                        resolve(response.data.options);
+                    });
+            });
+        }
+        $scope.calculateTotal = function() {
+            if ($scope.issue_part.quantity != '' && $scope.issue_part.unit_price != '') {
+                $scope.issue_part.total = parseInt($scope.issue_part.quantity) * parseFloat($scope.issue_part.unit_price);
+            }
+        }
+        $scope.calculateTax = function() {
+            $scope.issue_part.tax_amount = parseFloat($scope.issue_part.total) * (parseFloat($scope.issue_part.tax_percentage) / 100);
+            $scope.issue_part.total_amount = parseFloat($scope.issue_part.total) + parseFloat($scope.issue_part.tax_amount);
+            $scope.issue_part.po_amount = $scope.issue_part.total_amount;
+        }
+        $scope.checkAvailability = function() {
+            // console.log($scope.available_quantity, $scope.issued_part.issued_qty);
+            if ($scope.available_quantity == undefined) {
+                custom_noty('error', 'Please Select Part');
+                return false;
+            } else {
+                if (parseFloat($scope.available_quantity) < parseFloat($scope.issued_part.issued_qty)) {
+                    custom_noty('error', 'Issued quantity should not exceed available quantity');
+                    return false;
+                }
+            }
+        }
+        $scope.issuedPartSelected = function(part) {
+            console.log(part);
+            alert(part.job_order_part_id);
             if (part) {
                 $.ajax({
                         url: base_url + '/api/inward-part-indent/get-part-detail-pias',

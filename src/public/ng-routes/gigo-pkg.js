@@ -193,6 +193,10 @@ app.config(['$routeProvider', function($routeProvider) {
         template: '<parts-indent-issue-part-form></parts-indent-issue-part-form>',
         title: 'Issue Part',
     }).
+    when('/part-indent/issue-bulk-part/form/:job_order_id', {
+        template: '<parts-indent-issue-bulk-part-form></parts-indent-issue-bulk-part-form>',
+        title: 'Issue Bulk Part',
+    }).
 
     //Complaint Group
     when('/gigo-pkg/complaint-group/list', {

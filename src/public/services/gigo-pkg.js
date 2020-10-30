@@ -462,6 +462,9 @@ app.factory('PartSvc', function(RequestSvc) {
         options: function(params) {
             return RequestSvc.get('/api/' + model + '/options', params);
         },
+        getFormData: function(params) {
+            return RequestSvc.post('/api/' + model + '/get-from-data', params);
+        },
     };
 
 });
