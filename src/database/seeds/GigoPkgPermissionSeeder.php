@@ -1760,16 +1760,22 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_name' => 'Split Order',
 			],
 			[
-				'display_order' => 99,
+				'display_order' => 1,
 				'parent' => 'inward-job-card-tab-split-order',
 				'name' => 'inward-job-card-tab-split-order-edit',
 				'display_name' => 'Edit',
 			],
 			[
-				'display_order' => 99,
+				'display_order' => 2,
 				'parent' => 'inward-job-card-tab-split-order',
 				'name' => 'inward-job-card-tab-split-order-view',
 				'display_name' => 'View',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'inward-job-card-tab-split-order',
+				'name' => 'inward-job-card-tab-split-order-paid-edit',
+				'display_name' => 'Edit Paid Split Orders',
 			],
 			[
 				'display_order' => 20,

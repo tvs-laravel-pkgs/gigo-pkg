@@ -136,7 +136,9 @@
                                                                         <table id="table{{key}}" class="table split-order-table table-form childgrid">
                                                                             <thead>
                                                                                 <tr>
-                                                                                    <th ng-if="split_order_type.paid_by_id !=10013 && job_card.status_id == 8231" class="action">Action</th>
+                                                                                    <!-- $ctrl.hasPermission('inward-job-card-tab-split-order-paid-edit') -->
+                                                                                    <th ng-if="(split_order_type.paid_by_id ==10013 ? $ctrl.hasPermission('inward-job-card-tab-split-order-paid-edit') ? true:false : true) && job_card.status_id == 8231" class="action">Action</th>
+                                                                                    <!-- <th ng-if="split_order_type.paid_by_id !=10013 && job_card.status_id == 8231" class="action">Action</th> -->
                                                                                     <th>Item Type</th>
                                                                                     <th>Free Service</th>
                                                                                     <th>Item</th>
@@ -150,11 +152,16 @@
                                                                             </thead>
                                                                             <tbody class="connectedSortable">
                                                                                 <tr ng-if="labour.split_order_type_id == split_order_type.id" ng-repeat="(labour_key,labour) in labour_details">
-                                                                                    <td class="action width-100" ng-if="split_order_type.paid_by_id !=10013 && job_card.status_id == 8231">
+                                                                                    <td class="action width-100" ng-if="(split_order_type.paid_by_id ==10013 ? $ctrl.hasPermission('inward-job-card-tab-split-order-paid-edit') ? true:false : true) && job_card.status_id == 8231">
                                                                                         <a href="" ng-click="splitOrderLabourChange(labour.id,1,key,split_order_type.id)">
                                                                                             <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
                                                                                         </a>
                                                                                     </td>
+                                                                                    <!-- <td class="action width-100" ng-if="split_order_type.paid_by_id !=10013 && job_card.status_id == 8231">
+                                                                                        <a href="" ng-click="splitOrderLabourChange(labour.id,1,key,split_order_type.id)">
+                                                                                            <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
+                                                                                        </a>
+                                                                                    </td> -->
                                                                                     <td>Labour</td>
                                                                                     <td ng-if="labour.is_free_service == 1">
                                                                                         <p class="text-danger">Yes</p>
@@ -171,11 +178,16 @@
                                                                                     <td class="text-right">{{labour.total_amount}}</td>
                                                                                 </tr>
                                                                                 <tr ng-if="part.split_order_type_id == split_order_type.id" ng-repeat="(part_key,part) in part_details">
-                                                                                    <td class="action width-100" ng-if="split_order_type.paid_by_id !=10013 && job_card.status_id == 8231">
+                                                                                    <td class="action width-100" ng-if="(split_order_type.paid_by_id ==10013 ? $ctrl.hasPermission('inward-job-card-tab-split-order-paid-edit') ? true:false : true) && job_card.status_id == 8231">
                                                                                         <a href="" ng-click="splitOrderPartChange(part.id,1,key,split_order_type.id)">
                                                                                             <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
                                                                                         </a>
                                                                                     </td>
+                                                                                    <!-- <td class="action width-100" ng-if="split_order_type.paid_by_id !=10013 && job_card.status_id == 8231">
+                                                                                        <a href="" ng-click="splitOrderPartChange(part.id,1,key,split_order_type.id)">
+                                                                                            <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
+                                                                                        </a>
+                                                                                    </td> -->
                                                                                     <td>Part</td>
                                                                                     <td ng-if="part.is_free_service == 1">
                                                                                         <p class="text-danger">Yes</p>
