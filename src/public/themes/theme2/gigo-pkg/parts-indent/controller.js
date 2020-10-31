@@ -631,7 +631,7 @@ app.component('partsIndentPartsView', {
                         });
                 }
                 if (part.uom == undefined) {
-                    // PartSvc.getFormData(part.id, '16')
+                    // PartSvc.read(part.id)
                     //     .then(function(response) {
                     //         $scope.parts_indent.part = response.data.part;
                     //         $scope.parts_indent.part.qty = part.qty;
@@ -639,7 +639,6 @@ app.component('partsIndentPartsView', {
                     //         $scope.parts_indent.repair_order_parts = $scope.repair_orders;
                     //         // $scope.calculatePartAmount();
                     //     });
-                    console.log(PartSvc);
                     PartSvc.getFormData({ outletId: $scope.job_order.outlet_id, partId: part.id })
                         .then(function(response) {
                             // $scope.warranty_job_order_request.job_order.outlet.business = response.data.business;
@@ -726,7 +725,6 @@ app.component('partsIndentPartsView', {
                 }
             }
             // PartSvc.read(part.id)
-            // PartSvc.getFormData(part.id, '16')
             //     .then(function(response) {
             //         // $scope.parts_indent.part.mrp = response.data.part.part_stock ? (response.data.part.part_stock.stock != 0 ? response.data.part.part_stock.mrp : (response.data.part.job_order_parts.length != 0 ? response.data.part.job_order_parts[0].rate : '0')) : '0';
             //         $scope.parts_indent.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.stock > 0 ? response.data.part.part_stock.mrp : '0' : '0';
@@ -740,7 +738,6 @@ app.component('partsIndentPartsView', {
             //         $scope.parts_indent.part.qty = $qty;
             //         $scope.calculatePartAmount();
             //     });
-            console.log(PartSvc);
             PartSvc.getFormData({ outletId: $scope.job_order.outlet_id, partId: part.id })
                 .then(function(response) {
                     // $scope.parts_indent.part.mrp = response.data.part.part_stock ? (response.data.part.part_stock.stock != 0 ? response.data.part.part_stock.mrp : (response.data.part.job_order_parts.length != 0 ? response.data.part.job_order_parts[0].rate : '0')) : '0';

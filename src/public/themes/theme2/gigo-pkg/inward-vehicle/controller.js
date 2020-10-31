@@ -3043,7 +3043,23 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                     $qty = part.qty;
                 }
             }
-            PartSvc.read(part.id)
+            // PartSvc.read(part.id)
+            //     .then(function(response) {
+            //         console.log(response);
+
+            //         $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.stock > 0 ? response.data.part.part_stock.mrp : '0' : '0';
+
+            //         if (part.id == $scope.part_id) {
+            //             $scope.schedule_maintainance_part.part.mrp = $scope.part_mrp;
+            //         }
+            //         // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? (response.data.part.part_stock.stock != 0 ? response.data.part.part_stock.mrp : (response.data.part.job_order_parts.length != 0 ? response.data.part.job_order_parts[0].rate : '0')) : '0';
+            //         // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock.stock != 0 ? response.data.part.part_stock.mrp : part.job_order_parts[0].rate;
+            //         $scope.schedule_maintainance_part.part.total_amount = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
+            //         $scope.available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
+            //         $scope.schedule_maintainance_part.part.qty = $qty;
+            //         $scope.calculatePartAmount();
+            //     });
+            PartSvc.getFormData({ outletId: $scope.job_order.outlet_id, partId: part.id })
                 .then(function(response) {
                     console.log(response);
 
@@ -3058,6 +3074,8 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                     $scope.available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
                     $scope.schedule_maintainance_part.part.qty = $qty;
                     $scope.calculatePartAmount();
+                }).catch(function(error) {
+                    console.log(error);
                 });
 
         }
@@ -3143,12 +3161,21 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                         });
                 }
                 if (part.uom == undefined) {
-                    PartSvc.read(part.part_id)
+                    // PartSvc.read(part.part_id)
+                    //     .then(function(response) {
+                    //         $scope.schedule_maintainance_part.part = response.data.part;
+                    //         $scope.schedule_maintainance_part.part.qty = part.qty;
+                    //         $scope.job_order.repair_order = $scope.repair_orders;
+                    //         $scope.calculatePartAmount();
+                    //     });
+                    PartSvc.getFormData({ outletId: $scope.job_order.outlet_id, partId: part.part_id })
                         .then(function(response) {
                             $scope.schedule_maintainance_part.part = response.data.part;
                             $scope.schedule_maintainance_part.part.qty = part.qty;
                             $scope.job_order.repair_order = $scope.repair_orders;
                             $scope.calculatePartAmount();
+                        }).catch(function(error) {
+                            console.log(error);
                         });
                 }
                 $scope.schedule_maintainance_part.part = part;
@@ -3617,7 +3644,22 @@ app.component('inwardVehiclePayableLabourPartForm', {
                     $qty = part.qty;
                 }
             }
-            PartSvc.read(part.id)
+            // PartSvc.read(part.id)
+            //     .then(function(response) {
+            //         console.log(response);
+            //         $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.stock > 0 ? response.data.part.part_stock.mrp : '0' : '0';
+
+            //         if (part.id == $scope.part_id) {
+            //             $scope.schedule_maintainance_part.part.mrp = $scope.part_mrp;
+            //         }
+            //         // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? (response.data.part.part_stock.stock != 0 ? response.data.part.part_stock.mrp : (response.data.part.job_order_parts.length != 0 ? response.data.part.job_order_parts[0].rate : '0')) : '0';
+            //         // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock.stock != '0.00' ? response.data.part.part_stock.mrp : part.job_order_parts[0].rate;
+            //         $scope.schedule_maintainance_part.part.total_amount = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
+            //         $scope.available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
+            //         $scope.schedule_maintainance_part.part.qty = $qty;
+            //         $scope.calculatePartAmount();
+            //     });
+            PartSvc.getFormData({ outletId: $scope.job_order.outlet_id, partId: part.id })
                 .then(function(response) {
                     console.log(response);
                     $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.stock > 0 ? response.data.part.part_stock.mrp : '0' : '0';
@@ -3631,6 +3673,8 @@ app.component('inwardVehiclePayableLabourPartForm', {
                     $scope.available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
                     $scope.schedule_maintainance_part.part.qty = $qty;
                     $scope.calculatePartAmount();
+                }).catch(function(error) {
+                    console.log(error);
                 });
 
         }
@@ -3716,12 +3760,21 @@ app.component('inwardVehiclePayableLabourPartForm', {
                         });
                 }
                 if (part.uom == undefined) {
-                    PartSvc.read(part.part_id)
+                    // PartSvc.read(part.part_id)
+                    //     .then(function(response) {
+                    //         $scope.schedule_maintainance_part.part = response.data.part;
+                    //         $scope.schedule_maintainance_part.part.qty = part.qty;
+                    //         $scope.job_order.repair_order = $scope.repair_orders;
+                    //         $scope.calculatePartAmount();
+                    //     });
+                    PartSvc.getFormData({ outletId: $scope.job_order.outlet_id, partId: part.part_id })
                         .then(function(response) {
                             $scope.schedule_maintainance_part.part = response.data.part;
                             $scope.schedule_maintainance_part.part.qty = part.qty;
                             $scope.job_order.repair_order = $scope.repair_orders;
                             $scope.calculatePartAmount();
+                        }).catch(function(error) {
+                            console.log(error);
                         });
                 }
                 $scope.schedule_maintainance_part.part = part;

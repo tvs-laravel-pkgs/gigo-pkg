@@ -2368,12 +2368,21 @@ app.component('jobCardScheduleMaintenanceForm', {
                         });
                 }
                 if (part.uom == undefined) {
-                    PartSvc.read(part.part_id)
+                    // PartSvc.read(part.part_id)
+                    //     .then(function(response) {
+                    //         $scope.schedule_maintainance_part.part = response.data.part;
+                    //         $scope.schedule_maintainance_part.part.qty = part.qty;
+                    //         $scope.job_card.repair_order = $scope.repair_orders;
+                    //         // $scope.calculatePartAmount();
+                    //     });
+                    PartSvc.getFormData({ outletId: $scope.job_order.outlet_id, partId: part.part_id })
                         .then(function(response) {
                             $scope.schedule_maintainance_part.part = response.data.part;
                             $scope.schedule_maintainance_part.part.qty = part.qty;
                             $scope.job_card.repair_order = $scope.repair_orders;
                             // $scope.calculatePartAmount();
+                        }).catch(function(error) {
+                            console.log(error);
                         });
                 }
                 $scope.schedule_maintainance_part.part = part;
@@ -2533,7 +2542,24 @@ app.component('jobCardScheduleMaintenanceForm', {
                     $qty = part.qty;
                 }
             }
-            PartSvc.read(part.id)
+            // PartSvc.read(part.id)
+            //     .then(function(response) {
+            //         console.log(response);
+            //         // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? (response.data.part.part_stock.stock != 0 ? response.data.part.part_stock.mrp : (response.data.part.job_order_parts.length != 0 ? response.data.part.job_order_parts[0].rate : '0')) : '0';
+            //         $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.stock > 0 ? response.data.part.part_stock.mrp : '0' : '0';
+
+            //         if (part.id == $scope.part_id) {
+            //             $scope.schedule_maintainance_part.part.mrp = $scope.part_mrp;
+            //         }
+
+            //         // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.mrp : '0';
+            //         $scope.schedule_maintainance_part.part.total_amount = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
+            //         $scope.available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
+            //         $scope.schedule_maintainance_part.part.qty = $qty;
+            //         $scope.calculatePartAmount();
+            //     });
+
+            PartSvc.getFormData({ outletId: $scope.job_order.outlet_id, partId: part.id })
                 .then(function(response) {
                     console.log(response);
                     // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? (response.data.part.part_stock.stock != 0 ? response.data.part.part_stock.mrp : (response.data.part.job_order_parts.length != 0 ? response.data.part.job_order_parts[0].rate : '0')) : '0';
@@ -2548,6 +2574,8 @@ app.component('jobCardScheduleMaintenanceForm', {
                     $scope.available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
                     $scope.schedule_maintainance_part.part.qty = $qty;
                     $scope.calculatePartAmount();
+                }).catch(function(error) {
+                    console.log(error);
                 });
 
         }
@@ -2950,7 +2978,24 @@ app.component('jobCardPayableLabourPartsForm', {
                     $qty = part.qty;
                 }
             }
-            PartSvc.read(part.id)
+            // PartSvc.read(part.id)
+            //     .then(function(response) {
+            //         console.log(response);
+            //         // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? (response.data.part.part_stock.stock != 0 ? response.data.part.part_stock.mrp : (response.data.part.job_order_parts.length != 0 ? response.data.part.job_order_parts[0].rate : '0')) : '0';
+            //         $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.stock > 0 ? response.data.part.part_stock.mrp : '0' : '0';
+
+            //         if (part.id == $scope.part_id) {
+            //             $scope.schedule_maintainance_part.part.mrp = $scope.part_mrp;
+            //         }
+
+            //         // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.mrp : '0';
+            //         $scope.schedule_maintainance_part.part.total_amount = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
+            //         $scope.available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
+            //         $scope.schedule_maintainance_part.part.qty = $qty;
+            //         $scope.calculatePartAmount();
+            //     });
+
+            PartSvc.getFormData({ outletId: $scope.job_order.outlet_id, partId: part.id })
                 .then(function(response) {
                     console.log(response);
                     // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? (response.data.part.part_stock.stock != 0 ? response.data.part.part_stock.mrp : (response.data.part.job_order_parts.length != 0 ? response.data.part.job_order_parts[0].rate : '0')) : '0';
@@ -2965,6 +3010,8 @@ app.component('jobCardPayableLabourPartsForm', {
                     $scope.available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
                     $scope.schedule_maintainance_part.part.qty = $qty;
                     $scope.calculatePartAmount();
+                }).catch(function(error) {
+                    console.log(error);
                 });
 
         }
@@ -3062,12 +3109,22 @@ app.component('jobCardPayableLabourPartsForm', {
                         });
                 }
                 if (part.uom == undefined) {
-                    PartSvc.read(part.part_id)
+                    // PartSvc.read(part.part_id)
+                    //     .then(function(response) {
+                    //         $scope.schedule_maintainance_part.part = response.data.part;
+                    //         $scope.schedule_maintainance_part.part.qty = part.qty;
+                    //         $scope.job_card.repair_order = $scope.repair_orders;
+                    //         // $scope.calculatePartAmount();
+                    //     });
+
+                    PartSvc.getFormData({ outletId: $scope.job_order.outlet_id, partId: part.part_id })
                         .then(function(response) {
                             $scope.schedule_maintainance_part.part = response.data.part;
                             $scope.schedule_maintainance_part.part.qty = part.qty;
                             $scope.job_card.repair_order = $scope.repair_orders;
                             // $scope.calculatePartAmount();
+                        }).catch(function(error) {
+                            console.log(error);
                         });
                 }
                 $scope.schedule_maintainance_part.part = part;

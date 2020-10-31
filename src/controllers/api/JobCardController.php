@@ -1930,13 +1930,13 @@ class JobCardController extends Controller {
 					]);
 				}
 
-				//Check Parts Requsted or not
-				$job_order_parts = JobOrderPart::where('job_order_id', $job_card->job_order_id)->whereNull('removal_reason_id')->count();
-				if ($job_order_parts > 0) {
-					$job_card->status_id = 8227; //Waiting for Parts Confirmation
-				} else {
-					$job_card->status_id = 8231; //Ready for Split Order
-				}
+				// //Check Parts Requsted or not
+				// $job_order_parts = JobOrderPart::where('job_order_id', $job_card->job_order_id)->whereNull('removal_reason_id')->count();
+				// if ($job_order_parts > 0) {
+				$job_card->status_id = 8227; //Waiting for Parts Confirmation
+				// } else {
+				// 	$job_card->status_id = 8231; //Ready for Split Order
+				// }
 
 				$job_card->work_completed_at = Carbon::now();
 
