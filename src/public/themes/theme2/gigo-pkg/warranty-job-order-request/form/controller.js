@@ -940,11 +940,29 @@ app.component('warrantyJobOrderRequestForm', {
         };
 
         $scope.calculateHandlingCharge = function(field = null) {
-            $handling_charge = parseFloat($scope.wjor_part.net_amount) * (parseFloat($scope.wjor_part.handling_charge_percentage) / 100);
+            // $handling_charge = parseFloat($scope.wjor_part.net_amount) * (parseFloat($scope.wjor_part.handling_charge_percentage) / 100);
+            // if (isNaN($handling_charge)) {
+            //     $handling_charge = 0;
+            // }
+            // $scope.wjor_part.handling_charge = $handling_charge.toFixed(2);
+
+            $total_tax_amount = 0;
+            angular.forEach($scope.wjor_part.taxes, function(value, key) {
+                $total_tax_amount += value.amount;
+            });
+
+            if (isNaN($total_tax_amount)) {
+                $total_tax_amount = 0;
+            }
+            // console.log($total_tax_amount);
+            $parts_amount = parseFloat($scope.wjor_part.net_amount) + $total_tax_amount;
+
+            $handling_charge = parseFloat($parts_amount) * (parseFloat($scope.wjor_part.handling_charge_percentage) / 100);
             if (isNaN($handling_charge)) {
                 $handling_charge = 0;
             }
             $scope.wjor_part.handling_charge = $handling_charge.toFixed(2);
+
             /*if ($scope.wjor_part.tax_code) {
                 angular.forEach($scope.wjor_part.tax_code.taxes, function(tax) {
                     if (tax.name == 'Handling Charges') {
