@@ -21,6 +21,7 @@ use App\FinancialYear;
 use App\FloatingGatePass;
 use App\FloatStock;
 use App\GateLog;
+use App\GatePass;
 use App\GigoInvoice;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\WpoSoapController;
@@ -6412,170 +6413,276 @@ class VehicleInwardController extends Controller {
 		// dd($request->all());
 		DB::beginTransaction();
 		try {
-			$validator = Validator::make($request->all(), [
-				'job_order_id' => [
-					'required',
-					'integer',
-					'exists:job_orders,id',
-				],
-				'estimation_type_id' => [
-					'required',
-					'integer',
-					'exists:estimation_types,id',
-				],
-				'minimum_payable_amount' => [
-					'required',
-					'numeric',
-				],
-			]);
+			if ($request->estimation_charges_required == 1) {
 
-			if ($validator->fails()) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => $validator->errors()->all(),
-				]);
-			}
-
-			if (date('m') > 3) {
-				$year = date('Y') + 1;
-			} else {
-				$year = date('Y');
-			}
-			//GET FINANCIAL YEAR ID
-			$financial_year = FinancialYear::where('from', $year)
-				->where('company_id', Auth::user()->company_id)
-				->first();
-			if (!$financial_year) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => [
-						'Fiancial Year Not Found',
+				$validator = Validator::make($request->all(), [
+					'job_order_id' => [
+						'required',
+						'integer',
+						'exists:job_orders,id',
+					],
+					'estimation_type_id' => [
+						'required',
+						'integer',
+						'exists:estimation_types,id',
+					],
+					'minimum_payable_amount' => [
+						'required',
+						'numeric',
 					],
 				]);
-			}
-			//GET BRANCH/OUTLET
-			$branch = Outlet::where('id', Auth::user()->employee->outlet_id)->first();
 
-			//GENERATE GATE IN VEHICLE NUMBER
-			$generateNumber = SerialNumberGroup::generateNumber(25, $financial_year->id, $branch->state_id, $branch->id);
-			if (!$generateNumber['success']) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => [
-						'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
-					],
-				]);
-			}
+				if ($validator->fails()) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
+					]);
+				}
 
-			$job_order = JobOrder::with([
-				'vehicle',
-			])->find($request->job_order_id);
-
-			if (!$job_order) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => [
-						'Job Order Not Found',
-					],
-				]);
-			}
-
-			$job_order->estimation_type_id = $request->estimation_type_id;
-			$job_order->minimum_payable_amount = $request->minimum_payable_amount;
-			$job_order->estimate_ref_no = $generateNumber['number'];
-			$job_order->is_customer_agreed = 0;
-			$job_order->is_customer_approved = 0;
-			$job_order->status_id = 8475; // Estimation Payment Pending
-			$job_order->updated_by_id = Auth::user()->id;
-			$job_order->updated_at = Carbon::now();
-			$job_order->save();
-
-			//Update Gatelog Status
-			$gate_log = Gatelog::where('job_order_id', $job_order->id)
-				->update([
-					'status_id' => 8122, //Vehicle Inward Completed
-					'updated_by_id' => Auth::user()->id,
-					'updated_at' => Carbon::now(),
-				]);
-
-			// $customer_detail = Customer::select('customers.name', 'customers.mobile_no', 'vehicles.registration_number')
-			// 	->join('vehicle_owners', 'vehicle_owners.customer_id', 'customers.id')
-			// 	->join('vehicles', 'vehicle_owners.vehicle_id', 'vehicles.id')
-			// 	->join('job_orders', 'job_orders.vehicle_id', 'vehicles.id')
-			// 	->where('job_orders.id', $job_order->id)
-			// 	->orderBy('vehicle_owners.from_date', 'DESC')
-			// 	->first();
-
-			// if (!$customer_detail) {
-			// 	return response()->json([
-			// 		'success' => false,
-			// 		'error' => 'Customer Details Not Found!',
-			// 	]);
-			// }
-
-			$params['job_order_id'] = $request->job_order_id;
-			$params['customer_id'] = $job_order->customer->id;
-			$params['outlet_id'] = $job_order->outlet->id;
-			//ESTIMATION INVOICE ADD
-			if ($request->minimum_payable_amount > 0) {
-				$params['invoice_of_id'] = 7427; // PART JOB CARD
-				$params['invoice_amount'] = $request->minimum_payable_amount;
+				if (date('m') > 3) {
+					$year = date('Y') + 1;
+				} else {
+					$year = date('Y');
+				}
+				//GET FINANCIAL YEAR ID
+				$financial_year = FinancialYear::where('from', $year)
+					->where('company_id', Auth::user()->company_id)
+					->first();
+				if (!$financial_year) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'Fiancial Year Not Found',
+						],
+					]);
+				}
+				//GET BRANCH/OUTLET
+				$branch = Outlet::where('id', Auth::user()->employee->outlet_id)->first();
 
 				//GENERATE GATE IN VEHICLE NUMBER
-				$generateNumber = SerialNumberGroup::generateNumber(101, $financial_year->id, $branch->state_id, $branch->id);
+				$generateNumber = SerialNumberGroup::generateNumber(25, $financial_year->id, $branch->state_id, $branch->id);
 				if (!$generateNumber['success']) {
 					return response()->json([
 						'success' => false,
 						'error' => 'Validation Error',
 						'errors' => [
-							'No Invoice Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
+							'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
 						],
 					]);
 				}
 
-				$error_messages_1 = [
-					'number.required' => 'Serial number is required',
-					'number.unique' => 'Serial number is already taken',
-				];
-				$validator_1 = Validator::make($generateNumber, [
-					'number' => [
+				$job_order = JobOrder::with([
+					'vehicle',
+				])->find($request->job_order_id);
+
+				if (!$job_order) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'Job Order Not Found',
+						],
+					]);
+				}
+
+				$job_order->estimation_type_id = $request->estimation_type_id;
+				$job_order->minimum_payable_amount = $request->minimum_payable_amount;
+				$job_order->estimate_ref_no = $generateNumber['number'];
+				$job_order->is_customer_agreed = 0;
+				$job_order->is_customer_approved = 0;
+				$job_order->status_id = 8475; // Estimation Payment Pending
+				$job_order->updated_by_id = Auth::user()->id;
+				$job_order->updated_at = Carbon::now();
+				$job_order->save();
+
+				//Update Gatelog Status
+				$gate_log = Gatelog::where('job_order_id', $job_order->id)
+					->update([
+						'status_id' => 8122, //Vehicle Inward Completed
+						'updated_by_id' => Auth::user()->id,
+						'updated_at' => Carbon::now(),
+					]);
+
+				// $customer_detail = Customer::select('customers.name', 'customers.mobile_no', 'vehicles.registration_number')
+				// 	->join('vehicle_owners', 'vehicle_owners.customer_id', 'customers.id')
+				// 	->join('vehicles', 'vehicle_owners.vehicle_id', 'vehicles.id')
+				// 	->join('job_orders', 'job_orders.vehicle_id', 'vehicles.id')
+				// 	->where('job_orders.id', $job_order->id)
+				// 	->orderBy('vehicle_owners.from_date', 'DESC')
+				// 	->first();
+
+				// if (!$customer_detail) {
+				// 	return response()->json([
+				// 		'success' => false,
+				// 		'error' => 'Customer Details Not Found!',
+				// 	]);
+				// }
+
+				$params['job_order_id'] = $request->job_order_id;
+				$params['customer_id'] = $job_order->customer->id;
+				$params['outlet_id'] = $job_order->outlet->id;
+				//ESTIMATION INVOICE ADD
+				if ($request->minimum_payable_amount > 0) {
+					$params['invoice_of_id'] = 7427; // PART JOB CARD
+					$params['invoice_amount'] = $request->minimum_payable_amount;
+
+					//GENERATE GATE IN VEHICLE NUMBER
+					$generateNumber = SerialNumberGroup::generateNumber(101, $financial_year->id, $branch->state_id, $branch->id);
+					if (!$generateNumber['success']) {
+						return response()->json([
+							'success' => false,
+							'error' => 'Validation Error',
+							'errors' => [
+								'No Invoice Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
+							],
+						]);
+					}
+
+					$error_messages_1 = [
+						'number.required' => 'Serial number is required',
+						'number.unique' => 'Serial number is already taken',
+					];
+					$validator_1 = Validator::make($generateNumber, [
+						'number' => [
+							'required',
+							'unique:invoices,invoice_number,' . $params['job_order_id'] . ',entity_id,company_id,' . Auth::user()->company_id,
+						],
+					], $error_messages_1);
+
+					$params['invoice_number'] = $generateNumber['number'];
+
+					$this->saveGigoInvoice($params);
+				}
+
+				$mobile_number = $job_order->contact_number;
+
+				if (!$mobile_number) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Customer Mobile Number Not Found',
+					]);
+				}
+
+				$url = url('/') . '/vehicle-inward/estimate/view/' . $job_order->id;
+
+				$short_url = ShortUrl::createShortLink($url, $maxlength = "7");
+
+				$message = 'Dear Customer,Kindly click below link to pay for TVS job order ' . $short_url . ' Vehicle Reg Number : ' . $job_order->vehicle->registration_number;
+
+				$msg = sendSMSNotification($mobile_number, $message);
+
+				$success_message = 'Estimation Details Sent to Customer Successfully';
+
+			} else {
+
+				$validator = Validator::make($request->all(), [
+					'job_order_id' => [
 						'required',
-						'unique:invoices,invoice_number,' . $params['job_order_id'] . ',entity_id,company_id,' . Auth::user()->company_id,
+						'integer',
+						'exists:job_orders,id',
 					],
-				], $error_messages_1);
-
-				$params['invoice_number'] = $generateNumber['number'];
-
-				$this->saveGigoInvoice($params);
-			}
-
-			$mobile_number = $job_order->contact_number;
-
-			if (!$mobile_number) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Customer Mobile Number Not Found',
 				]);
+
+				if ($validator->fails()) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
+					]);
+				}
+
+				// $job_order = JobOrder::with([
+				// 	'vehicle',
+				// ])->find($request->job_order_id);
+
+				$job_order = JobOrder::find($request->job_order_id);
+
+				if (!$job_order) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'Job Order Not Found',
+						],
+					]);
+				}
+
+				$job_order->status_id = 8470; // VEHICLE INWARD COMPLETED
+				$job_order->is_customer_agreed = 0;
+				$job_order->is_customer_approved = 0;
+				$job_order->estimation_type_id = NULL;
+				$job_order->minimum_payable_amount = NULL;
+				$job_order->updated_by_id = Auth::user()->id;
+				$job_order->updated_at = Carbon::now();
+				$job_order->save();
+
+				$gate_log = GateLog::where('job_order_id', $job_order->id)->first();
+
+				// dd($gate_log);
+				if ($gate_log) {
+
+					if (date('m') > 3) {
+						$year = date('Y') + 1;
+					} else {
+						$year = date('Y');
+					}
+					//GET FINANCIAL YEAR ID
+					$financial_year = FinancialYear::where('from', $year)
+						->where('company_id', $gate_log->company_id)
+						->first();
+
+					$branch = Outlet::where('id', $gate_log->outlet_id)->first();
+
+					if ($branch && $financial_year) {
+
+						//GENERATE GatePASS
+						$generateNumber = SerialNumberGroup::generateNumber(29, $financial_year->id, $branch->state_id, $branch->id);
+
+						if ($generateNumber['success']) {
+
+							$gate_pass = GatePass::firstOrNew(['job_order_id' => $job_order->id, 'type_id' => 8280]); //VEHICLE GATE PASS
+
+							$gate_pass->gate_pass_of_id = 11280;
+							$gate_pass->entity_id = $job_order->id;
+
+							if (!$gate_pass->exists) {
+								$gate_pass->updated_at = Carbon::now();
+								$gate_pass->updated_by_id = Auth::user()->id;
+							} else {
+								$gate_pass->created_at = Carbon::now();
+								$gate_pass->created_by_id = Auth::user()->id;
+							}
+
+							$gate_pass->company_id = $gate_log->company_id;
+							$gate_pass->number = $generateNumber['number'];
+							$gate_pass->status_id = 8340; //GATE OUT PENDING
+							$gate_pass->save();
+
+							$gate_log->gate_pass_id = $gate_pass->id;
+							$gate_log->status_id = 8123; //GATE OUT PENDING
+							$gate_log->updated_by_id = Auth::user()->id;
+							$gate_log->updated_at = Carbon::now();
+							$gate_log->save();
+
+						}
+
+						//Generate GatePass PDF
+						$generate_estimate_gatepass_pdf = JobOrder::generateEstimateGatePassPDF($job_order->id, $type = 'GateIn');
+						// $generate_covering_pdf = JobOrder::generateCoveringLetterPDF($job_order->id);
+					}
+				}
+
+				$success_message = 'Vehicle Inward Completed Successfully';
 			}
-
-			$url = url('/') . '/vehicle-inward/estimate/view/' . $job_order->id;
-
-			$short_url = ShortUrl::createShortLink($url, $maxlength = "7");
-
-			$message = 'Dear Customer,Kindly click below link to pay for TVS job order ' . $short_url . ' Vehicle Reg Number : ' . $job_order->vehicle->registration_number;
-
-			$msg = sendSMSNotification($mobile_number, $message);
 
 			DB::commit();
 
 			return response()->json([
 				'success' => true,
 				'job_order' => $job_order,
-				'message' => 'Estimation Details Sent to Cusotmer Successfully',
+				'message' => $success_message,
 			]);
 		} catch (\Exception $e) {
 			return response()->json([

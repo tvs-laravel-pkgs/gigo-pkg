@@ -45,7 +45,25 @@ input[type=number] {
                                             <h5 class="color-primary mb-10"><b>Estimation Denied by Customer</b></h5>
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="row">
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Estimation Charges Required ?
+                                                        </label>
+                                                        <div class="common-radio-button type-4">
+                                                            <input type="radio" id="registered" name="estimation_charges_required" ng-value="1" value="1" ng-model="estimation_charges_required" ng-checked="estimation_charges_required">
+                                                            <label for="registered">
+                                                                Yes
+                                                            </label>
+                                                            <input type="radio" id="unregistered" name="estimation_charges_required" ng-value="0" value="0" ng-model="estimation_charges_required" ng-checked="!estimation_charges_required">
+                                                            <label for="unregistered">
+                                                                No
+                                                            </label>
+                                                        </div>
+                                                        <div id="errorRoadTestRequired"></div>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3" ng-if="estimation_charges_required == 1">
                                                     <div class="form-group">
                                                         <label>
                                                             Estimation Type
@@ -64,7 +82,7 @@ input[type=number] {
                                                         <input type="hidden" name="estimation_type_id" value="{{job_order.estimation_type_id}}">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-4">
+                                                <div class="col-md-3" ng-if="estimation_charges_required == 1">
                                                     <div class="form-group">
                                                         <label>Minimum Payable Amount
                                                             <sup class="mandatory">*</sup>

@@ -4759,10 +4759,17 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
                         $location.path('/inward-vehicle/customer-confirmation/' + $scope.job_order.id);
                     }
                     $scope.estimation_type = res.estimation_type;
-                    $scope.minimum_payable_amount = $scope.job_order.minimum_payable_amount;
+                    if (res.job_order.status_id == 8475) {
+                        $scope.estimation_charges_required = 1;
+                    } else {
+                        $scope.estimation_charges_required = 0;
+                    }
 
                     $scope.getSelectedEstimationType($scope.job_order.estimation_type_id, 1);
+
                     $scope.$apply();
+                    
+                    $scope.minimum_payable_amount = $scope.job_order.minimum_payable_amount;
                 })
                 .fail(function(xhr) {
                     custom_noty('error', 'Something went wrong at server');
@@ -4829,11 +4836,17 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
                             }
                             console.log(res.job_order);
                             $('.submit').button('reset');
-                            $('#confirm_notification').modal('show');
-                            $scope.estimate_ref_no = res.job_order.estimate_ref_no;
+
+                            custom_noty('success', res.message);
+
+                            if ($scope.estimation_charges_required == 1) {
+                                $('#confirm_notification').modal('show');
+                                $scope.estimate_ref_no = res.job_order.estimate_ref_no;
+                            } else {
+                                $location.path('/inward-vehicle/table-list');
+                            }
 
                             $scope.$apply();
-
                         })
                         .fail(function(xhr) {
                             $rootScope.loading = false;
