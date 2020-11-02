@@ -7209,6 +7209,13 @@ class VehicleInwardController extends Controller {
 	public function getPartsSearchList(Request $request) {
 		// dd($request->all());
 		$key = $request->key;
+
+		if ($request->outlet_id) {
+			$outlet_id = $request->outlet_id;
+		} else {
+			$outlet_id = Auth::user()->employee->outlet_id;
+		}
+
 		$list = [];
 
 		if ($key) {
@@ -7219,9 +7226,9 @@ class VehicleInwardController extends Controller {
 				'part_stocks.stock',
 				'part_stocks.mrp'
 			)
-				->leftJoin('part_stocks', function ($join) {
+				->leftJoin('part_stocks', function ($join) use ($outlet_id) {
 					$join->on('part_stocks.part_id', 'parts.id')
-						->where('outlet_id', Auth::user()->employee->outlet_id);
+						->where('outlet_id', $outlet_id);
 				})
 				->where(function ($q) use ($key) {
 					$q->where('parts.code', 'like', $key . '%')
