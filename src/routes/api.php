@@ -293,6 +293,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('vehicle-inward/estimate/link/generate', 'VehicleInwardController@generateUrl');
 
 		//INITIATE JOB SAVE
+		Route::post('vehicle-inward/cancel', 'VehicleInwardController@inwardCancel');
+
+		//INITIATE JOB SAVE
 		Route::post('vehicle-inward/initiate-job/save', 'VehicleInwardController@saveInitiateJob');
 
 		//LABOUR PARTS DELETE STATUS UPADET

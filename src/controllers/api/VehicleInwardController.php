@@ -624,10 +624,14 @@ class VehicleInwardController extends Controller {
 				}
 			}
 
+			//Inward Cancel Process
+			$inward_cancel_status = $job_order->inwardProcessChecks()->where('tab_id', 8706)->pluck('is_form_filled')->first();
+
 			$params['config_type_id'] = 32;
 			$params['add_default'] = false;
 			$extras = [
 				'inspection_results' => Config::getDropDownList($params), //VEHICLE INSPECTION RESULTS
+				'inward_cancel_status' => $inward_cancel_status,
 			];
 
 			$inventory_params['field_type_id'] = [11, 12];
@@ -6986,6 +6990,138 @@ class VehicleInwardController extends Controller {
 				'message' => 'Vehicle Inwarded Successfully',
 				'repair_order_and_parts_detils' => $repair_order_and_parts_detils,
 			]);
+		} catch (\Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Error!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
+			]);
+		}
+	}
+
+	//Inward Cancel
+	public function inwardCancel(Request $request) {
+		// dd($request->all());
+		try {
+
+			$validator = Validator::make($request->all(), [
+				'job_order_id' => [
+					'required',
+					'integer',
+					'exists:job_orders,id',
+				],
+				'inward_cancel_reason' => [
+					'required',
+				],
+			]);
+
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			DB::beginTransaction();
+
+			$job_order = JobOrder::find($request->job_order_id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found',
+					],
+				]);
+			}
+
+			$inward_process_check = $job_order->inwardProcessChecks()
+				->whereIn('tab_id', [8700, 8701])
+				->where('is_form_filled', 0)
+				->first();
+			if ($inward_process_check) {
+				return response()->json([
+					'success' => false,
+					'message' => 'Validation Error',
+					'errors' => [
+						'Please Save Vehicle & Customer Details',
+					],
+				]);
+			}
+
+			$job_order->status_id = 8476; // VEHICLE INWARD CANCELLED
+			$job_order->inward_cancel_reason = $request->inward_cancel_reason;
+			$job_order->updated_by_id = Auth::user()->id;
+			$job_order->updated_at = Carbon::now();
+			$job_order->save();
+
+			$gate_log = GateLog::where('job_order_id', $job_order->id)->first();
+
+			// dd($gate_log);
+			if ($gate_log) {
+
+				if (date('m') > 3) {
+					$year = date('Y') + 1;
+				} else {
+					$year = date('Y');
+				}
+				//GET FINANCIAL YEAR ID
+				$financial_year = FinancialYear::where('from', $year)
+					->where('company_id', $gate_log->company_id)
+					->first();
+
+				$branch = Outlet::where('id', $gate_log->outlet_id)->first();
+
+				if ($branch && $financial_year) {
+
+					//GENERATE GatePASS
+					$generateNumber = SerialNumberGroup::generateNumber(29, $financial_year->id, $branch->state_id, $branch->id);
+
+					if ($generateNumber['success']) {
+
+						$gate_pass = GatePass::firstOrNew(['job_order_id' => $job_order->id, 'type_id' => 8280]); //VEHICLE GATE PASS
+
+						$gate_pass->gate_pass_of_id = 11280;
+						$gate_pass->entity_id = $job_order->id;
+
+						if (!$gate_pass->exists) {
+							$gate_pass->updated_at = Carbon::now();
+							$gate_pass->updated_by_id = Auth::user()->id;
+						} else {
+							$gate_pass->created_at = Carbon::now();
+							$gate_pass->created_by_id = Auth::user()->id;
+						}
+
+						$gate_pass->company_id = $gate_log->company_id;
+						$gate_pass->number = $generateNumber['number'];
+						$gate_pass->status_id = 8340; //GATE OUT PENDING
+						$gate_pass->save();
+
+						$gate_log->gate_pass_id = $gate_pass->id;
+						$gate_log->status_id = 8123; //GATE OUT PENDING
+						$gate_log->updated_by_id = Auth::user()->id;
+						$gate_log->updated_at = Carbon::now();
+						$gate_log->save();
+
+					}
+
+					//Generate GatePass PDF
+					$generate_estimate_gatepass_pdf = JobOrder::generateEstimateGatePassPDF($job_order->id, $type = 'GateIn');
+					// $generate_covering_pdf = JobOrder::generateCoveringLetterPDF($job_order->id);
+				}
+			}
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'Vehicle Inwarded Cancelled Successfully',
+			]);
+
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,

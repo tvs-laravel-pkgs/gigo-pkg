@@ -470,6 +470,8 @@ app.component('inwardVehicleView', {
                         self.exwarrany_status = 0;
                     }
 
+                    self.inward_cancel = 0;
+
                     //PDF
                     $scope.total_estimate = res.job_order.total_estimate;
                     $scope.estimate_pdf = res.job_order.estimate_pdf;
@@ -555,6 +557,69 @@ app.component('inwardVehicleView', {
                     });
             }
         });
+
+        //Save Form Data 
+        $scope.saveInwardCancel = function(id) {
+            var form_id = '#inward_cancel_form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'job_order_id': {
+                        required: true,
+                    },
+                    'inward_cancel_reason': {
+                        required: true,
+                    },
+                },
+                messages: {
+
+                },
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all tabs');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $scope.button_action(id, 1);
+                    $.ajax({
+                            url: base_url + '/api/vehicle-inward/cancel',
+                            method: "POST",
+                            data: formData,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            $scope.button_action(id, 2);
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+
+                            setTimeout(function() {
+                                $scope.fetchData();
+                            }, 1000);
+                        })
+                        .fail(function(xhr) {
+                            $scope.button_action(id, 2);
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+        $scope.button_action = function(id, type) {
+            if (type == 1) {
+                $('.submit').button('loading');
+                $('.btn-prev').bind('click', false);
+
+            } else {
+                $('.submit').button('reset');
+                $('.btn-prev').unbind('click', false);
+            }
+        }
     }
 });
 
@@ -4768,7 +4833,7 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
                     $scope.getSelectedEstimationType($scope.job_order.estimation_type_id, 1);
 
                     $scope.$apply();
-                    
+
                     $scope.minimum_payable_amount = $scope.job_order.minimum_payable_amount;
                 })
                 .fail(function(xhr) {
