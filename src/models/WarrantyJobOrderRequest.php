@@ -467,10 +467,50 @@ class WarrantyJobOrderRequest extends BaseModel {
 			if ($input['vehicle_search_type'] == 'true') {
 				$vehicle = Vehicle::find($input['vehicle_id']);
 			} else {
-				$vehicle = Vehicle::firstOrNew([
-					'company_id' => Auth::user()->company_id,
-					'engine_number' => $input['engine_number'],
-				]);
+				// $vehicle = Vehicle::firstOrNew([
+				// 	'company_id' => Auth::user()->company_id,
+				// 	'engine_number' => $input['engine_number'],
+				// ]);
+				$registration_number = str_replace("-", "", $input['registration_number']);
+
+				if ($registration_number) {
+					$vehicle = Vehicle::where([
+						'company_id' => Auth::user()->company_id,
+						'registration_number' => $registration_number,
+					])->first();
+
+					if (!$vehicle) {
+						//Chassis Number
+						if ($input['chassis_number']) {
+							$vehicle = Vehicle::firstOrNew([
+								'company_id' => Auth::user()->company_id,
+								'chassis_number' => $input['chassis_number'],
+							]);
+						}
+						//Engine Number
+						else {
+							$vehicle = Vehicle::firstOrNew([
+								'company_id' => Auth::user()->company_id,
+								'engine_number' => $input['engine_number'],
+							]);
+						}
+					}
+				} else {
+					//Chassis Number
+					if ($input['chassis_number']) {
+						$vehicle = Vehicle::firstOrNew([
+							'company_id' => Auth::user()->company_id,
+							'chassis_number' => $input['chassis_number'],
+						]);
+					}
+					//Engine Number
+					else {
+						$vehicle = Vehicle::firstOrNew([
+							'company_id' => Auth::user()->company_id,
+							'engine_number' => $input['engine_number'],
+						]);
+					}
+				}
 			}
 			if (!$vehicle) {
 				return [
