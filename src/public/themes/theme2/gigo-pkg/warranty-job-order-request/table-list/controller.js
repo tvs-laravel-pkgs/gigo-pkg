@@ -155,11 +155,12 @@ app.component('warrantyJobOrderRequestTableList', {
                 { data: 'outlet_name', name: 'outlets.code' },
                 { data: 'status', name: 'configs.name' },
                 { data: 'bharat_stage', name: 'bharat_stages.name' },
-                { data: 'requested_by', name: 'users.name' },
+                { data: 'approval_rating', name: 'warranty_job_order_requests.approval_rating' },
                 { data: 'customer_name', name: 'customers.name' },
                 { data: 'mod_name', name: 'mod.model_name' },
                 { data: 'registration_number', name: 'vehicles.registration_number' },
                 { data: 'chassis_number', name: 'vehicles.chassis_number' },
+                { data: 'requested_by', name: 'users.name' },
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)
