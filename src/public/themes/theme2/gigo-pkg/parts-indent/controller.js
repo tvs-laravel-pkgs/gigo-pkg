@@ -1278,9 +1278,9 @@ app.component('partsIndentIssuePartForm', {
                 $local_purchase_part = '(L)';
                 if ($part_code.indexOf($local_purchase_part) != -1) {
                     self.issued_mode_id = 8481;
-                    $scope.disabled = 1;
+                    // $scope.disabled = 1;
                 } else {
-                    $scope.disabled = 0;
+                    // $scope.disabled = 0;
                     self.issued_mode_id = 8480;
                 }
                 // }
