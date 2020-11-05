@@ -1294,7 +1294,7 @@ class VehicleInwardController extends Controller {
 		// dd($request->all());
 		try {
 
-			$job_order_parts = Part::join('job_order_parts', 'job_order_parts.part_id', 'parts.id')->where('job_order_parts.job_order_id', $request->id)->whereNull('removal_reason_id')->where('job_order_parts.is_customer_approved', 1)->select('job_order_parts.id as job_order_part_id', 'parts.code', 'parts.name')->get();
+			$job_order_parts = Part::join('job_order_parts', 'job_order_parts.part_id', 'parts.id')->where('job_order_parts.job_order_id', $request->id)->whereNull('removal_reason_id')->where('job_order_parts.is_customer_approved', 1)->select('job_order_parts.id as job_order_part_id', 'parts.code', 'parts.name', 'job_order_parts.rate as parts_rate')->get();
 
 			$repair_order_mechanics = User::leftJoin('repair_order_mechanics', 'repair_order_mechanics.mechanic_id', 'users.id')
 				->leftJoin('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')->select('users.*')
@@ -1302,14 +1302,16 @@ class VehicleInwardController extends Controller {
 				->where('job_order_repair_orders.job_order_id', $request->id)->groupBy('users.id')->get();
 
 			$issue_modes = Config::where('config_type_id', 109)->select('id', 'name')->get();
-			$issue_data = JobOrderIssuedPart::join('job_order_parts', 'job_order_issued_parts.job_order_part_id', 'job_order_parts.id')
+			$issue_data = JobOrderIssuedPart::join('job_order_parts', 'job_order_issued_parts.job_order_part_id', 'job_order_parts.id')->join('parts', 'parts.id', 'job_order_parts.part_id')
 				->where('job_order_issued_parts.id', $request->issue_part_id)
 				->select(
 					'job_order_issued_parts.issued_qty',
 					'job_order_issued_parts.issued_to_id',
 					'job_order_issued_parts.issued_mode_id',
 					'job_order_parts.part_id',
-					'job_order_issued_parts.job_order_part_id'
+					'job_order_parts.rate as parts_rate',
+					'job_order_issued_parts.job_order_part_id',
+					'parts.*'
 				)
 				->first();
 
@@ -1342,7 +1344,9 @@ class VehicleInwardController extends Controller {
 		// dd($request->all());
 		try {
 
-			$job_order = JobOrder::find($request->id);
+			$job_order = JobOrder::with([
+				'outlet',
+			])->find($request->id);
 
 			if (!$job_order) {
 				return response()->json([
@@ -1400,6 +1404,7 @@ class VehicleInwardController extends Controller {
 
 			$responseArr = array(
 				'success' => true,
+				'job_order' => $job_order,
 				'job_order_parts' => $parts_data,
 				'repair_order_mechanics' => $repair_order_mechanics,
 				'issue_modes' => $issue_modes,
@@ -1419,6 +1424,19 @@ class VehicleInwardController extends Controller {
 	public function getPartDetailPias(Request $request) {
 		// dd($request->all());
 		try {
+
+			$job_order = JobOrder::find($request->job_order_id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found!',
+					],
+				]);
+			}
+
 			$available_qty = 0;
 
 			$error = '';
@@ -1426,8 +1444,9 @@ class VehicleInwardController extends Controller {
 			//GET TODAY DATE OF ISSUED PARTS FROM BPAS JOB ORDER ISSUED PARTS
 			$part = Part::with([
 				'partType',
-				'partStock',
-				'partStock.outlet',
+				'partStock' => function ($query) use ($job_order) {
+					$query->where('outlet_id', $job_order->outlet_id);
+				},
 			])
 				->where('code', $request->code)
 				->first();

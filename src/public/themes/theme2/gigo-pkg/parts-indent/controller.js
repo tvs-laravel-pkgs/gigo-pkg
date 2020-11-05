@@ -1104,14 +1104,20 @@ app.component('partsIndentIssuePartForm', {
                     $scope.issued_part = res.issue_data;
                     $scope.floating_parts = res.floating_parts;
                     if ($scope.issued_part) {
-                        PartSvc.read($scope.issued_part.part_id)
-                            .then(function(response) {
-                                console.log(response.data.part);
-                                $scope.return_part = response.data.part;
-                                console.log($scope.return_part);
-                                $scope.issuedPartSelected(response.data.part);
-                                $scope.return_part.job_order_part_id = res.issue_data.job_order_part_id;
-                            });
+                        // PartSvc.read($scope.issued_part.part_id)
+                        //     .then(function(response) {
+                        //         // console.log(response.data.part);
+                        //         $scope.return_part = response.data.part;
+                        //         $scope.return_part.job_order_part_id = response.data.part.job_order_part_id;
+                        //         // console.log($scope.return_part);
+                        //         $scope.issuedPartSelected(response.data.part, 2);
+                        //         $scope.return_part.job_order_part_id = res.issue_data.job_order_part_id;
+                        //     });
+                        $scope.return_part = res.issue_data;
+                        // $scope.issuedPartSelected(res.issue_data, 2);
+
+                        console.log($scope.return_part);
+
                         $scope.issued_to = res.issue_to_user;
                         $scope.issued_part.issued_qty = parseFloat($scope.issued_part.issued_qty);
                         self.issued_mode_id = res.issue_data.issued_mode_id;
@@ -1263,23 +1269,24 @@ app.component('partsIndentIssuePartForm', {
                 }
             }
         }
-        $scope.issuedPartSelected = function(part) {
-            // console.log(part);
-            // alert(part.job_order_part_id);
-            // alert(part.code);
-            // if (!part.job_order_part_id) {
-            //     var job_order_part_id = $routeParams.id;
-            // } else {
-            //     var job_order_part_id = part.job_order_part_id;
-            // }
-
-            // alert(job_order_part_id);
+        $scope.issuedPartSelected = function(part, type) {
             if (part) {
-                console.log(part);
-                console.log(part.job_order_part_id);
+
+                $part_code = part.code;
+
+                // if (type == 1) {
+                $local_purchase_part = '(L)';
+                if ($part_code.indexOf($local_purchase_part) != -1) {
+                    self.issued_mode_id = 8481;
+                    $scope.disabled = 1;
+                } else {
+                    $scope.disabled = 0;
+                    self.issued_mode_id = 8480;
+                }
+                // }
 
                 $.ajax({
-                        url: base_url + '/api/inward-part-indent/get-part-detail-pias',
+                        url: base_url + '/api/part-indent/get-part-form-data',
                         method: "POST",
                         data: {
                             code: part.code,
