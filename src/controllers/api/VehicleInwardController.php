@@ -297,6 +297,10 @@ class VehicleInwardController extends Controller {
 				'amcMember.amcPolicy',
 				'GateInTradePlateNumber',
 				'GateInTradePlateNumber.outlet',
+				'gateInDriverSign',
+				'gateInSecuritySign',
+				'gateOutDriverSign',
+				'gateOutSecuritySign',
 			])
 				->select([
 					'job_orders.*',
