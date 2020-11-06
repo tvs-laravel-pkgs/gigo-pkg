@@ -100,7 +100,8 @@ input[type=number] {
                                                 <div class="col-md-4" ng-if="$ctrl.part_type == 1">
                                                     <div class="input-text form-group">
                                                         <label>Issuing Quantity <sup class="mandatory">*</sup></label>
-                                                        <input type="number" name="issued_qty" min="1" max="{{$ctrl.job_order_issued_part_id && part.part_type.name =='Lubricants' ? total_request_qty : total_balance_qty}}" ng-model="issued_part.issued_qty" step="0.01" class="form-control" placeholder="Enter Issue Quantity" autocomplete="off" />
+                                                        <input type="number" name="issued_qty" min="1" max="{{max_issue_qty}}" ng-model="issued_part.issued_qty" step="0.01" class="form-control" placeholder="Enter Issue Quantity" autocomplete="off" />
+                                                        <!-- <input type="number" name="issued_qty" min="1" max="{{$ctrl.job_order_issued_part_id && part.part_type.name =='Lubricants' ? total_request_qty : total_balance_qty}}" ng-model="issued_part.issued_qty" step="0.01" class="form-control" placeholder="Enter Issue Quantity" autocomplete="off" /> -->
                                                         <input type="hidden" name="available_qty" id="available_qty" value="{{available_quantity}}" ng-model="available_quantity">
                                                     </div><!-- Form Group -->
                                                 </div><!-- Column -->

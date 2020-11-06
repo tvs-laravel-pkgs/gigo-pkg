@@ -1116,7 +1116,7 @@ app.component('partsIndentIssuePartForm', {
                         $scope.return_part = res.issue_data;
                         // $scope.issuedPartSelected(res.issue_data, 2);
 
-                        console.log($scope.return_part);
+                        // console.log($scope.return_part);
 
                         $scope.issued_to = res.issue_to_user;
                         $scope.issued_part.issued_qty = parseFloat($scope.issued_part.issued_qty);
@@ -1313,6 +1313,7 @@ app.component('partsIndentIssuePartForm', {
                         $scope.total_request_qty = res.total_request_qty;
                         $scope.total_issued_qty = res.total_issued_qty;
                         $scope.total_balance_qty = res.total_balance_qty;
+                        $scope.max_issue_qty = res.max_issue_qty;
 
                         if ($scope.available_quantity >= 1) {
                             // $scope.issued_mode_id = 8480;

@@ -1501,6 +1501,18 @@ class VehicleInwardController extends Controller {
 				$available_qty = $part->partStock ? $part->partStock->stock : '0';
 			}
 
+			//Mentioned Parts Total Request Quantity
+			// $total_request_qty = JobOrderPart::join('parts', 'parts.id', 'job_order_parts.part_id')->where('job_order_parts.job_order_id', $request->job_order_id)->where('parts.code', $request->code)->pluck('job_order_parts.qty')->first();
+			$total_request_qty = JobOrderPart::join('parts', 'parts.id', 'job_order_parts.part_id')->where('job_order_parts.id', $request->job_order_part_id)->pluck('job_order_parts.qty')->first();
+
+			//Mentioned Parts Total Issued Quantity
+			// $total_issued_qty = JobOrderPart::join('parts', 'parts.id', 'job_order_parts.part_id')->join('job_order_issued_parts', 'job_order_issued_parts.job_order_part_id', 'job_order_parts.id')->where('job_order_parts.job_order_id', $request->job_order_id)->where('parts.code', $request->code)->sum('job_order_issued_parts.issued_qty');
+			$total_issued_qty = $part_issued_qty - $part_returned_qty;
+
+			$total_balance_qty = $total_request_qty - $total_issued_qty;
+
+			$max_issue_qty = $total_request_qty;
+
 			if ($available_qty > 0) {
 				if ($available_qty > $part_issued_qty) {
 					$available_qty = ($available_qty + $part_returned_qty) - $part_issued_qty;
@@ -1513,16 +1525,6 @@ class VehicleInwardController extends Controller {
 				}
 			}
 
-			//Mentioned Parts Total Request Quantity
-			// $total_request_qty = JobOrderPart::join('parts', 'parts.id', 'job_order_parts.part_id')->where('job_order_parts.job_order_id', $request->job_order_id)->where('parts.code', $request->code)->pluck('job_order_parts.qty')->first();
-			$total_request_qty = JobOrderPart::join('parts', 'parts.id', 'job_order_parts.part_id')->where('job_order_parts.id', $request->job_order_part_id)->pluck('job_order_parts.qty')->first();
-
-			//Mentioned Parts Total Issued Quantity
-			// $total_issued_qty = JobOrderPart::join('parts', 'parts.id', 'job_order_parts.part_id')->join('job_order_issued_parts', 'job_order_issued_parts.job_order_part_id', 'job_order_parts.id')->where('job_order_parts.job_order_id', $request->job_order_id)->where('parts.code', $request->code)->sum('job_order_issued_parts.issued_qty');
-			$total_issued_qty = $part_issued_qty - $part_returned_qty;
-
-			$total_balance_qty = $total_request_qty - $total_issued_qty;
-
 			$responseArr = array(
 				'success' => true,
 				'part' => $part,
@@ -1530,6 +1532,7 @@ class VehicleInwardController extends Controller {
 				'total_request_qty' => $total_request_qty,
 				'total_issued_qty' => $total_issued_qty,
 				'total_balance_qty' => $total_balance_qty,
+				'max_issue_qty' => $max_issue_qty,
 			);
 
 			return response()->json($responseArr);
