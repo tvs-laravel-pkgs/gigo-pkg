@@ -240,14 +240,14 @@ class VehicleGatePassController extends Controller {
 
 			//Check Driver & Security Signature
 			if ($request->web == 'website') {
-				$validator = Validator::make($request->all(), [
-					'driver_signature' => [
-						'required',
-					],
-					'security_signature' => [
-						'required',
-					],
-				]);
+				// $validator = Validator::make($request->all(), [
+				// 	'driver_signature' => [
+				// 		'required',
+				// 	],
+				// 	'security_signature' => [
+				// 		'required',
+				// 	],
+				// ]);
 			} else {
 				$validator = Validator::make($request->all(), [
 					'security_signature' => [
