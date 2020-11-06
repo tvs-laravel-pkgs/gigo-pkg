@@ -7,6 +7,7 @@ use Abs\GigoPkg\AmcMember;
 use Abs\GigoPkg\ModelType;
 use Abs\GigoPkg\TradePlateNumber;
 use Abs\SerialNumberPkg\SerialNumberGroup;
+use App\Attachment;
 use App\Config;
 use App\Employee;
 use App\FinancialYear;
@@ -206,6 +207,36 @@ class GateInController extends Controller {
 				],
 			]);
 
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			//Check Driver & Security Signature
+			if ($request->web == 'website') {
+				$validator = Validator::make($request->all(), [
+					'driver_signature' => [
+						'required',
+					],
+					'security_signature' => [
+						'required',
+					],
+				]);
+			} else {
+				$validator = Validator::make($request->all(), [
+					'security_signature' => [
+						'required',
+						'mimes:jpeg,jpg',
+					],
+					'driver_signature' => [
+						'required',
+						'mimes:jpeg,jpg',
+					],
+				]);
+			}
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
@@ -678,6 +709,115 @@ class GateInController extends Controller {
 			$short_url = ShortUrl::createShortLink($url, $maxlength = "8");
 
 			$tracking_message = 'Greetings from TVS & Sons! Kindly click on this link to track vehicle service status: ' . $short_url;
+
+			//Save Driver & Security Signature
+			if ($request->web == 'website') {
+				//DRIVER E SIGN
+				if (!empty($request->driver_signature)) {
+					$remove_previous_attachment = Attachment::where([
+						'entity_id' => $job_order->id,
+						'attachment_of_id' => 227,
+						'attachment_type_id' => 10098,
+					])->forceDelete();
+
+					$driver_sign = str_replace('data:image/png;base64,', '', $request->driver_signature);
+					$driver_sign = str_replace(' ', '+', $driver_sign);
+
+					$user_images_des = storage_path('app/public/gigo/job_order/attachments/');
+					File::makeDirectory($user_images_des, $mode = 0777, true, true);
+
+					$filename = $job_order->id . "webcam_gate_in_driver_sign_" . strtotime("now") . ".png";
+
+					File::put($attachment_path . $filename, base64_decode($driver_sign));
+
+					//SAVE ATTACHMENT
+					$attachment = new Attachment;
+					$attachment->attachment_of_id = 227; //JOB ORDER
+					$attachment->attachment_type_id = 10098; //GateIn Driver Signature
+					$attachment->entity_id = $job_order->id;
+					$attachment->name = $filename;
+					$attachment->created_by = Auth()->user()->id;
+					$attachment->created_at = Carbon::now();
+					$attachment->save();
+				}
+
+				//SECURITY E SIGN
+				if (!empty($request->security_signature)) {
+					$remove_previous_attachment = Attachment::where([
+						'entity_id' => $job_order->id,
+						'attachment_of_id' => 227,
+						'attachment_type_id' => 10098,
+					])->forceDelete();
+
+					$security_sign = str_replace('data:image/png;base64,', '', $request->security_signature);
+					$security_sign = str_replace(' ', '+', $security_sign);
+
+					$user_images_des = storage_path('app/public/gigo/job_order/attachments/');
+					File::makeDirectory($user_images_des, $mode = 0777, true, true);
+
+					$filename = $job_order->id . "webcam_gate_in_security_sign_" . strtotime("now") . ".png";
+
+					File::put($attachment_path . $filename, base64_decode($security_sign));
+
+					//SAVE ATTACHMENT
+					$attachment = new Attachment;
+					$attachment->attachment_of_id = 227; //JOB ORDER
+					$attachment->attachment_type_id = 10099; //GateIn Security Signature
+					$attachment->entity_id = $job_order->id;
+					$attachment->name = $filename;
+					$attachment->created_by = Auth()->user()->id;
+					$attachment->created_at = Carbon::now();
+					$attachment->save();
+				}
+
+			} else {
+				if (!empty($request->driver_signature)) {
+					$remove_previous_attachment = Attachment::where([
+						'entity_id' => $job_order->id,
+						'attachment_of_id' => 227,
+						'attachment_type_id' => 10098,
+					])->forceDelete();
+
+					$image = $request->driver_signature;
+					$time_stamp = date('Y_m_d_h_i_s');
+					$extension = $image->getClientOriginalExtension();
+					$name = $job_order->id . '_' . $time_stamp . '_gatein_driver_signature.' . $extension;
+					$image->move(storage_path('app/public/gigo/job_order/attachments/'), $name);
+
+					//SAVE ATTACHMENT
+					$attachment = new Attachment;
+					$attachment->attachment_of_id = 227; //JOB ORDER
+					$attachment->attachment_type_id = 10098; //GateIn Driver Signature
+					$attachment->entity_id = $job_order->id;
+					$attachment->name = $name;
+					$attachment->created_by = Auth()->user()->id;
+					$attachment->created_at = Carbon::now();
+					$attachment->save();
+				}
+				if (!empty($request->security_signature)) {
+					$remove_previous_attachment = Attachment::where([
+						'entity_id' => $job_order->id,
+						'attachment_of_id' => 227,
+						'attachment_type_id' => 10099,
+					])->forceDelete();
+
+					$image = $request->security_signature;
+					$time_stamp = date('Y_m_d_h_i_s');
+					$extension = $image->getClientOriginalExtension();
+					$name = $job_order->id . '_' . $time_stamp . '_gatein_security_signature.' . $extension;
+					$image->move(storage_path('app/public/gigo/job_order/attachments/'), $name);
+
+					//SAVE ATTACHMENT
+					$attachment = new Attachment;
+					$attachment->attachment_of_id = 227; //JOB ORDER
+					$attachment->attachment_type_id = 10099; //GateIn Security Signature
+					$attachment->entity_id = $job_order->id;
+					$attachment->name = $name;
+					$attachment->created_by = Auth()->user()->id;
+					$attachment->created_at = Carbon::now();
+					$attachment->save();
+				}
+			}
 
 			DB::commit();
 

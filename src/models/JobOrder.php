@@ -381,6 +381,22 @@ class JobOrder extends BaseModel {
 		return $this->belongsTo('App\AmcMember', 'service_policy_id');
 	}
 
+	public function gateInDriverSign() {
+		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 10098);
+	}
+
+	public function gateInSecuritySign() {
+		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 10099);
+	}
+
+	public function gateOutDriverSign() {
+		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 10100);
+	}
+
+	public function gateOutSecuritySign() {
+		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 10101);
+	}
+
 	// Query Scopes --------------------------------------------------------------
 
 	public function scopeFilterSearch($query, $term) {
@@ -463,6 +479,10 @@ class JobOrder extends BaseModel {
 			'vehicle.currentOwner.customer.primaryAddress.city',
 			'serviceAdviser',
 			'customerESign',
+			'gateInDriverSign',
+			'gateInSecuritySign',
+			'gateOutDriverSign',
+			'gateOutSecuritySign',
 		])
 
 			->find($job_order_id);
@@ -520,6 +540,34 @@ class JobOrder extends BaseModel {
 			$job_order->esign_img = 'app/public/gigo/job_order/' . $job_order->customerESign[0]->name;
 		} else {
 			$job_order->esign_img = '';
+		}
+
+		//Gate In Security Sign
+		if ($job_order->gateInSecuritySign) {
+			$job_order->gate_in_security_signature = 'app/public/gigo/job_order/attachments/' . $job_order->gateInSecuritySign->name;
+		} else {
+			$job_order->gate_in_security_signature = '';
+		}
+
+		//Gate In Driver Sign
+		if ($job_order->gateInDriverSign) {
+			$job_order->gate_in_driver_signature = 'app/public/gigo/job_order/attachments/' . $job_order->gateInDriverSign->name;
+		} else {
+			$job_order->gate_in_driver_signature = '';
+		}
+
+		//Gate Out Security Sign
+		if ($job_order->gateOutDriverSign) {
+			$job_order->gate_out_driver_signature = 'app/public/gigo/job_order/attachments/' . $job_order->gateOutDriverSign->name;
+		} else {
+			$job_order->gate_out_driver_signature = '';
+		}
+
+		//Gate Out Driver Sign
+		if ($job_order->gateOutSecuritySign) {
+			$job_order->gate_out_security_signature = 'app/public/gigo/job_order/attachments/' . $job_order->gateOutSecuritySign->name;
+		} else {
+			$job_order->gate_out_security_signature = '';
 		}
 
 		$data['gate_pass'] = $job_order;
