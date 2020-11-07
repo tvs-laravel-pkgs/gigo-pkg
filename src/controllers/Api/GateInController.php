@@ -10,6 +10,7 @@ use Abs\SerialNumberPkg\SerialNumberGroup;
 use App\Attachment;
 use App\Config;
 use App\Employee;
+use App\Entity;
 use App\FinancialYear;
 use App\FloatingGatePass;
 use App\GateLog;
@@ -403,8 +404,9 @@ class GateInController extends Controller {
 
 			//CHECK VEHICLE PREVIOUS JOBCARD STATUS
 			$previous_job_order = JobOrder::where('vehicle_id', $vehicle->id)->orderBy('id', 'DESC')->first();
+
 			if ($previous_job_order) {
-				if ($previous_job_order->status_id != 8470) {
+				if ($previous_job_order->status_id != 8470 && $previous_job_order->status_id != 8476) {
 					return response()->json([
 						'success' => false,
 						'error' => 'Validation Error',
@@ -458,17 +460,44 @@ class GateInController extends Controller {
 					$generate_number_status = 1;
 				}
 			} else {
-				$job_order = new JobOrder;
-				$job_order->company_id = Auth::user()->company_id;
-				$job_order->number = rand();
-				$job_order->vehicle_id = $vehicle->id;
-				$job_order->outlet_id = Auth::user()->employee->outlet_id;
-				if ($vehicle->currentOwner) {
-					$job_order->customer_id = $vehicle->currentOwner->customer_id;
-				}
-				$job_order->save();
 
-				$generate_number_status = 1;
+				//Get vehicle recent service date
+				$job_order = JobOrder::where('vehicle_id', $vehicle->id)->orderBy('id', 'DESC')->first();
+				$job_card_status = 1; // Create New
+				if ($job_order) {
+					$previous_job_date = $job_order->created_at;
+
+					$job_card_reopen_date = Entity::where('entity_type_id', 35)->select('name')->first();
+					if ($job_card_reopen_date) {
+						$job_card_reopen_date = date("d-m-Y h:i A", strtotime('+' . $job_card_reopen_date->name . ' days', strtotime($job_order->created_at)));
+					} else {
+						$job_card_reopen_date = date("d-m-Y h:i A", strtotime('+60 days', strtotime($job_order->created_at)));
+					}
+
+					$job_card_reopen_date = date('Ymdhi', strtotime($job_card_reopen_date));
+
+					$current_date = date('Ymdhi');
+
+					if ($job_card_reopen_date > $current_date) {
+						$job_card_status = 2; // Reopen Last JobOrder
+					} else {
+						$job_card_status = 1; // Create New
+					}
+				}
+
+				if ($job_card_status == 1) {
+					$job_order = new JobOrder;
+					$job_order->company_id = Auth::user()->company_id;
+					$job_order->number = rand();
+					$job_order->vehicle_id = $vehicle->id;
+					$job_order->outlet_id = Auth::user()->employee->outlet_id;
+					if ($vehicle->currentOwner) {
+						$job_order->customer_id = $vehicle->currentOwner->customer_id;
+					}
+					$job_order->save();
+
+					$generate_number_status = 1;
+				}
 			}
 
 			if ($generate_number_status == 1) {
@@ -626,7 +655,7 @@ class GateInController extends Controller {
 			}
 
 			// $job_order->vehicleInventoryItem()->sync([]);
-			//Remove already gatelog inventories
+			//Remove already saved gatelog inventories
 			$inventories = DB::table('job_order_vehicle_inventory_item')->where('gate_log_id', $gate_log->id)->delete();
 
 			if ($request->vehicle_inventory_items) {

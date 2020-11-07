@@ -644,6 +644,9 @@ class JobCardController extends Controller {
 			$job_order->floor_supervisor_id = $request->floor_supervisor_id;
 			$job_order->save();
 
+			//UPDATE GATE LOG FLOOR Supervisor
+			$job_order->gateLog()->update(['floor_supervisor_id' => $request->floor_supervisor_id]);
+
 			DB::commit();
 
 			return response()->json([

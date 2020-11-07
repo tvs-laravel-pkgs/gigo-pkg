@@ -7239,6 +7239,16 @@ class VehicleInwardController extends Controller {
 				]);
 
 				if ($job_card->exists) {
+
+					if ($job_card->status_id == 8226 || $job_card->status_id == 8228) {
+						$job_card->bay_id = NULL;
+						$job_card->floor_supervisor_id = NULL;
+						$job_card->status_id = 8220; //Waiting for Bay Allocation
+
+						$job_order->status_id = 8470; // Inward Completed
+						$job_order->save();
+					}
+
 					$job_card->updated_by = Auth::user()->id;
 					$job_card->updated_at = Carbon::now();
 				} else {
