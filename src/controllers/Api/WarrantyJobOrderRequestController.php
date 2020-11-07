@@ -276,15 +276,16 @@ class WarrantyJobOrderRequestController extends Controller {
 				]);
 			}
 
+			$warranty_job_order_request->generatePDF();
+
+			DB::commit();
+
 			$warranty_manager->message = 'Kindly review product performance report by clicking the link provided below';
+			$warranty_manager->pdf = url('/' . 'storage/app/public/wjor-pdfs/' . $warranty_job_order_request->number . '.pdf');
 
 			$warranty_manager->notify(new WjorNotification([
 				'wjor' => $warranty_job_order_request,
 			]));
-
-			$warranty_job_order_request->generatePDF();
-
-			DB::commit();
 
 			return Self::read($warranty_job_order_request->id);
 		} catch (Exceprion $e) {
