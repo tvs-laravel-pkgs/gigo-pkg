@@ -717,9 +717,10 @@ app.component('jobCardReturnableItemList', {
                         return;
                     }
                     $scope.job_card = res.job_card;
-                    $scope.returnable_items = res.returnable_items;
+                    $scope.returnable_other_items = res.returnable_other_items;
+                    $scope.returnable_parts_items = res.returnable_parts_items;
                     $scope.returnable_item_attachement_path = res.attachement_path;
-                    console.log(res.returnable_items);
+                    console.log(res.returnable_parts_items);
                     console.log($scope.returnable_item_attachement_path);
                     $scope.$apply();
                 })
@@ -828,6 +829,7 @@ app.component('jobCardReturnableItemForm', {
                     },
                     'job_card_returnable_items[0][item_serial_no]': {
                         maxlength: 191,
+                        required: true,
                     },
                     'job_card_returnable_items[0][qty]': {
                         required: true,

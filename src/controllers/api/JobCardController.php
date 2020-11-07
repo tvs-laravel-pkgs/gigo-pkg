@@ -4113,16 +4113,25 @@ class JobCardController extends Controller {
 			]);
 		}
 
-		$returnable_items = JobCardReturnableItem::with([
+		$returnable_parts_items = JobCardReturnableItem::with([
 			'attachment',
 		])
 			->where('job_card_id', $job_card->id)
+			->whereNotNull('part_id')
+			->get();
+
+		$returnable_other_items = JobCardReturnableItem::with([
+			'attachment',
+		])
+			->where('job_card_id', $job_card->id)
+			->whereNull('part_id')
 			->get();
 
 		return response()->json([
 			'success' => true,
 			'job_card' => $job_card,
-			'returnable_items' => $returnable_items,
+			'returnable_parts_items' => $returnable_parts_items,
+			'returnable_other_items' => $returnable_other_items,
 			'attachement_path' => url('storage/app/public/gigo/job_card/returnable_items/'),
 		]);
 
@@ -4167,7 +4176,7 @@ class JobCardController extends Controller {
 		]);
 	}
 
-	public function ReturnableItemSave(Request $request) {
+	public function returnableItemSave(Request $request) {
 		// dd($request->all());
 		try {
 			$validator = Validator::make($request->all(), [
@@ -4175,11 +4184,6 @@ class JobCardController extends Controller {
 					'required',
 					'integer',
 					'exists:job_cards,id',
-				],
-				'job_card_returnable_items.*.id' => [
-					'required',
-					'integer',
-					'exists:parts,id',
 				],
 				'job_card_returnable_items.*.item_name' => [
 					'required',
@@ -4229,20 +4233,6 @@ class JobCardController extends Controller {
 			//START FOR CHECK QUANTITY VALIDATION
 			$job_card = JobCard::find($request->job_card_id);
 
-			$job_order_part = JobOrderPart::where([
-				'job_order_id' => $job_card->job_order_id,
-				'part_id' => $request->job_card_returnable_items[0]['id'],
-			])->first();
-
-			if ($request->job_card_returnable_items[0]['qty'] > $job_order_part->qty) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'message' => 'Quantity Not More then ' . $job_order_part->qty . '.For this item!',
-				]);
-			}
-			//END FOR CHECK QUANTITY VALIDATION
-
 			$job_card_returnable_items_count = count($request->job_card_returnable_items);
 			$job_card_returnable_unique_items_count = count(array_unique(array_column($request->job_card_returnable_items, 'item_serial_no')));
 			if ($job_card_returnable_items_count != $job_card_returnable_unique_items_count) {
@@ -4265,7 +4255,6 @@ class JobCardController extends Controller {
 					$returnable_item = JobCardReturnableItem::firstOrNew([
 						'item_name' => $job_card_returnable_item['item_name'],
 						'item_serial_no' => $job_card_returnable_item['item_serial_no'],
-						'part_id' => $job_card_returnable_item['id'],
 						'job_card_id' => $request->job_card_id,
 					]);
 					$returnable_item->fill($job_card_returnable_item);
@@ -4356,13 +4345,13 @@ class JobCardController extends Controller {
 		]);
 	}
 
-	public function ReturnablePartSave(Request $request) {
+	public function returnablePartSave(Request $request) {
 		// dd($request->all());
 		try {
 			DB::beginTransaction();
 
 			if ($request->returned_parts) {
-				$delete_parts = JobCardReturnableItem::where('job_card_id', $request->job_card_id)->forceDelete();
+				$delete_parts = JobCardReturnableItem::where('job_card_id', $request->job_card_id)->whereNotNull('part_id')->forceDelete();
 
 				foreach ($request->returned_parts as $key => $parts) {
 					if (isset($parts['qty'])) {

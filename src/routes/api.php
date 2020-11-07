@@ -382,11 +382,11 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('job-card/returnable-items/get', 'JobCardController@getReturnableItems');
 		Route::post('job-card/returnable-items/get-form-data', 'JobCardController@getReturnableItemFormdata');
 
-		Route::post('job-card/returnable-item/save', 'JobCardController@ReturnableItemSave');
+		Route::post('job-card/returnable-item/save', 'JobCardController@returnableItemSave');
 
 		//JOB CARD RETURNABLE PARTS SAVE
 		Route::post('job-card/returnable-parts/get-form-data', 'JobCardController@getReturnablePartsFormdata');
-		Route::post('job-card/returnable-part/save', 'JobCardController@ReturnablePartSave');
+		Route::post('job-card/returnable-part/save', 'JobCardController@returnablePartSave');
 
 		//Job Card View
 		Route::post('jobcard/road-test-observation/get', 'JobCardController@getRoadTestObservation');

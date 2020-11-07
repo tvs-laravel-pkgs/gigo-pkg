@@ -36,6 +36,10 @@ class JobCardReturnableItem extends Model {
 		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 232)->where('attachment_type_id', 239);
 	}
 
+	public function getQtyAttribute($value) {
+		return empty($value) ? '' : round($value);
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];

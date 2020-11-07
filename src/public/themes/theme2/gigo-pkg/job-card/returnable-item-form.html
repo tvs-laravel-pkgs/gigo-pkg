@@ -52,22 +52,13 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Item Name <sup class="mandatory">*</sup></label>
-                                                <md-select ng-model="returnable_item.id" ng-change="getDescription(returnable_item.id)" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Returnable Item">
-                                                    <md-select-header class="demo-select-header">
-                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Returnable Item" class="demo-header-searchbox md-text">
-                                                    </md-select-header>
-                                                    <md-optgroup>
-                                                        <md-option ng-value="returnable_item.part.id" ng-repeat="returnable_item in job_card.job_order.job_order_parts | filter:searchTerm">{{returnable_item.part.code}}</md-option>
-                                                    </md-optgroup>
-                                                </md-select>
-                                                <input type="hidden" class="form-control required" name="job_card_returnable_items[0][id]" value="{{returnable_item.id}}">
+                                                <input type="text" class="form-control required" placeholder="Enter Item Name" name="job_card_returnable_items[0][item_name]" ng-model="returnable_item.item_name" autocomplete="off" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Item Description <sup class="mandatory">*</sup></label>
                                                 <input type="text" class="form-control" placeholder="Enter Description" name="job_card_returnable_items[0][item_description]" ng-model="returnable_item.item_description" autocomplete="off" />
-                                                <input type="hidden" name="job_card_returnable_items[0][item_name]" ng-model="returnable_item.item_name" value="{{returnable_item.item_name}}"/>
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-4">
@@ -88,8 +79,8 @@
                                         </div><!-- Column -->
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Item Serial No</label>
-                                                <input type="text" class="form-control" placeholder="Enter Serial No" autocomplete="off" name="job_card_returnable_items[0][item_serial_no]" ng-model="returnable_item.item_serial_no" />
+                                                <label>Item Serial No <sup class="mandatory">*</sup></label>
+                                                <input type="text" class="form-control required" placeholder="Enter Serial No" autocomplete="off" name="job_card_returnable_items[0][item_serial_no]" ng-model="returnable_item.item_serial_no" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                     </div><!-- Row -->
@@ -99,7 +90,7 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Quantity <sup class="mandatory">*</sup></label>
-                                                <input type="text" class="form-control" placeholder="Enter Quantity" autocomplete="off" name="job_card_returnable_items[0][qty]" maxlength="7" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" ng-model="returnable_item.qty" />
+                                                <input type="text" class="form-control" placeholder="Enter Quantity" autocomplete="off" name="job_card_returnable_items[0][qty]" maxlength="2" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" ng-model="returnable_item.qty" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-8">
