@@ -521,6 +521,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 			}
 			$registration_number = str_replace("-", "", $input['registration_number']);
 			$vehicle->chassis_number = $input['chassis_number'];
+			$vehicle->engine_number = $input['engine_number'];
 			$vehicle->model_id = $input['model_id'];
 			$vehicle->bharat_stage_id = $input['bharat_stage_id'];
 			if ($input['vehicle_search_type'] == 'false') {
