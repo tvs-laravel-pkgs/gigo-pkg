@@ -126,7 +126,7 @@
                                                                                 <ul class="flex-row type-3">
                                                                                     <li class="flex-col-4" ng-repeat="(index,job_card_returnable_item) in $ctrl.vehicle_gate_pass.job_order.job_card.job_card_returnable_items">
                                                                                         <div class="border-box type-2">
-                                                                                            <div class="top-title">Break Shoe <span class="right-text">Qty : {{job_card_returnable_item.qty}}</span></div>
+                                                                                            <div class="top-title">{{job_card_returnable_item.item_name}} <span class="right-text">Qty : {{job_card_returnable_item.qty}}</span></div>
                                                                                             <div class="mb-20"></div><!-- Spacing -->
                                                                                             <table class="table-info">
                                                                                                 <tbody>
@@ -139,7 +139,7 @@
                                                                                                         <td>: {{job_card_returnable_item.item_model}}</td>
                                                                                                     </tr>
                                                                                                     <tr>
-                                                                                                        <td>Seriel no</td>
+                                                                                                        <td>Serial no</td>
                                                                                                         <td>: {{job_card_returnable_item.item_serial_no}}</td>
                                                                                                     </tr>
                                                                                                     <tr>
