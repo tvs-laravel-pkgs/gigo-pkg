@@ -3171,6 +3171,38 @@ class VehicleInwardController extends Controller {
 				$repair_order_part_obj->repair_order_parts()->sync($repair_order_part_array);
 			}
 
+			$job_order_part->taxes()->sync([]);
+
+			if ($job_order->vehicle->currentOwner->customer->primaryAddress) {
+				//Check which tax applicable for customer
+				if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
+					$tax_type = 1160; //Within State
+				} else {
+					$tax_type = 1161; //Inter State
+				}
+			} else {
+				$tax_type = 1160; //Within State
+			}
+
+			$taxes = Tax::get();
+
+			if ($part->taxCode) {
+				foreach ($part->taxCode->taxes as $tax_key => $value) {
+					if ($value->type_id == $tax_type) {
+
+						$percentage_value = ($job_order_part->amount * $value->pivot->percentage) / 100;
+						$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+
+						if ($percentage_value >= 0 && $value->pivot->percentage >= 0) {
+							$job_order_part->taxes()->attach($value->id, [
+								'percentage' => $value->pivot->percentage,
+								'amount' => $percentage_value,
+							]);
+						}
+					}
+				}
+			}
+
 			DB::commit();
 
 			// if (in_array($request->split_order_type_id, $customer_paid_type) && $job_order->jobCard) {
@@ -3446,6 +3478,38 @@ class VehicleInwardController extends Controller {
 
 			$job_order_repair_order->created_by_id = Auth::user()->id;
 			$job_order_repair_order->save();
+
+			$job_order_repair_order->taxes()->sync([]);
+
+			if ($job_order->vehicle->currentOwner->customer->primaryAddress) {
+				//Check which tax applicable for customer
+				if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
+					$tax_type = 1160; //Within State
+				} else {
+					$tax_type = 1161; //Inter State
+				}
+			} else {
+				$tax_type = 1160; //Within State
+			}
+
+			$taxes = Tax::get();
+
+			if ($repair_order->taxCode) {
+				foreach ($repair_order->taxCode->taxes as $tax_key => $value) {
+					if ($value->type_id == $tax_type) {
+
+						$percentage_value = ($job_order_repair_order->amount * $value->pivot->percentage) / 100;
+						$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+
+						if ($percentage_value >= 0 && $value->pivot->percentage >= 0) {
+							$job_order_repair_order->taxes()->attach($value->id, [
+								'percentage' => $value->pivot->percentage,
+								'amount' => $percentage_value,
+							]);
+						}
+					}
+				}
+			}
 
 			DB::commit();
 
