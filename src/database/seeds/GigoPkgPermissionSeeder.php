@@ -27,6 +27,13 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_name' => 'GIGO Pages',
 			],
 
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'gigo-dashboard',
+				'display_name' => 'GIGO Dashboard',
+			],
+
 			//Vehicle Segment
 			[
 				'display_order' => 99,
@@ -2043,6 +2050,27 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'otp-own-outlet',
 				'display_name' => 'View Own Outlet',
 			],
+
+			//GIGO Dashboard
+			[
+				'display_order' => 100,
+				'parent' => 'gigo-dashboard',
+				'name' => 'dashboard-view-own-outlet',
+				'display_name' => 'Own Outlet Only',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'gigo-dashboard',
+				'name' => 'dashboard-view-mapped-outlet',
+				'display_name' => 'View Mapped Outlets',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'gigo-dashboard',
+				'name' => 'dashboard-view-all-outlet',
+				'display_name' => 'View All',
+			],
+
 		];
 		Permission::createFromArrays($permissions);
 	}

@@ -1,0 +1,106 @@
+<!-- Content Wrap -->
+<div class="content-wrap">
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form-top type-2">
+            <div class="page-tab-form-top-left">
+                <div class="page-tab-form-top-left-info pad-lf-rt">
+                    <span class="page-tab-form-top-left-info-content">
+                        <b>
+                            Dashboard
+                        </b>
+                    </span>
+                </div>
+            </div><!-- Page Tab Form Top Left -->
+        </div><!-- Page Tab Form Top -->
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="page-form pb-60 mt-30">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>State <sup class="mandatory">*</sup></label>
+                                    <md-select ng-model="$ctrl.state_id" placeholder="Select State" md-on-close="clearSearchRejectedReason()" data-md-container-class="selectdemoSelectHeader" ng-change="onSelectedState()">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchState" type="search" placeholder="Search State.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                        </md-select-header>
+                                        <md-optgroup label="Status">
+                                            <md-option ng-repeat="val in dashboard_data.state_list  | filter:searchState" value="{{val.id}}">{{val.name}}</md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" name="state_id" value="{{$ctrl.state_id}}" class="state_id">
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Outlet <sup class="mandatory">*</sup></label>
+                                    <md-select ng-model="$ctrl.outlet_id" placeholder="Select Outlet" md-on-close="clearSearchRejectedReason()" data-md-container-class="selectdemoSelectHeader">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchOutlet" type="search" placeholder="Search Outlet.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                        </md-select-header>
+                                        <md-optgroup label="Status">
+                                            <md-option ng-repeat="val in $ctrl.outlet_list  | filter:searchOutlet" value="{{val.id}}">{{val.name}}</md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" name="outlet_id" value="{{$ctrl.outlet_id}}" class="outlet_id">
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                        </div><!-- Row -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <ul class="card-list">
+                                    <li>
+                                        <div class="card-box">
+                                            <div class="card-box-body">
+                                                <p class="card-top-info-bold">
+                                                    Gate In Vehicles : GIM0031342
+                                                </p>
+                                                <div class="card-box-content mb-8">
+                                                    <img class="img-responsive" src="./public/theme/img/content/jc_profile.svg" alt="Image" />
+                                                    <span class="card-box-content-value">
+                                                        <b>
+                                                            Sasikumar
+                                                        </b>
+                                                    </span>
+                                                    <table class="card-box-content-table">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>
+                                                                    Job Order Type
+                                                                </td>
+                                                                <td>
+                                                                    : Warranty Order
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    Quote Type
+                                                                </td>
+                                                                <td>
+                                                                    : At Site Quote
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    Service Type
+                                                                </td>
+                                                                <td>
+                                                                    : 2nd Service BSIV
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div><!-- Card Box Body -->
+                                        </div><!-- Card Box -->
+                                    </li>
+                                </ul><!-- Card List -->
+                            </div><!-- Column -->
+                        </div><!-- Row -->
+                    </div><!-- Page Form -->
+                </div><!-- Column -->
+            </div><!-- Row -->
+        </div><!-- Container -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->

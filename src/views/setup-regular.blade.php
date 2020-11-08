@@ -839,6 +839,21 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 <script type='text/javascript'>
 	app.config(['$routeProvider', function($routeProvider) {
 	    $routeProvider.
+	    //Dashboard
+	    when('/gigo/dashboard', {
+	        template: '<gigo-dashboard></gigo-dashboard>',
+	        title: 'Dashboard',
+	    });
+	}]);
+
+	//Dashboard
+    var gigo_dashboard_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/dashboard/list.html')}}';
+</script>
+<script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/dashboard/controller.js')}}"></script>
+
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
 	    //Gate Log
 	    when('/gate-log/list', {
 	        template: '<gate-log-list></gate-log-list>',

@@ -162,6 +162,10 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 			Route::get('options', $controller . '@options');
 		});
 
+		//Dashboard
+		Route::post('gigo/dashboard', 'DashboardController@getDashboard');
+		Route::get('state-based/outlet/{id?}', 'DashboardController@getOutletData');
+
 		//SAVE GATE IN ENTRY
 		Route::get('gate-in-entry/get-form-data', 'GateInController@getFormData');
 		Route::post('gate-in-entry/create', 'GateInController@createGateInEntry');

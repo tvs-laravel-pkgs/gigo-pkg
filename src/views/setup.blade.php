@@ -395,6 +395,10 @@
 </script>
 <!-- <script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-gate-pass/controller.js')}}"></script> -->
 
+<script type='text/javascript'>
+    //Dashboard
+    var gigo_dashboard_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/dashboard/list.html')}}';
+</script>
 
 <script type='text/javascript'>
 

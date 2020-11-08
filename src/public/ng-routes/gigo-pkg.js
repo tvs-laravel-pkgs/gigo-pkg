@@ -562,6 +562,15 @@ app.config(['$routeProvider', function($routeProvider) {
 
 app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.
+    //Dashboard
+    when('/gigo/dashboard', {
+        template: '<gigo-dashboard></gigo-dashboard>',
+        title: 'Dashboard',
+    });
+}]);
+
+app.config(['$routeProvider', function($routeProvider) {
+    $routeProvider.
     //Gate Log
     when('/gate-log/list', {
         template: '<gate-log-list></gate-log-list>',
