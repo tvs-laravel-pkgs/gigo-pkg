@@ -85,9 +85,9 @@
                                     <div class="col-md-3">
                                         <table style="width: 100%">
                                             <tr>
-                                                <td style="width: 50%">Present Employees </td>
+                                                <td style="width: 60%">Check in / Check Out Employees </td>
                                                 <td style="width: 5%" class="text-center">:</td>
-                                                <td style="width: 45%">{{dashboard_data.employee_data.present_employees}}</td>
+                                                <td style="width: 35%">{{dashboard_data.employee_data.present_employees}}</td>
                                                 <!-- <td>&nbsp;</td> -->
                                                 <!-- <td>&nbsp;</td> -->
                                             </tr>
@@ -196,7 +196,7 @@
                                                         <table class="table table-form type-3">
                                                             <tbody>
                                                                 <tr>
-                                                                    <th>Repair Order amount</th>
+                                                                    <th>Labour amount</th>
                                                                     <th><img class="img-responsive img-inline" style="height: 15px;width: 10px" src="./public/theme/img/content/rupee-dark.svg" alt="" />{{dashboard_data.inward_inprogress_data.repair_order_amount}}</th>
                                                                 </tr>
                                                                 <tr>
@@ -227,7 +227,7 @@
                                                         <table class="table table-form type-3">
                                                             <tbody>
                                                                 <tr>
-                                                                    <th>Repair Order amount</th>
+                                                                    <th>Labour amount</th>
                                                                     <th><img class="img-responsive img-inline" style="height: 15px;width: 10px" src="./public/theme/img/content/rupee-dark.svg" alt="" />{{dashboard_data.inward_data.repair_order_amount}}</th>
                                                                 </tr>
                                                                 <tr>
@@ -251,6 +251,37 @@
                                         <div class="card-box">
                                             <div class="card-box-body">
                                                 <p class="card-top-info-bold">
+                                                    Customer Estimation Approved : {{dashboard_data.est_approved_data.total_vehicles}}
+                                                </p>
+                                                <div class="card-box-content">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-form type-3">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <th>Labour amount</th>
+                                                                    <th><img class="img-responsive img-inline" style="height: 15px;width: 10px" src="./public/theme/img/content/rupee-dark.svg" alt="" />{{dashboard_data.est_approved_data.repair_order_amount}}</th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th>Parts amount</th>
+                                                                    <th><img class="img-responsive img-inline" style="height: 15px;width: 10px" src="./public/theme/img/content/rupee-dark.svg" alt="" />{{dashboard_data.est_approved_data.parts_amount}}</th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th>Total amount</th>
+                                                                    <th>
+                                                                        <img class="img-responsive" style="height: 15px;width: 10px" src="./public/theme/img/content/rupee-dark.svg" alt="" />{{dashboard_data.est_approved_data.total_amount}}
+                                                                    </th>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div><!-- Table Responsive -->
+                                                </div>
+                                            </div><!-- Card Box Body -->
+                                        </div><!-- Card Box -->
+                                    </li>
+                                    <li>
+                                        <div class="card-box">
+                                            <div class="card-box-body">
+                                                <p class="card-top-info-bold">
                                                     Work Inprogress Vehicles : {{dashboard_data.wip_data.total_vehicles}}
                                                 </p>
                                                 <div class="card-box-content">
@@ -258,7 +289,7 @@
                                                         <table class="table table-form type-3">
                                                             <tbody>
                                                                 <tr>
-                                                                    <th>Repair Order amount</th>
+                                                                    <th>Labour amount</th>
                                                                     <th><img class="img-responsive img-inline" style="height: 15px;width: 10px" src="./public/theme/img/content/rupee-dark.svg" alt="" />{{dashboard_data.wip_data.repair_order_amount}}</th>
                                                                 </tr>
                                                                 <tr>
@@ -289,7 +320,7 @@
                                                         <table class="table table-form type-3">
                                                             <tbody>
                                                                 <tr>
-                                                                    <th>Repair Order amount</th>
+                                                                    <th>Labour amount</th>
                                                                     <th><img class="img-responsive img-inline" style="height: 15px;width: 10px" src="./public/theme/img/content/rupee-dark.svg" alt="" />{{dashboard_data.wc_data.repair_order_amount}}</th>
                                                                 </tr>
                                                                 <tr>
@@ -320,7 +351,7 @@
                                                         <table class="table table-form type-3">
                                                             <tbody>
                                                                 <tr>
-                                                                    <th>Repair Order amount</th>
+                                                                    <th>Labour amount</th>
                                                                     <th><img class="img-responsive img-inline" style="height: 15px;width: 10px" src="./public/theme/img/content/rupee-dark.svg" alt="" />{{dashboard_data.gate_out_data.repair_order_amount}}</th>
                                                                 </tr>
                                                                 <tr>
@@ -344,37 +375,6 @@
                                         <div class="card-box">
                                             <div class="card-box-body">
                                                 <p class="card-top-info-bold">
-                                                    Customer Estimation Approved : {{dashboard_data.est_approved_data.total_vehicles}}
-                                                </p>
-                                                <div class="card-box-content">
-                                                    <div class="table-responsive">
-                                                        <table class="table table-form type-3">
-                                                            <tbody>
-                                                                <tr>
-                                                                    <th>Repair Order amount</th>
-                                                                    <th><img class="img-responsive img-inline" style="height: 15px;width: 10px" src="./public/theme/img/content/rupee-dark.svg" alt="" />{{dashboard_data.est_approved_data.repair_order_amount}}</th>
-                                                                </tr>
-                                                                <tr>
-                                                                    <th>Parts amount</th>
-                                                                    <th><img class="img-responsive img-inline" style="height: 15px;width: 10px" src="./public/theme/img/content/rupee-dark.svg" alt="" />{{dashboard_data.est_approved_data.parts_amount}}</th>
-                                                                </tr>
-                                                                <tr>
-                                                                    <th>Total amount</th>
-                                                                    <th>
-                                                                        <img class="img-responsive" style="height: 15px;width: 10px" src="./public/theme/img/content/rupee-dark.svg" alt="" />{{dashboard_data.est_approved_data.total_amount}}
-                                                                    </th>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div><!-- Table Responsive -->
-                                                </div>
-                                            </div><!-- Card Box Body -->
-                                        </div><!-- Card Box -->
-                                    </li>
-                                    <li>
-                                        <div class="card-box">
-                                            <div class="card-box-body">
-                                                <p class="card-top-info-bold">
                                                     OSL Works : {{dashboard_data.osl_data.total_osl}}
                                                 </p>
                                                 <div class="card-box-content">
@@ -382,16 +382,16 @@
                                                         <table class="table table-form type-3">
                                                             <tbody>
                                                                 <tr>
-                                                                    <th>Completed Works</th>
+                                                                    <th>Completed Works / Values</th>
                                                                     <th>{{dashboard_data.osl_data.completed_osl}}</th>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th>Pending Works</th>
-                                                                    <th>{{dashboard_data.osl_data.pending_osl}}</th>
+                                                                    <th>Inprocessing Works / Values</th>
+                                                                    <th>{{dashboard_data.osl_data.in_process_osl}}</th>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th></th>
-                                                                    <th>&nbsp;</th>
+                                                                    <th>Pending Works / Values</th>
+                                                                    <th>{{dashboard_data.osl_data.pending_osl}}</th>
                                                                 </tr>
                                                             </tbody>
                                                         </table>

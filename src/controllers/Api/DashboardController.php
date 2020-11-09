@@ -280,11 +280,15 @@ class DashboardController extends Controller {
 		$completed_osl = GatePass::join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')->whereDate('gate_passes.created_at', '>=', $start_date)->whereDate('gate_passes.created_at', '<=', $end_date)->where('gate_passes.type_id', 8281)->whereIn('gate_passes.status_id', [8302, 8304])->count();
 
 		//Pending OSL
-		$pending_osl = GatePass::join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')->whereDate('gate_passes.created_at', '>=', $start_date)->whereDate('gate_passes.created_at', '<=', $end_date)->where('gate_passes.type_id', 8281)->whereIn('gate_passes.status_id', [8300, 8301, 8303])->count();
+		$pending_osl = GatePass::join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')->whereDate('gate_passes.created_at', '>=', $start_date)->whereDate('gate_passes.created_at', '<=', $end_date)->where('gate_passes.type_id', 8281)->where('gate_passes.status_id', 8300)->count();
+
+		//In process OSL
+		$in_process_osl = GatePass::join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')->whereDate('gate_passes.created_at', '>=', $start_date)->whereDate('gate_passes.created_at', '<=', $end_date)->where('gate_passes.type_id', 8281)->whereIn('gate_passes.status_id', [8301, 8303])->count();
 
 		$osl_data['total_osl'] = $total_osl;
 		$osl_data['completed_osl'] = $completed_osl;
 		$osl_data['pending_osl'] = $pending_osl;
+		$osl_data['in_process_osl'] = $in_process_osl;
 
 		$dashboard_data['osl_data'] = $osl_data;
 
