@@ -17,6 +17,7 @@ use App\SplitOrderType;
 use App\State;
 use App\Survey;
 use App\User;
+use App\Vehicle;
 use Auth;
 use DB;
 use Entrust;
@@ -46,7 +47,9 @@ class DashboardController extends Controller {
 	}
 
 	public function getDashboard11(Request $request) {
-		if ($request->date_range) {
+		// dd($request->all());
+
+		if ($request->date_range && $request->date_range != '<%$ctrl.date_range%>') {
 			$date_range = explode(' to ', $request->date_range);
 			$start_date = date('Y-m-d', strtotime($date_range[0]));
 			$start_date = $start_date . ' 00:00:00';
@@ -96,33 +99,68 @@ class DashboardController extends Controller {
 			// join('users', 'users.id', 'attendance_logs.user_id')
 			// ->join('employees', 'employees.id', 'users.entity_id')
 			// ->where('users.user_type_id', 1)
-			whereDate('attendance_logs.date', '>=', $start_date)
-		// ->whereDate('attendance_logs.date', '>=', $start_date)
-			->whereDate('attendance_logs.date', '<=', $end_date)
-		// ->groupBy('attendance_logs.date')
-			->groupBy('attendance_logs.user_id')
-		// ->groupBy('attendance_logs.user_id', 'attendance_logs.date')
-			->count();
+			whereDate('attendance_logs.created_at', '>=', $start_date)
+			->whereDate('attendance_logs.created_at', '<=', $end_date)
+			->groupBy('attendance_logs.user_id', 'attendance_logs.date')
+			->get();
 
+		// dd(count($present_employees));
 		//Total Absent Employees
 
 		//Total Kanban Employees
 
 		//Total GateIn
-		$gate_in_vehicles = GateLog::whereDate('gate_in_date', '>=', $start_date)->whereDate('gate_in_date', '<=', $end_date)->whereIn('outlet_id', $outlet_ids)->count();
+		$gate_in_vehicles = GateLog::join('job_orders', 'job_orders.id', 'gate_logs.job_order_id')->whereDate('gate_logs.gate_in_date', '>=', $start_date)->whereDate('gate_logs.gate_in_date', '<=', $end_date)->whereIn('gate_logs.outlet_id', $outlet_ids)->pluck('job_orders.vehicle_id')->toArray();
 		// SELECT *  FROM `gate_logs` WHERE `gate_in_date` >= '2020-06-01' AND `gate_in_date` <= '2020-11-21' ORDER BY `id`  DESC
 
+		$total_gate_in_vehicles = count($gate_in_vehicles);
+		$total_registered_vehicles = Vehicle::whereIn('id', $gate_in_vehicles)->where('is_registered', 1)->count();
+		$total_unregistered_vehicles = Vehicle::whereIn('id', $gate_in_vehicles)->where('is_registered', 0)->count();
+
+		$gate_in_data['total_vehicles'] = $total_gate_in_vehicles;
+		$gate_in_data['total_registered_vehicles'] = $total_registered_vehicles;
+		$gate_in_data['total_unregistered_vehicles'] = $total_unregistered_vehicles;
+
+		$dashboard_data['gate_in_data'] = $gate_in_data;
+
+		//Total Inward Inprogress Vehicles
+		$inward_inprogress_vehicles = JobOrder::whereDate('created_at', '>=', $start_date)->whereDate('created_at', '<=', $end_date)->whereIn('status_id', [8463, 8460, 8469, 8471, 8472, 8474, 8473])->whereIn('outlet_id', $outlet_ids)->pluck('id')->toArray();
+		// SELECT *  FROM `job_orders` WHERE `created_at` >= '2020-06-01' AND `created_at` <= '2020-11-21' ORDER BY `id`  DESC
+
+		$total_inward_inprogress_vehicles = count($inward_inprogress_vehicles);
+
+		$inward_inprogress_repair_order = JobOrderRepairOrder::whereIn('job_order_id', $inward_inprogress_vehicles)
+			->whereNull('removal_reason_id')
+			->whereIn('split_order_type_id', $customer_paid_type_id)
+			->sum('amount');
+
+		$inward_inprogress_parts = JobOrderPart::whereIn('job_order_id', $inward_inprogress_vehicles)
+			->whereNull('removal_reason_id')
+			->whereIn('split_order_type_id', $customer_paid_type_id)
+			->sum('amount');
+
+		$total_inward_inprogress_value = $inward_inprogress_repair_order + $inward_inprogress_parts;
+
+		$inward_inprogress_data['total_vehicles'] = $total_inward_inprogress_vehicles;
+		$inward_inprogress_data['repair_order_amount'] = number_format($inward_inprogress_repair_order, 2);
+		$inward_inprogress_data['parts_amount'] = number_format($inward_inprogress_parts, 2);
+		$inward_inprogress_data['total_amount'] = number_format($total_inward_inprogress_value, 2);
+
+		$dashboard_data['inward_inprogress_data'] = $inward_inprogress_data;
+
 		//Total Inward Completed Vehicles
-		$inward_vehicles = JobOrder::whereDate('created_at', '>=', $start_date)->whereDate('created_at', '<=', $end_date)->whereIn('status_id', [8470, 8476])->whereIn('outlet_id', $outlet_ids)->pluck('id')->toArray();
+		$inward_vehicles = JobOrder::whereDate('created_at', '>=', $start_date)->whereDate('created_at', '<=', $end_date)->whereIn('status_id', [8470, 8476, 8461])->whereIn('outlet_id', $outlet_ids)->pluck('id')->toArray();
 		// SELECT *  FROM `job_orders` WHERE `created_at` >= '2020-06-01' AND `created_at` <= '2020-11-21' ORDER BY `id`  DESC
 
 		$total_inward_vehicles = count($inward_vehicles);
 
 		$inward_repair_order = JobOrderRepairOrder::whereIn('job_order_id', $inward_vehicles)
+			->whereNull('removal_reason_id')
 			->whereIn('split_order_type_id', $customer_paid_type_id)
 			->sum('amount');
 
 		$inward_parts = JobOrderPart::whereIn('job_order_id', $inward_vehicles)
+			->whereNull('removal_reason_id')
 			->whereIn('split_order_type_id', $customer_paid_type_id)
 			->sum('amount');
 
@@ -141,10 +179,12 @@ class DashboardController extends Controller {
 		$total_wip_vehicles = count($wip_vehicles);
 
 		$wip_repair_order = JobOrderRepairOrder::whereIn('job_order_id', $wip_vehicles)
+			->whereNull('removal_reason_id')
 			->whereIn('split_order_type_id', $customer_paid_type_id)
 			->sum('amount');
 
 		$wip_parts = JobOrderPart::whereIn('job_order_id', $wip_vehicles)
+			->whereNull('removal_reason_id')
 			->whereIn('split_order_type_id', $customer_paid_type_id)
 			->sum('amount');
 
@@ -163,10 +203,12 @@ class DashboardController extends Controller {
 		$total_wc_vehicles = count($wc_vehicles);
 
 		$wc_repair_order = JobOrderRepairOrder::whereIn('job_order_id', $wc_vehicles)
+			->whereNull('removal_reason_id')
 			->whereIn('split_order_type_id', $customer_paid_type_id)
 			->sum('amount');
 
 		$wc_parts = JobOrderPart::whereIn('job_order_id', $wc_vehicles)
+			->whereNull('removal_reason_id')
 			->whereIn('split_order_type_id', $customer_paid_type_id)
 			->sum('amount');
 
@@ -185,10 +227,12 @@ class DashboardController extends Controller {
 		$total_gate_out_vehicles = count($gate_out_vehicles);
 
 		$gate_out_repair_order = JobOrderRepairOrder::whereIn('job_order_id', $gate_out_vehicles)
+			->whereNull('removal_reason_id')
 			->whereIn('split_order_type_id', $customer_paid_type_id)
 			->sum('amount');
 
 		$gate_out_parts = JobOrderPart::whereIn('job_order_id', $gate_out_vehicles)
+			->whereNull('removal_reason_id')
 			->whereIn('split_order_type_id', $customer_paid_type_id)
 			->sum('amount');
 
@@ -229,10 +273,12 @@ class DashboardController extends Controller {
 		$total_est_approved_vehicles = count($estimation_approved_vehicles);
 
 		$est_approved_repair_order = JobOrderRepairOrder::whereIn('job_order_id', $estimation_approved_vehicles)
+			->whereNull('removal_reason_id')
 			->whereIn('split_order_type_id', $customer_paid_type_id)
 			->sum('amount');
 
 		$est_approved_parts = JobOrderPart::whereIn('job_order_id', $estimation_approved_vehicles)
+			->whereNull('removal_reason_id')
 			->whereIn('split_order_type_id', $customer_paid_type_id)
 			->sum('amount');
 

@@ -2823,6 +2823,19 @@ class VehicleInwardController extends Controller {
 				JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('is_recommended_by_oem', 1)->forceDelete();
 				if ($job_order->vehicle && $job_order->vehicle->model && $job_order->vehicle->model->vehicleSegment && $job_order->vehicle->model->vehicleSegment->vehicle_service_schedule && $job_order->vehicle->model->vehicleSegment->vehicle_service_schedule->vehicle_service_schedule_service_types) {
 
+					if ($job_order->vehicle->currentOwner->customer->primaryAddress) {
+						//Check which tax applicable for customer
+						if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
+							$tax_type = 1160; //Within State
+						} else {
+							$tax_type = 1161; //Inter State
+						}
+					} else {
+						$tax_type = 1160; //Within State
+					}
+
+					$taxes = Tax::get();
+
 					$estimate_id = JobOrderEstimate::where('job_order_id', $job_order->id)->where('status_id', 10071)->first();
 					if ($estimate_id) {
 						$estimate_order_id = $estimate_id->id;
@@ -2875,19 +2888,43 @@ class VehicleInwardController extends Controller {
 						//Save Repair Orders
 						if ($value->service_type_id == $request->service_type_id && $value->repair_orders) {
 							foreach ($value->repair_orders as $rkey => $rvalue) {
-								$repair_order = JobOrderRepairOrder::firstOrNew(['job_order_id' => $request->job_order_id, 'repair_order_id' => $rvalue->id]);
 
-								$repair_order->is_recommended_by_oem = 1;
-								$repair_order->is_fixed_schedule = 1;
-								$repair_order->is_customer_approved = 0;
-								$repair_order->split_order_type_id = $rvalue->pivot->split_order_type_id;
-								$repair_order->qty = $rvalue->hours;
-								$repair_order->amount = $rvalue->amount;
-								$repair_order->is_free_service = $value->is_free;
-								$repair_order->status_id = 8180; //Customer Approval Pending
-								$repair_order->estimate_order_id = $estimate_order_id;
-								$repair_order->created_by_id = Auth::user()->id;
-								$repair_order->save();
+								$repair_order = RepairOrder::find($rvalue->id);
+
+								if ($repair_order) {
+									$job_order_repair_order = JobOrderRepairOrder::firstOrNew(['job_order_id' => $request->job_order_id, 'repair_order_id' => $rvalue->id]);
+
+									$job_order_repair_order->is_recommended_by_oem = 1;
+									$job_order_repair_order->is_fixed_schedule = 1;
+									$job_order_repair_order->is_customer_approved = 0;
+									$job_order_repair_order->split_order_type_id = $rvalue->pivot->split_order_type_id;
+									$job_order_repair_order->qty = $rvalue->hours;
+									$job_order_repair_order->amount = $rvalue->amount;
+									$job_order_repair_order->is_free_service = $value->is_free;
+									$job_order_repair_order->status_id = 8180; //Customer Approval Pending
+									$job_order_repair_order->estimate_order_id = $estimate_order_id;
+									$job_order_repair_order->created_by_id = Auth::user()->id;
+									$job_order_repair_order->save();
+
+									if ($repair_order->taxCode) {
+										$job_order_repair_order->taxes()->sync([]);
+										foreach ($repair_order->taxCode->taxes as $tax_key => $value) {
+											if ($value->type_id == $tax_type) {
+
+												$percentage_value = ($job_order_repair_order->amount * $value->pivot->percentage) / 100;
+												$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+
+												if ($percentage_value >= 0 && $value->pivot->percentage >= 0) {
+													$job_order_repair_order->taxes()->attach($value->id, [
+														'percentage' => $value->pivot->percentage,
+														'amount' => $percentage_value,
+													]);
+												}
+											}
+										}
+									}
+								}
+
 							}
 						}
 
@@ -2895,22 +2932,43 @@ class VehicleInwardController extends Controller {
 						if ($value->service_type_id == $request->service_type_id && $value->parts) {
 							foreach ($value->parts as $pkey => $pvalue) {
 
-								$part_order = JobOrderPart::firstOrNew(['job_order_id' => $request->job_order_id, 'part_id' => $pvalue->id]);
+								$part = Part::with(['partStock'])->find($pvalue->id);
+								if ($part) {
+									$part_order = JobOrderPart::firstOrNew(['job_order_id' => $request->job_order_id, 'part_id' => $pvalue->id]);
 
-								$part = Part::with(['partStock'])->find($part_order->part_id);
+									$part_order->qty = $pvalue->pivot->quantity;
+									$part_order->split_order_type_id = $pvalue->pivot->split_order_type_id;
+									$part_order->rate = $part->partStock ? $part->partStock->mrp : '0';
+									$part_order->amount = $pvalue->pivot->amount;
+									$part_order->is_free_service = $value->is_free;
+									$part_order->status_id = 8200; //Customer Approval Pending
+									$part_order->is_oem_recommended = 1;
+									$part_order->is_fixed_schedule = 1;
+									$part_order->is_customer_approved = 0;
+									$part_order->estimate_order_id = $estimate_order_id;
+									$part_order->created_by_id = Auth::user()->id;
+									$part_order->save();
 
-								$part_order->qty = $pvalue->pivot->quantity;
-								$part_order->split_order_type_id = $pvalue->pivot->split_order_type_id;
-								$part_order->rate = $part->partStock ? $part->partStock->mrp : '0';
-								$part_order->amount = $pvalue->pivot->amount;
-								$part_order->is_free_service = $value->is_free;
-								$part_order->status_id = 8200; //Customer Approval Pending
-								$part_order->is_oem_recommended = 1;
-								$part_order->is_fixed_schedule = 1;
-								$part_order->is_customer_approved = 0;
-								$part_order->estimate_order_id = $estimate_order_id;
-								$part_order->created_by_id = Auth::user()->id;
-								$part_order->save();
+									$part_order->taxes()->sync([]);
+
+									if ($part->taxCode) {
+										foreach ($part->taxCode->taxes as $tax_key => $value) {
+											if ($value->type_id == $tax_type) {
+
+												$percentage_value = ($part_order->amount * $value->pivot->percentage) / 100;
+												$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+
+												if ($percentage_value >= 0 && $value->pivot->percentage >= 0) {
+													$part_order->taxes()->attach($value->id, [
+														'percentage' => $value->pivot->percentage,
+														'amount' => $percentage_value,
+													]);
+												}
+											}
+										}
+									}
+								}
+
 							}
 						}
 					}
@@ -6082,6 +6140,20 @@ class VehicleInwardController extends Controller {
 					'message' => 'Validation Error',
 					'errors' => [
 						'Please Save ' . $inward_process_check->name,
+					],
+				]);
+			}
+
+			//Check Labour and Parts added or not
+			$labour_count = JobOrderRepairOrder::where('job_order_id', $job_order->id)->whereNull('removal_reason_id')->count();
+			$parts_count = JobOrderPart::where('job_order_id', $job_order->id)->whereNull('removal_reason_id')->count();
+
+			if ($labour_count == 0 && $parts_count == 0) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Please Select atleast one ROT or Part!',
 					],
 				]);
 			}

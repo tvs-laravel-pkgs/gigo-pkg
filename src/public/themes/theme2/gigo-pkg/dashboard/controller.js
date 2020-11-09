@@ -27,14 +27,14 @@ app.component('gigoDashboard', {
         }
 
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchDashboardData = function() {
             $.ajax({
                     url: base_url + '/api/gigo/dashboard',
                     method: "POST",
                     data: {
                         state_id: self.state_id,
                         outlet_id: self.outlet_id,
-                        date_range: self.date_range,
+                        date_range: $('.date_range').val(),
                         user_id: self.user.id,
                     },
                     beforeSend: function(xhr) {
@@ -53,7 +53,8 @@ app.component('gigoDashboard', {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
-        $scope.fetchData();
+
+        $scope.fetchDashboardData();
 
         $scope.onSelectedState = function() {
             setTimeout(function() {
@@ -186,11 +187,12 @@ app.component('gigoDashboard', {
 
         $('.daterange').on('apply.daterangepicker', function(ev, picker) {
             $(this).val(picker.startDate.format('DD-MM-YYYY') + ' to ' + picker.endDate.format('DD-MM-YYYY'));
-            //dataTables.fnFilter();
+            $('.date_range').val(picker.startDate.format('DD-MM-YYYY') + ' to ' + picker.endDate.format('DD-MM-YYYY'));
         });
 
         $('.daterange').on('cancel.daterangepicker', function(ev, picker) {
             $(this).val('');
+            $('.date_range').val('');
         });
 
         $scope.applyFilter = function() {
