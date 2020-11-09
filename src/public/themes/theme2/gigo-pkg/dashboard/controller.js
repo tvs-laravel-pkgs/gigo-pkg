@@ -3,7 +3,7 @@ app.component('gigoDashboard', {
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
 
         $rootScope.loading = true;
-        $('#search_inward_vehicle').focus();
+        $('#date_range').focus();
         var self = this;
         HelperService.isLoggedIn()
         $('li').removeClass('active');
@@ -77,89 +77,6 @@ app.component('gigoDashboard', {
             }, 200);
         }
 
-        $('.refresh_table').on("click", function() {
-            $scope.fetchData();
-        });
-        $scope.clear_search = function() {
-            self.search_key = '';
-            localStorage.setItem('search_key', self.search_key);
-            $scope.fetchData();
-        }
-        $scope.searchInwardVehicle = function() {
-            localStorage.setItem('search_key', self.search_key);
-            $scope.fetchData();
-        }
-        $("#gate_in_date").keyup(function() {
-            self.gate_in_date = this.value;
-        });
-        $("#reg_no").keyup(function() {
-            self.reg_no = this.value;
-        });
-        $("#membership").keyup(function() {
-            self.membership = this.value;
-        });
-        $("#gate_in_no").keyup(function() {
-            self.gate_in_no = this.value;
-        });
-
-
-
-        $element.find('input').on('keydown', function(ev) {
-            ev.stopPropagation();
-        });
-        $scope.clearSearchTerm = function() {
-            $scope.searchTerm = '';
-            $scope.searchTerm1 = '';
-            $scope.searchTerm2 = '';
-            $scope.searchTerm3 = '';
-        };
-        /* Modal Md Select Hide */
-        $('.modal').bind('click', function(event) {
-            if ($('.md-select-menu-container').hasClass('md-active')) {
-                $mdSelect.hide();
-            }
-        });
-        $scope.selectedCustomer = function(id) {
-            $('#customer_id').val(id);
-            self.customer_id = id;
-        }
-        $scope.selectedVehicleModel = function(id) {
-            $('#model_id').val(id);
-            self.model_id = id;
-        }
-        $scope.onSelectedRegistrationType = function(id) {
-            $('#registration_type').val(id);
-            self.registration_type = id;
-        }
-        $scope.onSelectedStatus = function(id) {
-            $('#status_id').val(id);
-            self.status_id = id;
-        }
-        $scope.applyFilter = function() {
-            $scope.fetchData();
-            $('#vehicle-inward-filter-modal').modal('hide');
-        }
-        $scope.reset_filter = function() {
-            $("#gate_in_date").val('');
-            $("#registration_type").val('');
-            $("#reg_no").val('');
-            $("#customer_id").val('');
-            $("#model_id").val('');
-            $("#membership").val('');
-            $("#gate_in_no").val('');
-            $("#status_id").val('');
-            self.customer_id = '';
-            self.model_id = '';
-            self.registration_type = '';
-            self.status_id = '';
-            setTimeout(function() {
-                $scope.fetchData();
-            }, 1000);
-            $('#vehicle-inward-filter-modal').modal('hide');
-        }
-
-        $rootScope.loading = false;
-
         /* Modal Md Select Hide */
         $('.modal').bind('click', function(event) {
             if ($('.md-select-menu-container').hasClass('md-active')) {
@@ -170,6 +87,7 @@ app.component('gigoDashboard', {
         /* DateRange Picker */
         $('.daterange').daterangepicker({
             autoUpdateInput: false,
+            maxDate: new Date(),
             locale: {
                 cancelLabel: 'Clear',
                 format: "DD-MM-YYYY"
@@ -178,6 +96,7 @@ app.component('gigoDashboard', {
 
         $('.align-left.daterange').daterangepicker({
             autoUpdateInput: false,
+            maxDate: new Date(),
             "opens": "left",
             locale: {
                 cancelLabel: 'Clear',
@@ -195,19 +114,6 @@ app.component('gigoDashboard', {
             $('.date_range').val('');
         });
 
-        $scope.applyFilter = function() {
-            // $('#status').val(self.status);
-            dataTables.fnFilter();
-            $('#gate-log-filter-modal').modal('hide');
-        }
-
-        $scope.reset_filter = function() {
-            $("#date_range").val('');
-            $("#model_id").val('');
-            $("#outlet_id").val('');
-            dataTables.fnFilter();
-            $('#gate-log-filter-modal').modal('hide');
-        }
         $rootScope.loading = false;
     }
 });

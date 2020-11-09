@@ -64,10 +64,97 @@
                                     <button type="submit" class="btn btn-blue mr-10 btn-md submit_btn" id="submit" ng-click="fetchDashboardData()">Submit</button>
                                 </div>
                             </div>
-                        </div><!-- Row -->
-                        <hr>
-                        <div class="row">
+                            <div class="col-sm-12">
+                                <hr class="md mt-none">
+                            </div>
                             <div class="col-md-12">
+                                <h6 class="mb-15"><b>Employee Data</b></h6>
+                                <!-- <div class="mt-30"></div> -->
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <table style="width: 100%">
+                                            <tr>
+                                                <td style="width: 50%">Total Employees</td>
+                                                <td style="width: 5%" class="text-center">:</td>
+                                                <td style="width: 45%">{{dashboard_data.employee_data.total_employees}}</td>
+                                                <!-- <td>&nbsp;</td>
+                                                <td>&nbsp;</td> -->
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <table style="width: 100%">
+                                            <tr>
+                                                <td style="width: 50%">Present Employees </td>
+                                                <td style="width: 5%" class="text-center">:</td>
+                                                <td style="width: 45%">{{dashboard_data.employee_data.present_employees}}</td>
+                                                <!-- <td>&nbsp;</td> -->
+                                                <!-- <td>&nbsp;</td> -->
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <table style="width: 100%">
+                                            <tr>
+                                                <td style="width: 50%">Absent Employees </td>
+                                                <td style="width: 5%" class="text-center">:</td>
+                                                <td style="width: 45%">{{dashboard_data.employee_data.absent_employees}}</td>
+                                                <!-- <td>&nbsp;</td> -->
+                                                <!-- <td>&nbsp;</td> -->
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <table style="width: 100%">
+                                            <tr>
+                                                <td style="width: 50%">Kanban Employees </td>
+                                                <td style="width: 5%" class="text-center">:</td>
+                                                <td style="width: 45%">{{dashboard_data.employee_data.kanban_employees}}</td>
+                                                <!-- <td>&nbsp;</td> -->
+                                                <!-- <td>&nbsp;</td> -->
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <!-- <p class="card-top-info-bold">
+                                    Total Employees : &emsp;{{dashboard_data.employee_data.total_employees}} &emsp;&emsp;&emsp;|&emsp;&emsp;&emsp;
+                                    Present Employees : &emsp;{{dashboard_data.employee_data.present_employees}} &emsp;&emsp;&emsp;|&emsp;&emsp;&emsp;
+                                    Absent Employees : &emsp;{{dashboard_data.employee_data.absent_employees}} &emsp;&emsp;&emsp;|&emsp;&emsp;&emsp;
+                                    Kanban Employees : &emsp;{{dashboard_data.employee_data.kanban_employees}}
+                                </p> -->
+                                <ul class="card-list ng-hide">
+                                    <li>
+                                        <div class="card-box">
+                                            <div class="card-box-body">
+                                                <p class="card-top-info-bold">
+                                                    Present Employees : {{dashboard_data.employee_data.present_employees}}
+                                                </p>
+                                                <div class="card-box-content mb-8">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-form type-3">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <th>Total Employees</th>
+                                                                    <th>{{dashboard_data.employee_data.total_employees}}</th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th>Absent Employees</th>
+                                                                    <th>{{dashboard_data.employee_data.absent_employees}}</th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th>Kanban Employees</th>
+                                                                    <th>{{dashboard_data.employee_data.kanban_employees}}</th>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div><!-- Table Responsive -->
+                                                </div>
+                                            </div><!-- Card Box Body -->
+                                        </div><!-- Card Box -->
+                                    </li>
+                                </ul>
+                                <hr class="md">
+                                <h6 class="mb-15"><b>Vehicle Data</b></h6>
                                 <ul class="card-list">
                                     <li>
                                         <div class="card-box">
@@ -78,7 +165,7 @@
                                                 <div class="card-box-content mb-8">
                                                     <div class="table-responsive">
                                                         <table class="table table-form type-3">
-                                                            <thead>
+                                                            <tbody>
                                                                 <tr>
                                                                     <th>Registered Vehicles</th>
                                                                     <th>{{dashboard_data.gate_in_data.total_registered_vehicles}}</th>
@@ -87,7 +174,11 @@
                                                                     <th>UnRegistered Vehicles</th>
                                                                     <th>{{dashboard_data.gate_in_data.total_unregistered_vehicles}}</th>
                                                                 </tr>
-                                                            </thead>
+                                                                <tr>
+                                                                    <th></th>
+                                                                    <th>&nbsp;</th>
+                                                                </tr>
+                                                            </tbody>
                                                         </table>
                                                     </div><!-- Table Responsive -->
                                                 </div>
@@ -134,7 +225,7 @@
                                                 <div class="card-box-content">
                                                     <div class="table-responsive">
                                                         <table class="table table-form type-3">
-                                                            <thead>
+                                                            <tbody>
                                                                 <tr>
                                                                     <th>Repair Order amount</th>
                                                                     <th><img class="img-responsive img-inline" style="height: 15px;width: 10px" src="./public/theme/img/content/rupee-dark.svg" alt="" />{{dashboard_data.inward_data.repair_order_amount}}</th>
@@ -149,22 +240,10 @@
                                                                         <img class="img-responsive" style="height: 15px;width: 10px" src="./public/theme/img/content/rupee-dark.svg" alt="" />{{dashboard_data.inward_data.total_amount}}
                                                                     </th>
                                                                 </tr>
-                                                            </thead>
+                                                            </tbody>
                                                         </table>
                                                     </div><!-- Table Responsive -->
                                                 </div>
-                                                <!-- <div class="card-box-content">
-                                                    <img class="img-responsive" src="./public/theme/img/content/job-card.svg" alt="Image" />
-                                                    <span class="card-box-content-value">Repair Order amount : {{dashboard_data.inward_data.repair_order_amount}}</span>
-                                                </div>
-                                                <div class="card-box-content">
-                                                    <img class="img-responsive" src="./public/theme/img/content/jc_setup.svg" alt="Image" />
-                                                    <span class="card-box-content-value">Parts amount : {{dashboard_data.inward_data.parts_amount}}</span>
-                                                </div>
-                                                <div class="card-box-content">
-                                                    <img class="img-responsive" src="./public/theme/img/content/rupee-red.svg" alt="Image" />
-                                                    <span class="card-box-content-value">Total amount : {{dashboard_data.inward_data.total_amount}}</span>
-                                                </div> -->
                                             </div><!-- Card Box Body -->
                                         </div><!-- Card Box -->
                                     </li>
@@ -196,18 +275,6 @@
                                                         </table>
                                                     </div><!-- Table Responsive -->
                                                 </div>
-                                                <!-- <div class="card-box-content">
-                                                    <img class="img-responsive" src="./public/theme/img/content/job-card.svg" alt="Image" />
-                                                    <span class="card-box-content-value">Repair Order amount : {{dashboard_data.wip_data.repair_order_amount}}</span>
-                                                </div>
-                                                <div class="card-box-content">
-                                                    <img class="img-responsive" src="./public/theme/img/content/jc_setup.svg" alt="Image" />
-                                                    <span class="card-box-content-value">Parts amount : {{dashboard_data.wip_data.parts_amount}}</span>
-                                                </div>
-                                                <div class="card-box-content">
-                                                    <img class="img-responsive" src="./public/theme/img/content/rupee-red.svg" alt="Image" />
-                                                    <span class="card-box-content-value">Total amount : {{dashboard_data.wip_data.total_amount}}</span>
-                                                </div> -->
                                             </div><!-- Card Box Body -->
                                         </div><!-- Card Box -->
                                     </li>
@@ -251,7 +318,7 @@
                                                 <div class="card-box-content">
                                                     <div class="table-responsive">
                                                         <table class="table table-form type-3">
-                                                            <thead>
+                                                            <tbody>
                                                                 <tr>
                                                                     <th>Repair Order amount</th>
                                                                     <th><img class="img-responsive img-inline" style="height: 15px;width: 10px" src="./public/theme/img/content/rupee-dark.svg" alt="" />{{dashboard_data.gate_out_data.repair_order_amount}}</th>
@@ -266,22 +333,10 @@
                                                                         <img class="img-responsive" style="height: 15px;width: 10px" src="./public/theme/img/content/rupee-dark.svg" alt="" />{{dashboard_data.gate_out_data.total_amount}}
                                                                     </th>
                                                                 </tr>
-                                                            </thead>
+                                                            </tbody>
                                                         </table>
                                                     </div><!-- Table Responsive -->
                                                 </div>
-                                                <!-- <div class="card-box-content">
-                                                    <img class="img-responsive" src="./public/theme/img/content/job-card.svg" alt="Image" />
-                                                    <span class="card-box-content-value">Repair Order amount : {{dashboard_data.gate_out_data.repair_order_amount}}</span>
-                                                </div>
-                                                <div class="card-box-content">
-                                                    <img class="img-responsive" src="./public/theme/img/content/jc_setup.svg" alt="Image" />
-                                                    <span class="card-box-content-value">Parts amount : {{dashboard_data.gate_out_data.parts_amount}}</span>
-                                                </div>
-                                                <div class="card-box-content">
-                                                    <img class="img-responsive" src="./public/theme/img/content/rupee-red.svg" alt="Image" />
-                                                    <span class="card-box-content-value">Total amount : {{dashboard_data.gate_out_data.total_amount}}</span>
-                                                </div> -->
                                             </div><!-- Card Box Body -->
                                         </div><!-- Card Box -->
                                     </li>
@@ -325,7 +380,7 @@
                                                 <div class="card-box-content">
                                                     <div class="table-responsive">
                                                         <table class="table table-form type-3">
-                                                            <thead>
+                                                            <tbody>
                                                                 <tr>
                                                                     <th>Completed Works</th>
                                                                     <th>{{dashboard_data.osl_data.completed_osl}}</th>
@@ -334,7 +389,11 @@
                                                                     <th>Pending Works</th>
                                                                     <th>{{dashboard_data.osl_data.pending_osl}}</th>
                                                                 </tr>
-                                                            </thead>
+                                                                <tr>
+                                                                    <th></th>
+                                                                    <th>&nbsp;</th>
+                                                                </tr>
+                                                            </tbody>
                                                         </table>
                                                     </div><!-- Table Responsive -->
                                                 </div>

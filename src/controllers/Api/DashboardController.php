@@ -12,6 +12,7 @@ use App\JobCard;
 use App\JobOrder;
 use App\JobOrderPart;
 use App\JobOrderRepairOrder;
+use App\MechanicTimeLog;
 use App\Outlet;
 use App\SplitOrderType;
 use App\State;
@@ -92,22 +93,42 @@ class DashboardController extends Controller {
 		$customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
 
 		//Total Mechanic
-		$total_employees = Employee::where('is_mechanic', 1)->count();
+		$total_employees = Employee::join('users', 'users.entity_id', 'employees.id')->where('users.user_type_id', 1)->where('employees.is_mechanic', 1)->whereIn('employees.outlet_id', $outlet_ids)->count();
+		// SELECT employees.id,employees.code,users.name,users.id  FROM `employees` JOIN users on users.entity_id = employees.id WHERE `outlet_id` = 16 AND `is_mechanic` = 1 AND users.user_type_id = 1
 
 		//Total Present Employees
-		$present_employees = AttendanceLog::
-			// join('users', 'users.id', 'attendance_logs.user_id')
-			// ->join('employees', 'employees.id', 'users.entity_id')
-			// ->where('users.user_type_id', 1)
-			whereDate('attendance_logs.created_at', '>=', $start_date)
+		$present_employees = AttendanceLog::join('users', 'users.id', 'attendance_logs.user_id')
+			->join('employees', 'employees.id', 'users.entity_id')
+			->where('users.user_type_id', 1)
+			->where('employees.is_mechanic', 1)
+			->whereIn('employees.outlet_id', $outlet_ids)
+			->whereDate('attendance_logs.created_at', '>=', $start_date)
 			->whereDate('attendance_logs.created_at', '<=', $end_date)
 			->groupBy('attendance_logs.user_id', 'attendance_logs.date')
 			->get();
 
+		$present_employees = count($present_employees);
 		// dd(count($present_employees));
 		//Total Absent Employees
-
+		$absent_employees = $total_employees - $present_employees;
 		//Total Kanban Employees
+
+		$kanban_employees = MechanicTimeLog::join('repair_order_mechanics', 'repair_order_mechanics.id', 'mechanic_time_logs.repair_order_mechanic_id')->join('users', 'users.id', 'repair_order_mechanics.mechanic_id')
+			->join('employees', 'employees.id', 'users.entity_id')
+			->where('users.user_type_id', 1)
+			->whereIn('employees.outlet_id', $outlet_ids)
+			->whereDate('mechanic_time_logs.created_at', '>=', $start_date)
+			->whereDate('mechanic_time_logs.created_at', '<=', $end_date)
+			->whereNull('end_date_time')
+			->groupBy('mechanic_time_logs.repair_order_mechanic_id')
+			->get();
+
+		$employee_data['total_employees'] = $total_employees;
+		$employee_data['present_employees'] = $present_employees;
+		$employee_data['absent_employees'] = $absent_employees;
+		$employee_data['kanban_employees'] = count($kanban_employees);
+
+		$dashboard_data['employee_data'] = $employee_data;
 
 		//Total GateIn
 		$gate_in_vehicles = GateLog::join('job_orders', 'job_orders.id', 'gate_logs.job_order_id')->whereDate('gate_logs.gate_in_date', '>=', $start_date)->whereDate('gate_logs.gate_in_date', '<=', $end_date)->whereIn('gate_logs.outlet_id', $outlet_ids)->pluck('job_orders.vehicle_id')->toArray();
@@ -307,8 +328,6 @@ class DashboardController extends Controller {
 		$dashboard_data['state_list'] = $state_list;
 
 		$dashboard_datas = $dashboard_data;
-
-		// dd($dashboard_data);
 
 		return response()->json(['success' => true, 'dashboard_data' => $dashboard_datas]);
 
