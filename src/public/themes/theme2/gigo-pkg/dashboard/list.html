@@ -375,23 +375,29 @@
                                         <div class="card-box">
                                             <div class="card-box-body">
                                                 <p class="card-top-info-bold">
-                                                    OSL Works : {{dashboard_data.osl_data.total_osl}}
+                                                    OSL : {{dashboard_data.osl_data.total_osl}}
                                                 </p>
                                                 <div class="card-box-content">
                                                     <div class="table-responsive">
                                                         <table class="table table-form type-3">
                                                             <tbody>
                                                                 <tr>
-                                                                    <th>Completed Works / Values</th>
-                                                                    <th>{{dashboard_data.osl_data.completed_osl}}</th>
+                                                                    <th>Completed / Values</th>
+                                                                    <th>{{dashboard_data.osl_data.completed_osl}} /
+                                                                        <img class="img-responsive" style="height: 15px;width: 10px" src="./public/theme/img/content/rupee-dark.svg" alt="" />{{dashboard_data.osl_data.completed_osl_value}}
+                                                                    </th>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th>Inprocessing Works / Values</th>
-                                                                    <th>{{dashboard_data.osl_data.in_process_osl}}</th>
+                                                                    <th>Active / Values</th>
+                                                                    <th>{{dashboard_data.osl_data.in_process_osl}} /
+                                                                        <img class="img-responsive" style="height: 15px;width: 10px" src="./public/theme/img/content/rupee-dark.svg" alt="" />{{dashboard_data.osl_data.in_process_value}}
+                                                                    </th>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th>Pending Works / Values</th>
-                                                                    <th>{{dashboard_data.osl_data.pending_osl}}</th>
+                                                                    <th>Pending / Values</th>
+                                                                    <th>{{dashboard_data.osl_data.pending_osl}} /
+                                                                        <img class="img-responsive" style="height: 15px;width: 10px" src="./public/theme/img/content/rupee-dark.svg" alt="" />{{dashboard_data.osl_data.pending_osl_value}}
+                                                                    </th>
                                                                 </tr>
                                                             </tbody>
                                                         </table>

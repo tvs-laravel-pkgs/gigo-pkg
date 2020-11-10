@@ -13,6 +13,7 @@ use App\JobOrder;
 use App\JobOrderPart;
 use App\JobOrderRepairOrder;
 use App\MechanicTimeLog;
+use App\OSLWorkOrder;
 use App\Outlet;
 use App\SplitOrderType;
 use App\State;
@@ -47,7 +48,7 @@ class DashboardController extends Controller {
 		return response()->json($this->data);
 	}
 
-	public function getDashboard11(Request $request) {
+	public function getDashboard(Request $request) {
 		// dd($request->all());
 
 		if ($request->date_range && $request->date_range != '<%$ctrl.date_range%>') {
@@ -277,18 +278,27 @@ class DashboardController extends Controller {
 		$total_osl = GatePass::join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')->whereDate('gate_passes.created_at', '>=', $start_date)->whereDate('gate_passes.created_at', '<=', $end_date)->whereIn('job_cards.outlet_id', $outlet_ids)->where('gate_passes.type_id', 8281)->count();
 
 		//Completed OSL
-		$completed_osl = GatePass::join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')->whereDate('gate_passes.created_at', '>=', $start_date)->whereDate('gate_passes.created_at', '<=', $end_date)->where('gate_passes.type_id', 8281)->whereIn('gate_passes.status_id', [8302, 8304])->count();
+		$completed_osl = GatePass::join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')->join('gate_pass_details', 'gate_pass_details.gate_pass_id', 'gate_passes.id')->whereDate('gate_passes.created_at', '>=', $start_date)->whereDate('gate_passes.created_at', '<=', $end_date)->where('gate_passes.type_id', 8281)->whereIn('gate_passes.status_id', [8302, 8304])->groupBy('gate_passes.id')->pluck('gate_pass_details.work_order_no')->toArray();
+
+		$completed_osl_value = OSLWorkOrder::join('job_order_repair_orders', 'job_order_repair_orders.osl_work_order_id', 'osl_work_orders.id')->whereIn('osl_work_orders.number', $completed_osl)->sum('job_order_repair_orders.amount');
 
 		//Pending OSL
-		$pending_osl = GatePass::join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')->whereDate('gate_passes.created_at', '>=', $start_date)->whereDate('gate_passes.created_at', '<=', $end_date)->where('gate_passes.type_id', 8281)->where('gate_passes.status_id', 8300)->count();
+		$pending_osl = GatePass::join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')->join('gate_pass_details', 'gate_pass_details.gate_pass_id', 'gate_passes.id')->whereDate('gate_passes.created_at', '>=', $start_date)->whereDate('gate_passes.created_at', '<=', $end_date)->where('gate_passes.type_id', 8281)->where('gate_passes.status_id', 8300)->groupBy('gate_passes.id')->pluck('gate_pass_details.work_order_no')->toArray();
+
+		$pending_osl_value = OSLWorkOrder::join('job_order_repair_orders', 'job_order_repair_orders.osl_work_order_id', 'osl_work_orders.id')->whereIn('osl_work_orders.number', $pending_osl)->sum('job_order_repair_orders.amount');
 
 		//In process OSL
-		$in_process_osl = GatePass::join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')->whereDate('gate_passes.created_at', '>=', $start_date)->whereDate('gate_passes.created_at', '<=', $end_date)->where('gate_passes.type_id', 8281)->whereIn('gate_passes.status_id', [8301, 8303])->count();
+		$in_process_osl = GatePass::join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')->join('gate_pass_details', 'gate_pass_details.gate_pass_id', 'gate_passes.id')->whereDate('gate_passes.created_at', '>=', $start_date)->whereDate('gate_passes.created_at', '<=', $end_date)->where('gate_passes.type_id', 8281)->whereIn('gate_passes.status_id', [8301, 8303])->groupBy('gate_passes.id')->pluck('gate_pass_details.work_order_no')->toArray();
+
+		$in_process_value = OSLWorkOrder::join('job_order_repair_orders', 'job_order_repair_orders.osl_work_order_id', 'osl_work_orders.id')->whereIn('osl_work_orders.number', $in_process_osl)->sum('job_order_repair_orders.amount');
 
 		$osl_data['total_osl'] = $total_osl;
-		$osl_data['completed_osl'] = $completed_osl;
-		$osl_data['pending_osl'] = $pending_osl;
-		$osl_data['in_process_osl'] = $in_process_osl;
+		$osl_data['completed_osl'] = count($completed_osl);
+		$osl_data['completed_osl_value'] = $completed_osl_value;
+		$osl_data['pending_osl'] = count($pending_osl);
+		$osl_data['pending_osl_value'] = $pending_osl_value;
+		$osl_data['in_process_osl'] = count($in_process_osl);
+		$osl_data['in_process_value'] = $in_process_value;
 
 		$dashboard_data['osl_data'] = $osl_data;
 
@@ -337,7 +347,7 @@ class DashboardController extends Controller {
 
 	}
 
-	public function getDashboard(Request $request) {
+	public function getDashboard11(Request $request) {
 		// dd($request->all());
 
 		$validator = Validator::make($request->all(), [
