@@ -48,7 +48,7 @@ class DashboardController extends Controller {
 		return response()->json($this->data);
 	}
 
-	public function getDashboard(Request $request) {
+	public function getWebDashboard(Request $request) {
 		// dd($request->all());
 
 		if ($request->date_range && $request->date_range != '<%$ctrl.date_range%>') {
@@ -347,7 +347,7 @@ class DashboardController extends Controller {
 
 	}
 
-	public function getDashboard11(Request $request) {
+	public function getDashboard(Request $request) {
 		// dd($request->all());
 
 		$validator = Validator::make($request->all(), [

@@ -163,7 +163,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		});
 
 		//Dashboard
-		Route::post('gigo/dashboard', 'DashboardController@getDashboard');
+		Route::post('gigo/dashboard', 'DashboardController@getWebDashboard');
 		Route::get('state-based/outlet/{id?}', 'DashboardController@getOutletData');
 
 		//SAVE GATE IN ENTRY
