@@ -1800,7 +1800,6 @@ class VehicleInwardController extends Controller {
 
 				DB::beginTransaction();
 
-				// dd(11);
 				if ($request->issued_part) {
 					foreach ($request->issued_part as $key => $issued_part) {
 						if (isset($issued_part['qty'])) {
@@ -1819,6 +1818,13 @@ class VehicleInwardController extends Controller {
 							$job_order_part->save();
 						}
 					}
+				}
+				else{
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => ['Parts not found!'],
+					]);
 				}
 
 				DB::commit();
