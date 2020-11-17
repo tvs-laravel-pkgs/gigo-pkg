@@ -275,7 +275,10 @@ class DashboardController extends Controller {
 		$dashboard_data['feedback_data'] = $feedback_data;
 
 		//Total OSL
-		$total_osl = GatePass::join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')->whereDate('gate_passes.created_at', '>=', $start_date)->whereDate('gate_passes.created_at', '<=', $end_date)->whereIn('job_cards.outlet_id', $outlet_ids)->where('gate_passes.type_id', 8281)->count();
+		// $total_osl = GatePass::join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')->whereDate('gate_passes.created_at', '>=', $start_date)->whereDate('gate_passes.created_at', '<=', $end_date)->whereIn('job_cards.outlet_id', $outlet_ids)->where('gate_passes.type_id', 8281)->count();
+		$total_osl = GatePass::join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')->join('gate_pass_details', 'gate_pass_details.gate_pass_id', 'gate_passes.id')->whereDate('gate_passes.created_at', '>=', $start_date)->whereDate('gate_passes.created_at', '<=', $end_date)->where('gate_passes.type_id', 8281)->groupBy('gate_passes.id')->pluck('gate_pass_details.work_order_no')->toArray();
+
+		$total_osl_value = OSLWorkOrder::join('job_order_repair_orders', 'job_order_repair_orders.osl_work_order_id', 'osl_work_orders.id')->whereIn('osl_work_orders.number', $total_osl)->sum('job_order_repair_orders.amount');
 
 		//Completed OSL
 		$completed_osl = GatePass::join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')->join('gate_pass_details', 'gate_pass_details.gate_pass_id', 'gate_passes.id')->whereDate('gate_passes.created_at', '>=', $start_date)->whereDate('gate_passes.created_at', '<=', $end_date)->where('gate_passes.type_id', 8281)->whereIn('gate_passes.status_id', [8302, 8304])->groupBy('gate_passes.id')->pluck('gate_pass_details.work_order_no')->toArray();
@@ -292,7 +295,8 @@ class DashboardController extends Controller {
 
 		$in_process_value = OSLWorkOrder::join('job_order_repair_orders', 'job_order_repair_orders.osl_work_order_id', 'osl_work_orders.id')->whereIn('osl_work_orders.number', $in_process_osl)->sum('job_order_repair_orders.amount');
 
-		$osl_data['total_osl'] = $total_osl;
+		$osl_data['total_osl'] = count($total_osl);
+		$osl_data['total_osl_value'] = $total_osl_value;
 		$osl_data['completed_osl'] = count($completed_osl);
 		$osl_data['completed_osl_value'] = $completed_osl_value;
 		$osl_data['pending_osl'] = count($pending_osl);
@@ -325,6 +329,29 @@ class DashboardController extends Controller {
 		$est_approved_data['total_amount'] = number_format($total_est_approved_value, 2);
 
 		$dashboard_data['est_approved_data'] = $est_approved_data;
+
+		//Feedback provide
+		$total_feedback = Survey::join('job_orders', 'job_orders.id', 'surveys.survey_for_id')->whereDate('surveys.created_at', '>=', $start_date)->whereDate('surveys.created_at', '<=', $end_date)->count();
+
+		//Customer Feedback requested
+		$customer_feedback_request = Survey::join('survey_types','survey_types.id','surveys.survey_type_id')->join('job_orders', 'job_orders.id', 'surveys.survey_for_id')->whereDate('surveys.created_at', '>=', $start_date)->whereDate('surveys.created_at', '<=', $end_date)->where('survey_types.attendee_type_id',11201)->where('surveys.status_id',11240)->count();
+
+		//Customer Feedback provide
+		$customer_feedback_provide = Survey::join('survey_types','survey_types.id','surveys.survey_type_id')->join('job_orders', 'job_orders.id', 'surveys.survey_for_id')->whereDate('surveys.created_at', '>=', $start_date)->whereDate('surveys.created_at', '<=', $end_date)->where('survey_types.attendee_type_id',11201)->where('surveys.status_id',11241)->count();
+
+		//Driver Feedback requested
+		$driver_feedback_request = Survey::join('survey_types','survey_types.id','surveys.survey_type_id')->join('job_orders', 'job_orders.id', 'surveys.survey_for_id')->whereDate('surveys.created_at', '>=', $start_date)->whereDate('surveys.created_at', '<=', $end_date)->where('survey_types.attendee_type_id',11200)->where('surveys.status_id',11240)->count();
+
+		//Driver Feedback provide
+		$driver_feedback_provide = Survey::join('survey_types','survey_types.id','surveys.survey_type_id')->join('job_orders', 'job_orders.id', 'surveys.survey_for_id')->whereDate('surveys.created_at', '>=', $start_date)->whereDate('surveys.created_at', '<=', $end_date)->where('survey_types.attendee_type_id',11200)->where('surveys.status_id',11241)->count();
+
+		$feedback_data['total_feedback'] = $total_feedback;
+		$feedback_data['customer_feedback_request'] = $customer_feedback_request;
+		$feedback_data['customer_feedback_provide'] = $customer_feedback_provide;
+		$feedback_data['driver_feedback_request'] = $driver_feedback_request;
+		$feedback_data['driver_feedback_provide'] = $driver_feedback_provide;
+
+		$dashboard_data['feedback_data'] = $feedback_data;
 
 		if (Entrust::can('dashboard-view-all-outlet')) {
 			$state_list = collect(State::select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select State']);

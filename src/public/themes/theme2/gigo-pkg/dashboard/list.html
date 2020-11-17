@@ -116,12 +116,6 @@
                                         </table>
                                     </div>
                                 </div>
-                                <!-- <p class="card-top-info-bold">
-                                    Total Employees : &emsp;{{dashboard_data.employee_data.total_employees}} &emsp;&emsp;&emsp;|&emsp;&emsp;&emsp;
-                                    Present Employees : &emsp;{{dashboard_data.employee_data.present_employees}} &emsp;&emsp;&emsp;|&emsp;&emsp;&emsp;
-                                    Absent Employees : &emsp;{{dashboard_data.employee_data.absent_employees}} &emsp;&emsp;&emsp;|&emsp;&emsp;&emsp;
-                                    Kanban Employees : &emsp;{{dashboard_data.employee_data.kanban_employees}}
-                                </p> -->
                                 <ul class="card-list ng-hide">
                                     <li>
                                         <div class="card-box">
@@ -251,7 +245,7 @@
                                         <div class="card-box">
                                             <div class="card-box-body">
                                                 <p class="card-top-info-bold">
-                                                    Customer Estimation Approved : {{dashboard_data.est_approved_data.total_vehicles}}
+                                                    Customer Approved Estimation : {{dashboard_data.est_approved_data.total_vehicles}}
                                                 </p>
                                                 <div class="card-box-content">
                                                     <div class="table-responsive">
@@ -375,29 +369,62 @@
                                         <div class="card-box">
                                             <div class="card-box-body">
                                                 <p class="card-top-info-bold">
-                                                    OSL : {{dashboard_data.osl_data.total_osl}}
+                                                    OSL : {{dashboard_data.osl_data.total_osl}} 
+                                                    <!-- /  <img class="img-responsive" style="height: 15px;width: 10px" src="./public/theme/img/content/rupee-dark.svg" alt="" />{{dashboard_data.osl_data.total_osl_value}} -->
                                                 </p>
                                                 <div class="card-box-content">
                                                     <div class="table-responsive">
                                                         <table class="table table-form type-3">
                                                             <tbody>
                                                                 <tr>
-                                                                    <th>Completed / Values</th>
+                                                                    <th>Completed / Amount</th>
                                                                     <th>{{dashboard_data.osl_data.completed_osl}} /
                                                                         <img class="img-responsive" style="height: 15px;width: 10px" src="./public/theme/img/content/rupee-dark.svg" alt="" />{{dashboard_data.osl_data.completed_osl_value}}
                                                                     </th>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th>Active / Values</th>
+                                                                    <th>Active / Amount</th>
                                                                     <th>{{dashboard_data.osl_data.in_process_osl}} /
                                                                         <img class="img-responsive" style="height: 15px;width: 10px" src="./public/theme/img/content/rupee-dark.svg" alt="" />{{dashboard_data.osl_data.in_process_value}}
                                                                     </th>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th>Pending / Values</th>
+                                                                    <th>Pending / Amount</th>
                                                                     <th>{{dashboard_data.osl_data.pending_osl}} /
                                                                         <img class="img-responsive" style="height: 15px;width: 10px" src="./public/theme/img/content/rupee-dark.svg" alt="" />{{dashboard_data.osl_data.pending_osl_value}}
                                                                     </th>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div><!-- Table Responsive -->
+                                                </div>
+                                            </div><!-- Card Box Body -->
+                                        </div><!-- Card Box -->
+                                    </li>
+                                    <li>
+                                        <div class="card-box">
+                                            <div class="card-box-body">
+                                                <p class="card-top-info-bold">
+                                                    Feedback Provided : {{dashboard_data.feedback_data.total_feedback}} 
+                                                    
+                                                </p>
+                                                <div class="card-box-content">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-form type-3">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <th>Customer  Sent / Provide</th>
+                                                                    <th>{{dashboard_data.feedback_data.customer_feedback_request}} / {{dashboard_data.feedback_data.customer_feedback_provide}}
+                                                                    </th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th>Driver  Sent / Provide</th>
+                                                                    <th>{{dashboard_data.feedback_data.driver_feedback_request}} / {{dashboard_data.feedback_data.driver_feedback_provide}}
+                                                                    </th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th></th>
+                                                                    <th>&nbsp;</th>
                                                                 </tr>
                                                             </tbody>
                                                         </table>
