@@ -227,24 +227,24 @@ class GateInController extends Controller {
 				// 	],
 				// ]);
 			} else {
-				$validator = Validator::make($request->all(), [
-					'security_signature' => [
-						'required',
-						'mimes:jpeg,jpg',
-					],
-					'driver_signature' => [
-						'required',
-						'mimes:jpeg,jpg',
-					],
-				]);
+				// $validator = Validator::make($request->all(), [
+				// 	'security_signature' => [
+				// 		'required',
+				// 		'mimes:jpeg,jpg',
+				// 	],
+				// 	'driver_signature' => [
+				// 		'required',
+				// 		'mimes:jpeg,jpg',
+				// 	],
+				// ]);
 			}
-			if ($validator->fails()) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => $validator->errors()->all(),
-				]);
-			}
+			// if ($validator->fails()) {
+			// 	return response()->json([
+			// 		'success' => false,
+			// 		'error' => 'Validation Error',
+			// 		'errors' => $validator->errors()->all(),
+			// 	]);
+			// }
 
 			// $request['registration_number'] = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
 
