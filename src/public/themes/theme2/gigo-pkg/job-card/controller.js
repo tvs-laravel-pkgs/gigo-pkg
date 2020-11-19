@@ -4293,7 +4293,7 @@ app.component('jobCardScheduleForm', {
 //Schedule Review
 app.component('jobCardLabourReview', {
     templateUrl: job_card_labour_review_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element,ComplaintSvc, FaultSvc) {
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
@@ -4349,6 +4349,24 @@ app.component('jobCardLabourReview', {
                 $('#attachment_removal_ids').val(JSON.stringify(self.attachment_removal_id));
             }
             $scope.job_order_repair_order.labour_review_attachment.splice(index, 1);
+        }
+
+        $scope.searchCompaints = function(query) {
+            return new Promise(function(resolve, reject) {
+                ComplaintSvc.options({ filter: { search: query} })
+                    .then(function(response) {
+                        resolve(response.data.options);
+                    });
+            });
+        }
+
+        $scope.searchFaults = function(query) {
+            return new Promise(function(resolve, reject) {
+                FaultSvc.options({ filter: { search: query } })
+                    .then(function(response) {
+                        resolve(response.data.options);
+                    });
+            });
         }
 
         //Save Form Data 
@@ -4679,7 +4697,7 @@ app.component('jobCardOrderView', {
 //Split Order Details
 app.component('jobCardSplitOrder', {
     templateUrl: job_card_split_order_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect,ComplaintSvc, FaultSvc) {
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
@@ -4709,6 +4727,7 @@ app.component('jobCardSplitOrder', {
                         showErrorNoty(res);
                         return;
                     }
+                    $scope.split_order_claimable = 0;
                     //console.log(res);
                     $scope.job_card = res.job_card;
                     $scope.labour_details = res.labour_details;
@@ -4853,8 +4872,43 @@ app.component('jobCardSplitOrder', {
             $('#split_order_change').modal('show');
         }
 
+        $scope.searchCompaints = function(query) {
+            return new Promise(function(resolve, reject) {
+                ComplaintSvc.options({ filter: { search: query} })
+                    .then(function(response) {
+                        resolve(response.data.options);
+                    });
+            });
+        }
+
+        $scope.searchFaults = function(query) {
+            return new Promise(function(resolve, reject) {
+                FaultSvc.options({ filter: { search: query } })
+                    .then(function(response) {
+                        resolve(response.data.options);
+                    });
+            });
+        }
+
+        $scope.split_order_modal_close = function() {
+            $scope.split_order_id = '';
+            $('#split_order_change').modal('hide');
+            $('#split_order_type_id').val('');
+            setTimeout(function() {
+                $scope.fetchData();
+            }, 100);
+        }
+
+        $scope.splitOrderChange = function(split_order_claimable) {
+            $scope.split_order_claimable = 0;
+            if(split_order_claimable == 1)
+            {
+                $scope.split_order_claimable = 1;
+            }
+        }
+
         //console.log($scope.user.token);
-        $scope.splitOrderChange = function() {
+        $scope.splitOrderSave = function() {
             var split_form_id = '#split_order_form';
             var v = jQuery(split_form_id).validate({
                 ignore: '',

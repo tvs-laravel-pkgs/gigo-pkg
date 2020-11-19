@@ -144,6 +144,44 @@
                                                 <textarea class="form-control" rows="4" placeholder="Enter Remarks" name="remarks">{{labour_review_data.job_order.job_order_repair_orders[0].remarks}}</textarea>
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
+                                        <div class="col-md-6" ng-if="$ctrl.action == 8187 && job_order_repair_order.split_order_type.is_claimable ==1">
+                                            <div class="form-group">
+                                                <label>
+                                                    Complaint code
+                                                    <sup class="mandatory">*</sup>
+                                                </label>
+                                                <md-autocomplete md-no-cache="true" md-selected-item="job_order_repair_order.complaint" md-search-text="complaintSearchKey" md-items="complaint in searchCompaints(complaintSearchKey)" md-item-text="complaint.code+' / '+complaint.name" md-min-length="3" md-escape-options="clear" placeholder="Ex. 01C4" md-input-id="complaint_ac">
+                                                    <md-item-template>
+                                                        <span>
+                                                            {{complaint.code+' / '+complaint.name}}
+                                                        </span>
+                                                    </md-item-template>
+                                                    <md-not-found>
+                                                        No complaints matching "{{complaintSearchKey}}" were found.
+                                                    </md-not-found>
+                                                </md-autocomplete>
+                                                <input type="hidden" name="complaint_id" value="{{job_order_repair_order.complaint.id}}">
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-6" ng-if="$ctrl.action == 8187 && job_order_repair_order.split_order_type.is_claimable ==1">
+                                            <div class="form-group">
+                                                <label>
+                                                    Fault code
+                                                    <sup class="mandatory">*</sup>
+                                                </label>
+                                                <md-autocomplete md-selected-item="job_order_repair_order.fault" md-search-text="faultSearchKey" md-items="fault in searchFaults(faultSearchKey)" md-item-text="fault.code+' / '+fault.name" md-min-length="1" md-escape-options="clear" placeholder="Ex. AA" md-input-id="fault_ac">
+                                                    <md-item-template>
+                                                        <span>
+                                                            {{fault.code+' / '+fault.name}}
+                                                        </span>
+                                                    </md-item-template>
+                                                    <md-not-found>
+                                                        No faults matching "{{faultSearchKey}}" were found.
+                                                    </md-not-found>
+                                                </md-autocomplete>
+                                                <input type="hidden" name="fault_id" value="{{job_order_repair_order.fault.id}}">
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
                                         <div class="col-md-12" ng-if="$ctrl.action == 8187">
                                             <div class="light-box form-group">
                                                 <h6 class=""><b>Attachments</b></h6>

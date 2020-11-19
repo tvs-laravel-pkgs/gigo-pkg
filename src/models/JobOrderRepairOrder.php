@@ -43,6 +43,14 @@ class JobOrderRepairOrder extends Model {
 		return $this->belongsTo('App\Config', 'status_id');
 	}
 
+	public function fault() {
+		return $this->belongsTo('App\Fault', 'fault_id');
+	}
+
+	public function complaint() {
+		return $this->belongsTo('App\Complaint', 'complaint_id');
+	}
+
 	public function labourReviewAttachment() {
 		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 10096);
 	}

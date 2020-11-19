@@ -244,39 +244,90 @@
         </div>
     </div>
 </div>
-<div class="modal modal-center fade" id="split_order_change" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-xs" role="document">
+
+<div class="modal fade filter" id="split_order_change"  data-keyboard="false"  data-backdrop="static">
+    <!-- <div class="modal-dialog modal-xs"> -->
+    <!-- <div class="modal-dialog"> -->
+    <div class="modal-dialog" ng-class="{'modal-xs': split_order_claimable == 0 } ">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <button type="button" class="close ripple" ng-click='split_order_modal_close()' aria-label="Close"><i class="icon ion-md-close"></i></button>
                 <h5 class="modal-title">Split Order Update</h5>
-            </div><!-- Modal Header -->
+            </div>
             <div class="modal-body">
-                <form id="split_order_form">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="input-text form-group">
-                                <label>Split Order Type<sup class="mandatory">*</sup></label>
-                                <md-select ng-model="split_order_id" md-on-close="clearSearchType()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Split Order Type">
-                                    <md-select-header class="demo-select-header">
-                                        <input ng-model="searchType" type="search" placeholder="Search Split Order Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
-                                    </md-select-header>
-                                    <md-optgroup>
-                                        <md-option ng-value="split_order_type.id" ng-repeat="split_order_type in split_order_types | filter:searchType">{{split_order_type.code}} / {{split_order_type.name}}</md-option>
-                                    </md-optgroup>
-                                </md-select>
-                                <input type="hidden" class="form-control required" id="split_order_type_id" name="split_order_type_id" value="{{split_order_id}}" />
-                            </div>
-                        </div><!-- Column -->
-                        <div class="col-md-12">
-                            <input type="hidden" id="labour_id" name="labour_id" value="" />
+                <div class="modal-form">
+                    <form id="split_order_form">
+                        <input type="hidden" id="labour_id" name="labour_id" value="" />
                             <input type="hidden" id="part_id" name="part_id" value="" />
                             <input type="hidden" id="type" name="type" value="{{type}}" />
-                            <button type="submit" class="btn btn-secondary-dark btn-square btn-block submit" ng-click="splitOrderChange();"><b>Submit</b></button>
-                        </div><!-- Column -->
-                    </div><!-- Row -->
-                </form>
-            </div><!-- Modal Body -->
+                        <div class="row">
+                            <!-- <div class="col-md-12"> -->
+                            <!-- <div class="col-md-6"> -->
+                            <div ng-class="{'col-md-12': split_order_claimable == 0, 'col-md-6':split_order_claimable == 1 } ">
+                                <div class="form-group">
+                                    <label>Split Order Type<sup class="mandatory">*</sup></label>
+                                    <md-select ng-model="split_order" md-on-close="clearSearchType()" data-md-container-class="selectdemoSelectHeader" ng-change='splitOrderChange(split_order.is_claimable)' placeholder="Select Split Order Type">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchType" type="search" placeholder="Search Split Order Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                        </md-select-header>
+                                        <md-optgroup>
+                                            <md-option ng-value="split_order_type" ng-repeat="split_order_type in split_order_types | filter:searchType">{{split_order_type.code}} / {{split_order_type.name}}</md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" class="form-control required" id="split_order_type_id" name="split_order_type_id" value="{{split_order.id}}" />
+                                </div>
+                            </div><!-- Column -->
+                            <div class="col-md-6" ng-if="split_order_claimable ==1">
+                                <div class="form-group">
+                                    <label>
+                                        Complaint code
+                                        <sup class="mandatory">*</sup>
+                                    </label>
+                                    <md-autocomplete md-no-cache="true" md-selected-item="job_order_repair_order.complaint" md-search-text="complaintSearchKey" md-items="complaint in searchCompaints(complaintSearchKey)" md-item-text="complaint.code+' / '+complaint.name" md-min-length="3" md-escape-options="clear" placeholder="Ex. 01C4" md-input-id="complaint_ac">
+                                        <md-item-template>
+                                            <span>
+                                                {{complaint.code+' / '+complaint.name}}
+                                            </span>
+                                        </md-item-template>
+                                        <md-not-found>
+                                            No complaints matching "{{complaintSearchKey}}" were found.
+                                        </md-not-found>
+                                    </md-autocomplete>
+                                    <input type="hidden" class="required" name="complaint_id" value="{{job_order_repair_order.complaint.id}}">
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-6" ng-if="split_order_claimable ==1">
+                                <div class="form-group">
+                                    <label>
+                                        Fault code
+                                        <sup class="mandatory">*</sup>
+                                    </label>
+                                    <md-autocomplete md-selected-item="job_order_repair_order.fault" md-search-text="faultSearchKey" md-items="fault in searchFaults(faultSearchKey)" md-item-text="fault.code+' / '+fault.name" md-min-length="1" md-escape-options="clear" placeholder="Ex. AA" md-input-id="fault_ac">
+                                        <md-item-template>
+                                            <span>
+                                                {{fault.code+' / '+fault.name}}
+                                            </span>
+                                        </md-item-template>
+                                        <md-not-found>
+                                            No faults matching "{{faultSearchKey}}" were found.
+                                        </md-not-found>
+                                    </md-autocomplete>
+                                    <input type="hidden" class="required" name="fault_id" value="{{job_order_repair_order.fault.id}}">
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-center mb-15">
+                                <button type="button"  ng-click='split_order_modal_close()' class="btn btn-primary btn-bordered cancel_modal_btn">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="btn btn-bordered submit"  ng-click="splitOrderSave();">Submit</button>
+                                <!-- <button type="submit" class="btn btn-secondary-dark btn-square btn-block submit" ng-click="splitOrderSave();"><b>Submit</b></button> -->
+                            </div><!-- Column -->
+                        </div><!-- Row -->
+                    </form>
+                </div>
+            </div>
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
-</div><!-- Modal Content -->
+</div><!-- Modal -->

@@ -1550,6 +1550,8 @@ class JobCardController extends Controller {
 				'labourReviewAttachment',
 				'repairOrder',
 				'repairOrderMechanics',
+				'fault',
+				'splitOrderType',
 				'repairOrderMechanics.mechanic',
 				'repairOrderMechanics.status',
 				'repairOrderMechanics.mechanicTimeLogs',
@@ -1713,6 +1715,48 @@ class JobCardController extends Controller {
 				]);
 			}
 
+			if($request->complaint_id)
+			{
+				$validator = Validator::make($request->all(), [
+					'complaint_id' => [
+						'required',
+						'integer',
+						'exists:complaints,id',
+					],
+				]);
+	
+				if ($validator->fails()) {
+					$errors = $validator->errors()->all();
+					$success = false;
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
+					]);
+				}
+			}
+
+			if($request->fault_id)
+			{
+				$validator = Validator::make($request->all(), [
+					'fault_id' => [
+						'required',
+						'integer',
+						'exists:faults,id',
+					],
+				]);
+	
+				if ($validator->fails()) {
+					$errors = $validator->errors()->all();
+					$success = false;
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
+					]);
+				}
+			}
+
 			DB::beginTransaction();
 
 			//UPDATE JOB CARD STATUS
@@ -1727,6 +1771,18 @@ class JobCardController extends Controller {
 			$job_order_repair_order->fill($request->all());
 			$job_order_repair_order->updated_at = Carbon::now();
 			$job_order_repair_order->updated_by_id = Auth::user()->id;
+			if($request->complaint_id){
+				$job_order_repair_order->complaint_id = $request->complaint_id;
+			}else{
+				$job_order_repair_order->complaint_id = NULL;
+			}
+
+			if($request->fault_id){
+				$job_order_repair_order->fault_id = $request->fault_id;
+			}else{
+				$job_order_repair_order->fault_id = NULL;
+			}
+			
 			$job_order_repair_order->save();
 
 			//Change Mechnanic status completed into rework
@@ -5599,6 +5655,48 @@ class JobCardController extends Controller {
 				]);
 			}
 
+			if($request->complaint_id)
+			{
+				$validator = Validator::make($request->all(), [
+					'complaint_id' => [
+						'required',
+						'integer',
+						'exists:complaints,id',
+					],
+				]);
+	
+				if ($validator->fails()) {
+					$errors = $validator->errors()->all();
+					$success = false;
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
+					]);
+				}
+			}
+
+			if($request->fault_id)
+			{
+				$validator = Validator::make($request->all(), [
+					'fault_id' => [
+						'required',
+						'integer',
+						'exists:faults,id',
+					],
+				]);
+	
+				if ($validator->fails()) {
+					$errors = $validator->errors()->all();
+					$success = false;
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
+					]);
+				}
+			}
+
 			if ($request->type == 'Part') {
 				$job_order_part = JobOrderPart::find($request->part_id);
 				if (!$job_order_part) {
@@ -5611,6 +5709,17 @@ class JobCardController extends Controller {
 				$job_order_part->split_order_type_id = $request->split_order_type_id == '-1' ? NULL : $request->split_order_type_id;
 				$job_order_part->updated_at = Carbon::now();
 				$job_order_part->updated_by_id = Auth::user()->id;
+				if($request->complaint_id){
+					$job_order_part->complaint_id = $request->complaint_id;
+				}else{
+					$job_order_part->complaint_id = NULL;
+				}
+
+				if($request->fault_id){
+					$job_order_part->fault_id = $request->fault_id;
+				}else{
+					$job_order_part->fault_id = NULL;
+				}
 				$job_order_part->save();
 			} else {
 				$job_order_repair_order = JobOrderRepairOrder::find($request->labour_id);
@@ -5624,6 +5733,17 @@ class JobCardController extends Controller {
 				$job_order_repair_order->split_order_type_id = $request->split_order_type_id == '-1' ? NULL : $request->split_order_type_id;
 				$job_order_repair_order->updated_at = Carbon::now();
 				$job_order_repair_order->updated_by_id = Auth::user()->id;
+				if($request->complaint_id){
+					$job_order_repair_order->complaint_id = $request->complaint_id;
+				}else{
+					$job_order_repair_order->complaint_id = NULL;
+				}
+
+				if($request->fault_id){
+					$job_order_repair_order->fault_id = $request->fault_id;
+				}else{
+					$job_order_repair_order->fault_id = NULL;
+				}
 				$job_order_repair_order->save();
 			}
 			return response()->json([

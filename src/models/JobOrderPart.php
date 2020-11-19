@@ -50,6 +50,14 @@ class JobOrderPart extends Model {
 		return $this->belongsToMany('App\Tax', 'job_order_part_tax', 'job_order_part_id', 'tax_id')->withPivot(['percentage', 'amount']);
 	}
 
+	public function fault() {
+		return $this->belongsTo('App\Fault', 'fault_id');
+	}
+
+	public function complaint() {
+		return $this->belongsTo('App\Complaint', 'complaint_id');
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];
