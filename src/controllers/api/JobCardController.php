@@ -1961,8 +1961,8 @@ class JobCardController extends Controller {
 								$gate_log->save();
 							}
 
-							$generate_estimate_pdf = JobCard::generateGatePassPDF($job_card->id);
-							$generate_covering_pdf = JobCard::generateCoveringLetterPDF($job_card->id);
+							$generate_estimate_pdf = JobCard::generateGatePassPDF($job_card->id,$type = 'GateIn');
+							$generate_covering_pdf = JobCard::generateCoveringLetterPDF($job_card->id,$type = 'GateIn');
 						}
 					}
 

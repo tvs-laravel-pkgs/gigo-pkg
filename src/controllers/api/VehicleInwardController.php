@@ -1384,7 +1384,8 @@ class VehicleInwardController extends Controller {
 					$total_issued_qty = $issued_qty - $returned_qty;
 
 					// dump($avail_qty, $total_remain_qty);
-					if ($avail_qty && $avail_qty > 0 && $total_remain_qty > 0) {
+					// if ($avail_qty && $avail_qty > 0 && $total_remain_qty > 0) {
+					if ($total_remain_qty > 0) {
 						$parts_data[$key]['part_id'] = $parts->id;
 						$parts_data[$key]['code'] = $parts->code;
 						$parts_data[$key]['name'] = $parts->name;
