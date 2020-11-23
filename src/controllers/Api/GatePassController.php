@@ -269,7 +269,7 @@ class GatePassController extends Controller {
 			//GET BRANCH/OUTLET
 			$branch = Outlet::where('id', Auth::user()->working_outlet_id)->first();
 
-			$generateNumber = SerialNumberGroup::generateNumber(138, $financial_year->id, $branch->state_id, $branch->id);
+			$generateNumber = SerialNumberGroup::generateNumber(139, $financial_year->id, $branch->state_id, $branch->id);
 				if (!$generateNumber['success']) {
 					return response()->json([
 						'success' => false,
