@@ -379,8 +379,15 @@
 </script>
 
 <script type='text/javascript'>
-    //Survey Type
+    //OTP
     var otp_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/otp/list.html')}}';
+</script>
+
+<script type='text/javascript'>
+    //Gate Pass
+    var gate_pass_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gate-pass/list.html')}}';
+    var gate_pass_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gate-pass/form.html')}}';
+    var gate_pass_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gate-pass/view.html')}}';
 </script>
 
 <script type='text/javascript'>

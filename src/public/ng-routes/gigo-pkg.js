@@ -1261,3 +1261,24 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'OTP',
     });
 }]);
+
+app.config(['$routeProvider', function($routeProvider) {
+    $routeProvider.
+    //GatePass
+    when('/gate-pass/list', {
+        template: '<gate-pass-list></gate-pass-list>',
+        title: 'GatePass',
+    }).
+    when('/gate-pass/add', {
+        template: '<gate-pass-form></gate-pass-form>',
+        title: 'Add GatePass',
+    }).
+    when('/gate-pass/edit/:id', {
+        template: '<gate-pass-form></gate-pass-form>',
+        title: 'Edit GatePass',
+    }).
+    when('/gate-pass/view/:id', {
+        template: '<gate-pass-view></gate-pass-view>',
+        title: 'View GatePass',
+    });
+}]);

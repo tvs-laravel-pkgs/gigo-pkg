@@ -1,0 +1,267 @@
+<div class="content-wrap cndn-wrap">
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content title-block">
+                    <h1 class="title type-2">
+                        Inward Vehicle
+                        <span class="badge badge-secondary">
+                            {{gate_logs.length}}
+                        </span>
+                    </h1>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content reset-block">
+                    <div class="reset-wrap">
+                        <button class="btn-reset reset-tooltip refresh_table my-tooltip" ng-shortcut="'meta+shift+r'" ng-shortcut-click data-title="ctrl+shift+r">
+                            <img class="img-responsive" src="./public/theme/img/content/reset.svg" alt="Reset" />
+                        </button>
+                    </div>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content search-block">
+                    <div class="search_filter">
+                        <label>
+                            <input type="search" id="search_inward_vehicle" class="form-control" placeholder="Search" ng-model="$ctrl.search_key" ng-keyup=searchInwardVehicle() autofocus />
+                            <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">Clear</button>
+                        </label>
+                    </div><!-- Search Filter -->
+                </div><!-- Page Header Content -->
+                <div class="page-header-content button-block">
+                    <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#vehicle-inward-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>Filter</button>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+            <div class="page-header-content-right">
+                <div class="page-header-content tab-block">
+                    <div class="list-card-icon-wrap">
+                        <div class="list-icon" ng-click="listRedirect('table')">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <div class="card-icon in" ng-click="listRedirect('card')">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div><!-- List Card Wrap -->
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Right -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <div class="list-card-tab-wrap">
+        <div class="card-tab-content in">
+            <div class="page-card-content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <ul class="card-list">
+                                <li ng-repeat="(key, gate_log) in gate_logs">
+                                    <div class="card-box">
+                                        <div class="card-box-head">
+                                            <div class="card-box-head-title">
+                                                {{gate_log.registration_type}}
+                                            </div>
+                                        </div><!-- Card Box Head -->
+                                        <div class="card-box-body">
+                                            <div class="box-list">
+                                                <div class="box-left">
+                                                    <div class="box-transparent">
+                                                        <div class="box-transparent-title">
+                                                            {{gate_log.registration_number}}
+                                                        </div>
+                                                        <div class="box-transparent-subtitle">
+                                                            {{gate_log.model_number}}
+                                                        </div>
+                                                    </div>
+                                                </div><!-- Box Left -->
+                                                <div class="box-right">
+                                                    <div class="box-info">
+                                                        <div class="box-info-head">
+                                                            Gate In # : {{gate_log.number}}
+                                                        </div>
+                                                        <div class="box-info-body">
+                                                            <div class="box-info-body-text">
+                                                                {{gate_log.date}}
+                                                            </div>
+                                                            <div class="box-info-body-text">
+                                                                {{gate_log.time}}
+                                                            </div>
+                                                        </div>
+                                                    </div><!-- Box Info -->
+                                                </div><!-- Box Right -->
+                                            </div><!-- Box List -->
+                                            <div class="card-box-content mb-8">
+                                                <img class="img-responsive" src="./public/theme/img/content/jc_profile.svg" alt="Image" />
+                                                <span class="card-box-content-value">
+                                                    <b>
+                                                        {{gate_log.customer_name ? gate_log.customer_name : '-'}}
+                                                    </b>
+                                                </span>
+                                            </div>
+                                            <div class="card-box-content" ng-if="gate_log.amc_policies">
+                                                <img class="img-responsive" src="./public/theme/img/content/jc_membership.svg" alt="Image" />
+                                                <span class="card-box-content-value">
+                                                    {{gate_log.amc_policies}}
+                                                </span>
+                                            </div>
+                                        </div><!-- Card Box Body -->
+                                        <div class="card-box-footer">
+                                            <div class="card-box-footer-left">
+                                                <div class="card-box-footer-info">
+                                                    <img class="img-responsive" src="./public/theme/img/content/icon-exclamatory.svg" alt="Icon" />
+                                                    <span class="card-box-footer-value">
+                                                        {{gate_log.status_name}}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="card-box-footer-right">
+                                                <a href=".#!/inward-vehicle/view/{{gate_log.id}}" class="btn btn-square btn-md btn-red">
+                                                    View
+                                                </a>
+                                                <a href=".#!/inward-vehicle/vehicle-detail/{{gate_log.id}}" class="btn btn-square btn-md btn-secondary-dark" ng-if="gate_log.status_id == 8460">
+                                                    Initiate
+                                                </a>
+                                                <a href=".#!/inward-vehicle/update-jc/form/{{gate_log.id}}" class="btn btn-square btn-md btn-secondary-dark" ng-if="gate_log.status_id == 8461 && gate_log.is_customer_agreed == 1">
+                                                    Update JC
+                                                </a>
+                                            </div>
+                                        </div><!-- Card Box Footer -->
+                                    </div><!-- Card Box -->
+                                </li>
+                            </ul><!-- Card List -->
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Container -->
+            </div><!-- Page Card Content -->
+        </div><!-- Card Tab Content -->
+    </div><!-- List & Card Tab Wrap -->
+</div><!-- Content Wrap -->
+<!-- Filter Modal -->
+<div class="modal fade filter" id="vehicle-inward-filter-modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <h5 class="modal-title" id="myModalLabel">
+                    Filter
+                </h5>
+            </div><!-- Modal Header -->
+            <div class="modal-body">
+                <div class="modal-form">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Gate In Date</label>
+                                <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
+                                    <input type="text" class="form-control" placeholder="Select Gate In Date" ng-model="$ctrl.gate_in_date" id="gate_in_date" />
+                                    <div class="input-group-addon">
+                                        <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                    </div>
+                                </div><!-- Input Group -->
+                            </div><!-- Feild -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Registration Type</label>
+                                <md-select ng-model="$ctrl.registration_type" md-on-close="clearSearchTerm()" ng-change="onSelectedRegistrationType($ctrl.registration_type)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Registration Type">
+                                    <md-select-header class="demo-select-header">
+                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Registration Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                    </md-select-header>
+                                    <md-optgroup>
+                                        <md-option ng-value="registration_type.id" ng-repeat="registration_type in $ctrl.extras.registration_type_list | filter:searchTerm">{{registration_type.name}}</md-option>
+                                    </md-optgroup>
+                                </md-select>
+                                <input type="hidden" class="form-control type-sm" name="registration_type" id="registration_type" value="">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>
+                                    Registration No
+                                </label>
+                                <input type="text" class="form-control" id="reg_no" name="reg_no" placeholder="Enter Registration No" autocomplete="off" ng-model="$ctrl.reg_no">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>
+                                    Membership
+                                </label>
+                                <input type="text" class="form-control" id="membership" name="membership" placeholder="Enter Membership" autocomplete="off" ng-model="$ctrl.membership">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Customer</label>
+                                <md-autocomplete md-items="option in $ctrl.searchCustomer($ctrl.customerSearchText)" md-selected-item="$ctrl.customer" md-selected-item-change="selectedCustomer($ctrl.customer.id)" md-search-text="$ctrl.customerSearchText" md-item-text="option.name" md-min-length="3" placeholder="Customer Name" md-autofocus>
+                                    <md-item-template>
+                                        <span>
+                                            {{option.name}}
+                                        </span>
+                                    </md-item-template>
+                                    <md-not-found>
+                                        No Customer matching "{{$ctrl.customerSearchText}}" were found.
+                                    </md-not-found>
+                                </md-autocomplete>
+                                <input type="hidden" id="customer_id" name="customer_id" value="">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Vehicle Model</label>
+                                <md-autocomplete md-items="option in $ctrl.searchVehicleModel($ctrl.vehicleModelSearchText)" md-selected-item="$ctrl.vehicle_model" md-selected-item-change="selectedVehicleModel($ctrl.vehicle_model.id)" md-search-text="$ctrl.vehicleModelSearchText" md-item-text="option.model_name" md-min-length="3" placeholder="Vehicle Model Name" md-autofocus>
+                                    <md-item-template>
+                                        <span>
+                                            {{option.model_name}} / {{option.number}}
+                                        </span>
+                                    </md-item-template>
+                                    <md-not-found>
+                                        No Vehicle Model matching "{{$ctrl.vehicleModelSearchText}}" were found.
+                                    </md-not-found>
+                                </md-autocomplete>
+                                <input type="hidden" id="model_id" name="model_id" value="">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>
+                                    Gate In No
+                                </label>
+                                <input type="text" class="form-control" id="gate_in_no" name="gate_in_no" placeholder="Enter Gate In No" autocomplete="off" ng-model="$ctrl.gate_in_no">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Status</label>
+                                <md-select ng-model="$ctrl.status_id" md-on-close="clearSearchTerm()" ng-change="onSelectedStatus($ctrl.status_id)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Status">
+                                    <md-select-header class="demo-select-header">
+                                        <input ng-model="searchTerm1" type="search" placeholder="Search for a Status" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                    </md-select-header>
+                                    <md-optgroup>
+                                        <md-option ng-value="status.id" ng-repeat="status in $ctrl.extras.status_list | filter:searchTerm1">{{status.name}}</md-option>
+                                    </md-optgroup>
+                                </md-select>
+                                <input type="hidden" class="form-control type-sm" name="status_id" id="status_id" value="">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Modal Form -->
+            </div><!-- Modal Body -->
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-6">
+                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.gate_in_date='';$ctrl.membership='';$ctrl.gate_in_no='';$ctrl.registration_type='';$ctrl.reg_no='';$ctrl.customerSearchText='';$ctrl.vehicleModelSearchText='';$ctrl.status_id='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">
+                            Reset Filter
+                        </button>
+                    </div><!-- Column -->
+                    <div class="col-md-6 text-right">
+                        <button type="button" class="btn btn-primary btn-md" ng-click="applyFilter()">
+                            Apply
+                        </button>
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div><!-- Modal Footer -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->

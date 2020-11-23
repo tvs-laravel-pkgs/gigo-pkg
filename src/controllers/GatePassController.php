@@ -1,8 +1,9 @@
 <?php
 
 namespace Abs\GigoPkg;
-use App\Http\Controllers\Controller;
+use App\Customer;
 use App\GatePass;
+use App\Http\Controllers\Controller;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -182,5 +183,15 @@ class GatePassController extends Controller {
 			'success' => true,
 			'gate_passes' => $gate_passes,
 		]);
+	}
+
+	//Customer Search
+	public function getCustomerSearchList(Request $request) {
+		return Customer::searchCustomer($request);
+	}
+
+	//Customer Search
+	public function getJobCardSearchList(Request $request) {
+		return JobCard::searchJobCard($request);
 	}
 }

@@ -978,4 +978,20 @@ class JobCard extends BaseModel {
 		return true;
 	}
 
+	public static function searchJobCard($r) {
+		$key = $r->key;
+		$list = self::where('company_id', Auth::user()->company_id)
+			->select(
+				'id',
+				'job_card_number',
+				'date',
+			)
+			->where(function ($q) use ($key) {
+				$q->where('job_card_number', 'like', $key . '%')
+				;
+			})
+			->get();
+		return response()->json($list);
+	}
+
 }

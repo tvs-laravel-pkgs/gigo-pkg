@@ -353,4 +353,7 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('/otp/get-list', 'OTPController@getOTPList')->name('getOTPList');
 	Route::get('/otp/get-filter-data', 'OTPController@getOTPFilter')->name('getOTPFilter');
 
+	//GatePass
+	Route::post('/gate-pass/jobcard/get-search-list', 'GatePassController@getJobCardSearchList')->name('getJobCardSearchList');
+
 });

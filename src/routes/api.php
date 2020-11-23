@@ -462,5 +462,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		// Aggregates
 		Route::post('aggregates/get-sub-aggregates-list', 'AggregateController@getSubAggregates');
 
+		//GatePass
+		Route::post('gate-pass/get-form-data', 'GatePassController@getFormData');
+		Route::post('gate-pass/save', 'GatePassController@save');
+
 	});
 });

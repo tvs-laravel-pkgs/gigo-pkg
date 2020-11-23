@@ -105,6 +105,22 @@ class GatePass extends Model {
 		return $this->belongsToMany('App\GatePassItem', 'gate_pass_gate_pass_item', 'gate_pass_id', 'gate_pass_item_id')->withPivot(['return_qty', 'gate_in_date']);
 	}
 
+	public function gatePassInvoice() {
+		return $this->hasOne('App\GatePassInvoice', 'gate_pass_id');
+	}
+
+	public function gatePassCustomer() {
+		return $this->hasOne('App\GatePassCustomer', 'gate_pass_id');
+	}
+
+	public function gatePassInvoiceItems() {
+		return $this->hasMany('App\GatePassInvoiceItem', 'gate_pass_id');
+	}
+
+	public function purpose() {
+		return $this->belongsTo('App\Config', 'purpose_id');
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];
