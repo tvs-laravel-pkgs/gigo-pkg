@@ -202,191 +202,261 @@ class GatePassController extends Controller {
 	public function save(Request $request) {
         // dd($request->all());
 		try {
-		$validator = Validator::make($request->all(), [
-			'type' => [
-				'required',
-			],
-			'purpose_id' => [
-				'required',
-				'integer',
-				'exists:configs,id',
-			],
-			// 'other_purpose' => [
-			// 	'required',
-			// ],
-			'hand_over_to' => [
-				'required',
-			],
-		]);
+			if($request->form_type == 2)
+			{
+				$gate_pass = GatePass::find($request->gate_pass_id);
 
-		if ($validator->fails()) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Validation Error',
-				'errors' => $validator->errors()->all(),
-			]);
-		}
+				if(!$gate_pass)
+				{
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => ['Gate Pass Not Found!'],
+					]);
+				}
 
-		DB::beginTransaction();
-		
-		//remove items
-		$removal_item_ids = json_decode($request->removal_item_ids);
-		if (!empty($removal_item_ids)) {
-			$invoice_items = GatePassInvoiceItem::whereIn('id', $removal_item_ids)->forceDelete();
-		}
+				DB::beginTransaction();
 
-		$gate_pass = GatePass::firstOrNew(['id'=>$request->id]);
-		if($request->type == 'Returnable')
-		{
-			$gate_pass->type_id = 8282;
-			$gate_pass->job_card_id = $request->job_card_id;
-		}
-		else
-		{
-			$gate_pass->type_id = 8283;
-			$gate_pass->job_card_id = NULL;
-		}
+				if($gate_pass->status_id == 11400)
+				{
+					if($gate_pass->type_id == 8282)
+					{
+						$gate_pass->status_id = 11402;
+					}
+					else
+					{
+						$gate_pass->status_id = 11401;
+					}
 
-		if (!$gate_pass->exists) {
-			if (date('m') > 3) {
-				$year = date('Y') + 1;
-			} else {
-				$year = date('Y');
-			}
-			//GET FINANCIAL YEAR ID
-			$financial_year = FinancialYear::where('from', $year)
-				->where('company_id', Auth::user()->company_id)
-				->first();
-			if (!$financial_year) {
+					$gate_pass->gate_out_date = Carbon::now();
+				}
+				elseif($gate_pass->status_id == 11402)
+				{
+					$gate_pass->status_id = 11403;
+					$gate_pass->gate_in_date = Carbon::now();
+				}
+				elseif($gate_pass->status_id == 11403)
+				{
+					$gate_pass->status_id = 11404;
+				}
+
+				$gate_pass->save();
+
+				//Update parts Details
+				if (isset($request->invoice_items)) {
+					foreach ($request->invoice_item as $key => $invoice_item) {
+						if(isset($invoice_item['returned_qty']))
+						{
+							$gate_pass_item = GatePassInvoiceItem::firstOrNew([
+								'id' => $invoice_item['item_id'],
+							]);
+			
+							$gate_pass_item->returned_qty =  $invoice_item['returned_qty'];
+							$gate_pass_item->status_id = 11421;
+							$gate_pass_item->save();
+						}
+					}	
+				}
+
+				DB::commit();
+
 				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => [
-						'Fiancial Year Not Found',
-					],
+					'success' => true,
+					'message' => 'GatePass Updated successfully!!',
 				]);
-			}
-			//GET BRANCH/OUTLET
-			$branch = Outlet::where('id', Auth::user()->working_outlet_id)->first();
-
-			$generateNumber = SerialNumberGroup::generateNumber(139, $financial_year->id, $branch->state_id, $branch->id);
-				if (!$generateNumber['success']) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Validation Error',
-						'errors' => [
-							'No Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
-						],
-					]);
-				}
-
-				$error_messages_2 = [
-					'number.required' => 'Serial number is required',
-					'number.unique' => 'Serial number is already taken',
-				];
-
-				$validator_2 = Validator::make($generateNumber, [
-					'number' => [
-						'required',
-						'unique:gate_passes,number,' . $gate_pass->id . ',id,company_id,' . Auth::user()->company_id,
-					],
-				], $error_messages_2);
-
-				if ($validator_2->fails()) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Validation Error',
-						'errors' => $validator_2->errors()->all(),
-					]);
-				}
-			$gate_pass->number = $generateNumber['number'];
-		}
-
-		$gate_pass->job_card_id = $request->job_card_id;
-		$gate_pass->purpose_id = $request->purpose_id;
-		$gate_pass->other_remarks = $request->other_purpose;
-		$gate_pass->hand_over_to = $request->hand_over_to;
-		$gate_pass->status_id = 11400;
-		$gate_pass->company_id = Auth::user()->company_id;
-		$gate_pass->save();
-
-		if (isset($request->part_details)) {
-			foreach ($request->part_details as $key => $part_detail) {
-				$gate_pass_item = GatePassInvoiceItem::firstOrNew([
-					'id' => $part_detail['id'],
-				]);
-
-				if($gate_pass_item->exists)
-				{
-					$gate_pass_item->updated_by_id = Auth::user()->id;
-					$gate_pass_item->updated_at = Carbon::now();
-				}
-				else
-				{
-					$gate_pass_item->created_by_id = Auth::user()->id;
-					$gate_pass_item->created_at = Carbon::now();
-				}
-				
-				$gate_pass_item->gate_pass_id = $gate_pass->id;
-				$gate_pass_item->category_id =  $part_detail['category_id'];
-				$gate_pass_item->entity_id =  isset($part_detail['entity_id']) ? $part_detail['entity_id'] : NULL;
-				$gate_pass_item->entity_name = isset($part_detail['entity_name']) ? $part_detail['entity_name'] : NULL;
-				$gate_pass_item->entity_description =  $part_detail['entity_description'];
-				$gate_pass_item->issue_qty =  $part_detail['issue_qty'];
-				$gate_pass_item->status_id = 11400;
-				$gate_pass_item->save();
-			}	
-		}else
-		{
-
-		}
-		
-		if($request->type == 'Non Returnable')
-		{
-			$gate_pass_invoice = GatePassInvoice::firstOrNew(['gate_pass_id'=>$gate_pass->id]);
-
-			if (!$gate_pass_invoice->exists) {
-				$gate_pass_invoice->created_at = Carbon::now();
-				$gate_pass_invoice->created_by_id = Auth::user()->id;
 			}
 			else
 			{
-				$gate_pass_invoice->updated_at = Carbon::now();
-				$gate_pass_invoice->updated_by_id = Auth::user()->id;
-			}
-
-			$gate_pass_invoice->invoice_number = $request->invoice_number;
-			$gate_pass_invoice->invoice_date = date('Y-m-d', strtotime($request->invoice_date));
-			$gate_pass_invoice->invoice_amount = $request->invoice_amount;
-			$gate_pass_invoice->save();
-		}
-
-		//Customer
-		$gate_pass_customer = GatePassCustomer::firstOrNew(['gate_pass_id'=>$gate_pass->id]);
-
-		if (!$gate_pass_customer->exists) {
-			$gate_pass_customer->created_at = Carbon::now();
-			$gate_pass_customer->created_by_id = Auth::user()->id;
-		}
-		else
-		{
-			$gate_pass_customer->updated_at = Carbon::now();
-			$gate_pass_customer->updated_by_id = Auth::user()->id;
-		}
-
-		$gate_pass_customer->customer_name = $request->customer_name;
-		$gate_pass_customer->customer_address = $request->customer_address;
-		$gate_pass_customer->customer_id = $request->customer_id;
-
-		$gate_pass_customer->save();
+				$validator = Validator::make($request->all(), [
+					'type' => [
+						'required',
+					],
+					'purpose_id' => [
+						'required',
+						'integer',
+						'exists:configs,id',
+					],
+					// 'other_purpose' => [
+					// 	'required',
+					// ],
+					'hand_over_to' => [
+						'required',
+					],
+				]);
 		
-		DB::commit();
-
-		return response()->json([
-			'success' => true,
-			'message' => 'GatePass Saved successfully!!',
-		]);
-
+				if ($validator->fails()) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
+					]);
+				}
+		
+				DB::beginTransaction();
+				
+				//remove items
+				$removal_item_ids = json_decode($request->removal_item_ids);
+				if (!empty($removal_item_ids)) {
+					$invoice_items = GatePassInvoiceItem::whereIn('id', $removal_item_ids)->forceDelete();
+				}
+		
+				$gate_pass = GatePass::firstOrNew(['id'=>$request->id]);
+				if($request->type == 'Returnable')
+				{
+					$gate_pass->type_id = 8282;
+					$gate_pass->job_card_id = $request->job_card_id;
+				}
+				else
+				{
+					$gate_pass->type_id = 8283;
+					$gate_pass->job_card_id = NULL;
+				}
+		
+				if (!$gate_pass->exists) {
+					if (date('m') > 3) {
+						$year = date('Y') + 1;
+					} else {
+						$year = date('Y');
+					}
+					//GET FINANCIAL YEAR ID
+					$financial_year = FinancialYear::where('from', $year)
+						->where('company_id', Auth::user()->company_id)
+						->first();
+					if (!$financial_year) {
+						return response()->json([
+							'success' => false,
+							'error' => 'Validation Error',
+							'errors' => [
+								'Fiancial Year Not Found',
+							],
+						]);
+					}
+					//GET BRANCH/OUTLET
+					$branch = Outlet::where('id', Auth::user()->working_outlet_id)->first();
+		
+					$generateNumber = SerialNumberGroup::generateNumber(139, $financial_year->id, $branch->state_id, $branch->id);
+						if (!$generateNumber['success']) {
+							return response()->json([
+								'success' => false,
+								'error' => 'Validation Error',
+								'errors' => [
+									'No Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
+								],
+							]);
+						}
+		
+						$error_messages_2 = [
+							'number.required' => 'Serial number is required',
+							'number.unique' => 'Serial number is already taken',
+						];
+		
+						$validator_2 = Validator::make($generateNumber, [
+							'number' => [
+								'required',
+								'unique:gate_passes,number,' . $gate_pass->id . ',id,company_id,' . Auth::user()->company_id,
+							],
+						], $error_messages_2);
+		
+						if ($validator_2->fails()) {
+							return response()->json([
+								'success' => false,
+								'error' => 'Validation Error',
+								'errors' => $validator_2->errors()->all(),
+							]);
+						}
+					$gate_pass->number = $generateNumber['number'];
+				}
+		
+				$gate_pass->job_card_id = $request->job_card_id;
+				$gate_pass->purpose_id = $request->purpose_id;
+				$gate_pass->other_remarks = $request->other_purpose;
+				$gate_pass->hand_over_to = $request->hand_over_to;
+				$gate_pass->status_id = 11400;
+				$gate_pass->company_id = Auth::user()->company_id;
+				$gate_pass->outlet_id = Auth::user()->working_outlet_id;
+				$gate_pass->save();
+		
+				if (isset($request->part_details)) {
+					foreach ($request->part_details as $key => $part_detail) {
+						$gate_pass_item = GatePassInvoiceItem::firstOrNew([
+							'id' => $part_detail['id'],
+						]);
+		
+						if($gate_pass_item->exists)
+						{
+							$gate_pass_item->updated_by_id = Auth::user()->id;
+							$gate_pass_item->updated_at = Carbon::now();
+						}
+						else
+						{
+							$gate_pass_item->created_by_id = Auth::user()->id;
+							$gate_pass_item->created_at = Carbon::now();
+						}
+						
+						$gate_pass_item->gate_pass_id = $gate_pass->id;
+						$gate_pass_item->category_id =  $part_detail['category_id'];
+						$gate_pass_item->entity_id =  isset($part_detail['entity_id']) ? $part_detail['entity_id'] : NULL;
+						$gate_pass_item->entity_name = isset($part_detail['entity_name']) ? $part_detail['entity_name'] : NULL;
+						$gate_pass_item->entity_description =  $part_detail['entity_description'];
+						$gate_pass_item->issue_qty =  $part_detail['issue_qty'];
+						$gate_pass_item->status_id = 11420;
+						$gate_pass_item->save();
+					}	
+				}else
+				{
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => ['Kindly add atleast one part or tool!'],
+					]);
+				}
+				
+				if($request->type == 'Non Returnable')
+				{
+					$gate_pass_invoice = GatePassInvoice::firstOrNew(['gate_pass_id'=>$gate_pass->id]);
+		
+					if (!$gate_pass_invoice->exists) {
+						$gate_pass_invoice->created_at = Carbon::now();
+						$gate_pass_invoice->created_by_id = Auth::user()->id;
+					}
+					else
+					{
+						$gate_pass_invoice->updated_at = Carbon::now();
+						$gate_pass_invoice->updated_by_id = Auth::user()->id;
+					}
+		
+					$gate_pass_invoice->invoice_number = $request->invoice_number;
+					$gate_pass_invoice->invoice_date = date('Y-m-d', strtotime($request->invoice_date));
+					$gate_pass_invoice->invoice_amount = $request->invoice_amount;
+					$gate_pass_invoice->save();
+				}
+		
+				//Customer
+				$gate_pass_customer = GatePassCustomer::firstOrNew(['gate_pass_id'=>$gate_pass->id]);
+		
+				if (!$gate_pass_customer->exists) {
+					$gate_pass_customer->created_at = Carbon::now();
+					$gate_pass_customer->created_by_id = Auth::user()->id;
+				}
+				else
+				{
+					$gate_pass_customer->updated_at = Carbon::now();
+					$gate_pass_customer->updated_by_id = Auth::user()->id;
+				}
+		
+				$gate_pass_customer->customer_name = $request->customer_name;
+				$gate_pass_customer->customer_address = $request->customer_address;
+				$gate_pass_customer->customer_id = $request->customer_id;
+		
+				$gate_pass_customer->save();
+				
+				DB::commit();
+		
+				return response()->json([
+					'success' => true,
+					'message' => 'GatePass Saved successfully!!',
+				]);
+			}
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,

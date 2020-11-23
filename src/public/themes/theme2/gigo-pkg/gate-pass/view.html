@@ -1,3 +1,16 @@
+<style>
+    /* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+</style>
 <!-- Content Wrap -->
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
@@ -25,8 +38,8 @@
     <!-- Page Main Content -->
     <div class="page-main-content form-content type2">
         <form id="form" autocomplete="off">
-            <input type="hidden" name="id" value="{{$ctrl.gate_pass.id}}">
-            <input type="hidden" name="removal_item_ids"class="removal_item_ids" id="removal_item_ids">
+            <input type="hidden" name="gate_pass_id" value="{{$ctrl.gate_pass.id}}">
+            <input type="hidden" name="form_type" value="2">
             <div class="page-tab-form pb-70">
                 <div class="tab-form-wrap">
                     <div class="tab-form-header">
@@ -91,6 +104,18 @@
                                                             <span class="view-col-label">JobCard Date</span>
                                                             <span class="view-data-list-value">{{$ctrl.gate_pass.job_card.date}}</span>
                                                         </li>
+                                                        <li class="view-col-3"  ng-if="$ctrl.gate_pass.type_id == 8283">
+                                                            <span class="view-col-label">Invoice Number</span>
+                                                            <span class="view-data-list-value">{{$ctrl.gate_pass.gate_pass_invoice.invoice_number}}</span>
+                                                        </li>
+                                                        <li class="view-col-3"  ng-if="$ctrl.gate_pass.type_id == 8283">
+                                                            <span class="view-col-label">Invoice Date</span>
+                                                            <span class="view-data-list-value">{{$ctrl.gate_pass.gate_pass_invoice.invoice_date}}</span>
+                                                        </li>
+                                                        <li class="view-col-3"  ng-if="$ctrl.gate_pass.type_id == 8283">
+                                                            <span class="view-col-label">Invoice Amount</span>
+                                                            <span class="view-data-list-value">{{$ctrl.gate_pass.gate_pass_invoice.invoice_amount}}</span>
+                                                        </li>
                                                     </ul>
                                                 </div><!-- View Data -->
                                                 <input type="hidden" value="{{$ctrl.employee.id}}" name="employee_ids" class="employee_id_di">
@@ -112,16 +137,43 @@
                                                             <th>Name</th>
                                                             <th>Description</th>
                                                             <th>Issue Qty</th>
+                                                            <th ng-if="$ctrl.gate_pass.status_id == 11402 || $ctrl.gate_pass.status_id == 11403 || $ctrl.gate_pass.status_id == 11404">Status</th>
+                                                            <th ng-if="$ctrl.gate_pass.status_id == 11402 || $ctrl.gate_pass.status_id == 11403 || $ctrl.gate_pass.status_id == 11404">Returned Qty</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <tr ng-repeat="(index, gate_pass_invoice_item) in $ctrl.gate_pass.gate_pass_invoice_items">
-                                                            <td>{{gate_pass_invoice_item.category.name}}</td>
+                                                            <td>{{gate_pass_invoice_item.category.name}}
+                                                                <input type="hidden" name="invoice_items[{{index}}][item_id]" value="{{gate_pass_invoice_item.id}}">
+                                                            </td>
                                                             <td ng-if="gate_pass_invoice_item.category_id == 11380">{{gate_pass_invoice_item.part.code}}</td>
                                                             <td ng-if="gate_pass_invoice_item.category_id == 11381">{{gate_pass_invoice_item.entity_name}}</td>
                                                             <td ng-if="gate_pass_invoice_item.category_id == 11380">{{gate_pass_invoice_item.part.name}}</td>
                                                             <td ng-if="gate_pass_invoice_item.category_id == 11381">{{gate_pass_invoice_item.entity_description}}</td>
                                                             <td>{{gate_pass_invoice_item.issue_qty}}</td>
+                                                            <td ng-if="$ctrl.gate_pass.status_id == 11402 || $ctrl.gate_pass.status_id == 11403">
+                                                                <label style="display: none">
+                                                                {{ gate_pass_invoice_item.switch_value = gate_pass_invoice_item.status_id == 11421 ? 'Received' : 'Pending' }}
+                                                                </label>
+                                                                <div class="common-switch">
+                                                                    <md-switch ng-model="gate_pass_invoice_item.switch_value" aria-label="Switch 1" ng-true-value="'Received'" ng-false-value="'Pending'" class="md-warn">
+                                                                        <!-- {{ gate_pass_invoice_item.switch_value ? gate_pass_invoice_item.switch_value :'Pending' }} -->
+                                                                        {{ gate_pass_invoice_item.switch_value}}
+                                                                    </md-switch>
+                                                                    <input type="hidden" ng-model="gate_pass_invoice_item.switch_value" value="{{gate_pass_invoice_item.switch_value}}" id="approveType{{index}}">
+                                                                </div>
+                                                            </td>
+                                                            <td ng-if="$ctrl.gate_pass.status_id == 11404">
+                                                                {{ gate_pass_invoice_item.status_id == 11421 ? 'Received' : 'Pending' }}
+                                                            </td>
+                                                            <td ng-if="$ctrl.gate_pass.status_id == 11402 || $ctrl.gate_pass.status_id == 11403">
+                                                                <div class="input-text" ng-if="gate_pass_invoice_item.switch_value == 'Received'">
+                                                                    <input type="number" min="1" max="{{gate_pass_invoice_item.issue_qty}}" class="form-control required" name="invoice_items[{{index}}][returned_qty]" value="{{gate_pass_invoice_item.returned_qty}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                                                </div>
+                                                            </td>
+                                                            <td ng-if="$ctrl.gate_pass.status_id == 11404">
+                                                                {{ gate_pass_invoice_item.returned_qty }}
+                                                            </td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -130,6 +182,14 @@
                                     </div><!-- Row -->
                                 </div><!-- Tab Pane Wrap -->
                             </div><!-- Tabe Pane -->
+                            <div class="tab-pane-footer">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <a href="#!/gate-pass/list" class="btn btn-secondary btn-prev my-tooltip">Cancel</a>
+                                        <button type="submit" class="btn btn-primary submit my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s" ng-click="saveGatePass()">Submit</button>
+                                    </div>
+                                </div>
+                            </div><!-- Tab Footer -->
                         </div><!-- Tab Content -->
                     </div><!-- Tab Form Body -->
                 </div><!-- Tab Form Wrap -->

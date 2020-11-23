@@ -19,49 +19,65 @@ class GatePassController extends Controller {
 	}
 
 	public function getGatePassList(Request $request) {
-		$gate_passes = GatePass::withTrashed()
-
-			->select([
+		$gate_passes = GatePass::join('configs as type', 'gate_passes.type_id', 'type.id')
+			->leftJoin('configs as status', 'gate_passes.status_id', 'status.id')
+			->leftJoin('job_cards', 'job_cards.id', 'gate_passes.job_card_id')
+			->leftJoin('outlets', 'outlets.id', 'gate_passes.outlet_id')
+			->select(
 				'gate_passes.id',
-				'gate_passes.name',
-				'gate_passes.code',
-
-				DB::raw('IF(gate_passes.deleted_at IS NULL, "Active","Inactive") as status'),
-			])
+				'gate_passes.status_id',
+				DB::raw('DATE_FORMAT(gate_passes.created_at,"%d/%m/%Y, %h:%i %p") as date'),
+				'gate_passes.number',
+				'status.name as status_name',
+				'outlets.code as outlet_code',
+				'type.name as type_name',
+				'job_cards.job_card_number'
+			)
+			->where(function ($query) use ($request) {
+				if (!empty($request->gate_in_date)) {
+					$query->whereDate('gate_passes.gate_in_date', date('Y-m-d', strtotime($request->gate_in_date)));
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->reg_no)) {
+					$query->where('gate_passes.number', 'LIKE', '%' . $request->number . '%');
+				}
+			})
+			
+			->where(function ($query) use ($request) {
+				if (!empty($request->status_id)) {
+					$query->where('gate_passes.status_id', $request->status_id);
+				}
+			})
 			->where('gate_passes.company_id', Auth::user()->company_id)
-
-			->where(function ($query) use ($request) {
-				if (!empty($request->name)) {
-					$query->where('gate_passes.name', 'LIKE', '%' . $request->name . '%');
-				}
-			})
-			->where(function ($query) use ($request) {
-				if ($request->status == '1') {
-					$query->whereNull('gate_passes.deleted_at');
-				} else if ($request->status == '0') {
-					$query->whereNotNull('gate_passes.deleted_at');
-				}
-			})
+			->where('gate_passes.outlet_id', Auth::user()->working_outlet_id)
+			->whereIn('gate_passes.type_id',[8282,8283])
 		;
+		$gate_passes->groupBy('gate_passes.id');
+		$gate_passes->orderBy('gate_passes.created_at', 'DESC');
 
 		return Datatables::of($gate_passes)
-			->rawColumns(['name', 'action'])
-			->addColumn('name', function ($gate_pass) {
-				$status = $gate_pass->status == 'Active' ? 'green' : 'red';
-				return '<span class="status-indicator ' . $status . '"></span>' . $gate_pass->name;
+			->rawColumns(['status', 'action'])
+			->editColumn('status', function ($gate_passes) {
+				$status = $gate_passes->status_id == '11400' || $gate_passes->status_id == '11402'? 'blue' : 'green';
+				return '<span class="text-' . $status . '">' . $gate_passes->status_name . '</span>';
 			})
-			->addColumn('action', function ($gate_pass) {
-				$img1 = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
-				$img1_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow-active.svg');
-				$img_delete = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-default.svg');
-				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
+			->addColumn('action', function ($gate_passes) {
+				$img2 = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
+				$img2_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow-active.svg');
+
+				$img1 = asset('public/themes/' . $this->data['theme'] . '/img/content/table/view.svg');
+				$img1_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/view.svg');
 				$output = '';
-				if (Entrust::can('edit-gate_pass')) {
-					$output .= '<a href="#!/gigo-pkg/gate_pass/edit/' . $gate_pass->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
+				if($gate_passes->status_id == '11400' && Entrust::can('edit-parts-tools-gate-pass'))
+				{
+					$output .= '<a href="#!/gate-pass/edit/' . $gate_passes->id . '" id = "" title="View"><img src="' . $img2 . '" alt="View" class="img-responsive" onmouseover=this.src="' . $img2 . '" onmouseout=this.src="' . $img2 . '"></a>';
 				}
-				if (Entrust::can('delete-gate_pass')) {
-					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#gate_pass-delete-modal" onclick="angular.element(this).scope().deleteGatePass(' . $gate_pass->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
+
+				if (Entrust::can('view-parts-tools-gate-pass')) {
+					$output .= '<a href="#!/gate-pass/view/' . $gate_passes->id . '" id = "" title="View"><img src="' . $img1 . '" alt="View" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
 				}
+
 				return $output;
 			})
 			->make(true);
@@ -190,7 +206,7 @@ class GatePassController extends Controller {
 		return Customer::searchCustomer($request);
 	}
 
-	//Customer Search
+	//JobCard Search
 	public function getJobCardSearchList(Request $request) {
 		return JobCard::searchJobCard($request);
 	}

@@ -26,6 +26,7 @@
     <div class="page-main-content form-content type2">
         <form id="form" autocomplete="off">
             <input type="hidden" name="id" value="{{$ctrl.gate_pass.id}}">
+            <input type="hidden" name="form_type" value="1">
             <input type="hidden" name="removal_item_ids"class="removal_item_ids" id="removal_item_ids">
             <div class="page-tab-form pb-70">
                 <div class="tab-form-wrap">
@@ -54,14 +55,14 @@
                             <div class="tab-pane fade in active" id="general-information" data-animation="fadeInUp" data-animation-delay="300">
                                 <div class="tab-pane-wrap">
                                     <div class="row">
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div class="input-text form-group">
                                                 <label>
                                                     Type
                                                     <sup class="mandatory">*</sup>
                                                 </label>
                                                 <div class="tab-switch">
-                                                    <md-switch ng-model="$ctrl.switch_value" aria-label="Switch 1" ng-true-value="'Non Returnable'" ng-false-value="'Returnable'" class="md-warn">
+                                                    <md-switch ng-model="$ctrl.switch_value" aria-label="Switch 4" ng-true-value="'Non Returnable'" ng-false-value="'Returnable'" class="md-warn  type-3">
                                                         {{ $ctrl.switch_value }}
                                                     </md-switch>
                                                     <input type="hidden" name="type" value="{{$ctrl.switch_value}}">
@@ -173,7 +174,7 @@
                                                 <label>
                                                     Search JobCard
                                                 </label>
-                                                <md-autocomplete md-selected-item="$ctrl.gate_pass.job_card" md-search-text="jobCardSearchKey"  md-items="job_card in $ctrl.searchJobCard(jobCardSearchKey)" md-item-text="job_card.job_card_number"  md-min-length="3" md-escape-options="clear" placeholder="Job Card Number" md-selected-item-change="console.log(1);jobCardSelected(job_card)" md-autofocus md-no-cache="true">
+                                                <md-autocomplete md-selected-item="$ctrl.gate_pass.job_card" md-search-text="jobCardSearchKey"  md-items="job_card in $ctrl.searchJobCard(jobCardSearchKey)" md-item-text="job_card.job_card_number"  md-min-length="4" md-escape-options="clear" placeholder="Job Card Number" md-selected-item-change="console.log(1);jobCardSelected(job_card)" md-autofocus md-no-cache="true">
                                                     <md-item-template>
                                                         <span>
                                                             {{job_card.job_card_number}}
@@ -279,7 +280,7 @@
                             <div class="tab-pane-footer">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <a href="#!/survey-type/list" class="btn btn-secondary btn-prev my-tooltip">Cancel</a>
+                                        <a href="#!/gate-pass/list" class="btn btn-secondary btn-prev my-tooltip">Cancel</a>
                                         <button type="submit" class="btn btn-primary submit my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s" ng-click="saveGatePass()">Submit</button>
                                     </div>
                                 </div>

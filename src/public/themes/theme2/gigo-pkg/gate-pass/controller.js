@@ -209,16 +209,14 @@ app.component('gatePassList', {
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $scope.loading = true;
         $('#search_inward_vehicle').focus();
-
-        alert(gate_pass_list_template_url);
         var self = this;
         HelperService.isLoggedIn()
         $('li').removeClass('active');
         $('.master_link').addClass('active').trigger('click');
 
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('inward-vehicle')) {
-            // window.location = "#!/page-permission-denied";
+        if (!self.hasPermission('parts-tools-gate-passes')) {
+            window.location = "#!/page-permission-denied";
             return false;
         }
         self.search_key = '';
@@ -227,7 +225,7 @@ app.component('gatePassList', {
         // var table_scroll;
         // table_scroll = $('.page-main-content.list-page-content').height() - 37;
         $('.page-main-content.list-page-content').css("overflow-y", "auto");
-        var dataTable = $('#inward_vehicles_list').DataTable({
+        var dataTable = $('#gate_pass_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {
                 // "search": "",
@@ -254,7 +252,7 @@ app.component('gatePassList', {
             paging: true,
             stateSave: true,
             ajax: {
-                url: laravel_routes['getVehicleInwardList'],
+                url: laravel_routes['getGatePassList'],
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
@@ -274,13 +272,10 @@ app.component('gatePassList', {
                 { data: 'action', class: 'action', name: 'action', searchable: false },
                 { data: 'date', searchable: false },
                 { data: 'outlet_code', name: 'outlets.code' },
-                { data: 'registration_type', name: 'registration_type' },
-                { data: 'registration_number', name: 'vehicles.registration_number' },
-                { data: 'customer_name', name: 'customers.name' },
-                { data: 'model_number', name: 'models.model_number' },
-                { data: 'amc_policies', name: 'amc_policies.name' },
-                { data: 'number', name: 'gate_logs.number' },
-                { data: 'status', name: 'configs.name' },
+                { data: 'type_name', name: 'configs.name' },
+                { data: 'number', name: 'gate_passes.number' },
+                { data: 'job_card_number', name: 'job_cards.job_card_number' },
+                { data: 'status_name', name: 'configs.name' },
 
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
@@ -295,13 +290,13 @@ app.component('gatePassList', {
 
         $scope.clear_search = function() {
             self.search_key = '';
-            $('#inward_vehicles_list').DataTable().search('').draw();
+            $('#gate_pass_list').DataTable().search('').draw();
         }
         $('.refresh_table').on("click", function() {
-            $('#inward_vehicles_list').DataTable().ajax.reload();
+            $('#gate_pass_list').DataTable().ajax.reload();
         });
 
-        var dataTables = $('#inward_vehicles_list').dataTable();
+        var dataTables = $('#gate_pass_list').dataTable();
         $scope.searchInwardVehicle = function() {
             dataTables.fnFilter(self.search_key);
         }
@@ -407,227 +402,6 @@ app.component('gatePassList', {
     }
 });
 
-//------------------------------------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------------------------------------
-
-app.component('inwardVehicleView', {
-    templateUrl: inward_vehicle_view_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
-        var self = this;
-        self.hasPermission = HelperService.hasPermission;
-        // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
-        //     window.location = "#!/page-permission-denied";
-        //     return false;
-        // }
-        self.angular_routes = angular_routes;
-
-        HelperService.isLoggedIn();
-        self.user = $scope.user = HelperService.getLoggedUser();
-
-        $scope.job_order_id = $routeParams.job_order_id;
-        //FETCH DATA
-        $scope.fetchData = function() {
-            $.ajax({
-                    url: base_url + '/api/vehicle-inward/get-view-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id
-                    },
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
-                .done(function(res) {
-                    if (!res.success) {
-                        showErrorNoty(res);
-                        return;
-                    }
-                    $scope.job_order = res.job_order;
-                    // console.log($scope.job_order);
-                    $scope.schedule_maintenance = res.schedule_maintenance;
-                    $scope.payable_maintenance = res.payable_maintenance;
-                    $scope.total_estimate_labour_amount = res.total_estimate_labour_amount;
-                    $scope.total_estimate_part_amount = res.total_estimate_part_amount;
-                    $scope.total_estimate_amount = res.total_estimate_amount;
-                    $scope.total_tax_amount = res.total_tax_amount;
-                    $scope.extras = res.extras;
-                    $scope.vehicle_inspection_item_groups = res.vehicle_inspection_item_groups;
-                    $scope.inventory_list = res.inventory_list;
-
-                    if ($scope.job_order.amc_status == 1 || $scope.job_order.amc_status == 0) {
-                        self.warrany_status = 1;
-                    } else {
-                        self.warrany_status = 0;
-                    }
-
-                    if ($scope.job_order.amc_status == 1) {
-                        self.amc_status = 1;
-                    } else {
-                        self.amc_status = 0;
-                    }
-
-                    if ($scope.job_order.ewp_expiry_date) {
-                        self.exwarrany_status = 1;
-                    } else {
-                        self.exwarrany_status = 0;
-                    }
-
-                    self.inward_cancel = 0;
-
-                    //PDF
-                    $scope.total_estimate = res.job_order.total_estimate;
-                    $scope.estimate_pdf = res.job_order.estimate_pdf;
-                    $scope.covering_letter_pdf = res.job_order.covering_letter_pdf;
-                    $scope.gate_pass_pdf = res.job_order.gate_pass_pdf;
-                    $scope.inventory_pdf = res.job_order.inventory_pdf;
-                    $scope.inspection_pdf = res.job_order.inspection_pdf;
-                    $scope.manual_job_order_pdf = res.job_order.manual_job_order_pdf;
-                    $scope.revised_estimate_url = base_url + '/gigo-pkg/pdf/job-order/revised-estimate/' + $scope.job_order.id;
-
-                    $scope.$apply();
-
-                    //Scrollable Tabs
-                    setTimeout(function() {
-                        scrollableTabs();
-                    }, 1000);
-                })
-                .fail(function(xhr) {
-                    custom_noty('error', 'Something went wrong at server');
-                });
-        }
-        $scope.fetchData();
-
-        $('.btn-nxt').on("click", function() {
-            $('.cndn-tabs li.active').next().children('a').trigger("click");
-            tabPaneFooter();
-        });
-        $('.btn-prev').on("click", function() {
-            $('.cndn-tabs li.active').prev().children('a').trigger("click");
-            tabPaneFooter();
-        });
-        $('.btn-pills').on("click", function() {
-            tabPaneFooter();
-        });
-        $scope.btnNxt = function() {}
-        $scope.prev = function() {}
-
-        /* Dropdown Arrow Function */
-        arrowDropdown();
-
-        //Save Form Data 
-        var form_id = '#inward_vehicle_form';
-        var v = jQuery(form_id).validate({
-            ignore: '',
-            // rules: {
-
-            // },
-            // messages: {
-
-            // },
-            invalidHandler: function(event, validator) {
-                custom_noty('error', 'You have errors, Please check all tabs');
-            },
-            submitHandler: function(form) {
-                let formData = new FormData($(form_id)[0]);
-                $('.submit').button('loading');
-                $.ajax({
-                        url: laravel_routes['saveJobOrder'],
-                        method: "POST",
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                    })
-                    .done(function(res) {
-                        if (res.success == true) {
-                            custom_noty('success', res.message);
-                            $location.path('/job-order/list');
-                            $scope.$apply();
-                        } else {
-                            if (!res.success == true) {
-                                $('.submit').button('reset');
-                                showErrorNoty(res);
-                            } else {
-                                $('.submit').button('reset');
-                                $location.path('/job-order/list');
-                                $scope.$apply();
-                            }
-                        }
-                    })
-                    .fail(function(xhr) {
-                        $('.submit').button('reset');
-                        custom_noty('error', 'Something went wrong at server');
-                    });
-            }
-        });
-
-        //Save Form Data 
-        $scope.saveInwardCancel = function(id) {
-            var form_id = '#inward_cancel_form';
-            var v = jQuery(form_id).validate({
-                ignore: '',
-                rules: {
-                    'job_order_id': {
-                        required: true,
-                    },
-                    'inward_cancel_reason': {
-                        required: true,
-                    },
-                },
-                messages: {
-
-                },
-                invalidHandler: function(event, validator) {
-                    custom_noty('error', 'You have errors, Please check all tabs');
-                },
-                submitHandler: function(form) {
-                    let formData = new FormData($(form_id)[0]);
-                    $scope.button_action(id, 1);
-                    $.ajax({
-                            url: base_url + '/api/vehicle-inward/cancel',
-                            method: "POST",
-                            data: formData,
-                            beforeSend: function(xhr) {
-                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                            },
-                            processData: false,
-                            contentType: false,
-                        })
-                        .done(function(res) {
-                            $scope.button_action(id, 2);
-                            if (!res.success) {
-                                showErrorNoty(res);
-                                return;
-                            }
-                            custom_noty('success', res.message);
-
-                            setTimeout(function() {
-                                $scope.fetchData();
-                            }, 1000);
-                        })
-                        .fail(function(xhr) {
-                            $scope.button_action(id, 2);
-                            custom_noty('error', 'Something went wrong at server');
-                        });
-                }
-            });
-        }
-
-        $scope.button_action = function(id, type) {
-            if (type == 1) {
-                $('.submit').button('loading');
-                $('.btn-prev').bind('click', false);
-
-            } else {
-                $('.submit').button('reset');
-                $('.btn-prev').unbind('click', false);
-            }
-        }
-    }
-});
-
-//------------------------------------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------------------------------------
-
 app.component('gatePassForm', {
     templateUrl: gate_pass_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element,$mdSelect,PartSvc) {
@@ -637,13 +411,11 @@ app.component('gatePassForm', {
         });
         var self = this;
         self.hasPermission = HelperService.hasPermission;
-        // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
-        //     window.location = "#!/page-permission-denied";
-        //     return false;
-        // }
-        if (!self.hasPermission('inward-job-card-tab-vehicle-details-edit')) {
-            // window.location = "#!/inward-vehicle/table-list";
+        if (!self.hasPermission('add-parts-tools-gate-pass') || !self.hasPermission('edit-parts-tools-gate-pass')) {
+            window.location = "#!/page-permission-denied";
+            return false;
         }
+        
         self.angular_routes = angular_routes;
 
         HelperService.isLoggedIn();
@@ -814,7 +586,7 @@ app.component('gatePassForm', {
                 },
                 submitHandler: function(form) {
                     let formData = new FormData($(form_id)[0]);
-                    // $scope.button_action(id, 1);
+                    $('.submit').button('loading');
                     $.ajax({
                             url: base_url + '/api/gate-pass/save',
                             method: "POST",
@@ -823,53 +595,23 @@ app.component('gatePassForm', {
                             contentType: false,
                         })
                         .done(function(res) {
-                            // $scope.button_action(id, 2);
+                            $('.submit').button('reset');
+
                             if (!res.success) {
-                                $('.submit').button('reset');
                                 showErrorNoty(res);
                                 return;
                             }
                             custom_noty('success', res.message);
-                            //     $location.path('/inward-vehicle/table-list');
+                            $location.path('/gate-pass/table-list');
                             
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
-                            $scope.button_action(id, 2);
+                            $('.submit').button('reset');
                             custom_noty('error', 'Something went wrong at server');
                         });
                 }
             });
-        }
-
-
-        $scope.showVehicleForm = function() {
-            $scope.show_vehicle_detail = false;
-            $scope.show_vehicle_form = true;
-        }
-
-        if ($routeParams.type_id == 1) {
-            $scope.show_vehicle_detail = false;
-            $scope.show_vehicle_form = true;
-        }
-
-        $scope.button_action = function(id, type) {
-            if (type == 1) {
-                if (id == 1) {
-                    $('.save').button('loading');
-                    $('.btn-next').attr("disabled", "disabled");
-                } else {
-                    $('.btn-next').button('loading');
-                    $('.save').attr("disabled", "disabled");
-                }
-                $('.btn-prev').bind('click', false);
-            } else {
-                $('.save').button('reset');
-                $('.btn-next').button('reset');
-                $('.btn-prev').unbind('click', false);
-                $(".btn-next").removeAttr("disabled");
-                $(".save").removeAttr("disabled");
-            }
         }
     }
 });
@@ -887,9 +629,7 @@ app.component('gatePassView', {
         //     window.location = "#!/page-permission-denied";
         //     return false;
         // }
-        if (!self.hasPermission('inward-job-card-tab-vehicle-details-edit')) {
-            // window.location = "#!/inward-vehicle/table-list";
-        }
+        
         self.angular_routes = angular_routes;
 
         HelperService.isLoggedIn();
@@ -915,7 +655,7 @@ app.component('gatePassView', {
                         return;
                     }
                     self.gate_pass = res.gate_pass;
-                    
+
                     $scope.extras = res.extras;
                     $scope.$apply();
                 })
@@ -925,101 +665,14 @@ app.component('gatePassView', {
         }
         $scope.fetchData();
 
+        $(document).on("wheel", "input[type=number]", function(e) {
+            $(this).blur();
+        });
+
         //Scrollable Tabs
         setTimeout(function() {
             scrollableTabs();
         }, 1000);
-
-        /* Modal Md Select Hide */
-        $('.modal').bind('click', function(event) {
-            if ($('.md-select-menu-container').hasClass('md-active')) {
-                $mdSelect.hide();
-            }
-        });
-
-        // ADD NEW TECHNICAL LEADS
-        self.addNewparts = function() {
-            self.gate_pass.gate_pass_invoice_items.push({});
-        }
-
-        self.item_removal_id = [];
-        self.removeparts = function(index,item_id) {
-            if (item_id) {
-                self.item_removal_id.push(item_id);
-                $('#removal_item_ids').val(JSON.stringify(self.item_removal_id));
-            }
-            self.gate_pass.gate_pass_invoice_items.splice(index, 1);
-        }
-
-        $scope.searchParts = function(query) {
-            return new Promise(function(resolve, reject) {
-                PartSvc.options({ filter: { search: query } })
-                    .then(function(response) {
-                        resolve(response.data.options);
-                    });
-            });
-        }
-
-        $scope.partSelected = function(part,index) {
-            // $('#entity_description_'+index).val(part.name);
-            $('.entity_description_'+index).val(part.name);
-        }
-        
-        //GET CUSTOMER LIST
-        self.searchCustomer = function(query) {
-            if (query) {
-                return new Promise(function(resolve, reject) {
-                    $http
-                        .post(
-                            laravel_routes['getCustomerSearchList'], {
-                                key: query,
-                            }
-                        )
-                        .then(function(response) {
-                            resolve(response.data);
-                        });
-                    //reject(response);
-                });
-            } else {
-                return [];
-            }
-        }
-
-        $scope.customerSelected = function(customer) {
-            if(customer)
-            {
-                $('.customer_name').val(customer.name);
-                var full_address = customer.primary_address.address_line1 + ' , ' + customer.primary_address.address_line2 + customer.primary_address.formatted;
-                $('.customer_address').val(full_address);
-            }
-        }
-
-        //GET JoBCard LIST
-        self.searchJobCard = function(query) {
-            if (query) {
-                return new Promise(function(resolve, reject) {
-                    $http
-                        .post(
-                            laravel_routes['getJobCardSearchList'], {
-                                key: query,
-                            }
-                        )
-                        .then(function(response) {
-                            resolve(response.data);
-                        });
-                    //reject(response);
-                });
-            } else {
-                return [];
-            }
-        }
-
-        $scope.jobCardSelected = function(job_card) {
-            if(job_card)
-            {
-                $('.job_card_date').val(job_card.date);
-            }
-        }
 
         //Save Form Data 
         $scope.saveGatePass = function() {
@@ -1027,13 +680,7 @@ app.component('gatePassView', {
             var v = jQuery(form_id).validate({
                 ignore: '',
                 rules: {
-                    'type': {
-                        required: true,
-                    },
-                    'purpose_id': {
-                        required: true,
-                    },
-                    'hand_over_to': {
+                    'gate_pass_id': {
                         required: true,
                     },
                 },
@@ -1044,7 +691,7 @@ app.component('gatePassView', {
                 },
                 submitHandler: function(form) {
                     let formData = new FormData($(form_id)[0]);
-                    // $scope.button_action(id, 1);
+                    $('.submit').button('loading');
                     $.ajax({
                             url: base_url + '/api/gate-pass/save',
                             method: "POST",
@@ -1053,53 +700,23 @@ app.component('gatePassView', {
                             contentType: false,
                         })
                         .done(function(res) {
-                            // $scope.button_action(id, 2);
+                            $('.submit').button('reset');
+
                             if (!res.success) {
-                                $('.submit').button('reset');
                                 showErrorNoty(res);
                                 return;
                             }
                             custom_noty('success', res.message);
-                            //     $location.path('/inward-vehicle/table-list');
+                            $location.path('/gate-pass/table-list');
                             
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
-                            $scope.button_action(id, 2);
+                            $('.submit').button('reset');
                             custom_noty('error', 'Something went wrong at server');
                         });
                 }
             });
-        }
-
-
-        $scope.showVehicleForm = function() {
-            $scope.show_vehicle_detail = false;
-            $scope.show_vehicle_form = true;
-        }
-
-        if ($routeParams.type_id == 1) {
-            $scope.show_vehicle_detail = false;
-            $scope.show_vehicle_form = true;
-        }
-
-        $scope.button_action = function(id, type) {
-            if (type == 1) {
-                if (id == 1) {
-                    $('.save').button('loading');
-                    $('.btn-next').attr("disabled", "disabled");
-                } else {
-                    $('.btn-next').button('loading');
-                    $('.save').attr("disabled", "disabled");
-                }
-                $('.btn-prev').bind('click', false);
-            } else {
-                $('.save').button('reset');
-                $('.btn-next').button('reset');
-                $('.btn-prev').unbind('click', false);
-                $(".btn-next").removeAttr("disabled");
-                $(".save").removeAttr("disabled");
-            }
         }
     }
 });

@@ -1814,8 +1814,12 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	app.config(['$routeProvider', function($routeProvider) {
 	    $routeProvider.
 		//GatePass
-		when('/gate-pass/list', {
+		when('/gate-pass/table-list', {
 			template: '<gate-pass-list></gate-pass-list>',
+			title: 'GatePass',
+		}).
+		when('/gate-pass/card-list', {
+			template: '<gate-pass-card-list></gate-pass-card-list>',
 			title: 'GatePass',
 		}).
 		when('/gate-pass/add', {
@@ -1834,7 +1838,8 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 
 	//GatePass
     var gate_pass_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gate-pass/list.html')}}';
-    var gate_pass_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gate-pass/form.html')}}';
+    var gate_pass_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gate-pass/card-list.html')}}';
+	var gate_pass_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gate-pass/form.html')}}';
     var gate_pass_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gate-pass/view.html')}}';
 </script>
 <script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gate-pass/controller.js')}}'></script>

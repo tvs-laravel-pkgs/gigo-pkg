@@ -214,6 +214,7 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::post('/gate-pass/save', 'GatePassController@saveGatePass')->name('saveGatePass');
 	Route::get('/gate-pass/delete', 'GatePassController@deleteGatePass')->name('deleteGatePass');
 	Route::get('/gate-pass/get-filter-data', 'GatePassController@getGatePassFilterData')->name('getGatePassFilterData');
+	Route::post('/gate-pass/jobcard/get-search-list', 'GatePassController@getJobCardSearchList')->name('getJobCardSearchList');
 
 	//Material Gate Pass
 	Route::get('/material-gate-pass/get-list', 'MaterialGatePassController@getMaterialGatePassList')->name('getMaterialGatePassList');
@@ -352,8 +353,5 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	//OTP
 	Route::get('/otp/get-list', 'OTPController@getOTPList')->name('getOTPList');
 	Route::get('/otp/get-filter-data', 'OTPController@getOTPFilter')->name('getOTPFilter');
-
-	//GatePass
-	Route::post('/gate-pass/jobcard/get-search-list', 'GatePassController@getJobCardSearchList')->name('getJobCardSearchList');
 
 });

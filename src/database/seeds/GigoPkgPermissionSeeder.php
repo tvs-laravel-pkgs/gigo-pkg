@@ -2070,6 +2070,50 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'dashboard-view-all-outlet',
 				'display_name' => 'View All',
 			],
+			
+			//Parts / Tools Gate Passes
+			[
+				'display_order' => 99,
+				'parent' => 'gigo-pages',
+				'name' => 'parts-tools-gate-passes',
+				'display_name' => 'Parts / Tools Gate Passes',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'parts-tools-gate-passes',
+				'name' => 'add-parts-tools-gate-pass',
+				'display_name' => 'Add Parts / Tools ',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'parts-tools-gate-passes',
+				'name' => 'edit-parts-tools-gate-pass',
+				'display_name' => 'Edit Parts / Tools ',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'parts-tools-gate-passes',
+				'name' => 'delete-parts-tools-gate-pass',
+				'display_name' => 'Delete Parts / Tools ',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'parts-tools-gate-passes',
+				'name' => 'view-parts-tools-gate-pass',
+				'display_name' => 'View Parts / Tools ',
+			],
+			[
+				'display_order' => 4,
+				'parent' => 'parts-tools-gate-passes',
+				'name' => 'verify-parts-tools-gate-pass',
+				'display_name' => 'Verify Parts / Tools ',
+			],
+			[
+				'display_order' => 5,
+				'parent' => 'parts-tools-gate-passes',
+				'name' => 'gate-in-out-parts-tools-gate-pass',
+				'display_name' => 'GateIn / GateOut Parts / Tools ',
+			],
 
 		];
 		Permission::createFromArrays($permissions);
