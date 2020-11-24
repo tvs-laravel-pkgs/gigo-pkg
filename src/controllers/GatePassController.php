@@ -3,6 +3,7 @@
 namespace Abs\GigoPkg;
 use App\Customer;
 use App\GatePass;
+use App\User;
 use App\Http\Controllers\Controller;
 use Auth;
 use Carbon\Carbon;
@@ -43,7 +44,7 @@ class GatePassController extends Controller {
 					$query->where('gate_passes.number', 'LIKE', '%' . $request->number . '%');
 				}
 			})
-			
+
 			->where(function ($query) use ($request) {
 				if (!empty($request->status_id)) {
 					$query->where('gate_passes.status_id', $request->status_id);
@@ -51,7 +52,7 @@ class GatePassController extends Controller {
 			})
 			->where('gate_passes.company_id', Auth::user()->company_id)
 			->where('gate_passes.outlet_id', Auth::user()->working_outlet_id)
-			->whereIn('gate_passes.type_id',[8282,8283])
+			->whereIn('gate_passes.type_id', [8282, 8283])
 		;
 		$gate_passes->groupBy('gate_passes.id');
 		$gate_passes->orderBy('gate_passes.created_at', 'DESC');
@@ -59,7 +60,7 @@ class GatePassController extends Controller {
 		return Datatables::of($gate_passes)
 			->rawColumns(['status', 'action'])
 			->editColumn('status', function ($gate_passes) {
-				$status = $gate_passes->status_id == '11400' || $gate_passes->status_id == '11402'? 'blue' : 'green';
+				$status = $gate_passes->status_id == '11400' || $gate_passes->status_id == '11402' ? 'blue' : 'green';
 				return '<span class="text-' . $status . '">' . $gate_passes->status_name . '</span>';
 			})
 			->addColumn('action', function ($gate_passes) {
@@ -69,20 +70,15 @@ class GatePassController extends Controller {
 				$img1 = asset('public/themes/' . $this->data['theme'] . '/img/content/table/view.svg');
 				$img1_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/view.svg');
 				$output = '';
-				if($gate_passes->status_id == '11400' && Entrust::can('edit-parts-tools-gate-pass'))
-				{
+				if ($gate_passes->status_id == '11400' && Entrust::can('edit-parts-tools-gate-pass')) {
 					$output .= '<a href="#!/gate-pass/edit/' . $gate_passes->id . '" id = "" title="View"><img src="' . $img2 . '" alt="View" class="img-responsive" onmouseover=this.src="' . $img2 . '" onmouseout=this.src="' . $img2 . '"></a>';
 				}
 
 				if (Entrust::can('verify-parts-tools-gate-pass') && $gate_passes->status_id == '11403') {
 					$output .= '<a href="#!/gate-pass/verify/view/' . $gate_passes->id . '" id = "" title="View"><img src="' . $img1 . '" alt="View" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
-				}
-				elseif(Entrust::can('gate-in-out-parts-tools-gate-pass')  && ($gate_passes->status_id == '11400' || $gate_passes->status_id == '11402'))
-				{
+				} elseif (Entrust::can('gate-in-out-parts-tools-gate-pass') && ($gate_passes->status_id == '11400' || $gate_passes->status_id == '11402')) {
 					$output .= '<a href="#!/gate-pass/approve/view/' . $gate_passes->id . '" id = "" title="View"><img src="' . $img1 . '" alt="View" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
-				}
-				else
-				{
+				} else {
 					$output .= '<a href="#!/gate-pass/view/' . $gate_passes->id . '" id = "" title="View"><img src="' . $img1 . '" alt="View" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
 				}
 
@@ -217,5 +213,10 @@ class GatePassController extends Controller {
 	//JobCard Search
 	public function getJobCardSearchList(Request $request) {
 		return JobCard::searchJobCard($request);
+	}
+
+	//User Search
+	public function getUserSearchList(Request $request) {
+		return User::searchUser($request);
 	}
 }

@@ -984,7 +984,7 @@ class JobCard extends BaseModel {
 			->select(
 				'id',
 				'job_card_number',
-				'date',
+				'date'
 			)
 			->where(function ($q) use ($key) {
 				$q->where('job_card_number', 'like', $key . '%')

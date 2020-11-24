@@ -404,7 +404,7 @@ app.component('gatePassList', {
 
 app.component('gatePassForm', {
     templateUrl: gate_pass_form_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element,$mdSelect,PartSvc) {
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect, PartSvc) {
         //for md-select search
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
@@ -415,7 +415,7 @@ app.component('gatePassForm', {
             window.location = "#!/page-permission-denied";
             return false;
         }
-        
+
         self.angular_routes = angular_routes;
 
         HelperService.isLoggedIn();
@@ -443,19 +443,13 @@ app.component('gatePassForm', {
                     self.gate_pass = res.gate_pass;
                     self.action = res.action;
 
-                    if(res.action == 'Edit')
-                    {
-                        if(res.gate_pass.type_id == '8282')
-                        {
+                    if (res.action == 'Edit') {
+                        if (res.gate_pass.type_id == '8282') {
                             self.switch_value = 'Returnable';
-                        }
-                        else
-                        {
+                        } else {
                             self.switch_value = 'Non Returnable';
                         }
-                    }
-                    else
-                    {
+                    } else {
                         self.switch_value = 'Returnable';
                     }
 
@@ -480,13 +474,18 @@ app.component('gatePassForm', {
             }
         });
 
-        // ADD NEW TECHNICAL LEADS
+        // ADD NEW ITEM
         self.addNewparts = function() {
             self.gate_pass.gate_pass_invoice_items.push({});
         }
 
+        // ADD NEW User
+        self.addNewUser = function() {
+            self.gate_pass.gate_pass_users.push({});
+        }
+
         self.item_removal_id = [];
-        self.removeparts = function(index,item_id) {
+        self.removeparts = function(index, item_id) {
             if (item_id) {
                 self.item_removal_id.push(item_id);
                 $('#removal_item_ids').val(JSON.stringify(self.item_removal_id));
@@ -503,11 +502,11 @@ app.component('gatePassForm', {
             });
         }
 
-        $scope.partSelected = function(part,index) {
+        $scope.partSelected = function(part, index) {
             // $('#entity_description_'+index).val(part.name);
-            $('.entity_description_'+index).val(part.name);
+            $('.entity_description_' + index).val(part.name);
         }
-        
+
         //GET CUSTOMER LIST
         self.searchCustomer = function(query) {
             if (query) {
@@ -529,8 +528,7 @@ app.component('gatePassForm', {
         }
 
         $scope.customerSelected = function(customer) {
-            if(customer)
-            {
+            if (customer) {
                 $('.customer_name').val(customer.name);
                 var full_address = customer.primary_address.address_line1 + ' , ' + customer.primary_address.address_line2 + customer.primary_address.formatted;
                 $('.customer_address').val(full_address);
@@ -558,10 +556,43 @@ app.component('gatePassForm', {
         }
 
         $scope.jobCardSelected = function(job_card) {
-            if(job_card)
-            {
+            if (job_card) {
                 $('.job_card_date').val(job_card.date);
             }
+        }
+
+        //GET JoBCard LIST
+        self.searchUsers = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getUserSearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                });
+            } else {
+                return [];
+            }
+        }
+
+        $scope.userSelected = function(user) {
+            if (user) {
+                $('.user_name' + index).val(user.name);
+            }
+        }
+
+        self.user_removal_id = [];
+        self.removeUser = function(index, user_id) {
+            if (user_id) {
+                self.user_removal_id.push(user_id);
+                $('#removal_user_ids').val(JSON.stringify(self.user_removal_id));
+            }
+            self.gate_pass.gate_pass_users.splice(index, 1);
         }
 
         //Save Form Data 
@@ -580,8 +611,7 @@ app.component('gatePassForm', {
                         required: true,
                     },
                 },
-                messages: {
-                },
+                messages: {},
                 invalidHandler: function(event, validator) {
                     custom_noty('error', 'You have errors, Please check all fields');
                 },
@@ -604,7 +634,7 @@ app.component('gatePassForm', {
                             }
                             custom_noty('success', res.message);
                             $location.path('/gate-pass/table-list');
-                            
+
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
@@ -619,7 +649,7 @@ app.component('gatePassForm', {
 
 app.component('gatePassView', {
     templateUrl: gate_pass_view_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element,$mdSelect) {
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         //for md-select search
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
@@ -630,7 +660,7 @@ app.component('gatePassView', {
         //     window.location = "#!/page-permission-denied";
         //     return false;
         // }
-        
+
         self.angular_routes = angular_routes;
 
         HelperService.isLoggedIn();
@@ -675,7 +705,7 @@ app.component('gatePassView', {
 
 app.component('gatePassApproveView', {
     templateUrl: gate_pass_approve_view_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element,$mdSelect) {
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         //for md-select search
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
@@ -686,7 +716,7 @@ app.component('gatePassApproveView', {
         //     window.location = "#!/page-permission-denied";
         //     return false;
         // }
-        
+
         self.angular_routes = angular_routes;
 
         HelperService.isLoggedIn();
@@ -713,8 +743,7 @@ app.component('gatePassApproveView', {
                     }
                     self.gate_pass = res.gate_pass;
 
-                    if(res.gate_pass.status_id == 11400)
-                    {
+                    if (res.gate_pass.status_id == 11400) {
                         self.approve_status = 1;
                         self.gate_in_approve_status = 0;
                         self.verify_status = 0;
@@ -737,32 +766,25 @@ app.component('gatePassApproveView', {
                     //         self.verify_status = 1;
                     //     }
                     // }
-                    else if(res.gate_pass.status_id == 11402)
-                    {
+                    else if (res.gate_pass.status_id == 11402) {
                         $scope.approve_status = 0;
                         $scope.gate_in_approve_status = 1;
                         $scope.verify_status = 0;
-                    }
-                    else if(res.gate_pass.status_id == 11403)
-                    {
+                    } else if (res.gate_pass.status_id == 11403) {
                         $scope.approve_status = 0;
                         $scope.gate_in_approve_status = 0;
                         $scope.verify_status = 1;
-                    }
-                    else
-                    {
+                    } else {
                         $scope.approve_status = 0;
                         $scope.gate_in_approve_status = 0;
                         $scope.verify_status = 0;
                     }
 
-                    if(!self.hasPermission('verify-parts-tools-gate-pass'))
-                    {
+                    if (!self.hasPermission('verify-parts-tools-gate-pass')) {
                         self.verify_status = 0;
                     }
 
-                    if(!self.hasPermission('gate-in-out-parts-tools-gate-pass'))
-                    {
+                    if (!self.hasPermission('gate-in-out-parts-tools-gate-pass')) {
                         self.approve_status = 0;
                         self.gate_in_approve_status = 0;
                     }
@@ -799,8 +821,7 @@ app.component('gatePassApproveView', {
                         required: true,
                     },
                 },
-                messages: {
-                },
+                messages: {},
                 invalidHandler: function(event, validator) {
                     custom_noty('error', 'You have errors, Please check all fields');
                 },
@@ -823,7 +844,7 @@ app.component('gatePassApproveView', {
                             }
                             custom_noty('success', res.message);
                             $location.path('/gate-pass/table-list');
-                            
+
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
@@ -838,7 +859,7 @@ app.component('gatePassApproveView', {
 
 app.component('gatePassVerifyView', {
     templateUrl: gate_pass_verify_view_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element,$mdSelect) {
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         //for md-select search
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
@@ -849,7 +870,7 @@ app.component('gatePassVerifyView', {
         //     window.location = "#!/page-permission-denied";
         //     return false;
         // }
-        
+
         self.angular_routes = angular_routes;
 
         HelperService.isLoggedIn();
@@ -876,8 +897,7 @@ app.component('gatePassVerifyView', {
                     }
                     self.gate_pass = res.gate_pass;
 
-                    if(res.gate_pass.status_id == 11400)
-                    {
+                    if (res.gate_pass.status_id == 11400) {
                         self.approve_status = 1;
                         self.gate_in_approve_status = 0;
                         self.verify_status = 0;
@@ -900,32 +920,25 @@ app.component('gatePassVerifyView', {
                     //         self.verify_status = 1;
                     //     }
                     // }
-                    else if(res.gate_pass.status_id == 11402)
-                    {
+                    else if (res.gate_pass.status_id == 11402) {
                         $scope.approve_status = 0;
                         $scope.gate_in_approve_status = 1;
                         $scope.verify_status = 0;
-                    }
-                    else if(res.gate_pass.status_id == 11403)
-                    {
+                    } else if (res.gate_pass.status_id == 11403) {
                         $scope.approve_status = 0;
                         $scope.gate_in_approve_status = 0;
                         $scope.verify_status = 1;
-                    }
-                    else
-                    {
+                    } else {
                         $scope.approve_status = 0;
                         $scope.gate_in_approve_status = 0;
                         $scope.verify_status = 0;
                     }
 
-                    if(!self.hasPermission('verify-parts-tools-gate-pass'))
-                    {
+                    if (!self.hasPermission('verify-parts-tools-gate-pass')) {
                         self.verify_status = 0;
                     }
 
-                    if(!self.hasPermission('gate-in-out-parts-tools-gate-pass'))
-                    {
+                    if (!self.hasPermission('gate-in-out-parts-tools-gate-pass')) {
                         self.approve_status = 0;
                         self.gate_in_approve_status = 0;
                     }
@@ -962,8 +975,7 @@ app.component('gatePassVerifyView', {
                         required: true,
                     },
                 },
-                messages: {
-                },
+                messages: {},
                 invalidHandler: function(event, validator) {
                     custom_noty('error', 'You have errors, Please check all fields');
                 },
@@ -986,7 +998,7 @@ app.component('gatePassVerifyView', {
                             }
                             custom_noty('success', res.message);
                             $location.path('/gate-pass/table-list');
-                            
+
                             $scope.$apply();
                         })
                         .fail(function(xhr) {

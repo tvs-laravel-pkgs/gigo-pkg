@@ -466,5 +466,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('gate-pass/get-form-data', 'GatePassController@getFormData');
 		Route::post('gate-pass/save', 'GatePassController@save');
 
+		Route::post('/gate-pass/jobcard/get-search-list', 'GatePassController@getJobCardSearchList');
+		Route::post('/gate-pass/user/get-search-list', 'GatePassController@getUserSearchList');
+
 	});
 });
