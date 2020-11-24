@@ -273,7 +273,7 @@ class GatePassController extends Controller {
 				}
 
 				//Update Gate Out date time 
-				if ($gate_pass->status_id == 11401 && $gate_pass->status_id == 11402 ) 
+				if ($gate_pass->status_id == 11401 || $gate_pass->status_id == 11402 ) 
 				{
 					$gate_pass_user = GatePassUser::where('gate_pass_id',$gate_pass->id)->update(['gate_out_date_time'=> Carbon::now(),'updated_by_id'=>Auth::user()->id,'updated_at'=> Carbon::now()]);
 				}
@@ -462,6 +462,10 @@ class GatePassController extends Controller {
 					$gate_pass_invoice->invoice_amount = $request->invoice_amount;
 					$gate_pass_invoice->save();
 				}
+				else
+				{
+					$gate_pass_invoice = GatePassInvoice::where('gate_pass_id', $gate_pass->id)->forceDelete();
+				}
 		
 				//Customer
 				$gate_pass_customer = GatePassCustomer::firstOrNew(['gate_pass_id'=>$gate_pass->id]);
@@ -508,7 +512,12 @@ class GatePassController extends Controller {
 						}
 					}	
 				}
-
+				
+				if($gate_pass->type_id == 8283 || $request->purpose_id !=11360)
+				{
+					$users = GatePassUser::where('gate_pass_id', $gate_pass->id)->forceDelete();
+				}
+			
 				DB::commit();
 		
 				return response()->json([

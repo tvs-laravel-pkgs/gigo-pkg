@@ -50,7 +50,7 @@
                                             Parts / Tools
                                         </a>
                                     </li>
-                                    <li ng-if="$ctrl.switch_value == 'Returnable'">
+                                    <li ng-if="$ctrl.gate_pass.purpose_id == 11360 && $ctrl.switch_value == 'Returnable'">
                                         <a class="filter" data-target="#employee_details" data-toggle="tab" aria-expanded="true">
                                             Mechanics
                                         </a>
@@ -309,8 +309,8 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt" ng-if="$ctrl.switch_value == 'Returnable'">Next</a>
-                                                    <button type="submit" ng-if="$ctrl.switch_value == 'Non Returnable'" class="btn btn-red btn-min-wdth submit" ng-click="saveGatePass()">Save</button>
+                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt" ng-if="$ctrl.gate_pass.purpose_id == 11360 && $ctrl.switch_value == 'Returnable'">Next</a>
+                                                    <button type="submit" ng-if="$ctrl.gate_pass.purpose_id != 11360 || $ctrl.switch_value != 'Returnable'" class="btn btn-red btn-min-wdth submit" ng-click="saveGatePass()">Save</button>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
