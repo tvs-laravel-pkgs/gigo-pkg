@@ -244,17 +244,24 @@ class GatePassController extends Controller {
 
 				//Update parts Details
 				if (isset($request->invoice_items)) {
-					foreach ($request->invoice_item as $key => $invoice_item) {
+					foreach ($request->invoice_items as $key => $invoice_item) {
+						
+						$gate_pass_item = GatePassInvoiceItem::firstOrNew([
+							'id' => $invoice_item['item_id'],
+						]);
+
 						if(isset($invoice_item['returned_qty']))
 						{
-							$gate_pass_item = GatePassInvoiceItem::firstOrNew([
-								'id' => $invoice_item['item_id'],
-							]);
-			
 							$gate_pass_item->returned_qty =  $invoice_item['returned_qty'];
 							$gate_pass_item->status_id = 11421;
-							$gate_pass_item->save();
 						}
+						else
+						{
+							$gate_pass_item->returned_qty =  NULL;
+							$gate_pass_item->status_id = 11420;
+						}
+						$gate_pass_item->save();
+
 					}	
 				}
 

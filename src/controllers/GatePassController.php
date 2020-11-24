@@ -74,7 +74,15 @@ class GatePassController extends Controller {
 					$output .= '<a href="#!/gate-pass/edit/' . $gate_passes->id . '" id = "" title="View"><img src="' . $img2 . '" alt="View" class="img-responsive" onmouseover=this.src="' . $img2 . '" onmouseout=this.src="' . $img2 . '"></a>';
 				}
 
-				if (Entrust::can('view-parts-tools-gate-pass')) {
+				if (Entrust::can('verify-parts-tools-gate-pass') && $gate_passes->status_id == '11403') {
+					$output .= '<a href="#!/gate-pass/verify/view/' . $gate_passes->id . '" id = "" title="View"><img src="' . $img1 . '" alt="View" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
+				}
+				elseif(Entrust::can('gate-in-out-parts-tools-gate-pass')  && ($gate_passes->status_id == '11400' || $gate_passes->status_id == '11402'))
+				{
+					$output .= '<a href="#!/gate-pass/approve/view/' . $gate_passes->id . '" id = "" title="View"><img src="' . $img1 . '" alt="View" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
+				}
+				else
+				{
 					$output .= '<a href="#!/gate-pass/view/' . $gate_passes->id . '" id = "" title="View"><img src="' . $img1 . '" alt="View" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
 				}
 

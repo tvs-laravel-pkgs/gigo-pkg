@@ -1284,5 +1284,13 @@ app.config(['$routeProvider', function($routeProvider) {
     when('/gate-pass/view/:id', {
         template: '<gate-pass-view></gate-pass-view>',
         title: 'View GatePass',
+    }).
+    when('/gate-pass/approve/view/:id', {
+        template: '<gate-pass-approve-view></gate-pass-approve-view>',
+        title: 'View GatePass',
+    }).
+    when('/gate-pass/verify/view/:id', {
+        template: '<gate-pass-verify-view></gate-pass-verify-view>',
+        title: 'View GatePass',
     });
 }]);

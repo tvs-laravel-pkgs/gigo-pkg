@@ -441,6 +441,7 @@ app.component('gatePassForm', {
                         return;
                     }
                     self.gate_pass = res.gate_pass;
+                    self.action = res.action;
 
                     if(res.action == 'Edit')
                     {
@@ -655,6 +656,283 @@ app.component('gatePassView', {
                         return;
                     }
                     self.gate_pass = res.gate_pass;
+
+                    $scope.extras = res.extras;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
+    }
+});
+
+app.component('gatePassApproveView', {
+    templateUrl: gate_pass_approve_view_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element,$mdSelect) {
+        //for md-select search
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
+        //     window.location = "#!/page-permission-denied";
+        //     return false;
+        // }
+        
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_order_id = $routeParams.job_order_id;
+
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/gate-pass/get-form-data',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.id,
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    self.gate_pass = res.gate_pass;
+
+                    if(res.gate_pass.status_id == 11400)
+                    {
+                        self.approve_status = 1;
+                        self.gate_in_approve_status = 0;
+                        self.verify_status = 0;
+                    }
+                    // else{
+                    //     self.approve_status = 0;
+                    //     self.gate_in_approve_status = 0;
+                    //     self.verify_status = 0;
+
+                    //     if(res.gate_pass.status_id == 11402)
+                    //     {
+                    //         self.approve_status = 0;
+                    //         self.gate_in_approve_status = 1;
+                    //         self.verify_status = 0;
+                    //     }
+                    //     else if(res.gate_pass.status_id == 11403)
+                    //     {
+                    //         self.approve_status = 0;
+                    //         self.gate_in_approve_status = 0;
+                    //         self.verify_status = 1;
+                    //     }
+                    // }
+                    else if(res.gate_pass.status_id == 11402)
+                    {
+                        $scope.approve_status = 0;
+                        $scope.gate_in_approve_status = 1;
+                        $scope.verify_status = 0;
+                    }
+                    else if(res.gate_pass.status_id == 11403)
+                    {
+                        $scope.approve_status = 0;
+                        $scope.gate_in_approve_status = 0;
+                        $scope.verify_status = 1;
+                    }
+                    else
+                    {
+                        $scope.approve_status = 0;
+                        $scope.gate_in_approve_status = 0;
+                        $scope.verify_status = 0;
+                    }
+
+                    if(!self.hasPermission('verify-parts-tools-gate-pass'))
+                    {
+                        self.verify_status = 0;
+                    }
+
+                    if(!self.hasPermission('gate-in-out-parts-tools-gate-pass'))
+                    {
+                        self.approve_status = 0;
+                        self.gate_in_approve_status = 0;
+                    }
+
+                    console.log(self.approve_status);
+                    console.log(self.gate_in_approve_status);
+                    console.log(self.verify_status);
+
+                    $scope.extras = res.extras;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        $(document).on("wheel", "input[type=number]", function(e) {
+            $(this).blur();
+        });
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
+
+        //Save Form Data 
+        $scope.saveGatePass = function() {
+            var form_id = '#form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'gate_pass_id': {
+                        required: true,
+                    },
+                },
+                messages: {
+                },
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all fields');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/gate-pass/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            $('.submit').button('reset');
+
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            $location.path('/gate-pass/table-list');
+                            
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+    }
+});
+
+app.component('gatePassVerifyView', {
+    templateUrl: gate_pass_verify_view_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element,$mdSelect) {
+        //for md-select search
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
+        //     window.location = "#!/page-permission-denied";
+        //     return false;
+        // }
+        
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_order_id = $routeParams.job_order_id;
+
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/gate-pass/get-form-data',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.id,
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    self.gate_pass = res.gate_pass;
+
+                    if(res.gate_pass.status_id == 11400)
+                    {
+                        self.approve_status = 1;
+                        self.gate_in_approve_status = 0;
+                        self.verify_status = 0;
+                    }
+                    // else{
+                    //     self.approve_status = 0;
+                    //     self.gate_in_approve_status = 0;
+                    //     self.verify_status = 0;
+
+                    //     if(res.gate_pass.status_id == 11402)
+                    //     {
+                    //         self.approve_status = 0;
+                    //         self.gate_in_approve_status = 1;
+                    //         self.verify_status = 0;
+                    //     }
+                    //     else if(res.gate_pass.status_id == 11403)
+                    //     {
+                    //         self.approve_status = 0;
+                    //         self.gate_in_approve_status = 0;
+                    //         self.verify_status = 1;
+                    //     }
+                    // }
+                    else if(res.gate_pass.status_id == 11402)
+                    {
+                        $scope.approve_status = 0;
+                        $scope.gate_in_approve_status = 1;
+                        $scope.verify_status = 0;
+                    }
+                    else if(res.gate_pass.status_id == 11403)
+                    {
+                        $scope.approve_status = 0;
+                        $scope.gate_in_approve_status = 0;
+                        $scope.verify_status = 1;
+                    }
+                    else
+                    {
+                        $scope.approve_status = 0;
+                        $scope.gate_in_approve_status = 0;
+                        $scope.verify_status = 0;
+                    }
+
+                    if(!self.hasPermission('verify-parts-tools-gate-pass'))
+                    {
+                        self.verify_status = 0;
+                    }
+
+                    if(!self.hasPermission('gate-in-out-parts-tools-gate-pass'))
+                    {
+                        self.approve_status = 0;
+                        self.gate_in_approve_status = 0;
+                    }
+
+                    console.log(self.approve_status);
+                    console.log(self.gate_in_approve_status);
+                    console.log(self.verify_status);
 
                     $scope.extras = res.extras;
                     $scope.$apply();
