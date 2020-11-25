@@ -1,4 +1,4 @@
-app.component('inwardVehicleCardList', {
+app.component('gatePassCardList', {
     templateUrl: inward_vehicle_card_list_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $rootScope.loading = true;
