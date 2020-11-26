@@ -58,10 +58,15 @@ class GatePassController extends Controller {
 		$gate_passes->orderBy('gate_passes.created_at', 'DESC');
 
 		return Datatables::of($gate_passes)
-			->rawColumns(['status', 'action'])
-			->editColumn('status', function ($gate_passes) {
-				$status = $gate_passes->status_id == '11400' || $gate_passes->status_id == '11402' ? 'blue' : 'green';
-				return '<span class="text-' . $status . '">' . $gate_passes->status_name . '</span>';
+			->addColumn('status', function ($gate_passes) {
+				if ($gate_passes->status_id == 11403 || $gate_passes->status_id == 11404) {
+					$status = '<p class="text-green">' . $gate_passes->status_name . '</p>';
+				} elseif ($gate_passes->status_id == 11401 || $gate_passes->status_id == 11402) {
+					$status = '<p class="text-blue">' . $gate_passes->status_name . '</p>';
+				} else {
+					$status = $gate_passes->status_name;
+				}
+				return $status;
 			})
 			->addColumn('action', function ($gate_passes) {
 				$img2 = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');

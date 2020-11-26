@@ -275,7 +275,7 @@ app.component('gatePassList', {
                 { data: 'type_name', name: 'configs.name' },
                 { data: 'number', name: 'gate_passes.number' },
                 { data: 'job_card_number', name: 'job_cards.job_card_number' },
-                { data: 'status_name', name: 'configs.name' },
+                { data: 'status', name: 'configs.name' },
 
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
