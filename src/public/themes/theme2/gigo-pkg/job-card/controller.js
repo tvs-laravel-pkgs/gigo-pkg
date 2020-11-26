@@ -4110,17 +4110,17 @@ app.component('jobCardScheduleForm', {
 
         //SAVE MECHANIC
         $scope.saveMechanic = function() {
-            if (!$("#selectedMachanic").val()) {
-                custom_noty('error', 'Kindly Select Employee to assign work!');
-                return;
-            }
+            // if (!$("#selectedMachanic").val()) {
+            //     custom_noty('error', 'Kindly Select Employee to assign work!');
+            //     return;
+            // }
             var form_id = '#form';
             var v = jQuery(form_id).validate({
                 ignore: '',
                 rules: {
-                    'selected_mechanic_ids': {
-                        required: true,
-                    },
+                    // 'selected_mechanic_ids': {
+                    //     required: true,
+                    // },
                 },
                 submitHandler: function(form) {
                     let formData = new FormData($(form_id)[0]);

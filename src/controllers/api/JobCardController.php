@@ -1381,10 +1381,10 @@ class JobCardController extends Controller {
 					'integer',
 					'exists:repair_orders,id',
 				],
-				'selected_mechanic_ids' => [
-					'required',
-					'string',
-				],
+				// 'selected_mechanic_ids' => [
+				// 	'required',
+				// 	'string',
+				// ],
 			]);
 
 			if ($validator->fails()) {
@@ -1397,59 +1397,92 @@ class JobCardController extends Controller {
 				]);
 			}
 
-			$mechanic_ids = explode(',', $request->selected_mechanic_ids);
+			if($request->selected_mechanic_ids)
+			{
+				$mechanic_ids = explode(',', $request->selected_mechanic_ids);
+			}
+			else
+			{
+				$mechanic_ids = [];
+			}
 			// dd($mechanic_ids);
+
+			$repair_order = JobOrderRepairOrder::join('job_cards','job_cards.job_order_id','job_order_repair_orders.job_order_id')->where('job_order_repair_orders.repair_order_id',$request->repair_order_id)->where('job_cards.id',$request->job_card_id)->select('job_order_repair_orders.id')->first();
+
+			$job_order_repair_order = JobOrderRepairOrder::find($repair_order->id);
+			
+			if (!$job_order_repair_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Repair Order Not Found!',
+					],
+				]);
+			}
+
 			DB::beginTransaction();
-			$job_card = JobCard::with([
-				'jobOrder',
-				'jobOrder.jobOrderRepairOrders',
-				'jobOrder.jobOrderRepairOrders.repairOrder',
-			])
-				->find($request->job_card_id);
 
 			if (count($mechanic_ids) > 0) {
-				foreach ($job_card->jobOrder->jobOrderRepairOrders as $JobOrderRepairOrder) {
-					if ($JobOrderRepairOrder->repair_order_id == $request->repair_order_id) {
-						$repair_order_mechanic_remove = RepairOrderMechanic::where('job_order_repair_order_id', $JobOrderRepairOrder->id)->whereNotIn('mechanic_id', $mechanic_ids)->forceDelete();
+				$repair_order_mechanic_remove = RepairOrderMechanic::where('job_order_repair_order_id', $job_order_repair_order->id)->whereNotIn('mechanic_id', $mechanic_ids)->forceDelete();
 
-						foreach ($mechanic_ids as $mechanic_id) {
-							$repair_order_mechanic = RepairOrderMechanic::firstOrNew([
-								'job_order_repair_order_id' => $JobOrderRepairOrder->id,
-								'mechanic_id' => $mechanic_id,
-							]);
-							// dd($repair_order_mechanic);
-							if ($repair_order_mechanic->exists) {
-								$repair_order_mechanic->updated_by_id = Auth::user()->id;
-								$repair_order_mechanic->updated_at = Carbon::now();
-							} else {
-								$repair_order_mechanic->created_by_id = Auth::user()->id;
-								$repair_order_mechanic->created_at = Carbon::now();
-							}
-							$repair_order_mechanic->fill($request->all());
-							if (!$repair_order_mechanic->exists) {
-								$repair_order_mechanic->status_id = 8260; //PENDING
-							}
-							$repair_order_mechanic->save();
-
-							$job_order_repair_order = JobOrderRepairOrder::where('id', $JobOrderRepairOrder->id)
-								->update([
-									'status_id' => 8182, //WORK PENDING
-									'updated_by_id' => Auth::user()->id,
-									'updated_at' => Carbon::now(),
-								])
-							;
-						}
+				foreach ($mechanic_ids as $mechanic_id) {
+					$repair_order_mechanic = RepairOrderMechanic::firstOrNew([
+						'job_order_repair_order_id' => $job_order_repair_order->id,
+						'mechanic_id' => $mechanic_id,
+					]);
+					if ($repair_order_mechanic->exists) {
+						$repair_order_mechanic->updated_by_id = Auth::user()->id;
+						$repair_order_mechanic->updated_at = Carbon::now();
 					} else {
-						continue;
+						$repair_order_mechanic->created_by_id = Auth::user()->id;
+						$repair_order_mechanic->created_at = Carbon::now();
 					}
+					$repair_order_mechanic->fill($request->all());
+					if (!$repair_order_mechanic->exists) {
+						$repair_order_mechanic->status_id = 8260; //PENDING
+					}
+					$repair_order_mechanic->save();
 				}
+
+				$job_order_repair_order->status_id = 8182; //WORK PENDING
+				$job_order_repair_order->updated_by_id =Auth::user()->id;
+				$job_order_repair_order->updated_at = Carbon::now();
+				$job_order_repair_order->save();
+				
+				$message = 'Mechanic assigned successfully!!';
+			}
+			else{
+				//Check any mechanics start work
+				$mechanics =  RepairOrderMechanic::where('job_order_repair_order_id', $job_order_repair_order->id)->where('status_id','!=','8260')->count();
+
+				if($mechanics > 0)
+				{
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'Some Mechanics start their work.Kindly unselect others!',
+						],
+					]);
+				}
+
+				//Remove Mechanics
+				$repair_order_mechanic_remove = RepairOrderMechanic::where('job_order_repair_order_id', $job_order_repair_order->id)->forceDelete();
+
+				$job_order_repair_order->status_id = 8181; //Mechanic Not Assigned
+				$job_order_repair_order->updated_by_id =Auth::user()->id;
+				$job_order_repair_order->updated_at = Carbon::now();
+				$job_order_repair_order->save();
+
+				$message = 'Mechanic unassigned successfully!!';
 			}
 
 			DB::commit();
 
 			return response()->json([
 				'success' => true,
-				'message' => 'Mechanic assigned successfully!!',
+				'message' => $message,
 			]);
 
 		} catch (Exception $e) {
@@ -2984,7 +3017,9 @@ class JobCardController extends Controller {
 			'status',
 			'jobOrder.vehicle.status',
 			'jobOrder.customerVoices',
-			'jobOrder.gateLog'])
+			'jobOrder.gateLog',
+			'jobOrder.VOCAttachment',
+			])
 			->select([
 				'job_cards.*',
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
