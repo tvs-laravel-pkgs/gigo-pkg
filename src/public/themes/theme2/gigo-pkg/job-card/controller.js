@@ -2565,7 +2565,19 @@ app.component('jobCardScheduleMaintenanceForm', {
                 .then(function(response) {
                     console.log(response);
                     // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? (response.data.part.part_stock.stock != 0 ? response.data.part.part_stock.mrp : (response.data.part.job_order_parts.length != 0 ? response.data.part.job_order_parts[0].rate : '0')) : '0';
-                    $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.stock > 0 ? response.data.part.part_stock.mrp : '0' : '0';
+                    // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.stock > 0 ? response.data.part.part_stock.mrp : '0' : '0';
+                    $local_purchase_part = '(L)';
+                    $part_code = response.data.part.code;
+
+                    if ($part_code.indexOf($local_purchase_part) != -1) {
+                        $scope.schedule_maintainance_part.part.mrp = 0;
+                        $scope.mrp_change = 1;
+                    }
+                    else
+                    {
+                        $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
+                        $scope.mrp_change = 0;
+                    }
 
                     if (part.id == $scope.part_id) {
                         $scope.schedule_maintainance_part.part.mrp = $scope.part_mrp;
@@ -3001,7 +3013,20 @@ app.component('jobCardPayableLabourPartsForm', {
                 .then(function(response) {
                     console.log(response);
                     // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? (response.data.part.part_stock.stock != 0 ? response.data.part.part_stock.mrp : (response.data.part.job_order_parts.length != 0 ? response.data.part.job_order_parts[0].rate : '0')) : '0';
-                    $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.stock > 0 ? response.data.part.part_stock.mrp : '0' : '0';
+                    // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.stock > 0 ? response.data.part.part_stock.mrp : '0' : '0';
+
+                    $local_purchase_part = '(L)';
+                    $part_code = response.data.part.code;
+
+                    if ($part_code.indexOf($local_purchase_part) != -1) {
+                        $scope.schedule_maintainance_part.part.mrp = 0;
+                        $scope.mrp_change = 1;
+                    }
+                    else
+                    {
+                        $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
+                        $scope.mrp_change = 0;
+                    }
 
                     if (part.id == $scope.part_id) {
                         $scope.schedule_maintainance_part.part.mrp = $scope.part_mrp;

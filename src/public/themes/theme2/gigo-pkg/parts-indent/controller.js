@@ -741,7 +741,20 @@ app.component('partsIndentPartsView', {
             PartSvc.getFormData({ outletId: $scope.job_order.outlet_id, partId: part.id })
                 .then(function(response) {
                     // $scope.parts_indent.part.mrp = response.data.part.part_stock ? (response.data.part.part_stock.stock != 0 ? response.data.part.part_stock.mrp : (response.data.part.job_order_parts.length != 0 ? response.data.part.job_order_parts[0].rate : '0')) : '0';
-                    $scope.parts_indent.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.stock > 0 ? response.data.part.part_stock.mrp : '0' : '0';
+                    // $scope.parts_indent.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.stock > 0 ? response.data.part.part_stock.mrp : '0' : '0';
+
+                    $local_purchase_part = '(L)';
+                    $part_code = response.data.part.code;
+
+                    if ($part_code.indexOf($local_purchase_part) != -1) {
+                        $scope.parts_indent.part.mrp = 0;
+                        $scope.mrp_change = 1;
+                    }
+                    else
+                    {
+                        $scope.parts_indent.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
+                        $scope.mrp_change = 0;
+                    }
 
                     if (part.id == $scope.part_id) {
                         $scope.parts_indent.part.mrp = $scope.part_mrp;
