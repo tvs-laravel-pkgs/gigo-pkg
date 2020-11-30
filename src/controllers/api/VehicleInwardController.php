@@ -7646,7 +7646,8 @@ class VehicleInwardController extends Controller {
 				'parts.name',
 				'parts.code',
 				'part_stocks.stock',
-				'part_stocks.mrp'
+				'part_stocks.mrp',
+				'part_stocks.cost_price'
 			)
 				->leftJoin('part_stocks', function ($join) use ($outlet_id) {
 					$join->on('part_stocks.part_id', 'parts.id')
