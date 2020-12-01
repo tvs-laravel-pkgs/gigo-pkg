@@ -1396,12 +1396,20 @@ app.component('warrantyJobOrderRequestForm', {
                         }*/
                         var failure_type_val = $("#failure_type_id").val();
                         console.log(failure_type_val);
-                        if (failure_type_val == '') {
-                            return false;
-                        } else {
+                        // if (failure_type_val == '') {
+                        //     return false;
+                        // } else {
+                        //     if (($scope.updating == false && $scope.warranty_job_order_request.failure_type.id != undefined) || ($scope.updating == true && $scope.warranty_job_order_request.failure_type.id != undefined && $scope.warranty_job_order_request.failure_photo == null)) {
+                        //         return true;
+                        //     }
+                        //     return false;
+                        // }
+                        if (failure_type_val) {
                             if (($scope.updating == false && $scope.warranty_job_order_request.failure_type.id != undefined) || ($scope.updating == true && $scope.warranty_job_order_request.failure_type.id != undefined && $scope.warranty_job_order_request.failure_photo == null)) {
                                 return true;
                             }
+                            return false;
+                        } else {
                             return false;
                         }
                     }

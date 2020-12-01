@@ -60,7 +60,7 @@
                         </div><!-- Column -->
                         <div class="col-md-12" ng-if="wjor_part.part">
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label>
                                             MRP
@@ -70,20 +70,20 @@
                                         </label>
                                     </div><!-- Field -->
                                 </div><!-- Column -->
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label>
                                             Quantity
                                         </label>
                                         <div class="input-group">
                                             <input type="text" ng-blur="calculateHandlingCharge()" ng-keyup="calculateHandlingCharge('qty')" class="form-control qtyText" name="quantity" ng-model="wjor_part.qty" maxlength="12" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
-                                            <span class="input-group-addon">
+                                            <span class="input-group-addon type-2">
                                                 {{wjor_part.part.uom.name}}
                                             </span>
                                         </div>
                                     </div><!-- Field -->
                                 </div><!-- Column -->
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label>
                                             Rate
@@ -91,15 +91,15 @@
                                         <input type="text" ng-blur="calculateHandlingCharge()" ng-keyup="calculateHandlingCharge('rate')" class="form-control rateText" name="rate" ng-model="wjor_part.rate" maxlength="12" ng-readonly1="wjor_part.purchase_type != '8481'" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                     </div><!-- Field -->
                                 </div><!-- Column -->
-                                <div class="col-md-4" ng-hide="warranty_job_order_request.request_type_id == '9181'">
+                                <div class="col-md-3" ng-hide="warranty_job_order_request.request_type_id == '9181'">
                                     <div class="form-group">
                                         <label>
-                                            Handling Charge Percentage
+                                            Handling Charge %
                                         </label>
                                         <input type="text" ng-keyup="calculateHandlingCharge()" class="form-control" name="handling_charge_percentage" ng-model="wjor_part.handling_charge_percentage" maxlength="3" ng-readonly="warranty_job_order_request.request_type_id == '9181'" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                     </div><!-- Field -->
                                 </div><!-- Column -->
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label>
                                             Net Amount
@@ -109,7 +109,7 @@
                                         </label>
                                     </div><!-- Field -->
                                 </div><!-- Column -->
-                                <div class="col-md-4" ng-repeat="(tax_key, tax) in wjor_part.taxes" ng-if="wjor_part.part.tax_code && wjor_part.part">
+                                <div class="col-md-3" ng-repeat="(tax_key, tax) in wjor_part.taxes" ng-if="wjor_part.part.tax_code && wjor_part.part">
                                     <div class="form-group">
                                         <label>
                                             {{tax.name}} ({{tax.pivot.percentage}}%)
@@ -119,11 +119,7 @@
                                         </label>
                                     </div><!-- Field -->
                                 </div><!-- Column -->
-                            </div><!-- Row -->
-                        </div><!-- Column -->
-                        <div class="col-md-12" ng-if="wjor_part.part">
-                            <div class="row">
-                                <div class="col-md-4" ng-hide="warranty_job_order_request.request_type_id == '9181'">
+                                <div class="col-md-3" ng-hide="warranty_job_order_request.request_type_id == '9181'">
                                     <div class="form-group">
                                         <label>
                                             Handling Charges
@@ -132,7 +128,7 @@
                                     </div>
                                 </div>
                                 <!-- Column -->
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label>
                                             Amount

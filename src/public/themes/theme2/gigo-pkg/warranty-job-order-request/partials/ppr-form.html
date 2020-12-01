@@ -1156,11 +1156,11 @@
                                         </div>
                                     </div><!-- Feild -->
                                 </li>
-                                <li class="view-col-3" ng-show="warranty_job_order_request.is_analysis_report_required">
+                                <li class="view-col-3" ng-if="warranty_job_order_request.is_analysis_report_required">
                                     <div class="form-group">
                                         <label>
                                             Failure Type
-                                            <sup class="mandatory"></sup>
+                                            <sup class="mandatory">*</sup>
                                         </label>
                                         <md-select ng-model="warranty_job_order_request.failure_type" placeholder="Select Failure Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
                                             <md-select-header class="demo-select-header">
@@ -1172,7 +1172,7 @@
                                                 </md-option>
                                             </md-optgroup>
                                         </md-select>
-                                        <input type="hidden" id="failure_type_id" name="failure_type_id" value="{{warranty_job_order_request.failure_type.id}}">
+                                        <input type="hidden" class="required" id="failure_type_id" name="failure_type_id" value="{{warranty_job_order_request.failure_type.id}}">
                                     </div><!-- Feild -->
                                 </li>
                                 <li class="view-col-3" ng-show="warranty_job_order_request.is_analysis_report_required">
