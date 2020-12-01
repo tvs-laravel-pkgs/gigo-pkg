@@ -990,6 +990,7 @@ class JobCard extends BaseModel {
 				$q->where('job_card_number', 'like', $key . '%')
 				;
 			})
+			->where('outlet_id', Auth::user()->working_outlet_id)
 			->get();
 		return response()->json($list);
 	}
