@@ -125,6 +125,10 @@ class GatePass extends Model {
 		return $this->hasMany('App\GatePassUser', 'gate_pass_id');
 	}
 
+	public function company() {
+		return $this->belongsTo('App\Company', 'company_id');
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];

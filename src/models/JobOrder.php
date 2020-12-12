@@ -146,6 +146,10 @@ class JobOrder extends BaseModel {
 		return empty($this->attributes['estimated_delivery_date']) ? date('h:i A') : date('h:i A', strtotime($this->attributes['estimated_delivery_date']));
 	}
 
+	public function company() {
+		return $this->belongsTo('App\Company', 'company_id');
+	}
+
 	// Setters --------------------------------------------------------------
 
 	public function setDriverLicenseExpiryDateAttribute($date) {

@@ -104,6 +104,10 @@ class GateLog extends Model {
 		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 225)->where('attachment_type_id', 236);
 	}
 
+	public function company() {
+		return $this->belongsTo('App\Company', 'company_id');
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];
