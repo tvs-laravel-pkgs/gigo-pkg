@@ -721,6 +721,7 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
+	//Part Indent
 	public function getPartIndentVehicleDetail(Request $r) {
 		// dd($r->all());
 		try {
@@ -766,6 +767,7 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
+
 	public function getRepairOrders(Request $r) {
 		// dd($r->all());
 		try {
@@ -850,6 +852,7 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
+
 	public function getInwardPartIndentViewData(Request $r) {
 		try {
 			$job_order = JobOrder::with([
@@ -1058,6 +1061,7 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
+
 	//SAVE RETURN PART
 	public function saveReturnPart(Request $request) {
 		// dd($request->all());
@@ -1293,6 +1297,7 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
+
 	//ISSUE PART FORM DATA
 	public function getInwardPartIndentIssuePartFormData(Request $request) {
 		// dd($request->all());
@@ -1426,6 +1431,7 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
+
 	public function getPartDetailPias(Request $request) {
 		// dd($request->all());
 		try {
@@ -1552,6 +1558,7 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
+
 	//SAVE ISSUED PART
 	public function saveIssuedPart(Request $request) {
 		// dd($request->all());
@@ -1970,6 +1977,7 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
+
 	//VEHICLE INWARD VIEW DATA
 	public function getVehicleInwardViewData(Request $r) {
 		try {
@@ -2398,7 +2406,7 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
-	//DMS CHECKLIST SAVE
+	//VEHICLE PHOTOS SAVE
 	public function saveVehiclePhotos(Request $request) {
 		// dd($request->all());
 		try {
@@ -3002,8 +3010,24 @@ class VehicleInwardController extends Controller {
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();
 
-			//save Driver name & mobile number in vehicle table
-			$vehicle = Vehicle::where('id', $job_order->vehicle_id)->update(['driver_name' => $request->driver_name, 'driver_mobile_number' => $request->driver_mobile_number, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
+			//Update Vehicle Details
+			$vehicle = Vehicle::where('id', $job_order->vehicle_id)->first();
+			if($vehicle)
+			{
+				$vehicle->driver_name = $request->driver_name;
+				$vehicle->driver_mobile_number = $request->driver_mobile_number;
+				$vehicle->updated_by_id = Auth::user()->id;
+				$vehicle->updated_at = Carbon::now();
+				$vehicle->km_reading_type_id = $request->km_reading_type_id;
+				if($request->km_reading_type_id == 8040){
+					$vehicle->km_reading = $request->km_reading;
+					$vehicle->hr_reading = null;
+				}else{
+					$vehicle->km_reading = null;
+					$vehicle->hr_reading = $request->hr_reading;
+				}
+				$vehicle->save();
+			}
 
 			//CREATE DIRECTORY TO STORAGE PATH
 			$attachment_path = storage_path('app/public/gigo/job_order/attachments/');
@@ -3384,6 +3408,7 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
+
 	public function saveAddtionalLabour(Request $request) {
 		// dd($request->all());
 		try {
@@ -5121,9 +5146,9 @@ class VehicleInwardController extends Controller {
 
 			//REMOVE REPAIR ORDER WHILE CHANGING VOC
 			foreach ($job_order->customerVoices as $customer_voice) {
-				if (!in_array($customer_voice->id, $customer_voice_ids)) {
-					$delete_job_repair_order = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('repair_order_id', $customer_voice->repair_order_id)->where('is_recommended_by_oem', 0)->forceDelete();
-				}
+				// if (!in_array($customer_voice->id, $customer_voice_ids)) {
+				// 	$delete_job_repair_order = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('repair_order_id', $customer_voice->repair_order_id)->where('is_recommended_by_oem', 0)->forceDelete();
+				// }
 			}
 
 			$job_order->customerVoices()->sync([]);
@@ -7659,6 +7684,7 @@ class VehicleInwardController extends Controller {
 					;
 				})
 				->orderBy('parts.name')
+				->orderBy('part_stocks.stock')
 				->get();
 		}
 
