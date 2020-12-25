@@ -61,7 +61,7 @@ app.component('partsIndentList', {
                 { data: 'action', class: 'action', name: 'action', searchable: false },
                 { data: 'job_order_number', name: 'job_orders.number', searchable: true },
                 { data: 'job_order_date_time', searchable: false },
-                { data: 'vehicle', searchable: false },
+                { data: 'vehicle', name: 'vehicles.registration_number', searchable: true },
                 // { data: 'job_card_number', name: 'job_cards.job_card_number' , searchable: true },
                 // { data: 'job_card_date_time', searchable: false },
                 { data: 'requested_qty', searchable: false },
@@ -1344,6 +1344,10 @@ app.component('partsIndentIssuePartForm', {
                     });
             }
         }
+
+        $(document).on("wheel", "input[type=number]", function(e) {
+            $(this).blur();
+        });
     }
 });
 
