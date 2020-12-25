@@ -20,7 +20,6 @@ class SurveyType extends BaseModel {
 	}
 
 	public function surveyField() {
-		return $this->belongsToMany('Abs\AttributePkg\Field', 'survey_type_fields', 'survey_type_id', 'field_id');
+		return $this->belongsToMany('Abs\AttributePkg\Models\Field', 'survey_type_fields', 'survey_type_id', 'field_id');
 	}
-
 }
