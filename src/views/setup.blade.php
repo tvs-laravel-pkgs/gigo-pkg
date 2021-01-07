@@ -395,6 +395,13 @@
 </script>
 
 <script type='text/javascript'>
+	//Vehicle Delivery
+    var manual_vehicle_delivery_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/manual-vehicle-delivery/list.html')}}';
+    var manual_vehicle_delivery_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/manual-vehicle-delivery/form.html')}}';
+    var manual_vehicle_delivery_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/manual-vehicle-delivery/view.html')}}';
+</script>
+
+<script type='text/javascript'>
 
 	var view_img = './public/theme/img/table/cndn/view.svg';
 	var gate_out_img = './public/theme/img/table/cndn/gateout.svg';

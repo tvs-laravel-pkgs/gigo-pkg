@@ -1294,3 +1294,20 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'View GatePass',
     });
 }]);
+
+app.config(['$routeProvider', function($routeProvider) {
+    $routeProvider.
+    //Vehicle Delivery
+    when('/manual-vehicle-delivery/table-list', {
+        template: '<manual-vehicle-delivery-list></manual-vehicle-delivery-list>',
+        title: 'Manual Vehicle Delivery',
+    }).
+    when('/manual-vehicle-delivery/form/:id', {
+        template: '<manual-vehicle-delivery-form></manual-vehicle-delivery-form>',
+        title: 'Manual Vehicle Delivery',
+    }).
+    when('/manual-vehicle-delivery/view/:id', {
+        template: '<manual-vehicle-delivery-view></manual-vehicle-delivery-view>',
+        title: 'View Vehicle',
+    });
+}]);

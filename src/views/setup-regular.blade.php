@@ -1853,3 +1853,31 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 </script>
 <script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gate-pass/controller.js')}}'></script>
 
+
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
+		//Vehicle Delivery
+		when('/manual-vehicle-delivery/table-list', {
+			template: '<manual-vehicle-delivery-list></manual-vehicle-delivery-list>',
+			title: 'Manual Vehicle Delivery',
+		}).
+		
+		when('/manual-vehicle-delivery/form/:id', {
+			template: '<manual-vehicle-delivery-form></manual-vehicle-delivery-form>',
+			title: 'Manual Vehicle Delivery Form',
+		}).
+
+		when('/manual-vehicle-delivery/view/:id', {
+			template: '<manual-vehicle-delivery-view></manual-vehicle-delivery-view>',
+			title: 'View Manual Vehicle Delivery',
+		});
+	}]);
+
+	//Vehicle Delivery
+    var manual_vehicle_delivery_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/manual-vehicle-delivery/list.html')}}';
+	var manual_vehicle_delivery_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/manual-vehicle-delivery/view.html')}}';
+	var manual_vehicle_delivery_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/manual-vehicle-delivery/form.html')}}';
+</script>
+<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/manual-vehicle-delivery/controller.js')}}'></script>
+

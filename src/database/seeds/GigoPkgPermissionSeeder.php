@@ -2115,6 +2115,56 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_name' => 'GateIn / GateOut Parts / Tools ',
 			],
 
+			//Manual Vehicle Delivery
+			[
+				'display_order' => 100,
+				'parent' => 'gigo-pages',
+				'name' => 'gigo-manual-vehicle-delivery',
+				'display_name' => 'Manual Vehicle Delivery',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'gigo-manual-vehicle-delivery',
+				'name' => 'add-manual-vehicle-delivery',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'gigo-manual-vehicle-delivery',
+				'name' => 'edit-manual-vehicle-delivery',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'gigo-manual-vehicle-delivery',
+				'name' => 'view-manual-vehicle-delivery',
+				'display_name' => 'View',
+			],
+			[
+				'display_order' => 4,
+				'parent' => 'gigo-manual-vehicle-delivery',
+				'name' => 'verify-manual-vehicle-delivery',
+				'display_name' => 'Verify',
+			],
+			[
+				'display_order' => 5,
+				'parent' => 'gigo-manual-vehicle-delivery',
+				'name' => 'view-own-outlet-manual-vehicle-delivery',
+				'display_name' => 'View Own Outlet',
+			],
+			[
+				'display_order' => 6,
+				'parent' => 'gigo-manual-vehicle-delivery',
+				'name' => 'view-mapped-outlet-manual-vehicle-delivery',
+				'display_name' => 'View Mapped Outlet',
+			],
+			[
+				'display_order' => 7,
+				'parent' => 'gigo-manual-vehicle-delivery',
+				'name' => 'view-all-outlet-manual-vehicle-delivery',
+				'display_name' => 'View all Outlet',
+			],
+
 		];
 		Permission::createFromArrays($permissions);
 	}

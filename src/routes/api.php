@@ -469,5 +469,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('/gate-pass/jobcard/get-search-list', 'GatePassController@getJobCardSearchList');
 		Route::post('/gate-pass/user/get-search-list', 'GatePassController@getUserSearchList');
 
+		//Manual Vehicle Delivery
+		Route::post('/manual-vehicle-delivery/get-form-data', 'ManualVehicleDeliveryController@getFormData');
+		Route::post('/manual-vehicle-delivery/save', 'ManualVehicleDeliveryController@save');
 	});
 });
