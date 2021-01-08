@@ -52,7 +52,7 @@
                                         <img class="img-responsive" src="./public/theme/img/content/edit.svg" alt="Edit" />
                                     </a> -->
                                 <span ng-if="job_order.vehicle.model.model_number">
-                                    | {{job_order.vehicle.model.model_name}} /  {{job_order.vehicle.model.model_number}}
+                                    | {{job_order.vehicle.model.model_name}} / {{job_order.vehicle.model.model_number}}
                                 </span>
                                 <!-- <span ng-if="job_order.driver_name">
                                     | {{job_order.driver_name}}
@@ -392,94 +392,121 @@
                                 <div class="tab-pane-wrap">
                                     <div class="row">
                                         <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>Invoice Details</b></h5>
+                                            <ul class="view-row mb-no">
+                                                <li class="view-col-4">
+                                                    <span class="view-col-label">
+                                                        Invoice Date
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b>
+                                                            {{job_order.manual_delivery_labour_invoice.invoice_date}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-4">
+                                                    <span class="view-col-label">
+                                                        Labour Invoice Number
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b>
+                                                            {{job_order.manual_delivery_labour_invoice.number}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-4">
+                                                    <span class="view-col-label">
+                                                        Labour Invoice Amount
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        <b>
+                                                            {{job_order.manual_delivery_labour_invoice.amount}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-4">
+                                                    <span class="view-col-label">
+                                                        Parts Invoice Number
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        <b>
+                                                            {{job_order.manual_delivery_parts_invoice.number}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-4">
+                                                    <span class="view-col-label">
+                                                        Parts Invoice Amount
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        <b>
+                                                            {{job_order.manual_delivery_parts_invoice.amount}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                            </ul>
+                                            <!-- <button class="btn btn-secondary-dark btn-md btn-square">Edit</button> -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-12">
                                             <h5 class="color-primary mb-10"><b>Payment Details</b></h5>
                                             <ul class="view-row mb-no">
-                                                <li class="view-col-3">
+                                                <li class="view-col-4">
                                                     <span class="view-col-label">
-                                                        Code
+                                                        Cash Paid by Customer ?
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
-                                                            {{job_order.vehicle.current_owner.customer.code}}
+                                                            {{$ctrl.vehicle_payment_status}}
                                                         </b>
                                                     </span>
                                                 </li>
-                                                <li class="view-col-3">
+                                                <li class="view-col-4" ng-if="$ctrl.vehicle_payment_status == 'Yes'">
                                                     <span class="view-col-label">
-                                                        Name
+                                                        Receipt Number
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
-                                                            {{job_order.vehicle.current_owner.customer.name}}
+                                                            {{job_order.manual_delivery_receipt.permanent_receipt_no}}
                                                         </b>
                                                     </span>
                                                 </li>
-                                                <li class="view-col-3">
+                                                <li class="view-col-4" ng-if="$ctrl.vehicle_payment_status == 'Yes'">
                                                     <span class="view-col-label">
-                                                        Mobile No
-                                                    </span>
-                                                    <span class="view-col-value">
-                                                        <b>
-                                                            {{job_order.vehicle.current_owner.customer.mobile_no}}
-                                                        </b>
-                                                    </span>
-                                                </li>
-                                                <li class="view-col-3">
-                                                    <span class="view-col-label">
-                                                        Email
-                                                    </span>
-                                                    <span class="view-col-value">
-                                                        <b>
-                                                            {{job_order.vehicle.current_owner.customer.email}}
-                                                        </b>
-                                                    </span>
-                                                </li>
-                                                <li class="view-col-3 ptb-2">
-                                                    <span class="view-col-label">
-                                                        Address
-                                                    </span>
-                                                    <span class="view-col-value">
-                                                        {{job_order.vehicle.current_owner.customer.address.address_line1}},{{job_order.vehicle.current_owner.customer.address.address_line2}},{{job_order.vehicle.current_owner.customer.address.city.name}},{{job_order.vehicle.current_owner.customer.address.state.name}},{{job_order.vehicle.current_owner.customer.address.pincode}},{{job_order.vehicle.current_owner.customer.address.country.name}}.
-                                                    </span>
-                                                </li>
-                                                <li class="view-col-3">
-                                                    <span class="view-col-label">
-                                                        GST No
-                                                    </span>
-                                                    <span class="view-col-value">
-                                                        {{job_order.vehicle.current_owner.customer.gst_number}}
-                                                    </span>
-                                                </li>
-                                                <li class="view-col-3">
-                                                    <span class="view-col-label">
-                                                        PAN
-                                                        <!-- No -->
+                                                        Receipt Date
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
-                                                            {{job_order.vehicle.current_owner.customer.pan_number}}
+                                                            {{job_order.manual_delivery_receipt.date}}
                                                         </b>
                                                     </span>
                                                 </li>
-                                                <li class="view-col-3">
+                                                <li class="view-col-4" ng-if="$ctrl.vehicle_payment_status == 'Yes'">
                                                     <span class="view-col-label">
-                                                        Ownership
+                                                        Receipt Amount
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
-                                                            {{job_order.vehicle.current_owner.ownership_type.name}}
+                                                            {{job_order.manual_delivery_receipt.amount}}
                                                         </b>
                                                     </span>
                                                 </li>
-                                                <li class="view-col-3" ng-if="job_order.total_due_amount > 0">
+                                                <li class="view-col-4" ng-if="$ctrl.vehicle_payment_status == 'No'">
                                                     <span class="view-col-label">
-                                                        Customer Due Amount
+                                                        Vehicle Delivery Request Remarks
                                                     </span>
-                                                    <span class="view-data-list-value mandatory">
+                                                    <span class="view-data-list-value">
                                                         <b>
-                                                            <img class="img-responsive img-inline"
-                                                                src="./public/theme/img/table/cndn/table-rupee.svg"
-                                                                alt="Rupee" /> {{job_order.total_due_amount | number:2}}
+                                                            {{job_order.vehicle_delivery_request_remarks}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-4" ng-if="job_order.approved_remarks">
+                                                    <span class="view-col-label">
+                                                        Vehicle Delivery Approved Remarks
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b>
+                                                            {{job_order.approved_remarks}}
                                                         </b>
                                                     </span>
                                                 </li>
@@ -490,6 +517,12 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <button type="button"
+                                                        ng-if="job_order.status_id == 8477 && hasPerm('verify-manual-vehicle-delivery') "
+                                                        ng-click="showApprovalForm(job_order)"
+                                                        class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                                        Approve
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
@@ -503,3 +536,58 @@
         </form>
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
+<div class="modal fade filter" id="approve_modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <form id="vehicle-delivery-approval-form" autocomplete="off">
+            <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+            <input type="hidden" name="type_id" value="2">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close ripple reject_close" data-dismiss="modal" aria-label="Close">
+                        <i class="icon ion-md-close"></i>
+                    </button>
+                    <h5 class="modal-title">
+                        Approve
+                    </h5>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-form">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>
+                                        Approved Remarks
+                                    </label>
+                                    <textarea class="form-control" name="approved_remarks"
+                                        ng-model="job_order.approved_remarks"></textarea>
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>
+                                        Approved By
+                                    </label>
+                                    <input type="text" disabled="disabled" class="form-control" ng-model="user.name">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                        </div><!-- Row -->
+                    </div><!-- Modal Form -->
+                </div><!-- Modal Body -->
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                        </div><!-- Column -->
+                        <div class="col-md-6 text-right">
+                            <button type="button" data-dismiss="modal" class="btn btn-secondary-dark">
+                                Cancel
+                            </button>
+                            <button type="submit" class="submit btn btn-primary" ng-click="approveVehicleDelivery()">
+                                Approve
+                            </button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Modal Footer -->
+            </div><!-- Modal Content -->
+        </form>
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->
