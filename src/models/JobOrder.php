@@ -401,6 +401,28 @@ class JobOrder extends BaseModel {
 		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 10101);
 	}
 
+	public function invoice()
+    {
+        return $this->morphMany(GigoManualInvoice::class, 'invoiceable');
+	}
+	
+	public function payment()
+    {
+        return $this->morphOne('App\Payment', 'payable');
+	}
+	
+	public function manualDeliveryLabourInvoice() {
+		return $this->hasOne('App\GigoManualInvoice', 'invoiceable_id', 'id')->where('invoice_type_id',1);
+	}
+
+	public function manualDeliveryPartsInvoice() {
+		return $this->hasOne('App\GigoManualInvoice', 'invoiceable_id', 'id')->where('invoice_type_id',2);
+	}
+
+	public function manualDeliveryReceipt() {
+		return $this->hasOne('App\Receipt', 'entity_id', 'id')->where('receipt_of_id',7622);
+	}
+
 	// Query Scopes --------------------------------------------------------------
 
 	public function scopeFilterSearch($query, $term) {

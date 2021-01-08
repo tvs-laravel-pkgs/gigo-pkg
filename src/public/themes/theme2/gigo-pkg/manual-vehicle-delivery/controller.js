@@ -284,6 +284,7 @@ app.component('manualVehicleDeliveryForm', {
                     },
                 })
                 .done(function(res) {
+                    console.log(res)
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -370,7 +371,7 @@ app.component('manualVehicleDeliveryForm', {
                                 return;
                             }
                             custom_noty('success', res.message);
-                            $location.path('/gate-pass/table-list');
+                            $location.path('/manual-vehicle-delivery/table-list');
 
                             $scope.$apply();
                         })
