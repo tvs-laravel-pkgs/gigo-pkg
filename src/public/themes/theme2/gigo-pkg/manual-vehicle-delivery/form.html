@@ -433,7 +433,7 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Labour Amount<sup class="mandatory">*</sup></label>
-                                                        <input type="text" name="labour_amount" maxlength="100" class="form-control" value="{{job_order.manual_delivery_labour_invoice.amount}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                                        <input type="text" name="labour_amount" maxlength="100" class="form-control amount" id="labour_invoice_amount" value="{{job_order.manual_delivery_labour_invoice.amount}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
                                                         >
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
@@ -446,7 +446,7 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Parts Amount<sup class="mandatory">*</sup></label>
-                                                        <input type="text" name="parts_amount" maxlength="100" class="form-control" value="{{job_order.manual_delivery_parts_invoice.amount}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                                        <input type="text" name="parts_amount" maxlength="100" class="form-control amount" id="parts_invoice_amount" value="{{job_order.manual_delivery_parts_invoice.amount}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
                                                         >
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
@@ -493,7 +493,7 @@
                                                 <div class="col-md-3" ng-if="$ctrl.vehicle_payment_status">
                                                     <div class="form-group">
                                                         <label>Receipt Amount<sup class="mandatory">*</sup></label>
-                                                        <input type="text" name="receipt_amount" maxlength="100" class="form-control" value="{{job_order.manual_delivery_receipt.amount}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                                        <input type="text" name="receipt_amount" maxlength="100" class="form-control receipt_amount" value="{{job_order.manual_delivery_receipt.amount}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
                                                         >
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->

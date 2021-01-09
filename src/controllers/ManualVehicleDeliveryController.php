@@ -110,21 +110,24 @@ class ManualVehicleDeliveryController extends Controller {
 			->where('job_orders.company_id', Auth::user()->company_id)
 		;
 
-		// if (!Entrust::can('view-overall-outlets-vehicle-inward')) {
-		// 	if (Entrust::can('view-mapped-outlet-vehicle-inward')) {
-		// 		$outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
-		// 		array_push($outlet_ids, Auth::user()->employee->outlet_id);
-		// 		$vehicle_inwards->whereIn('job_orders.outlet_id', $outlet_ids);
-		// 	} else if (Entrust::can('view-own-outlet-vehicle-inward')) {
-		// 		$vehicle_inwards->where('job_orders.outlet_id', Auth::user()->employee->outlet_id)
-		// 			->whereRaw("IF (`job_orders`.`status_id` = '8460', `job_orders`.`service_advisor_id` IS  NULL, `job_orders`.`service_advisor_id` = '" . $request->service_advisor_id . "')");
-		// 	} else {
-		// 		$vehicle_inwards->where('job_orders.service_advisor_id', Auth::user()->id);
-		// 	}
-		// }
+		if (!Entrust::can('view-all-outlet-manual-vehicle-delivery')) {
+			if (Entrust::can('view-mapped-outlet-manual-vehicle-delivery')) {
+				$outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
+				array_push($outlet_ids, Auth::user()->employee->outlet_id);
+				$vehicle_inwards->whereIn('job_orders.outlet_id', $outlet_ids);
+			}
+			else{
+				$vehicle_inwards->where('job_orders.outlet_id', Auth::user()->working_outlet_id);
+			}
+		}
+
+		if (Entrust::can('verify-manual-vehicle-delivery')) {
+			$vehicle_inwards->whereIn('job_orders.status_id', [8477,8478,8479]);
+		}
 
 		$vehicle_inwards->groupBy('job_orders.id');
 		$vehicle_inwards->orderBy('job_orders.created_at', 'DESC');
+		$vehicle_inwards->orderBy('job_orders.status_id', 'DESC');
 
 		return Datatables::of($vehicle_inwards)
 			->rawColumns(['status', 'action'])
@@ -137,17 +140,13 @@ class ManualVehicleDeliveryController extends Controller {
 				return '<span class="text-' . $status . '">' . $vehicle_inward->status . '</span>';
 			})
 			->addColumn('action', function ($vehicle_inward) {
-				$img1 = asset('public/themes/' . $this->data['theme'] . '/img/content/table/view.svg');
-				$img1_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/view.svg');
+				$view_img = asset('public/themes/' . $this->data['theme'] . '/img/content/table/view.svg');
+				$edit_img = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
+
 				$output = '';
-				$output .= '<a href="#!/manual-vehicle-delivery/view/' . $vehicle_inward->id . '" id = "" title="View"><img src="' . $img1 . '" alt="View" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
-				$output .= '<a href="#!/manual-vehicle-delivery/form/' . $vehicle_inward->id . '" id = "" title="Form"><img src="' . $img1 . '" alt="View" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
-				if ($vehicle_inward->status_id == 8460) {
-					$output .= '<a href="#!/inward-vehicle/vehicle-detail/' . $vehicle_inward->id . '" id = "" title="Initiate" class="btn btn-secondary-dark btn-xs">Initiate</a>';
-				}
-				if ($vehicle_inward->status_id == 8461 && $vehicle_inward->is_customer_agreed == 1) {
-					$output .= '<a href="#!/inward-vehicle/update-jc/form/' . $vehicle_inward->id . '" id = "" title="Update JC" class="btn btn-secondary-dark btn-xs">Update JC</a>';
-				}
+
+				$output .= '<a href="#!/manual-vehicle-delivery/form/' . $vehicle_inward->id . '" id = "" title="Form"><img src="' . $edit_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $edit_img . '" onmouseout=this.src="' . $edit_img . '"></a>';
+				$output .= '<a href="#!/manual-vehicle-delivery/view/' . $vehicle_inward->id . '" id = "" title="View"><img src="' . $view_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $view_img . '" onmouseout=this.src="' . $view_img . '"></a>';
 				return $output;
 			})
 			->make(true);
