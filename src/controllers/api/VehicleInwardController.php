@@ -7683,8 +7683,8 @@ class VehicleInwardController extends Controller {
 						->orWhere('parts.name', 'like', '%' . $key . '%')
 					;
 				})
-				->orderBy('parts.name')
-				->orderBy('part_stocks.stock')
+				// ->orderBy('parts.name','ASC')
+				->orderBy('part_stocks.stock','DESC')
 				->get();
 		}
 
