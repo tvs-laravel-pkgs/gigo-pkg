@@ -476,66 +476,37 @@ app.component('manualVehicleDeliveryForm', {
             });
         }
 
-        $(document).on('keyup', ".amount", function() {
-            setTimeout(function() {
+        $scope.vehiclePaymentStatus = function (status) {
+            if(status == 1){
+                $scope.invoiceAmount();
+            }
+        }
 
+        $(document).on('keyup', ".amount", function() {
+            $scope.invoiceAmount();
+        });
+
+        $scope.invoiceAmount = function() {
+            setTimeout(function() {
                 var labour_amount = $('#labour_invoice_amount').val();
                 var parts_amount = $('#parts_invoice_amount').val();
 
                 var total_amount = 0;
 
-                // var part_amount = parseFloat($('#total_amount' + i).val());
-                // if (part_amount && !isNaN(part_amount)) {
-                //     overall_amount += part_amount;
-                // }
-
-                // var part_amount = parseFloat($('#total_amount' + i).val());
-                // if (part_amount && !isNaN(part_amount)) {
-                //     overall_amount += part_amount;
-                // }
-
-                if(!labour_amount || isNaN(labour_amount))
-                {
+                if(!labour_amount || isNaN(labour_amount)){
                     labour_amount = 0;
                 }
 
-                if(!parts_amount || isNaN(parts_amount))
-                {
+                if(!parts_amount || isNaN(parts_amount)){
                     parts_amount = 0;
                 }
 
-               
                 total_amount = parseFloat(labour_amount) + parseFloat(parts_amount);
                 total_amount = total_amount.toFixed(2);
 
                 $('.receipt_amount').val(total_amount);
-                $('.total_amount').html(total_amount);
-               
-                // //Calulate overall amount
-                // var overall_amount = 0;
-                // for (var i = 0; i < self.parts_request_parts_details.length; i++) {
-                //     var part_amount = parseFloat($('#total_amount' + i).val());
-                //     if (part_amount && !isNaN(part_amount)) {
-                //         overall_amount += part_amount;
-                //     }
-                // }
-
-                // var tcs_amount = $('.tcs_amount').val();
-
-                // if (isNaN(tcs_amount)) {
-                //     tcs_amount = 0;
-                // }
-
-                // if (!tcs_amount) {
-                //     tcs_amount = 0;
-                // }
-                // overall_amount = parseFloat(overall_amount) + parseFloat(tcs_amount);
-
-                // overall_amount = overall_amount.toFixed(2);
-                // $('#invoice_amount').val(overall_amount);
-                
             }, 100);
-        });
+        }
 
         //Scrollable Tabs
         setTimeout(function () {

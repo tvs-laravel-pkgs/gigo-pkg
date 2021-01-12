@@ -215,6 +215,7 @@ class ManualVehicleDeliveryController extends Controller
             'vehicle.currentOwner.customer.address.state',
             'vehicle.currentOwner.customer.address.city',
             'vehicle.currentOwner.ownershipType',
+            'outlet',
             'gateLog',
             'gateLog.createdBy',
             'gateLog.driverAttachment',

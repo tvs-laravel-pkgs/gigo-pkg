@@ -408,7 +408,7 @@
                                                     <div class="form-group">
                                                         <label>Invoice Date<sup class="mandatory">*</sup></label>
                                                         <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
-                                                            <input type="text" class="form-control required" placeholder="Select Date" ng-model="job_order.manual_delivery_labour_invoice.invoice_date" name="invoice_date" />
+                                                            <input type="text" class="form-control required" placeholder="Ex: 08-01-2021" ng-model="job_order.manual_delivery_labour_invoice.invoice_date" name="invoice_date" />
                                                             <div class="input-group-addon">
                                                                 <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                                             </div>
@@ -427,26 +427,26 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Labour Invoice Number<sup class="mandatory">*</sup></label>
-                                                        <input type="text" name="labour_invoice_number" maxlength="100" class="form-control" value="{{job_order.manual_delivery_labour_invoice.number}}" onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')">
+                                                        <input type="text" name="labour_invoice_number" maxlength="100" placeholder="Ex: INV20210101" class="form-control" value="{{job_order.manual_delivery_labour_invoice.number}}" onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Labour Amount<sup class="mandatory">*</sup></label>
-                                                        <input type="text" name="labour_amount" maxlength="100" class="form-control amount" id="labour_invoice_amount" value="{{job_order.manual_delivery_labour_invoice.amount}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                                        <input type="text" name="labour_amount" maxlength="100"  placeholder="Ex: 1000" class="form-control amount" id="labour_invoice_amount" value="{{job_order.manual_delivery_labour_invoice.amount}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
                                                         >
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Parts Invoice Number<sup class="mandatory">*</sup></label>
-                                                        <input type="text" name="parts_invoice_number" maxlength="100" class="form-control" value="{{job_order.manual_delivery_parts_invoice.number}}" onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')">
+                                                        <input type="text" name="parts_invoice_number" maxlength="100"  placeholder="Ex: INV20210101" class="form-control" value="{{job_order.manual_delivery_parts_invoice.number}}" onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Parts Amount<sup class="mandatory">*</sup></label>
-                                                        <input type="text" name="parts_amount" maxlength="100" class="form-control amount" id="parts_invoice_amount" value="{{job_order.manual_delivery_parts_invoice.amount}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                                        <input type="text" name="parts_amount" maxlength="100" placeholder="Ex: 2000" class="form-control amount" id="parts_invoice_amount" value="{{job_order.manual_delivery_parts_invoice.amount}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
                                                         >
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
@@ -466,9 +466,9 @@
                                                             Cash Paid by Customer ?
                                                         </label>
                                                         <div class="common-radio-button type-4">
-                                                            <input type="radio" id="sold" name="vehicle_payment_status" ng-model="$ctrl.vehicle_payment_status" ng-value="1">
+                                                            <input type="radio" id="sold" name="vehicle_payment_status" ng-model="$ctrl.vehicle_payment_status" ng-value="1" ng-click="vehiclePaymentStatus(1)">
                                                             <label for="sold">Yes</label>
-                                                            <input type="radio" id="not_sold" name="vehicle_payment_status" ng-model="$ctrl.vehicle_payment_status" ng-value="0">
+                                                            <input type="radio" id="not_sold" name="vehicle_payment_status" ng-model="$ctrl.vehicle_payment_status" ng-value="0" ng-click="vehiclePaymentStatus(0)">
                                                             <label for="not_sold">No</label>
                                                         </div>
                                                     </div><!-- Feild -->
@@ -476,14 +476,14 @@
                                                 <div class="col-md-3" ng-if="$ctrl.vehicle_payment_status">
                                                     <div class="form-group">
                                                         <label>Receipt Number<sup class="mandatory">*</sup></label>
-                                                        <input type="text" name="receipt_number" maxlength="100" class="form-control" value="{{job_order.manual_delivery_receipt.permanent_receipt_no}}">
+                                                        <input type="text" name="receipt_number" maxlength="100" placeholder="Ex: INV20210101"class="form-control" value="{{job_order.manual_delivery_receipt.permanent_receipt_no}}">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3" ng-if="$ctrl.vehicle_payment_status">
                                                     <div class="form-group">
                                                         <label>Receipt Date<sup class="mandatory">*</sup></label>
                                                         <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
-                                                            <input type="text" class="form-control required" placeholder="Select Date" ng-model="job_order.manual_delivery_receipt.date" name="receipt_date" />
+                                                            <input type="text" class="form-control required"  placeholder="Ex: 10-01-2021" ng-model="job_order.manual_delivery_receipt.date" name="receipt_date" />
                                                             <div class="input-group-addon">
                                                                 <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                                             </div>
@@ -493,7 +493,7 @@
                                                 <div class="col-md-3" ng-if="$ctrl.vehicle_payment_status">
                                                     <div class="form-group">
                                                         <label>Receipt Amount<sup class="mandatory">*</sup></label>
-                                                        <input type="text" name="receipt_amount" maxlength="100" class="form-control receipt_amount" value="{{job_order.manual_delivery_receipt.amount}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                                        <input type="text" name="receipt_amount" maxlength="100" class="form-control receipt_amount" placeholder="Ex: 3000" value="{{job_order.manual_delivery_receipt.amount}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
                                                         >
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
