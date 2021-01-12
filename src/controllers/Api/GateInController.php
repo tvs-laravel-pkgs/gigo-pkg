@@ -9,6 +9,7 @@ use Abs\GigoPkg\TradePlateNumber;
 use Abs\SerialNumberPkg\SerialNumberGroup;
 use App\Attachment;
 use App\Config;
+use App\Customer;
 use App\Employee;
 use App\Entity;
 use App\FinancialYear;
@@ -21,6 +22,7 @@ use App\Jobs\Notification;
 use App\Outlet;
 use App\ShortUrl;
 use App\Vehicle;
+use App\VehicleOwner;
 use App\VehicleInventoryItem;
 use Auth;
 use Carbon\Carbon;
@@ -238,71 +240,6 @@ class GateInController extends Controller {
 				// 	],
 				// ]);
 			}
-			// if ($validator->fails()) {
-			// 	return response()->json([
-			// 		'success' => false,
-			// 		'error' => 'Validation Error',
-			// 		'errors' => $validator->errors()->all(),
-			// 	]);
-			// }
-
-			// $request['registration_number'] = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
-
-			// //VEHICLE DETAIL VALIDATION
-			// if ($request->registration_number) {
-			// 	$validator1 = Validator::make($request->all(), [
-			// 		'registration_number' => [
-			// 			'required',
-			// 			'unique:vehicles,registration_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
-			// 		],
-			// 	]);
-
-			// 	if ($validator1->fails()) {
-			// 		return response()->json([
-			// 			'success' => false,
-			// 			'error' => 'Validation Error',
-			// 			'errors' => $validator1->errors()->all(),
-			// 		]);
-			// 	}
-			// }
-
-			// if ($request->chassis_number) {
-			// 	$validator1 = Validator::make($request->all(), [
-			// 		'chassis_number' => [
-			// 			'required',
-			// 			// 'min:10',
-			// 			'max:17',
-			// 			'unique:vehicles,chassis_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
-			// 		],
-			// 	]);
-
-			// 	if ($validator1->fails()) {
-			// 		return response()->json([
-			// 			'success' => false,
-			// 			'error' => 'Validation Error',
-			// 			'errors' => $validator1->errors()->all(),
-			// 		]);
-			// 	}
-			// }
-
-			// if ($request->engine_number) {
-			// 	$validator1 = Validator::make($request->all(), [
-			// 		'engine_number' => [
-			// 			'required',
-			// 			// 'min:10',
-			// 			'max:64',
-			// 			'unique:vehicles,engine_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
-			// 		],
-			// 	]);
-
-			// 	if ($validator1->fails()) {
-			// 		return response()->json([
-			// 			'success' => false,
-			// 			'error' => 'Validation Error',
-			// 			'errors' => $validator1->errors()->all(),
-			// 		]);
-			// 	}
-			// }
 
 			if ($request->search_type == 1 && $request->vehicle_id) {
 				//Exisiting
@@ -321,9 +258,19 @@ class GateInController extends Controller {
 				$vehicle->driver_name = $request->driver_name;
 				$vehicle->driver_mobile_number = $request->driver_mobile_number;
 				$vehicle->updated_by_id = Auth::user()->id;
+				$vehicle->updated_at = Carbon::now();
+
+				$vehicle_form_filled = 1;
+				if ($vehicle->currentOwner) {
+					$customer_form_filled = 1;
+					$vehicle->status_id = 8142; //COMPLETED
+				} else {
+					$customer_form_filled = 0;
+					$vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
+				}
+
 				$vehicle->save();
 			} else {
-
 				$registration_number = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
 				//New
 				if ($registration_number) {
@@ -460,7 +407,6 @@ class GateInController extends Controller {
 					$generate_number_status = 1;
 				}
 			} else {
-
 				//Get vehicle recent service date
 				$job_order = JobOrder::where('vehicle_id', $vehicle->id)->orderBy('id', 'DESC')->first();
 				$job_card_status = 1; // Create New
@@ -481,7 +427,7 @@ class GateInController extends Controller {
 					if ($job_card_reopen_date > $current_date) {
 						$job_card_status = 2; // Reopen Last JobOrder
 					} else {
-						$job_card_status = 1; // Create New
+						$job_card_status = 1; // Create New JobOrder
 					}
 				}
 
@@ -694,13 +640,12 @@ class GateInController extends Controller {
 			}
 
 			$membership_data = $this->getSoap->GetTVSONEVehicleDetails($soap_number);
-
+			// dd($membership_data);
 			$membership_message = '';
 			if ($membership_data && $membership_data['success'] == 'true') {
 				// dump($membership_data);
 
 				$amc_policy = AmcPolicy::firstOrNew(['company_id' => Auth::user()->company_id, 'name' => $membership_data['membership_name'], 'type' => $membership_data['membership_type']]);
-
 				if ($amc_policy->exists) {
 					$amc_policy->updated_by_id = Auth::user()->id;
 					$amc_policy->updated_at = Carbon::now();
@@ -1064,6 +1009,7 @@ class GateInController extends Controller {
 	public function getVehicleSearchList(Request $request) {
 		// dd($request->all());
 		$key = $request->key;
+
 		$list = Vehicle::with(['kmReadingType'])->select(
 			'driver_name',
 			'driver_mobile_number',
@@ -1082,7 +1028,151 @@ class GateInController extends Controller {
 					->orWhere('registration_number', 'like', '%' . $key . '%')
 				;
 			})
+			->whereNotNull('vehicles.sold_date')
 			->get();
+
+		// dd($list);
+		if (count($list) == 0) {
+			$vehicle_data = $this->getSoap->GetVehicleDetails($key);
+			// dd($vehicle_data);
+
+			if ($vehicle_data && $vehicle_data['success'] == 'true') {
+				// dump($vehicle_data);
+				DB::beginTransaction();
+				try {
+					if(isset($vehicle_data['vehicle_reg_number'])){
+						$vehicle = Vehicle::where([
+							'company_id' => Auth::user()->company_id,
+							'registration_number' => $vehicle_data['vehicle_reg_number'],
+						])->first();
+
+						if (!$vehicle) {
+							//Chassis Number
+							if ($vehicle_data['chassis_number']) {
+								$vehicle = Vehicle::firstOrNew([
+									'company_id' => Auth::user()->company_id,
+									'chassis_number' => $vehicle_data['chassis_number'],
+								]);
+							}
+							//Engine Number
+							else {
+								$vehicle = Vehicle::firstOrNew([
+									'company_id' => Auth::user()->company_id,
+									'engine_number' => $vehicle_data['engine_number'],
+								]);
+							}
+						}
+						$vehicle->is_registered = 1;
+					}
+					else
+					{
+						if ($vehicle_data['chassis_number']) {
+							$vehicle = Vehicle::firstOrNew([
+								'company_id' => Auth::user()->company_id,
+								'chassis_number' => $vehicle_data['chassis_number'],
+							]);
+						}
+						//Engine Number
+						else {
+							$vehicle = Vehicle::firstOrNew([
+								'company_id' => Auth::user()->company_id,
+								'engine_number' => $vehicle_data['engine_number'],
+							]);
+						}
+						$vehicle->is_registered = 0;
+					}
+
+					if (!$vehicle->exists) {					
+						$vehicle->company_id = Auth::user()->company_id;
+						$vehicle->created_by_id = Auth::user()->id;
+						$vehicle->created_at = Carbon::now();
+					} else {
+						$vehicle->updated_by_id = Auth::user()->id;
+						$vehicle->updated_at = Carbon::now();
+					}
+
+					$vehicle->registration_number = isset($vehicle_data['vehicle_reg_number']) ? $vehicle_data['vehicle_reg_number'] : NULL;
+					$vehicle->chassis_number = $vehicle_data['chassis_number'];
+					$vehicle->engine_number = $vehicle_data['engine_number'];
+
+					$vehicle->driver_mobile_number = $vehicle_data['driver_mobile'];
+					$vehicle->service_contact_number =$vehicle_data['service_contact_number'];
+					if($vehicle_data['reading_type'] == 'KM'){
+						$vehicle->km_reading_type_id = 8040;
+						$vehicle->km_reading =$vehicle_data['current_reading'];
+					}
+					else{
+						$vehicle->km_reading_type_id = 8041;
+						$vehicle->hr_reading =$vehicle_data['current_reading'];
+					}
+					
+					//Save Customer
+					$customer = null;
+					if(isset($vehicle_data['al_dms_code'])){
+						$customer = Customer::where('code',ltrim($vehicle_data['al_dms_code'], '0'))->first();
+						if($customer){
+							$vehicle->customer_id = $customer->id;
+							$vehicle->is_sold = 1;
+						}else{
+							$vehicle->is_sold = 0;
+						}
+					}
+					$vehicle->sold_date = date('Y-m-d',strtotime($vehicle_data['vehicle_sales_date']));
+					$vehicle->save();
+
+					//Save Vehicle Owner
+					if($customer)
+					{
+						$vehicle_owner = VehicleOwner::firstornew(['vehicle_id' => $vehicle->id, 'customer_id' => $customer->id]);
+						
+						$ownership_count = VehicleOwner::where('vehicle_id', $vehicle->id)->count();
+
+						if ($vehicle_owner->exists) {
+							//Check last owner is same custmer or not
+							$last_vehicle_owner = VehicleOwner::where('vehicle_id', $vehicle->id)->orderBy('ownership_id', 'DESC')->first();
+
+							if ($last_vehicle_owner->customer_id != $customer->id) {
+								$ownership_id = $last_vehicle_owner->ownership_id + 1;
+								$vehicle_owner->ownership_id = $ownership_id;
+							}
+
+							$vehicle_owner->from_date = Carbon::now();
+							$vehicle_owner->updated_at = Carbon::now();
+						} else {
+							$ownership_id = 8160 + $ownership_count;
+							$vehicle_owner->ownership_id = $ownership_id;
+							$vehicle_owner->from_date = Carbon::now();
+							$vehicle_owner->created_at = Carbon::now();
+						}
+						$vehicle_owner->save();
+					}
+				
+					DB::commit();
+
+					$list = Vehicle::with(['kmReadingType'])->select(
+						'driver_name',
+						'driver_mobile_number',
+						'service_contact_number',
+						'km_reading_type_id',
+						'km_reading',
+						'hr_reading',
+						'engine_number',
+						'chassis_number',
+						'registration_number',
+						'id'
+					)
+					->where('id', $vehicle->id)
+					->get();
+				} catch (Exception $e) {
+					DB::rollBack();
+					return response()->json(['success' => false, 'errors' => ['Exception Error' => $e->getMessage()]]);
+				}
+			}
+			else
+			{
+				$list = [];
+			}
+		}
 		return response()->json($list);
 	}
 
