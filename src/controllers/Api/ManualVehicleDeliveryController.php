@@ -16,6 +16,7 @@ use App\JobOrder;
 use App\Outlet;
 use App\Payment;
 use App\Receipt;
+use App\MailConfiguration;
 use App\User;
 use Auth;
 use Carbon\Carbon;
@@ -23,6 +24,8 @@ use DB;
 use Entrust;
 use Illuminate\Http\Request;
 use Validator;
+use App\Mail\VehicleDeliveryRequestMail;
+use Mail;
 
 class ManualVehicleDeliveryController extends Controller
 {
@@ -246,8 +249,16 @@ class ManualVehicleDeliveryController extends Controller
             ]);
         }
 
+        if($job_order->manual_delivery_labour_invoice)
+        {
+            $invoice_date = $job_order->manual_delivery_labour_invoice->invoice_date;
+        }
+        else{
+            $invoice_date = date('d-m-Y');
+        }
         $this->data['success'] = true;
         $this->data['job_order'] = $job_order;
+        $this->data['invoice_date'] = $invoice_date;
 
         $extras = [
             'purpose_list' => Config::getDropDownList([
@@ -294,12 +305,14 @@ class ManualVehicleDeliveryController extends Controller
                     // ],
                     'labour_invoice_number' => [
                         'required',
+                        'unique:gigo_manual_invoices,number,' . $request->job_order_id . ',invoiceable_id,invoice_type_id,1',
                     ],
                     'labour_amount' => [
                         'required',
                     ],
                     'parts_invoice_number' => [
                         'required',
+                        'unique:gigo_manual_invoices,number,' . $request->job_order_id . ',invoiceable_id,invoice_type_id,2',
                     ],
                     'parts_amount' => [
                         'required',
@@ -326,6 +339,35 @@ class ManualVehicleDeliveryController extends Controller
                     ]);
                 }
 
+                if($request->vehicle_payment_status == 1)
+                {   
+                    $validator = Validator::make($request->all(), [
+                        'receipt_number' => [
+                            'required',
+                            'unique:receipts,temporary_receipt_no,' . $request->job_order_id . ',entity_id,receipt_of_id,7622',
+                            'unique:receipts,permanent_receipt_no,' . $request->job_order_id . ',entity_id,receipt_of_id,7622',
+                        ],
+                    ]);
+    
+                    if ($validator->fails()) {
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'Validation Error',
+                            'errors' => $validator->errors()->all(),
+                        ]);
+                    }
+
+                    if (strtotime($request->invoice_date) > strtotime($request->receipt_date)) {
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'Validation Error',
+                            'errors' => [
+                                'Receipt Date should be greater than Invoice Date',
+                            ],
+                        ]);
+                    }
+                }
+
                 $job_order = JobOrder::find($request->job_order_id);
 
                 if (!$job_order) {
@@ -347,15 +389,14 @@ class ManualVehicleDeliveryController extends Controller
                     $job_order->status_id = 8478;
                     $payment_status_id = 2;
 
-                    $message = "Vehicle GateOut Pending";
+                    $message = "Vehicle delivery request saved successfully!";
                 } else {
                     $job_order->vehicle_delivery_requester_id = Auth::user()->id;
                     $job_order->vehicle_delivery_request_remarks = $request->vehicle_delivery_request_remarks;
                     $job_order->status_id = 8477;
                     $payment_status_id = 1;
 
-                    $message = "Manual Vehicle Delivery saved Successfully!";
-
+                    $message = "Vehicle delivery request sent to service head for successfully!";
                 }
                 $job_order->save();
 
@@ -438,6 +479,11 @@ class ManualVehicleDeliveryController extends Controller
 
                 DB::commit();
 
+                //Send Mail for Serivice Head
+                if ($request->vehicle_payment_status == 0) {
+                    $this->vehiceRequestMail($job_order->id);
+                }
+
                 return response()->json([
                     'success' => true,
                     'message' => $message,
@@ -508,6 +554,62 @@ class ManualVehicleDeliveryController extends Controller
             ]);
         }
     }
+
+    public function vehiceRequestMail($job_order_id) {
+        $job_order = JobOrder::with([
+            'vehicle',
+            'vehicle.model',
+            'vehicle.currentOwner.customer',
+            'vehicle.currentOwner.customer.address',
+            'vehicle.currentOwner.customer.address.country',
+            'vehicle.currentOwner.customer.address.state',
+            'vehicle.currentOwner.customer.address.city',
+            'vehicle.currentOwner.ownershipType',
+            'outlet',
+            'gateLog',
+            'gateLog.createdBy',
+            'gateLog.driverAttachment',
+            'gateLog.kmAttachment',
+            'gateLog.vehicleAttachment',
+            'gateLog.chassisAttachment',
+            'manualDeliveryLabourInvoice',
+            'manualDeliveryPartsInvoice',
+            'manualDeliveryReceipt',
+            'status',
+        ])
+            ->select([
+                'job_orders.*',
+                DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+                DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+            ])
+            ->find($job_order_id);
+        
+            $total_amount = $job_order->manualDeliveryLabourInvoice->amount + $job_order->manualDeliveryPartsInvoice->amount;
+            
+            $job_order->total_amount = $total_amount;
+            if($job_order)
+            {
+                $user_details = MailConfiguration::where('config_id',3011)->pluck('to_email')->first();
+                $to_email = explode(',',$user_details);
+                if(!$user_details || count($to_email) == 0)
+                {
+                    $to_email = ['0' => 'parthiban@uitoux.in'];
+                }
+            }
+		
+		if ($to_email) {
+			$cc_email = [];
+			
+			$arr['job_order'] = $job_order;
+			$arr['subject'] = 'GIGO – Need approval for Vehicle Delivery';
+			$arr['to_email'] = $to_email;
+			$arr['cc_email'] = $cc_email;
+
+			$MailInstance = new VehicleDeliveryRequestMail($arr);
+			$Mail = Mail::send($MailInstance);
+		}
+
+	}
 
     public function generateGatePass($job_order)
     {

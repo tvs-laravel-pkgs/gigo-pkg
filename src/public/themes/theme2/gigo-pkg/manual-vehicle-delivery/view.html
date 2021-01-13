@@ -16,10 +16,10 @@
                     </a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>View Gate Pass</b></h1>
+                    <h1 class="title"><b>View Vehicle Delivery</b></h1>
                     <p class="subtitle">
                         <a href="#!/manual-vehicle-delivery/table-list">
-                            Manual Vehicle Delivery
+                            Vehicle Delivery
                         </a> /
                         View
                     </p>
@@ -74,8 +74,8 @@
                             <div class="isotope-filters animated" data-animation="fadeInLeft"
                                 data-animation-delay="300">
                                 <ul class="nav nav-pills cndn-tabs">
-                                    <li class="active">
-                                        <a class="filter active" data-target="#gatein_details" data-toggle="tab"
+                                    <li>
+                                        <a class="filter" data-target="#gatein_details" data-toggle="tab"
                                             aria-expanded="true">
                                             Gate In Details
                                         </a>
@@ -86,16 +86,16 @@
                                             Vehicle Details
                                         </a>
                                     </li>
-                                    <li>
+                                    <li class="active">
                                         <a data-target="#customer_details" data-toggle="tab" aria-expanded="true"
-                                            class="filter">
+                                            class="filter active">
                                             Customer Details
                                         </a>
                                     </li>
                                     <li>
                                         <a data-target="#payment_details" data-toggle="tab" aria-expanded="true"
                                             class="filter">
-                                            Payment Details
+                                            Invoice Details
                                         </a>
                                     </li>
                                 </ul>
@@ -104,7 +104,7 @@
                     </div><!-- Tab Form Header -->
                     <div class="tab-form-body side-tab-open">
                         <div class="tab-content">
-                            <div class="tab-pane fade in active" id="gatein_details" data-animation="fadeInUp"
+                            <div class="tab-pane fade" id="gatein_details" data-animation="fadeInUp"
                                 data-animation-delay="300">
                                 <div class="tab-pane-wrap">
                                     <div class="row">
@@ -277,7 +277,7 @@
                                     </div><!-- Row -->
                                 </div><!-- Tab Pane Wrap -->
                             </div><!-- Tabe Pane -->
-                            <div class="tab-pane fade" id="customer_details" data-animation="fadeInUp"
+                            <div class="tab-pane fade in active" id="customer_details" data-animation="fadeInUp"
                                 data-animation-delay="300">
                                 <div class="tab-pane-wrap">
                                     <div class="row">
@@ -553,21 +553,13 @@
                 <div class="modal-body">
                     <div class="modal-form">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="form-group">
                                     <label>
                                         Approved Remarks
                                     </label>
                                     <textarea class="form-control" name="approved_remarks"
                                         ng-model="job_order.approved_remarks"></textarea>
-                                </div><!-- Field -->
-                            </div><!-- Column -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>
-                                        Approved By
-                                    </label>
-                                    <input type="text" disabled="disabled" class="form-control" ng-model="user.name">
                                 </div><!-- Field -->
                             </div><!-- Column -->
                         </div><!-- Row -->

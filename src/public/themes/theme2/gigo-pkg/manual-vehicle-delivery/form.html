@@ -16,10 +16,10 @@
                     </a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>View Gate Pass</b></h1>
+                    <h1 class="title"><b>Add Vehicle Delivery</b></h1>
                     <p class="subtitle">
                         <a href="#!/manual-vehicle-delivery/table-list">
-                            Manual Vehicle Delivery
+                            Vehicle Delivery
                         </a> /
                         View
                     </p>
@@ -94,7 +94,7 @@
                                     <li>
                                         <a data-target="#payment_details" data-toggle="tab" aria-expanded="true"
                                             class="filter">
-                                            Payment Details
+                                            Invoice Details
                                         </a>
                                     </li>
                                 </ul>
@@ -398,32 +398,19 @@
                                             </h5>
                                             <hr class="hr-15">
                                             <div class="row">
-                                                <div class="col-md-3  ng-hide">
-                                                    <div class="form-group">
-                                                        <label>Invoice Number<sup class="mandatory">*</sup></label>
-                                                        <input type="text" name="invoice_number" maxlength="100" class="form-control" value="{{job_order.cre_name}}" onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')">
-                                                    </div><!-- Feild -->
-                                                </div><!-- Column -->
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Invoice Date<sup class="mandatory">*</sup></label>
                                                         <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
-                                                            <input type="text" class="form-control required" placeholder="Ex: 08-01-2021" ng-model="job_order.manual_delivery_labour_invoice.invoice_date" name="invoice_date" />
+                                                            <input type="text" class="form-control required" placeholder="Ex: 08-01-2021" ng-model="invoice_date" name="invoice_date" />
                                                             <div class="input-group-addon">
                                                                 <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                                             </div>
                                                         </div><!-- Input Group -->
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-3 ng-hide">
-                                                    <div class="form-group">
-                                                        <label>Invoice Amount<sup class="mandatory">*</sup></label>
-                                                        <input type="text" name="invoice_amount" maxlength="100" class="form-control" value="{{job_order.manual_delivery_labour_invoice.amount}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
-                                                        >
-                                                    </div><!-- Feild -->
-                                                </div><!-- Column -->
-                                            <!-- </div> -->
-                                            <!-- <div class="row">  -->
+                                            </div>
+                                            <div class="row"> 
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Labour Invoice Number<sup class="mandatory">*</sup></label>
@@ -437,6 +424,8 @@
                                                         >
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
+                                            <!-- </div>
+                                            <div class="row"> -->
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Parts Invoice Number<sup class="mandatory">*</sup></label>
@@ -497,7 +486,7 @@
                                                         >
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-6" ng-if="$ctrl.vehicle_payment_status == 0">
+                                                <div class="col-md-9" ng-if="$ctrl.vehicle_payment_status == 0">
                                                     <div class="form-group">
                                                         <label>Vehicle Delivery Request Remarks<sup class="mandatory">*</sup></label>
                                                         <textarea class="form-control" name="vehicle_delivery_request_remarks" rows="4" placeholder="Enter Remarks">{{job_order.vehicle_delivery_request_remarks}}</textarea>

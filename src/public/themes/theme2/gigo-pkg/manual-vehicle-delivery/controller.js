@@ -385,7 +385,7 @@ app.component('manualVehicleDeliveryForm', {
                         return;
                     }
                     $scope.job_order = res.job_order;
-
+                    $scope.invoice_date = res.invoice_date;
                     $scope.extras = res.extras;
 
                     if ($scope.job_order.vehicle_payment_status && $scope.job_order.vehicle_payment_status == 1) {
