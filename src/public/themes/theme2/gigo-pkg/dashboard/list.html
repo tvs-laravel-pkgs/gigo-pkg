@@ -21,7 +21,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>State <sup class="mandatory">*</sup></label>
-                                    <md-select ng-model="$ctrl.state_id" placeholder="Select State"
+                                    <md-select multiple ng-model="$ctrl.state_id" placeholder="Select State"
                                         md-on-close="clearSearchRejectedReason()"
                                         data-md-container-class="selectdemoSelectHeader" ng-change="onSelectedState()">
                                         <md-select-header class="demo-select-header">
@@ -41,7 +41,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Outlet <sup class="mandatory">*</sup></label>
-                                    <md-select ng-model="$ctrl.outlet_id" placeholder="Select Outlet"
+                                    <md-select multiple ng-model="$ctrl.outlet_id" placeholder="Select Outlet"
                                         md-on-close="clearSearchRejectedReason()"
                                         data-md-container-class="selectdemoSelectHeader">
                                         <md-select-header class="demo-select-header">
@@ -548,6 +548,40 @@
                                                                         {{dashboard_data.feedback_data.driver_feedback_request}}
                                                                         /
                                                                         {{dashboard_data.feedback_data.driver_feedback_provide}}
+                                                                    </th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th></th>
+                                                                    <th>&nbsp;</th>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div><!-- Table Responsive -->
+                                                </div>
+                                            </div><!-- Card Box Body -->
+                                        </div><!-- Card Box -->
+                                    </li>
+                                    <li>
+                                        <div class="card-box">
+                                            <div class="card-box-body">
+                                                <p class="card-top-info-bold">
+                                                    Total Bay : {{dashboard_data.bay_data.total_bay}}
+
+                                                </p>
+                                                <div class="card-box-content">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-form type-3">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <th>Occupied Bay</th>
+                                                                    <th class="text-right">
+                                                                        {{dashboard_data.bay_data.occupied_bay}}
+                                                                    </th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th>Free Bay</th>
+                                                                    <th class="text-right">
+                                                                        {{dashboard_data.bay_data.free_bay}}
                                                                     </th>
                                                                 </tr>
                                                                 <tr>

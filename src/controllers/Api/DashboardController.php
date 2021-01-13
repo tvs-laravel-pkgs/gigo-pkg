@@ -18,6 +18,7 @@ use App\Outlet;
 use App\SplitOrderType;
 use App\State;
 use App\Survey;
+use App\Bay;
 use App\User;
 use App\Vehicle;
 use Auth;
@@ -29,18 +30,23 @@ use Validator;
 class DashboardController extends Controller {
 	public $successStatus = 200;
 
-	public function getOutletData($state_id = NULL) {
-
-		if (Entrust::can('dashboard-view-all-outlet')) {
-			$outlet_list = collect(Outlet::where('company_id', Auth::user()->company_id)->where('state_id', $state_id)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Outlet']);
-		} else {
-			if (Entrust::can('dashboard-view-mapped-outlet')) {
-				$outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
-				array_push($outlet_ids, Auth::user()->employee->outlet_id);
-
-				$outlet_list = collect(Outlet::whereIn('id', $outlet_ids)->where('state_id', $state_id)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Outlet']);
+	public function getOutletData(Request $request) {
+		// dd($request->all());
+		if($request->state_id)
+		{
+			$outlet_list = collect(Outlet::where('company_id', Auth::user()->company_id)->whereIn('state_id', $request->state_id)->orderBy('name','ASC')->select('id', 'name')->get());
+		}else{
+			if (Entrust::can('dashboard-view-all-outlet')) {
+				$outlet_list = collect(Outlet::where('company_id', Auth::user()->company_id)->orderBy('name','ASC')->select('id', 'name')->get());
 			} else {
-				$outlet_list = collect(Outlet::where('id', Auth::user()->employee->outlet_id)->where('state_id', $state_id)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Outlet']);
+				if (Entrust::can('dashboard-view-mapped-outlet')) {
+					$outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
+					array_push($outlet_ids, Auth::user()->employee->outlet_id);
+	
+					$outlet_list = collect(Outlet::whereIn('id', $outlet_ids)->orderBy('name','ASC')->select('id', 'name')->get());
+				} else {
+					$outlet_list = collect(Outlet::where('id', Auth::user()->employee->outlet_id)->orderBy('name','ASC')->select('id', 'name')->get());
+				}
 			}
 		}
 
@@ -50,7 +56,6 @@ class DashboardController extends Controller {
 
 	public function getWebDashboard(Request $request) {
 		// dd($request->all());
-
 		if ($request->date_range && $request->date_range != '<%$ctrl.date_range%>') {
 			$date_range = explode(' to ', $request->date_range);
 			$start_date = date('Y-m-d', strtotime($date_range[0]));
@@ -60,16 +65,14 @@ class DashboardController extends Controller {
 			$end_date = $end_date . ' 23:59:59';
 		} else {
 			$start_date = date('Y-m-d 00:00:00');
-			// $start_date = date('Y-m-d 00:00:00', strtotime("-1 days")); //Previous day
-			// $end_date = date('Y-m-t 23:59:59');
 			$end_date = date('Y-m-d 23:59:59');
 		}
 
 		if ($request->state_id) {
 			if ($request->outlet_id) {
-				$outlet_ids[] = $request->outlet_id;
+				$outlet_ids = $request->outlet_id;
 			} else {
-				$outlet_ids = Outlet::where('state_id', $request->state_id)->where('company_id', Auth::user()->company_id)->pluck('id')->toArray();
+				$outlet_ids = Outlet::whereIn('state_id', $request->state_id)->where('company_id', Auth::user()->company_id)->pluck('id')->toArray();
 			}
 		} else {
 			if (Entrust::can('dashboard-view-all-outlet')) {
@@ -81,15 +84,11 @@ class DashboardController extends Controller {
 
 					$outlet_list = Outlet::whereIn('id', $outlet_ids)->pluck('id')->toArray();
 				} else {
-
 					$outlet_list = Outlet::where('id', Auth::user()->employee->outlet_id)->pluck('id')->toArray();
 				}
 			}
-
 			$outlet_ids = $outlet_list;
 		}
-
-		// dd($outlet_ids);
 
 		$customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
 
@@ -109,10 +108,37 @@ class DashboardController extends Controller {
 			->get();
 
 		$present_employees = count($present_employees);
-		// dd(count($present_employees));
+		
 		//Total Absent Employees
 		$absent_employees = $total_employees - $present_employees;
 		//Total Kanban Employees
+
+		//Total CheckIn Employees
+		$check_in_employees = AttendanceLog::join('users', 'users.id', 'attendance_logs.user_id')
+			->join('employees', 'employees.id', 'users.entity_id')
+			->where('users.user_type_id', 1)
+			->where('employees.is_mechanic', 1)
+			->whereIn('employees.outlet_id', $outlet_ids)
+			->whereDate('attendance_logs.created_at', '>=', $start_date)
+			->whereDate('attendance_logs.created_at', '<=', $end_date)
+			->whereNull('attendance_logs.out_time')
+			->groupBy('attendance_logs.user_id', 'attendance_logs.date')
+			->get();
+
+		//Total CheckIn Employees
+		$check_out_employees = AttendanceLog::join('users', 'users.id', 'attendance_logs.user_id')
+			->join('employees', 'employees.id', 'users.entity_id')
+			->where('users.user_type_id', 1)
+			->where('employees.is_mechanic', 1)
+			->whereIn('employees.outlet_id', $outlet_ids)
+			->whereDate('attendance_logs.created_at', '>=', $start_date)
+			->whereDate('attendance_logs.created_at', '<=', $end_date)
+			->whereNotNull('attendance_logs.out_time')
+			->groupBy('attendance_logs.user_id', 'attendance_logs.date')
+			->get();
+		
+		$check_in_employees = count($check_in_employees);
+		$check_out_employees = count($check_out_employees);
 
 		$kanban_employees = MechanicTimeLog::join('repair_order_mechanics', 'repair_order_mechanics.id', 'mechanic_time_logs.repair_order_mechanic_id')->join('users', 'users.id', 'repair_order_mechanics.mechanic_id')
 			->join('employees', 'employees.id', 'users.entity_id')
@@ -125,7 +151,7 @@ class DashboardController extends Controller {
 			->get();
 
 		$employee_data['total_employees'] = $total_employees;
-		$employee_data['present_employees'] = $present_employees;
+		$employee_data['present_employees'] = $check_in_employees .' / '.$check_out_employees;
 		$employee_data['absent_employees'] = $absent_employees;
 		$employee_data['kanban_employees'] = count($kanban_employees);
 
@@ -276,22 +302,22 @@ class DashboardController extends Controller {
 
 		//Total OSL
 		// $total_osl = GatePass::join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')->whereDate('gate_passes.created_at', '>=', $start_date)->whereDate('gate_passes.created_at', '<=', $end_date)->whereIn('job_cards.outlet_id', $outlet_ids)->where('gate_passes.type_id', 8281)->count();
-		$total_osl = GatePass::join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')->join('gate_pass_details', 'gate_pass_details.gate_pass_id', 'gate_passes.id')->whereDate('gate_passes.created_at', '>=', $start_date)->whereDate('gate_passes.created_at', '<=', $end_date)->where('gate_passes.type_id', 8281)->groupBy('gate_passes.id')->pluck('gate_pass_details.work_order_no')->toArray();
+		$total_osl = GatePass::join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')->join('gate_pass_details', 'gate_pass_details.gate_pass_id', 'gate_passes.id')->whereDate('gate_passes.created_at', '>=', $start_date)->whereDate('gate_passes.created_at', '<=', $end_date)->where('gate_passes.type_id', 8281)->whereIn('job_cards.outlet_id', $outlet_ids)->groupBy('gate_passes.id')->pluck('gate_pass_details.work_order_no')->toArray();
 
 		$total_osl_value = OSLWorkOrder::join('job_order_repair_orders', 'job_order_repair_orders.osl_work_order_id', 'osl_work_orders.id')->whereIn('osl_work_orders.number', $total_osl)->sum('job_order_repair_orders.amount');
 
 		//Completed OSL
-		$completed_osl = GatePass::join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')->join('gate_pass_details', 'gate_pass_details.gate_pass_id', 'gate_passes.id')->whereDate('gate_passes.created_at', '>=', $start_date)->whereDate('gate_passes.created_at', '<=', $end_date)->where('gate_passes.type_id', 8281)->whereIn('gate_passes.status_id', [8302, 8304])->groupBy('gate_passes.id')->pluck('gate_pass_details.work_order_no')->toArray();
+		$completed_osl = GatePass::join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')->join('gate_pass_details', 'gate_pass_details.gate_pass_id', 'gate_passes.id')->whereDate('gate_passes.created_at', '>=', $start_date)->whereDate('gate_passes.created_at', '<=', $end_date)->where('gate_passes.type_id', 8281)->whereIn('gate_passes.status_id', [8302, 8304])->whereIn('job_cards.outlet_id', $outlet_ids)->groupBy('gate_passes.id')->pluck('gate_pass_details.work_order_no')->toArray();
 
 		$completed_osl_value = OSLWorkOrder::join('job_order_repair_orders', 'job_order_repair_orders.osl_work_order_id', 'osl_work_orders.id')->whereIn('osl_work_orders.number', $completed_osl)->sum('job_order_repair_orders.amount');
 
 		//Pending OSL
-		$pending_osl = GatePass::join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')->join('gate_pass_details', 'gate_pass_details.gate_pass_id', 'gate_passes.id')->whereDate('gate_passes.created_at', '>=', $start_date)->whereDate('gate_passes.created_at', '<=', $end_date)->where('gate_passes.type_id', 8281)->where('gate_passes.status_id', 8300)->groupBy('gate_passes.id')->pluck('gate_pass_details.work_order_no')->toArray();
+		$pending_osl = GatePass::join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')->join('gate_pass_details', 'gate_pass_details.gate_pass_id', 'gate_passes.id')->whereDate('gate_passes.created_at', '>=', $start_date)->whereDate('gate_passes.created_at', '<=', $end_date)->where('gate_passes.type_id', 8281)->where('gate_passes.status_id', 8300)->whereIn('job_cards.outlet_id', $outlet_ids)->groupBy('gate_passes.id')->pluck('gate_pass_details.work_order_no')->toArray();
 
 		$pending_osl_value = OSLWorkOrder::join('job_order_repair_orders', 'job_order_repair_orders.osl_work_order_id', 'osl_work_orders.id')->whereIn('osl_work_orders.number', $pending_osl)->sum('job_order_repair_orders.amount');
 
 		//In process OSL
-		$in_process_osl = GatePass::join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')->join('gate_pass_details', 'gate_pass_details.gate_pass_id', 'gate_passes.id')->whereDate('gate_passes.created_at', '>=', $start_date)->whereDate('gate_passes.created_at', '<=', $end_date)->where('gate_passes.type_id', 8281)->whereIn('gate_passes.status_id', [8301, 8303])->groupBy('gate_passes.id')->pluck('gate_pass_details.work_order_no')->toArray();
+		$in_process_osl = GatePass::join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')->join('gate_pass_details', 'gate_pass_details.gate_pass_id', 'gate_passes.id')->whereDate('gate_passes.created_at', '>=', $start_date)->whereDate('gate_passes.created_at', '<=', $end_date)->where('gate_passes.type_id', 8281)->whereIn('gate_passes.status_id', [8301, 8303])->whereIn('job_cards.outlet_id', $outlet_ids)->groupBy('gate_passes.id')->pluck('gate_pass_details.work_order_no')->toArray();
 
 		$in_process_value = OSLWorkOrder::join('job_order_repair_orders', 'job_order_repair_orders.osl_work_order_id', 'osl_work_orders.id')->whereIn('osl_work_orders.number', $in_process_osl)->sum('job_order_repair_orders.amount');
 
@@ -307,19 +333,21 @@ class DashboardController extends Controller {
 		$dashboard_data['osl_data'] = $osl_data;
 
 		//Estimation Approved Inward
-		$estimation_approved_vehicles = JobOrder::whereDate('created_at', '>=', $start_date)->whereDate('created_at', '<=', $end_date)->where('is_customer_approved', 1)->pluck('id')->toArray();
+		$estimation_approved_vehicles = JobOrder::whereDate('created_at', '>=', $start_date)->whereDate('created_at', '<=', $end_date)->whereIn('outlet_id', $outlet_ids)->where('is_customer_approved', 1)->pluck('id')->toArray();
 
 		$total_est_approved_vehicles = count($estimation_approved_vehicles);
 
-		$est_approved_repair_order = JobOrderRepairOrder::whereIn('job_order_id', $estimation_approved_vehicles)
-			->whereNull('removal_reason_id')
-			->whereIn('split_order_type_id', $customer_paid_type_id)
-			->sum('amount');
+		$est_approved_repair_order = JobOrderRepairOrder::join('job_orders', 'job_orders.id', 'job_order_repair_orders.job_order_id')->whereIn('job_order_id', $estimation_approved_vehicles)
+			->whereNull('job_order_repair_orders.removal_reason_id')
+			->whereIn('job_order_repair_orders.split_order_type_id', $customer_paid_type_id)
+			->whereIn('job_orders.outlet_id', $outlet_ids)
+			->sum('job_order_repair_orders.amount');
 
-		$est_approved_parts = JobOrderPart::whereIn('job_order_id', $estimation_approved_vehicles)
-			->whereNull('removal_reason_id')
-			->whereIn('split_order_type_id', $customer_paid_type_id)
-			->sum('amount');
+		$est_approved_parts = JobOrderPart::join('job_orders', 'job_orders.id', 'job_order_parts.job_order_id')->whereIn('job_order_id', $estimation_approved_vehicles)
+			->whereNull('job_order_parts.removal_reason_id')
+			->whereIn('job_order_parts.split_order_type_id', $customer_paid_type_id)
+			->whereIn('job_orders.outlet_id', $outlet_ids)
+			->sum('job_order_parts.amount');
 
 		$total_est_approved_value = $est_approved_repair_order + $est_approved_parts;
 
@@ -353,16 +381,27 @@ class DashboardController extends Controller {
 
 		$dashboard_data['feedback_data'] = $feedback_data;
 
-		if (Entrust::can('dashboard-view-all-outlet')) {
-			$state_list = collect(State::select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select State']);
+		//Bay
+		$total_bay = Bay::whereIn('outlet_id', $outlet_ids)->count();
+		$free_bay = Bay::whereIn('outlet_id', $outlet_ids)->where('status_id',8240)->count();
+		$occupied_bay = Bay::whereIn('outlet_id', $outlet_ids)->where('status_id',8241)->count();
+
+		$bay_data['total_bay'] = $total_bay;
+		$bay_data['free_bay'] = $free_bay;
+		$bay_data['occupied_bay'] = $occupied_bay;
+
+		$dashboard_data['bay_data'] = $bay_data;
+
+		if (!Entrust::can('dashboard-view-all-outlet')) {
+			$state_list = collect(State::select('id', 'name')->orderBy('name','ASC')->get());
 		} else {
 			if (Entrust::can('dashboard-view-mapped-outlet')) {
 				$outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
 				array_push($outlet_ids, Auth::user()->employee->outlet_id);
 
-				$state_list = collect(State::join('outlets', 'outlets.state_id', 'states.id')->whereIn('outlets.id', $outlet_ids)->select('states.id', 'states.name')->groupBy('states.id')->get())->prepend(['id' => '', 'name' => 'Select State']);
+				$state_list = collect(State::join('outlets', 'outlets.state_id', 'states.id')->whereIn('outlets.id', $outlet_ids)->orderBy('states.name','ASC')->select('states.id', 'states.name')->groupBy('states.id')->get());
 			} else {
-				$state_list = collect(State::join('outlets', 'outlets.state_id', 'states.id')->where('outlets.id', Auth::user()->employee->outlet_id)->select('states.id', 'states.name')->groupBy('states.id')->get())->prepend(['id' => '', 'name' => 'Select State']);
+				$state_list = collect(State::join('outlets', 'outlets.state_id', 'states.id')->where('outlets.id', Auth::user()->employee->outlet_id)->orderBy('states.name','ASC')->select('states.id', 'states.name')->groupBy('states.id')->get());
 			}
 		}
 

@@ -47,6 +47,7 @@ app.component('gigoDashboard', {
                         return;
                     }
                     $scope.dashboard_data = res.dashboard_data;
+                    self.outlet_id = res.dashboard_data.outlet_ids;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -64,11 +65,16 @@ app.component('gigoDashboard', {
                 console.log(state_id);
                 if (state_id) {
                     $.ajax({
-                            url: base_url + '/api/state-based/outlet/' + state_id,
-                            method: "GET",
-                        })
+                        url: base_url + '/api/state-based/outlet',
+                        method: "POST",
+                        data: {
+                            state_id: self.state_id,
+                        },
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                    })
                         .done(function(res) {
-
                             self.outlet_list = res.outlet_list;
                             console.log(self.outlet_list);
                             $scope.$apply()
