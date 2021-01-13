@@ -63,9 +63,13 @@ class DashboardController extends Controller {
 
 			$end_date = date('Y-m-d', strtotime($date_range[1]));
 			$end_date = $end_date . ' 23:59:59';
+
+			$filter_date_range = $request->date_range;
 		} else {
 			$start_date = date('Y-m-d 00:00:00');
 			$end_date = date('Y-m-d 23:59:59');
+
+			$filter_date_range = date('d-m-Y', strtotime($start_date)) .' to '.date('d-m-Y', strtotime($end_date));
 		}
 
 		if ($request->state_id) {
@@ -74,21 +78,29 @@ class DashboardController extends Controller {
 			} else {
 				$outlet_ids = Outlet::whereIn('state_id', $request->state_id)->where('company_id', Auth::user()->company_id)->pluck('id')->toArray();
 			}
+			$filter_state_ids = $request->state_id;
 		} else {
 			if (Entrust::can('dashboard-view-all-outlet')) {
 				$outlet_list = Outlet::where('company_id', Auth::user()->company_id)->pluck('id')->toArray();
+				$filter_state_ids = State::pluck('id')->toArray();
 			} else {
 				if (Entrust::can('dashboard-view-mapped-outlet')) {
 					$outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
 					array_push($outlet_ids, Auth::user()->employee->outlet_id);
 
 					$outlet_list = Outlet::whereIn('id', $outlet_ids)->pluck('id')->toArray();
+
+					$filter_state_ids = State::join('outlets', 'outlets.state_id', 'states.id')->whereIn('outlets.id', $outlet_ids)->groupBy('states.id')->pluck('states.id')->toArray();
 				} else {
 					$outlet_list = Outlet::where('id', Auth::user()->employee->outlet_id)->pluck('id')->toArray();
+
+					$filter_state_ids = State::join('outlets', 'outlets.state_id', 'states.id')->where('outlets.id', Auth::user()->employee->outlet_id)->groupBy('states.id')->pluck('states.id')->toArray();
 				}
 			}
 			$outlet_ids = $outlet_list;
 		}
+
+		$filter_oulet_ids = $outlet_ids;
 
 		$customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
 
@@ -394,18 +406,25 @@ class DashboardController extends Controller {
 
 		if (!Entrust::can('dashboard-view-all-outlet')) {
 			$state_list = collect(State::select('id', 'name')->orderBy('name','ASC')->get());
+			$outlet_list = collect(Outlet::where('company_id', Auth::user()->company_id)->orderBy('name','ASC')->select('id', 'name')->get());
 		} else {
 			if (Entrust::can('dashboard-view-mapped-outlet')) {
 				$outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
 				array_push($outlet_ids, Auth::user()->employee->outlet_id);
 
 				$state_list = collect(State::join('outlets', 'outlets.state_id', 'states.id')->whereIn('outlets.id', $outlet_ids)->orderBy('states.name','ASC')->select('states.id', 'states.name')->groupBy('states.id')->get());
+				$outlet_list = collect(Outlet::whereIn('id', $outlet_ids)->orderBy('name','ASC')->select('id', 'name')->get());
 			} else {
 				$state_list = collect(State::join('outlets', 'outlets.state_id', 'states.id')->where('outlets.id', Auth::user()->employee->outlet_id)->orderBy('states.name','ASC')->select('states.id', 'states.name')->groupBy('states.id')->get());
+				$outlet_list = collect(Outlet::where('id', Auth::user()->employee->outlet_id)->orderBy('name','ASC')->select('id', 'name')->get());
 			}
 		}
 
 		$dashboard_data['state_list'] = $state_list;
+		$dashboard_data['outlet_list'] = $outlet_list;
+		$dashboard_data['filter_oulet_ids'] = $filter_oulet_ids;
+		$dashboard_data['filter_state_ids'] = $filter_state_ids;
+		$dashboard_data['filter_date_range'] = $filter_date_range;
 
 		$dashboard_datas = $dashboard_data;
 

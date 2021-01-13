@@ -47,7 +47,11 @@ app.component('gigoDashboard', {
                         return;
                     }
                     $scope.dashboard_data = res.dashboard_data;
-                    self.outlet_id = res.dashboard_data.outlet_ids;
+                    self.outlet_list = res.dashboard_data.outlet_list;
+                    self.state_id = res.dashboard_data.filter_state_ids;
+                    self.outlet_id = res.dashboard_data.filter_oulet_ids;
+                    self.filter_date_range = res.dashboard_data.filter_date_range;
+
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -57,28 +61,31 @@ app.component('gigoDashboard', {
 
         $scope.fetchDashboardData();
 
-        $scope.onSelectedState = function() {
+        $scope.onSelectedState = function(selectOpened) {
             setTimeout(function() {
-                var state_id = $('.state_id').val();
-                self.outlet_list = [];
-                self.outlet_id = '';
-                console.log(state_id);
-                if (state_id) {
-                    $.ajax({
-                        url: base_url + '/api/state-based/outlet',
-                        method: "POST",
-                        data: {
-                            state_id: self.state_id,
-                        },
-                        beforeSend: function(xhr) {
-                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                        },
-                    })
-                        .done(function(res) {
-                            self.outlet_list = res.outlet_list;
-                            console.log(self.outlet_list);
-                            $scope.$apply()
-                        });
+                if(selectOpened)
+                {
+                    var state_id = $('.state_id').val();
+                    self.outlet_list = [];
+                    self.outlet_id = '';
+                    console.log(state_id);
+                    if (state_id) {
+                        $.ajax({
+                            url: base_url + '/api/state-based/outlet',
+                            method: "POST",
+                            data: {
+                                state_id: self.state_id,
+                            },
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                        })
+                            .done(function(res) {
+                                self.outlet_list = res.outlet_list;
+                                console.log(self.outlet_list);
+                                $scope.$apply()
+                            });
+                    }
                 }
             }, 200);
         }

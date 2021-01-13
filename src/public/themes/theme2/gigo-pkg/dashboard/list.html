@@ -23,7 +23,7 @@
                                     <label>State <sup class="mandatory">*</sup></label>
                                     <md-select multiple ng-model="$ctrl.state_id" placeholder="Select State"
                                         md-on-close="clearSearchRejectedReason()"
-                                        data-md-container-class="selectdemoSelectHeader" ng-change="onSelectedState()">
+                                        data-md-container-class="selectdemoSelectHeader" md-on-open="selectOpened = true" md-on-close="selectOpened = false" ng-change="onSelectedState(selectOpened)">
                                         <md-select-header class="demo-select-header">
                                             <input ng-model="searchState" type="search" placeholder="Search State.."
                                                 class="demo-header-searchbox md-text"
@@ -62,7 +62,7 @@
                                     <label>Date</label>
                                     <div class="input-group date">
                                         <input class="form-control daterange align-left"
-                                            placeholder="Select a Date Range" name="date" id="date_range">
+                                            placeholder="Select a Date Range" name="date" id="date_range" value="{{$ctrl.filter_date_range}}">
                                         <span class="input-group-addon">
                                             <img class="img-responsive"
                                                 src="./public/theme/img/content/calender-gray-icon.svg"
