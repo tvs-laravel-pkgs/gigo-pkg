@@ -286,6 +286,10 @@ app.component('manualVehicleDeliveryView', {
             $('#approve_modal').modal('show');
         }
 
+        $scope.showPaymentForm = function (job_order) {
+            $('#payment_modal').modal('show');
+        }
+
         //Save Form Data 
         $scope.approveVehicleDelivery = function () {
             // alert(111);
@@ -298,6 +302,62 @@ app.component('manualVehicleDeliveryView', {
                         required: true,
                     },
                     'approved_remarks': {
+                        required: true,
+                    },
+                },
+                messages: {},
+                invalidHandler: function (event, validator) {
+                    custom_noty('error', 'You have errors, Please check all fields');
+                },
+                submitHandler: function (form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/manual-vehicle-delivery/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function (res) {
+                            $('.submit').button('reset');
+
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                return;
+                            }
+                            $('#approve_modal').modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                            custom_noty('success', res.message);
+                            $location.path('/manual-vehicle-delivery/table-list');
+
+                            $scope.$apply();
+                        })
+                        .fail(function (xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+        //Save Payment Data 
+        $scope.saveVehiclePaymentData = function () {
+            var form_id = '#vehicle-delivery-payment-form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'job_order_id': {
+                        required: true,
+                    },
+                    'receipt_number': {
+                        required: true,
+                    },
+                    'receipt_date': {
+                        required: true,
+                    },
+                    'receipt_amount': {
                         required: true,
                     },
                 },

@@ -398,6 +398,9 @@ class ManualVehicleDeliveryController extends Controller
 
                     $message = "Vehicle delivery request sent to service head for successfully!";
                 }
+
+                $job_order->updated_by_id = Auth::user()->id;
+                $job_order->updated_at = Carbon::now();
                 $job_order->save();
 
                 //Delete previous receipt
@@ -484,11 +487,13 @@ class ManualVehicleDeliveryController extends Controller
                     $this->vehiceRequestMail($job_order->id);
                 }
 
+                // dd(111);
+
                 return response()->json([
                     'success' => true,
                     'message' => $message,
                 ]);
-            } else {
+            } else if ($request->type_id == 2) {
                 $error_messages = [
                     'approved_remarks.required' => "Vehicle Delivery Approval Remarks is required",
                 ];
@@ -537,6 +542,102 @@ class ManualVehicleDeliveryController extends Controller
                 $message = "Manual Vehicle Delivery Approved Successfully!";
 
                 DB::commit();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => $message,
+                ]);
+            } else {
+                
+                $validator = Validator::make($request->all(), [
+                    'job_order_id' => [
+                        'required',
+                        'integer',
+                        'exists:job_orders,id',
+                    ],
+                    'receipt_number' => [
+                        'required',
+                    ],
+                    'receipt_date' => [
+                        'required',
+                    ],
+                    'receipt_amount' => [
+                        'required',
+                    ],
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => $validator->errors()->all(),
+                    ]);
+                }
+
+                if (strtotime($request->receipt_date) < strtotime($request->invoice_date)) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => [
+                            'Receipt Date should be greater than or equal to Invoice Date',
+                        ],
+                    ]);
+                }
+
+                $job_order = JobOrder::find($request->job_order_id);
+
+                if (!$job_order) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => [
+                            'Job Order Not Found!',
+                        ],
+                    ]);
+                }
+
+                DB::beginTransaction();
+
+                $job_order->vehicle_payment_status = 1;
+                $job_order->updated_by_id = Auth::user()->id;
+                $job_order->updated_at = Carbon::now();
+                $job_order->save();
+
+                //Save Receipt
+                $customer = Customer::find($job_order->customer_id);
+
+                $receipt = new Receipt;
+                $receipt->company_id = Auth::user()->company_id;
+                $receipt->temporary_receipt_no = $request->receipt_number;
+                $receipt->date = date('Y-m-d', strtotime($request->receipt_date));
+                $receipt->outlet_id = $job_order->outlet_id;
+                $receipt->receipt_of_id = 7622;
+                $receipt->entity_id = $job_order->id;
+                $receipt->permanent_receipt_no = $request->receipt_number;
+                $receipt->amount = $request->receipt_amount;
+                $receipt->settled_amount = $request->receipt_amount;
+                $receipt->created_at = Carbon::now();
+
+                $customer->receipt()->save($receipt);
+
+                $receipt_id = $customer->receipt ? $customer->receipt[0] ? $customer->receipt[0]->id : null : null;
+
+                //Save Payment
+                $payment = new Payment;
+                // dd($payment);
+                $payment->entity_type_id = 8434;
+                $payment->entity_id = $job_order->id;
+                $payment->received_amount = $request->receipt_amount;
+                $payment->receipt_id = $receipt_id;
+                $job_order->payment()->save($payment);
+
+                
+                //Updare Invoice
+                $update_invoice = GigoManualInvoice::where('invoiceable_type', 'App\JobOrder')->where('invoiceable_id', $job_order->id)->update(['receipt_id'=>$receipt_id]);
+
+                DB::commit();
+
+                $message = 'Receipt Details saved succesfully!';
 
                 return response()->json([
                     'success' => true,
@@ -596,14 +697,15 @@ class ManualVehicleDeliveryController extends Controller
                     $to_email = ['0' => 'parthiban@uitoux.in'];
                 }
             }
-		
+
 		if ($to_email) {
 			$cc_email = [];
-			
+            $approver_view_url = url('/') . '/#!/manual-vehicle-delivery/view/'.$job_order->id;        
 			$arr['job_order'] = $job_order;
 			$arr['subject'] = 'GIGO – Need approval for Vehicle Delivery';
 			$arr['to_email'] = $to_email;
-			$arr['cc_email'] = $cc_email;
+            $arr['cc_email'] = $cc_email;
+            $arr['approver_view_url'] = $approver_view_url;
 
 			$MailInstance = new VehicleDeliveryRequestMail($arr);
 			$Mail = Mail::send($MailInstance);
