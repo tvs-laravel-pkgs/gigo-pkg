@@ -205,6 +205,7 @@ class GateLog extends Model
                 $data['outlet_id'] = $outlet->id;
             } else {
                 $record_errors[] = $import_record[$mandatory_columns['Outlet Code']->excel_column_name] . ' outlet not mapped in GIGO';
+                $skip = true;
             }
         }
 
