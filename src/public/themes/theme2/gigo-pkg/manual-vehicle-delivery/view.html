@@ -567,7 +567,7 @@
                                                         Approve
                                                     </button>
                                                     <button type="button"
-                                                        ng-if="!job_order.manual_delivery_receipt && job_order.status_id == 8478 && !hasPerm('verify-manual-vehicle-delivery') "
+                                                        ng-if="job_order.status_id == 8467 && !hasPerm('verify-manual-vehicle-delivery') "
                                                         ng-click="showPaymentForm(job_order)"
                                                         class="btn btn-secondary-dark btn-min-wdth btn-nxt">
                                                         Payment

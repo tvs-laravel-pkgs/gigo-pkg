@@ -386,7 +386,7 @@ class ManualVehicleDeliveryController extends Controller
                 if ($request->vehicle_payment_status == 1) {
                     $job_order->vehicle_delivery_requester_id = null;
                     $job_order->vehicle_delivery_request_remarks = null;
-                    $job_order->status_id = 8478;
+                    $job_order->status_id = 8468;
                     $payment_status_id = 2;
 
                     $message = "Vehicle delivery request saved successfully!";
@@ -548,7 +548,6 @@ class ManualVehicleDeliveryController extends Controller
                     'message' => $message,
                 ]);
             } else {
-                
                 $validator = Validator::make($request->all(), [
                     'job_order_id' => [
                         'required',
@@ -557,6 +556,8 @@ class ManualVehicleDeliveryController extends Controller
                     ],
                     'receipt_number' => [
                         'required',
+                        'unique:receipts,temporary_receipt_no,' . $request->job_order_id . ',entity_id,receipt_of_id,7622',
+                        'unique:receipts,permanent_receipt_no,' . $request->job_order_id . ',entity_id,receipt_of_id,7622',
                     ],
                     'receipt_date' => [
                         'required',
@@ -601,6 +602,7 @@ class ManualVehicleDeliveryController extends Controller
                 $job_order->vehicle_payment_status = 1;
                 $job_order->updated_by_id = Auth::user()->id;
                 $job_order->updated_at = Carbon::now();
+                $job_order->status_id = 8468;
                 $job_order->save();
 
                 //Save Receipt

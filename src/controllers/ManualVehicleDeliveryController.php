@@ -136,7 +136,7 @@ class ManualVehicleDeliveryController extends Controller {
 				$query->whereRaw($sql, ["%{$keyword}%"]);
 			})
 			->editColumn('status', function ($vehicle_inward) {
-				$status = $vehicle_inward->status_id == '8460' || $vehicle_inward->status_id == '8469' || $vehicle_inward->status_id == '8471' || $vehicle_inward->status_id == '8472' ? 'blue' : 'green';
+				$status = $vehicle_inward->status_id == '8460' || $vehicle_inward->status_id == '8469' || $vehicle_inward->status_id == '8477' || $vehicle_inward->status_id == '8479' ? 'green' : 'blue';
 				return '<span class="text-' . $status . '">' . $vehicle_inward->status . '</span>';
 			})
 			->addColumn('action', function ($vehicle_inward) {
@@ -144,7 +144,7 @@ class ManualVehicleDeliveryController extends Controller {
 				$edit_img = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
 
 				$output = '';
-				if($vehicle_inward->status_id != 8478 && $vehicle_inward->status_id != 8477 && !Entrust::can('verify-manual-vehicle-delivery'))
+				if($vehicle_inward->status_id != 8478 && $vehicle_inward->status_id != 8477 && $vehicle_inward->status_id != 8467 && $vehicle_inward->status_id != 8468 && !Entrust::can('verify-manual-vehicle-delivery'))
 				{
 					$output .= '<a href="#!/manual-vehicle-delivery/form/' . $vehicle_inward->id . '" id = "" title="Form"><img src="' . $edit_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $edit_img . '" onmouseout=this.src="' . $edit_img . '"></a>';
 				}
