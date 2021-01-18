@@ -680,7 +680,7 @@ class ManualVehicleDeliveryController extends Controller
         ])
             ->select([
                 'job_orders.*',
-                DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+                DB::raw('DATE_FORMAT(job_orders.created_at,"%d-%m-%Y") as date'),
                 DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
             ])
             ->find($job_order_id);
