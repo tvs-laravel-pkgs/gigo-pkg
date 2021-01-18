@@ -150,21 +150,29 @@
                                                                         <td class="text-center">Chassis Image</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <td><img class="img-responsive"
+                                                                        <td><img ng-if="job_order.gate_log.vehicle_attachment" class="img-responsive"
                                                                                 src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.vehicle_attachment.name}}"
-                                                                                alt="Vehicle Image" /></td>
+                                                                                alt="Vehicle Image" />
+                                                                            <span ng-if="!job_order.gate_log.vehicle_attachment">-</span>
+                                                                        </td>
                                                                         <td></td>
-                                                                        <td><img class="img-responsive"
+                                                                        <td><img ng-if="job_order.gate_log.km_attachment" class="img-responsive"
                                                                                 src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.km_attachment.name}}"
-                                                                                alt="KM" /></td>
+                                                                                alt="KM" />
+                                                                            <span ng-if="!job_order.gate_log.km_attachment">-</span>
+                                                                        </td>
                                                                         <td>&nbsp;&nbsp;</td>
-                                                                        <td><img class="img-responsive"
+                                                                        <td><img ng-if="job_order.gate_log.driver_attachment" class="img-responsive"
                                                                                 src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.driver_attachment.name}}"
-                                                                                alt="Driver Image" /></td>
+                                                                                alt="Driver Image" />
+                                                                            <span ng-if="!job_order.gate_log.driver_attachment">-</span>
+                                                                        </td>
                                                                         <td></td>
-                                                                        <td><img class="img-responsive"
+                                                                        <td><img ng-if="job_order.gate_log.chassis_attachment" class="img-responsive"
                                                                                 src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.chassis_attachment.name}}"
-                                                                                alt="Chassis Image" /></td>
+                                                                                alt="Chassis Image" />
+                                                                            <span ng-if="!job_order.gate_log.chassis_attachment">-</span>
+                                                                        </td>
                                                                     </tr>
                                                                 </tbody>
                                                             </table>
