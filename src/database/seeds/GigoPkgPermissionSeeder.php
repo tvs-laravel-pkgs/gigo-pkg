@@ -1090,7 +1090,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			[
 				'display_order' => 99,
 				'parent' => 'gigo-pages',
-				'name' => 'job-cards',
+				'name' => 'gigo-job-cards',
 				'display_name' => 'Job Cards',
 			],
 			[
