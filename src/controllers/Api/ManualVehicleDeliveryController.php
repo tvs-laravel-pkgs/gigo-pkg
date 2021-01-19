@@ -608,6 +608,9 @@ class ManualVehicleDeliveryController extends Controller
                 //Save Receipt
                 $customer = Customer::find($job_order->customer_id);
 
+                //Delete previous receipt
+                $remove_receipt = Receipt::where('receipt_of_id', 7622)->where('entity_id', $job_order->id)->forceDelete();
+
                 $receipt = new Receipt;
                 $receipt->company_id = Auth::user()->company_id;
                 $receipt->temporary_receipt_no = $request->receipt_number;
