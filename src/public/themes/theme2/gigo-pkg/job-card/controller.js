@@ -8,7 +8,7 @@ app.component('jobCardTableList', {
         $('li').removeClass('active');
         $('.job_cards').addClass('active').trigger('click');
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('job-cards')) {
+        if (!self.hasPermission('gigo-job-cards')) {
             window.location = "#!/page-permission-denied";
             return false;
         }
@@ -231,7 +231,7 @@ app.component('jobCardCardList', {
         $('.job_cards').addClass('active').trigger('click');
 
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('job-cards')) {
+        if (!self.hasPermission('gigo-job-cards')) {
             window.location = "#!/page-permission-denied";
             return false;
         }

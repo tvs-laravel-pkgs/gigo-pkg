@@ -144,7 +144,7 @@ class JobCardController extends Controller {
 				$img_delete = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-default.svg');
 				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
 				$output = '';
-				if (Entrust::can('job-cards')) {
+				if (Entrust::can('gigo-job-cards')) {
 					if (Entrust::can('inward-job-card-tab-bay-edit')) {
 						$output .= '<a href="#!/job-card/bay-view/' . $job_card->job_card_id . '" class=""><img class="img-responsive" src="' . $img1 . '" alt="View" /></a>';
 						if (!$job_card->bay_id) {
@@ -255,7 +255,7 @@ class JobCardController extends Controller {
 				$img_delete = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-default.svg');
 				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
 				$output = '';
-				if (Entrust::can('job-cards')) {
+				if (Entrust::can('gigo-job-cards')) {
 					$output .= '<a href="#!/gigo-pkg/job-card/material-gatepass/' . $job_card->job_card_id . '" class=""><img class="img-responsive" src="' . $img1 . '" alt="View" /></a>';
 					if (!$job_card->bay_id) {
 						$output .= '<a href="#!/job-card/assign-bay/' . $job_card->job_card_id . '"  class="btn btn-secondary-dark btn-sm">Assign Bay</a>';
