@@ -489,7 +489,7 @@ class ManualVehicleDeliveryController extends Controller
                 $job_order->invoice()->save($invoice_detail);
 
                 // dump($job_order->invoice);
-                if ($job_order->status_id == 8478) {
+                if ($request->vehicle_payment_status == 1) {
                     $gate_pass = $this->generateGatePass($job_order);
                 }
 
