@@ -368,7 +368,7 @@ class ManualVehicleDeliveryController extends Controller
                     }
                 }
 
-                $job_order = JobOrder::find($request->job_order_id);
+                $job_order = JobOrder::with('gateLog')->find($request->job_order_id);
 
                 if (!$job_order) {
                     return response()->json([
@@ -376,6 +376,19 @@ class ManualVehicleDeliveryController extends Controller
                         'error' => 'Validation Error',
                         'errors' => [
                             'Job Order Not Found!',
+                        ],
+                    ]);
+                }
+
+                $gate_in_date = $job_order->gateLog->gate_in_date;
+                $gate_in_date = date('d-m-Y',strtotime($gate_in_date));
+
+                if (strtotime($gate_in_date) > strtotime($request->invoice_date)) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => [
+                            'Invoice Date should be greater than Gate In Date',
                         ],
                     ]);
                 }
