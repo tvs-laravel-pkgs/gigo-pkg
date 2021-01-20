@@ -678,6 +678,70 @@ class GateInController extends Controller {
 
 			}
 
+			//Check Customer Mapped this vehicle or not
+			// if (!$vehicle->currentOwner) {
+			// 	// dd($vehicle);
+			// 	if($vehicle->registration_number){
+			// 		$key = str_replace('-','',$vehicle->registration_number);
+			// 	}else if($vehicle->chassis_number){
+			// 		$key = $vehicle->chassis_number;
+			// 	}else{
+			// 		$key = $vehicle->engine_number;
+			// 	}
+			// 	$vehicle_data = $this->getSoap->GetVehicleDetails($key);
+
+			// 	if ($vehicle_data && $vehicle_data['success'] == 'true') {
+			// 		// dump($vehicle_data);
+					
+			// 		$vehicle->registration_number = isset($vehicle_data['vehicle_reg_number']) ? $vehicle_data['vehicle_reg_number'] : NULL;
+			// 		$vehicle->chassis_number = $vehicle_data['chassis_number'];
+			// 		$vehicle->engine_number = $vehicle_data['engine_number'];
+
+			// 		//Save Customer
+			// 		$customer = null;
+			// 		if(isset($vehicle_data['al_dms_code'])){
+			// 			$customer = Customer::where('code',ltrim($vehicle_data['al_dms_code'], '0'))->first();
+			// 			if($customer){
+			// 				$vehicle->customer_id = $customer->id;
+			// 				$vehicle->is_sold = 1;
+			// 			}else{
+			// 				$vehicle->is_sold = 0;
+			// 			}
+			// 		}
+			// 		$vehicle->sold_date = date('Y-m-d',strtotime($vehicle_data['vehicle_sales_date']));
+			// 		$vehicle->save();
+
+			// 		//Save Vehicle Owner
+			// 		if($customer)
+			// 		{
+			// 			$vehicle_owner = VehicleOwner::firstornew(['vehicle_id' => $vehicle->id, 'customer_id' => $customer->id]);
+						
+			// 			$ownership_count = VehicleOwner::where('vehicle_id', $vehicle->id)->count();
+
+			// 			if ($vehicle_owner->exists) {
+			// 				//Check last owner is same custmer or not
+			// 				$last_vehicle_owner = VehicleOwner::where('vehicle_id', $vehicle->id)->orderBy('ownership_id', 'DESC')->first();
+
+			// 				if ($last_vehicle_owner->customer_id != $customer->id) {
+			// 					$ownership_id = $last_vehicle_owner->ownership_id + 1;
+			// 					$vehicle_owner->ownership_id = $ownership_id;
+			// 				}
+
+			// 				$vehicle_owner->from_date = Carbon::now();
+			// 				$vehicle_owner->updated_at = Carbon::now();
+			// 			} else {
+			// 				$ownership_id = 8160 + $ownership_count;
+			// 				$vehicle_owner->ownership_id = $ownership_id;
+			// 				$vehicle_owner->from_date = Carbon::now();
+			// 				$vehicle_owner->created_at = Carbon::now();
+			// 			}
+			// 			$vehicle_owner->save();
+			// 			$job_order->customer_id = $vehicle->currentOwner->customer_id;
+			// 			$job_order->save();
+			// 		}
+			// 	}
+			// }
+
 			$url = url('/') . '/vehicle/track/' . $job_order->id;
 
 			$short_url = ShortUrl::createShortLink($url, $maxlength = "8");
