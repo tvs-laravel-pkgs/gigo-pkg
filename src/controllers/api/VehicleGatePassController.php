@@ -50,7 +50,7 @@ class VehicleGatePassController extends Controller {
 				->leftJoin('job_cards', 'job_cards.id', 'gate_passes.job_card_id')
 				->join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
 				->join('vehicles', 'vehicles.id', 'job_orders.vehicle_id')
-				->join('models', 'models.id', 'vehicles.model_id')
+				->leftJoin('models', 'models.id', 'vehicles.model_id')
 				->join('configs', 'configs.id', 'gate_passes.status_id')
 				->where(function ($query) use ($request) {
 					if (!empty($request->search_key)) {
