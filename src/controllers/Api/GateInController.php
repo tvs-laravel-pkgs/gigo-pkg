@@ -1090,7 +1090,7 @@ class GateInController extends Controller {
 					->orWhere('registration_number', 'like', '%' . $key . '%')
 				;
 			})
-			->whereNotNull('vehicles.sold_date')
+			// ->whereNotNull('vehicles.sold_date')
 			->get();
 
 		// dd($list);
