@@ -380,6 +380,16 @@ class ManualVehicleDeliveryController extends Controller
                     ]);
                 }
 
+                if (!$job_order->customer_id) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => [
+                            'Customer Not Found!',
+                        ],
+                    ]);
+                }
+
                 $gate_in_date = $job_order->gateLog->gate_in_date;
                 $gate_in_date = date('d-m-Y',strtotime($gate_in_date));
 
@@ -392,7 +402,7 @@ class ManualVehicleDeliveryController extends Controller
                         ],
                     ]);
                 }
-
+                
                 DB::beginTransaction();
 
                 $job_order->vehicle_payment_status = $request->vehicle_payment_status;
@@ -424,6 +434,22 @@ class ManualVehicleDeliveryController extends Controller
 
                 $receipt_id = null;
                 if ($payment_status_id == 2) {
+
+                    $labour_amount =  $request->labour_amount;
+                    $parts_amount =  $request->parts_amount;
+                    $receipt_amount =  $request->receipt_amount;
+
+                    if($receipt_amount != ($labour_amount + $parts_amount))
+                    {
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'Validation Error',
+                            'errors' => [
+                                'Receipt amount should be equal to Invoice amount!',
+                            ],
+                        ]);
+                    }
+
                     //Save Receipt
                     $customer = Customer::find($job_order->customer_id);
 
@@ -606,6 +632,21 @@ class ManualVehicleDeliveryController extends Controller
                         'error' => 'Validation Error',
                         'errors' => [
                             'Job Order Not Found!',
+                        ],
+                    ]);
+                }
+
+                $invoice_amount = GigoManualInvoice::where('invoiceable_type', 'App\JobOrder')->where('invoiceable_id', $job_order->id)->sum('amount');
+
+                $receipt_amount =  $request->receipt_amount;
+
+                if($receipt_amount != $invoice_amount)
+                {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => [
+                            'Receipt amount should be equal to Invoice amount!',
                         ],
                     ]);
                 }
