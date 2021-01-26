@@ -256,12 +256,11 @@ class ManualVehicleDeliveryController extends Controller
             ]);
         }
 
-        
         $customer_id = $job_order->jv_customer_id ? $job_order->jv_customer_id : $job_order->customer_id;
         //get customer address
         $customer = Customer::with([
             'primaryAddress',
-			])->withTrashed()->find($customer_id);
+        ])->withTrashed()->find($customer_id);
         $job_order->customer = $customer;
 
         if ($job_order->manualDeliveryLabourInvoice) {
@@ -272,13 +271,12 @@ class ManualVehicleDeliveryController extends Controller
 
         //Labour Amount
         $labour_amount = $job_order->manualDeliveryLabourInvoice ? $job_order->manualDeliveryLabourInvoice->amount : 0;
-        $parts_amount = $job_order->manualDeliveryPartsInvoice ? $job_order->manualDeliveryPartsInvoice->amount : 0; 
+        $parts_amount = $job_order->manualDeliveryPartsInvoice ? $job_order->manualDeliveryPartsInvoice->amount : 0;
 
         //Paid amount
         $paid_amount = 0;
-        if(count($job_order->manualDeliveryReceipt) > 0)
-        {
-            foreach($job_order->manualDeliveryReceipt as $deliveryReceipt){
+        if (count($job_order->manualDeliveryReceipt) > 0) {
+            foreach ($job_order->manualDeliveryReceipt as $deliveryReceipt) {
                 $paid_amount += $deliveryReceipt['amount'];
             }
         }
@@ -292,13 +290,16 @@ class ManualVehicleDeliveryController extends Controller
 
         //Check Vehicle Membership
         // $vehicle_membership = AmcMember::join('amc_policies', 'amc_policies.id', 'amc_members.policy_id')->whereIn('amc_policies.name', ['TVS ONE', 'TVS CARE'])->where('amc_members.vehicle_id', $job_order->vehicle_id)->first();
-        $vehicle_membership = AmcMember::where('vehicle_id',$job_order->vehicle_id)->first();
+        $vehicle_membership = AmcMember::where('vehicle_id', $job_order->vehicle_id)->first();
 
-        if ($vehicle_membership && (strtotime($invoice_date) > strtotime($vehicle_membership->expiry_date))) {
-            $pending_reasons = collect(PendingReason::where('company_id', Auth::user()->company_id)->where('id', '!=', 2)->select('pending_reasons.id', 'pending_reasons.name')->get())->prepend(['id' => '', 'name' => 'Select Reason']);
+        if ($vehicle_membership) {
+            if (strtotime($invoice_date) > strtotime($vehicle_membership->expiry_date)) {
+                $pending_reasons = collect(PendingReason::where('company_id', Auth::user()->company_id)->where('id', '!=', 2)->select('pending_reasons.id', 'pending_reasons.name')->get())->prepend(['id' => '', 'name' => 'Select Reason']);
+            } else {
+                $pending_reasons = collect(PendingReason::where('company_id', Auth::user()->company_id)->select('pending_reasons.id', 'pending_reasons.name')->get())->prepend(['id' => '', 'name' => 'Select Reason']);
+            }
         } else {
-            $pending_reasons = collect(PendingReason::where('company_id', Auth::user()->company_id)
-                    ->select('pending_reasons.id', 'pending_reasons.name')->get())->prepend(['id' => '', 'name' => 'Select Reason']);
+            $pending_reasons = collect(PendingReason::where('company_id', Auth::user()->company_id)->select('pending_reasons.id', 'pending_reasons.name')->get())->prepend(['id' => '', 'name' => 'Select Reason']);
         }
 
         $extras = [
@@ -465,25 +466,22 @@ class ManualVehicleDeliveryController extends Controller
 
                     //Check Reason
                     $pending_reason = PendingReason::find($request->pending_reason_id);
-                    if($pending_reason)
-                    {
-                        if($pending_reason->need_verification == 0)
-                        {
+                    if ($pending_reason) {
+                        if ($pending_reason->need_verification == 0) {
                             $payment_status = 1;
                             $status_id = 8467;
                         }
                     }
                 }
 
-                $job_order->jv_customer_id = NULL;
-                if( $request->pending_reason_id == 4)
-                {
+                $job_order->jv_customer_id = null;
+                if ($request->pending_reason_id == 4) {
                     $job_order->jv_customer_id = $request->jv_customer_id;
                 }
-                
+
                 if ($payment_status) {
-                    $job_order->pending_reason_id = $request->pending_reason_id ? $request->pending_reason_id : NULL;
-                    $job_order->pending_remarks = $request->pending_remarks ? $request->pending_remarks : NULL;
+                    $job_order->pending_reason_id = $request->pending_reason_id ? $request->pending_reason_id : null;
+                    $job_order->pending_remarks = $request->pending_remarks ? $request->pending_remarks : null;
                     $job_order->status_id = $status_id;
 
                     $message = "Vehicle delivery request saved successfully!";
