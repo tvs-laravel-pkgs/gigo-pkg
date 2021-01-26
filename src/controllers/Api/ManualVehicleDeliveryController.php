@@ -709,8 +709,10 @@ class ManualVehicleDeliveryController extends Controller
                     ],
                     'receipt_number' => [
                         'required',
-                        'unique:receipts,temporary_receipt_no,' . $request->job_order_id . ',entity_id,receipt_of_id,7622',
-                        'unique:receipts,permanent_receipt_no,' . $request->job_order_id . ',entity_id,receipt_of_id,7622',
+                        // 'unique:receipts,temporary_receipt_no,' . $request->job_order_id . ',entity_id,receipt_of_id,7622',
+                        // 'unique:receipts,permanent_receipt_no,' . $request->job_order_id . ',entity_id,receipt_of_id,7622',
+                        'unique:receipts,temporary_receipt_no',
+                        'unique:receipts,permanent_receipt_no',
                     ],
                     'receipt_date' => [
                         'required',
