@@ -480,11 +480,11 @@ class VehicleGatePassController extends Controller {
 										]);
 									}
 
+									$survey->number = $generateNumber['number'];
 									$survey->created_by_id = Auth::user()->id;
 									$survey->created_at = Carbon::now();
 								}
 
-								$survey->number = $generateNumber['number'];
 								$survey->save();
 
 								//Save Surevey Questions
