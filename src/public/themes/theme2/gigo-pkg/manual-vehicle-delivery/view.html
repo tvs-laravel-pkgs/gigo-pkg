@@ -485,6 +485,17 @@
                                                         </b>
                                                     </span>
                                                 </li>
+                                                <li class="view-col-4" ng-if="job_order.jv_customer_id">
+                                                    <span class="view-col-label">
+                                                        JV Customer
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b>
+                                                            {{job_order.customer.code}}-{{job_order.customer.name}}
+                                                        </b>
+                                                        {{job_order.customer.primary_address.address_line1}}
+                                                    </span>
+                                                </li>
                                                 <li class="view-col-4" ng-if="job_order.pending_reason_id">
                                                     <span class="view-col-label">
                                                         Pending Remarks

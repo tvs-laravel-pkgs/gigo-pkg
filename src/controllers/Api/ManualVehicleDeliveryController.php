@@ -256,6 +256,14 @@ class ManualVehicleDeliveryController extends Controller
             ]);
         }
 
+        
+        $customer_id = $job_order->jv_customer_id ? $job_order->jv_customer_id : $job_order->customer_id;
+        //get customer address
+        $customer = Customer::with([
+            'primaryAddress',
+			])->withTrashed()->find($customer_id);
+        $job_order->customer = $customer;
+
         if ($job_order->manualDeliveryLabourInvoice) {
             $invoice_date = $job_order->manualDeliveryLabourInvoice->invoice_date;
         } else {
@@ -467,7 +475,12 @@ class ManualVehicleDeliveryController extends Controller
                     }
                 }
 
-                // $job_order->payment_mode_id = $request->payment_mode_id;
+                $job_order->jv_customer_id = NULL;
+                if( $request->pending_reason_id == 4)
+                {
+                    $job_order->jv_customer_id = $request->jv_customer_id;
+                }
+                
                 if ($payment_status) {
                     $job_order->pending_reason_id = $request->pending_reason_id ? $request->pending_reason_id : NULL;
                     $job_order->pending_remarks = $request->pending_remarks ? $request->pending_remarks : NULL;

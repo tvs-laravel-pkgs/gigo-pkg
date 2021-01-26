@@ -576,7 +576,7 @@
                                                         <label>Reason<sup class="mandatory">*</sup></label>
                                                         <md-select ng-model="job_order.pending_reason_id"
                                                             placeholder="Select Reason"
-                                                            data-md-container-class="selectdemoSelectHeader">
+                                                            data-md-container-class="selectdemoSelectHeader" ng-change="getSelectedReason(job_order.pending_reason_id)">
                                                             <md-select-header class="demo-select-header">
                                                                 <input ng-model="searchPendingReason" type="search"
                                                                     placeholder="Search for a Reason.."
@@ -593,6 +593,32 @@
                                                         <input type="hidden" class="required" name="pending_reason_id"
                                                             value="{{job_order.pending_reason_id}}">
                                                     </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3"
+                                                    ng-if="$ctrl.vehicle_payment_status && $ctrl.remarks_status == 1 && $ctrl.customer_status == 1  ">
+                                                    <div class="form-group">
+                                                        <label>JV Customer<sup class="mandatory">*</sup></label>
+                                                        <md-autocomplete md-selected-item="job_order.customer" md-search-text="customerSearchKey" md-items="customer in $ctrl.searchCustomer(customerSearchKey)" md-item-text="customer.code" md-min-length="3" md-escape-options="clear" placeholder="Customer Code/Name" md-selected-item-change="console.log(1);customerSelected(customer.id)" md-autofocus md-no-cache="true">
+                                                            <md-item-template>
+                                                                <span>
+                                                                    {{customer.code}} / {{customer.name}}
+                                                                </span>
+                                                            </md-item-template>
+                                                            <md-not-found>
+                                                                No Customer matching "{{customerSearchKey}}" were found.
+                                                            </md-not-found>
+                                                        </md-autocomplete>
+                                                        <input type="hidden" id="jv_customer_id" class="required" name="jv_customer_id" value="{{job_order.customer.id}}">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3"
+                                                    ng-if="$ctrl.vehicle_payment_status && $ctrl.remarks_status == 1 && $ctrl.customer_status == 1  ">
+                                                    <div class="customer-info" id="customer-info">
+                                                        <h6 class="heading">Customer Details</h6>
+                                                        <h5 class="title">{{job_order.customer.code}}-{{job_order.customer.name}}</h5>
+                                                        <p class="address">{{job_order.customer.primary_address.address_line1}}</p>
+                                                        <p class="contact">{{job_order.customer.mobile_no}} | {{job_order.customer.email ? job_order.customer.email : 'NA'}}</p>
+                                                    </div><!-- Customer Info -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-6"
                                                     ng-if="$ctrl.vehicle_payment_status && $ctrl.remarks_status == 1">

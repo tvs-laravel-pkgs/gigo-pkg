@@ -275,9 +275,9 @@ app.component('manualVehicleDeliveryView', {
                         self.vehicle_payment_status = "No";
                     }
 
-                    if($scope.job_order.payment_mode_id == 1) {
+                    if ($scope.job_order.payment_mode_id == 1) {
                         $scope.label_name = 'Receipt';
-                    }else{
+                    } else {
                         $scope.label_name = 'Transaction';
                     }
 
@@ -472,6 +472,17 @@ app.component('manualVehicleDeliveryForm', {
                         self.vehicle_payment_status = 0;
                     }
 
+                    if ($scope.job_order.pending_reason_id) {
+                        self.remarks_status = 1;
+                    } else {
+                        self.remarks_status = 0;
+                    }
+
+                    self.customer_status = 0;
+                    if ($scope.job_order.jv_customer_id) {
+                        self.customer_status = 1;
+                    }
+
                     $scope.$apply();
                 })
                 .fail(function (xhr) {
@@ -633,6 +644,34 @@ app.component('manualVehicleDeliveryForm', {
                 }
                 $scope.$apply();
             }, 100);
+        }
+
+        $scope.getSelectedReason = function (pending_reason_id) {
+            if (pending_reason_id == 4) {
+                self.customer_status = 1;
+            } else {
+                self.customer_status = 0;
+            }
+        }
+
+        //GET CUSTOMER LIST
+        self.searchCustomer = function (query) {
+            if (query) {
+                return new Promise(function (resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getCustomerSearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function (response) {
+                            resolve(response.data);
+                        });
+                    //reject(response);
+                });
+            } else {
+                return [];
+            }
         }
 
         //Scrollable Tabs
