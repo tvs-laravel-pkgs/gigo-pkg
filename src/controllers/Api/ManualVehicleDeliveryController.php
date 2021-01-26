@@ -469,8 +469,8 @@ class ManualVehicleDeliveryController extends Controller
 
                 // $job_order->payment_mode_id = $request->payment_mode_id;
                 if ($payment_status) {
-                    $job_order->pending_reason_id = null;
-                    $job_order->pending_remarks = null;
+                    $job_order->pending_reason_id = $request->pending_reason_id ? $request->pending_reason_id : NULL;
+                    $job_order->pending_remarks = $request->pending_remarks ? $request->pending_remarks : NULL;
                     $job_order->status_id = $status_id;
 
                     $message = "Vehicle delivery request saved successfully!";
