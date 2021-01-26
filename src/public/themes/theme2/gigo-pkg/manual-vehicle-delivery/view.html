@@ -268,6 +268,17 @@
                                                         {{job_order.vehicle.sold_date}}
                                                     </span>
                                                 </li>
+                                                <li class="view-col-3">
+                                                    <span class="view-col-label">
+                                                        TVS Membership
+                                                    </span>
+                                                    <span class="view-col-value" ng-if="job_order.amc_member">
+                                                        <b>{{job_order.amc_member.amc_policy.name}}</b>-<b>{{job_order.amc_member.amc_policy.type}}</b> Eligible Upto <b>{{job_order.amc_member.expiry_date}}</b>
+                                                    </span>
+                                                    <span class="view-col-value" ng-if="!job_order.amc_member">
+                                                        -
+                                                    </span>
+                                                </li>
                                             </ul>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
@@ -452,7 +463,7 @@
                                             <!-- <button class="btn btn-secondary-dark btn-md btn-square">Edit</button> -->
                                         </div><!-- Column -->
                                         <div class="col-md-12">
-                                            <h5 class="color-primary mb-10"><b>Payment Details</b></h5>
+                                            <h5 class="color-primary mb-10"><b>Payment Status</b></h5>
                                             <ul class="view-row mb-no">
                                                 <li class="view-col-4">
                                                     <span class="view-col-label">
@@ -464,33 +475,23 @@
                                                         </b>
                                                     </span>
                                                 </li>
-                                                <li class="view-col-4" ng-if="$ctrl.vehicle_payment_status == 'Yes' && !job_order.approved_remarks">
+                                                <li class="view-col-4" ng-if="job_order.pending_reason_id">
                                                     <span class="view-col-label">
-                                                        Receipt Number
+                                                        Pending Reason
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
-                                                            {{job_order.manual_delivery_receipt.permanent_receipt_no}}
+                                                            {{job_order.pending_reason.name}}
                                                         </b>
                                                     </span>
                                                 </li>
-                                                <li class="view-col-4" ng-if="$ctrl.vehicle_payment_status == 'Yes' && !job_order.approved_remarks">
+                                                <li class="view-col-4" ng-if="job_order.pending_reason_id">
                                                     <span class="view-col-label">
-                                                        Receipt Date
+                                                        Pending Remarks
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
-                                                            {{job_order.manual_delivery_receipt.date}}
-                                                        </b>
-                                                    </span>
-                                                </li>
-                                                <li class="view-col-4" ng-if="$ctrl.vehicle_payment_status == 'Yes' && !job_order.approved_remarks">
-                                                    <span class="view-col-label">
-                                                        Receipt Amount
-                                                    </span>
-                                                    <span class="view-data-list-value">
-                                                        <b>
-                                                            {{job_order.manual_delivery_receipt.amount}}
+                                                            {{job_order.pending_remarks}}
                                                         </b>
                                                     </span>
                                                 </li>
@@ -516,36 +517,46 @@
                                                 </li>
                                             </ul>
                                         </div><!-- Column -->
-                                        <div class="col-md-12" ng-if="job_order.manual_delivery_receipt && job_order.approved_remarks">
-                                            <h5 class="color-primary mb-10"><b>Receipt Details</b></h5>
-                                            <ul class="view-row mb-no">
-                                                <li class="view-col-4" ng-if="job_order.manual_delivery_receipt && job_order.approved_remarks">
+                                        <div class="col-md-12" ng-if="job_order.manual_delivery_receipt.length > 0">
+                                            <h5 class="color-primary mb-10"><b>Transaction Details</b></h5>
+                                            <ul class="view-row mb-no" ng-repeat="(index, transactions) in job_order.manual_delivery_receipt">
+                                                <li class="view-col-3">
+                                                    <span class="view-col-label">
+                                                        Payment Mode
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b>
+                                                            {{transactions.payment_mode.name}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3">
                                                     <span class="view-col-label">
                                                         Receipt Number
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
-                                                            {{job_order.manual_delivery_receipt.permanent_receipt_no}}
+                                                            {{transactions.permanent_receipt_no}}
                                                         </b>
                                                     </span>
                                                 </li>
-                                                <li class="view-col-4" ng-if="job_order.manual_delivery_receipt && job_order.approved_remarks">
+                                                <li class="view-col-3">
                                                     <span class="view-col-label">
                                                         Receipt Date
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
-                                                            {{job_order.manual_delivery_receipt.date}}
+                                                            {{transactions.date}}
                                                         </b>
                                                     </span>
                                                 </li>
-                                                <li class="view-col-4" ng-if="job_order.manual_delivery_receipt && job_order.approved_remarks">
+                                                <li class="view-col-3">
                                                     <span class="view-col-label">
                                                         Receipt Amount
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
-                                                            {{job_order.manual_delivery_receipt.amount}}
+                                                            {{transactions.amount}}
                                                         </b>
                                                     </span>
                                                 </li>
@@ -633,6 +644,7 @@
         <form id="vehicle-delivery-payment-form" autocomplete="off">
             <input type="hidden" name="job_order_id" value="{{job_order.id}}">
             <input type="hidden" name="type_id" value="3">
+            <input type="hidden" name="balance_amount" value="{{job_order.balance_amount}}">
             <input type="hidden" name="invoice_date" value="{{job_order.manual_delivery_labour_invoice.invoice_date}}">
             <div class="modal-content">
                 <div class="modal-header">
@@ -640,33 +652,57 @@
                         <i class="icon ion-md-close"></i>
                     </button>
                     <h5 class="modal-title">
-                        Approve
+                        Payment Details
                     </h5>
                 </div>
                 <div class="modal-body">
                     <div class="modal-form">
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group">
-                                    <label>Receipt Number<sup class="mandatory">*</sup></label>
-                                    <input type="text" name="receipt_number" maxlength="100" placeholder="Ex: INV20210101"class="form-control" value="{{job_order.manual_delivery_receipt.permanent_receipt_no}}">
+                                    <label>Mode of Payment<sup class="mandatory">*</sup></label>
+                                    <md-select ng-model="$ctrl.type_id"
+                                        placeholder="Select Mode"
+                                        data-md-container-class="selectdemoSelectHeader"
+                                        ng-change="getSelectedPaymentMode($ctrl.type_id)">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchPaymentMode" type="search"
+                                                placeholder="Search for a Payment Mode.."
+                                                class="demo-header-searchbox md-text"
+                                                ng-keydown="$event.stopPropagation()">
+                                        </md-select-header>
+                                        <md-optgroup>
+                                            <md-option ng-value="type.id"
+                                                ng-repeat="type in extras.payment_modes | filter:searchPaymentMode">
+                                                {{type.name}}
+                                            </md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" class="required" name="payment_mode_id"
+                                        value="{{$ctrl.type_id}}">
                                 </div><!-- Feild -->
                             </div><!-- Column -->
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group">
-                                    <label>Receipt Date<sup class="mandatory">*</sup></label>
+                                    <label>{{label_name}} Number<sup class="mandatory">*</sup></label>
+                                    <input type="text" name="receipt_number" maxlength="100" placeholder="Ex: INV20210101"class="form-control" value="">
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>{{label_name}} Date<sup class="mandatory">*</sup></label>
                                     <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
-                                        <input type="text" class="form-control required"  placeholder="Ex: 10-01-2021" ng-model="job_order.manual_delivery_receipt.date" name="receipt_date" />
+                                        <input type="text" class="form-control required"  placeholder="Ex: 10-01-2021"  name="receipt_date" />
                                         <div class="input-group-addon">
                                             <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                         </div>
                                     </div><!-- Input Group -->
                                 </div><!-- Feild -->
                             </div><!-- Column -->
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group">
-                                    <label>Receipt Amount<sup class="mandatory">*</sup></label>
-                                    <input type="text" name="receipt_amount" maxlength="100" class="form-control receipt_amount" placeholder="Ex: 3000" value="{{job_order.manual_delivery_receipt.amount}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                    <label>{{label_name}} Amount<sup class="mandatory">*</sup></label>
+                                    <input type="text" name="receipt_amount" maxlength="100" class="form-control receipt_amount" placeholder="Ex: 3000" value="{{job_order.balance_amount}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
                                     >
                                 </div><!-- Feild -->
                             </div><!-- Column -->

@@ -246,6 +246,7 @@ app.component('manualVehicleDeliveryView', {
         self.user = $scope.user = HelperService.getLoggedUser();
 
         $scope.job_order_id = $routeParams.job_order_id;
+        $scope.label_name = "Receipt";
 
         //FETCH DATA
         $scope.fetchData = function () {
@@ -273,6 +274,14 @@ app.component('manualVehicleDeliveryView', {
                     } else {
                         self.vehicle_payment_status = "No";
                     }
+
+                    if($scope.job_order.payment_mode_id == 1) {
+                        $scope.label_name = 'Receipt';
+                    }else{
+                        $scope.label_name = 'Transaction';
+                    }
+
+                    self.type_id = '1';
 
                     $scope.$apply();
                 })
@@ -398,6 +407,14 @@ app.component('manualVehicleDeliveryView', {
             });
         }
 
+        $scope.getSelectedPaymentMode = function (payment_mode_id) {
+            if (payment_mode_id == 1) {
+                $scope.label_name = "Receipt";
+            } else {
+                $scope.label_name = "Transaction";
+            }
+        }
+
         //Scrollable Tabs
         setTimeout(function () {
             scrollableTabs();
@@ -425,6 +442,7 @@ app.component('manualVehicleDeliveryForm', {
         self.user = $scope.user = HelperService.getLoggedUser();
 
         $scope.job_order_id = $routeParams.job_order_id;
+        $scope.label_name = "Receipt";
 
         //FETCH DATA
         $scope.fetchData = function () {
@@ -536,28 +554,38 @@ app.component('manualVehicleDeliveryForm', {
             });
         }
 
-        $scope.vehiclePaymentStatus = function (status) {
-            if(status == 1){
-                $scope.invoiceAmount();
+        $scope.getSelectedPaymentMode = function (payment_mode_id) {
+            if (payment_mode_id == 1) {
+                $scope.label_name = "Receipt";
+            } else {
+                $scope.label_name = "Transaction";
             }
         }
 
-        $(document).on('keyup', ".amount", function() {
+        $scope.vehiclePaymentStatus = function (status) {
+            if (status == 1) {
+                $scope.invoiceAmount();
+                $scope.billingAmount();
+            }
+        }
+
+        $(document).on('keyup', ".amount", function () {
             $scope.invoiceAmount();
+            $scope.billingAmount();
         });
 
-        $scope.invoiceAmount = function() {
-            setTimeout(function() {
+        $scope.invoiceAmount = function () {
+            setTimeout(function () {
                 var labour_amount = $('#labour_invoice_amount').val();
                 var parts_amount = $('#parts_invoice_amount').val();
 
                 var total_amount = 0;
 
-                if(!labour_amount || isNaN(labour_amount)){
+                if (!labour_amount || isNaN(labour_amount)) {
                     labour_amount = 0;
                 }
 
-                if(!parts_amount || isNaN(parts_amount)){
+                if (!parts_amount || isNaN(parts_amount)) {
                     parts_amount = 0;
                 }
 
@@ -565,6 +593,45 @@ app.component('manualVehicleDeliveryForm', {
                 total_amount = total_amount.toFixed(2);
 
                 $('.receipt_amount').val(total_amount);
+            }, 100);
+        }
+
+        $(document).on('keyup', ".receipt_amount", function () {
+            $scope.billingAmount();
+        });
+
+        $scope.billingAmount = function () {
+            setTimeout(function () {
+                var labour_amount = $('#labour_invoice_amount').val();
+                var parts_amount = $('#parts_invoice_amount').val();
+                var receipt_amount = $('.receipt_amount').val();
+
+                var total_amount = 0;
+
+                if (!labour_amount || isNaN(labour_amount)) {
+                    labour_amount = 0;
+                }
+
+                if (!parts_amount || isNaN(parts_amount)) {
+                    parts_amount = 0;
+                }
+
+                total_amount = parseFloat(labour_amount) + parseFloat(parts_amount);
+                // total_amount = total_amount.toFixed(2);
+                console.log("Total Amount -- " + total_amount);
+                console.log("Bill Amount -- " + receipt_amount);
+
+                if (receipt_amount >= total_amount) {
+                    $('.receipt_amount').val(total_amount);
+                    self.remarks_status = 0;
+                } else if (total_amount > receipt_amount) {
+                    if (receipt_amount > 0) {
+                        self.remarks_status = 1;
+                    } else {
+                        self.remarks_status = 0;
+                    }
+                }
+                $scope.$apply();
             }, 100);
         }
 

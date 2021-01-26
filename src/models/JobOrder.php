@@ -420,7 +420,11 @@ class JobOrder extends BaseModel {
 	}
 
 	public function manualDeliveryReceipt() {
-		return $this->hasOne('App\Receipt', 'entity_id', 'id')->where('receipt_of_id',7622);
+		return $this->hasMany('App\Receipt', 'entity_id', 'id')->where('receipt_of_id',7622)->orderBy('id','asc');
+	}
+
+	public function pendingReason() {
+		return $this->belongsTo('App\PendingReason', 'pending_reason_id');
 	}
 
 	// Query Scopes --------------------------------------------------------------

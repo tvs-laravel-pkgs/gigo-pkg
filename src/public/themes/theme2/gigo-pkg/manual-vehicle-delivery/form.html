@@ -51,7 +51,7 @@
                                         <img class="img-responsive" src="./public/theme/img/content/edit.svg" alt="Edit" />
                                     </a> -->
                                 <span ng-if="job_order.vehicle.model.model_number">
-                                    | {{job_order.vehicle.model.model_name}} /  {{job_order.vehicle.model.model_number}}
+                                    | {{job_order.vehicle.model.model_name}} / {{job_order.vehicle.model.model_number}}
                                 </span>
                                 <!-- <span ng-if="job_order.driver_name">
                                     | {{job_order.driver_name}}
@@ -146,28 +146,36 @@
                                                                         <td class="text-center">Chassis Image</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <td><img ng-if="job_order.gate_log.vehicle_attachment" class="img-responsive"
+                                                                        <td><img ng-if="job_order.gate_log.vehicle_attachment"
+                                                                                class="img-responsive"
                                                                                 src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.vehicle_attachment.name}}"
                                                                                 alt="Vehicle Image" />
-                                                                            <span ng-if="!job_order.gate_log.vehicle_attachment">-</span>
+                                                                            <span
+                                                                                ng-if="!job_order.gate_log.vehicle_attachment">-</span>
                                                                         </td>
                                                                         <td></td>
-                                                                        <td><img ng-if="job_order.gate_log.km_attachment" class="img-responsive"
+                                                                        <td><img ng-if="job_order.gate_log.km_attachment"
+                                                                                class="img-responsive"
                                                                                 src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.km_attachment.name}}"
                                                                                 alt="KM" />
-                                                                            <span ng-if="!job_order.gate_log.km_attachment">-</span>
+                                                                            <span
+                                                                                ng-if="!job_order.gate_log.km_attachment">-</span>
                                                                         </td>
                                                                         <td>&nbsp;&nbsp;</td>
-                                                                        <td><img ng-if="job_order.gate_log.driver_attachment" class="img-responsive"
+                                                                        <td><img ng-if="job_order.gate_log.driver_attachment"
+                                                                                class="img-responsive"
                                                                                 src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.driver_attachment.name}}"
                                                                                 alt="Driver Image" />
-                                                                            <span ng-if="!job_order.gate_log.driver_attachment">-</span>
+                                                                            <span
+                                                                                ng-if="!job_order.gate_log.driver_attachment">-</span>
                                                                         </td>
                                                                         <td></td>
-                                                                        <td><img ng-if="job_order.gate_log.chassis_attachment" class="img-responsive"
+                                                                        <td><img ng-if="job_order.gate_log.chassis_attachment"
+                                                                                class="img-responsive"
                                                                                 src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.chassis_attachment.name}}"
                                                                                 alt="Chassis Image" />
-                                                                            <span ng-if="!job_order.gate_log.chassis_attachment">-</span>
+                                                                            <span
+                                                                                ng-if="!job_order.gate_log.chassis_attachment">-</span>
                                                                         </td>
                                                                     </tr>
                                                                 </tbody>
@@ -265,6 +273,17 @@
                                                     </span>
                                                     <span class="view-col-value">
                                                         {{job_order.vehicle.sold_date}}
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3">
+                                                    <span class="view-col-label">
+                                                        TVS Membership
+                                                    </span>
+                                                    <span class="view-col-value" ng-if="job_order.amc_member">
+                                                        <b>{{job_order.amc_member.amc_policy.name}}</b>-<b>{{job_order.amc_member.amc_policy.type}}</b> Eligible Upto <b>{{job_order.amc_member.expiry_date}}</b>
+                                                    </span>
+                                                    <span class="view-col-value" ng-if="!job_order.amc_member">
+                                                        -
                                                     </span>
                                                 </li>
                                             </ul>
@@ -405,42 +424,61 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Invoice Date<sup class="mandatory">*</sup></label>
-                                                        <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
-                                                            <input type="text" class="form-control required" placeholder="Ex: 08-01-2021" ng-model="invoice_date" name="invoice_date" />
+                                                        <div class="input-group date" data-provide="datepicker"
+                                                            data-date-end-date="0d">
+                                                            <input type="text" class="form-control required"
+                                                                placeholder="Ex: 08-01-2021" ng-model="invoice_date"
+                                                                name="invoice_date" />
                                                             <div class="input-group-addon">
-                                                                <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                                                <img class="img-responsive"
+                                                                    src="./public/theme/img/content/calender-gray-icon.svg"
+                                                                    alt="Calendar Image" />
                                                             </div>
                                                         </div><!-- Input Group -->
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                             </div>
-                                            <div class="row"> 
+                                            <div class="row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label>Labour Invoice Number<sup class="mandatory">*</sup></label>
-                                                        <input type="text" name="labour_invoice_number" maxlength="100" placeholder="Ex: INV20210101" class="form-control" value="{{job_order.manual_delivery_labour_invoice.number}}" onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')">
+                                                        <label>Labour Invoice Number<sup
+                                                                class="mandatory">*</sup></label>
+                                                        <input type="text" name="labour_invoice_number" maxlength="100"
+                                                            placeholder="Ex: INV20210101" class="form-control"
+                                                            value="{{job_order.manual_delivery_labour_invoice.number}}"
+                                                            onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Labour Amount<sup class="mandatory">*</sup></label>
-                                                        <input type="text" name="labour_amount" maxlength="100"  placeholder="Ex: 1000" class="form-control amount" id="labour_invoice_amount" value="{{job_order.manual_delivery_labour_invoice.amount}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
-                                                        >
+                                                        <input type="text" name="labour_amount" maxlength="100"
+                                                            placeholder="Ex: 1000" class="form-control amount"
+                                                            id="labour_invoice_amount"
+                                                            value="{{job_order.manual_delivery_labour_invoice.amount}}"
+                                                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                            <!-- </div>
+                                                <!-- </div>
                                             <div class="row"> -->
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label>Parts Invoice Number<sup class="mandatory">*</sup></label>
-                                                        <input type="text" name="parts_invoice_number" maxlength="100"  placeholder="Ex: INV20210101" class="form-control" value="{{job_order.manual_delivery_parts_invoice.number}}" onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')">
+                                                        <label>Parts Invoice Number<sup
+                                                                class="mandatory">*</sup></label>
+                                                        <input type="text" name="parts_invoice_number" maxlength="100"
+                                                            placeholder="Ex: INV20210101" class="form-control"
+                                                            value="{{job_order.manual_delivery_parts_invoice.number}}"
+                                                            onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Parts Amount<sup class="mandatory">*</sup></label>
-                                                        <input type="text" name="parts_amount" maxlength="100" placeholder="Ex: 2000" class="form-control amount" id="parts_invoice_amount" value="{{job_order.manual_delivery_parts_invoice.amount}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
-                                                        >
+                                                        <input type="text" name="parts_amount" maxlength="100"
+                                                            placeholder="Ex: 2000" class="form-control amount"
+                                                            id="parts_invoice_amount"
+                                                            value="{{job_order.manual_delivery_parts_invoice.amount}}"
+                                                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
@@ -459,41 +497,119 @@
                                                             Paid by Customer ?
                                                         </label>
                                                         <div class="common-radio-button type-4">
-                                                            <input type="radio" id="sold" name="vehicle_payment_status" ng-model="$ctrl.vehicle_payment_status" ng-value="1" ng-click="vehiclePaymentStatus(1)">
+                                                            <input type="radio" id="sold" name="vehicle_payment_status"
+                                                                ng-model="$ctrl.vehicle_payment_status" ng-value="1"
+                                                                ng-click="vehiclePaymentStatus(1)">
                                                             <label for="sold">Yes</label>
-                                                            <input type="radio" id="not_sold" name="vehicle_payment_status" ng-model="$ctrl.vehicle_payment_status" ng-value="0" ng-click="vehiclePaymentStatus(0)">
+                                                            <input type="radio" id="not_sold"
+                                                                name="vehicle_payment_status"
+                                                                ng-model="$ctrl.vehicle_payment_status" ng-value="0"
+                                                                ng-click="vehiclePaymentStatus(0)">
                                                             <label for="not_sold">No</label>
                                                         </div>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3" ng-if="$ctrl.vehicle_payment_status">
                                                     <div class="form-group">
-                                                        <label>Receipt Number<sup class="mandatory">*</sup></label>
-                                                        <input type="text" name="receipt_number" maxlength="100" placeholder="Ex: INV20210101"class="form-control" value="{{job_order.manual_delivery_receipt.permanent_receipt_no}}">
+                                                        <label>Mode of Payment<sup class="mandatory">*</sup></label>
+                                                        <md-select ng-model="job_order.manual_delivery_receipt[0].payment_mode_id"
+                                                            placeholder="Select Mode"
+                                                            data-md-container-class="selectdemoSelectHeader"
+                                                            ng-change="getSelectedPaymentMode(job_order.manual_delivery_receipt[0].payment_mode_id)">
+                                                            <md-select-header class="demo-select-header">
+                                                                <input ng-model="searchPaymentMode" type="search"
+                                                                    placeholder="Search for a Payment Mode.."
+                                                                    class="demo-header-searchbox md-text"
+                                                                    ng-keydown="$event.stopPropagation()">
+                                                            </md-select-header>
+                                                            <md-optgroup>
+                                                                <md-option ng-value="type.id"
+                                                                    ng-repeat="type in extras.payment_modes | filter:searchPaymentMode">
+                                                                    {{type.name}}
+                                                                </md-option>
+                                                            </md-optgroup>
+                                                        </md-select>
+                                                        <input type="hidden" class="required" name="payment_mode_id"
+                                                            value="{{job_order.manual_delivery_receipt[0].payment_mode_id}}">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3" ng-if="$ctrl.vehicle_payment_status">
                                                     <div class="form-group">
-                                                        <label>Receipt Date<sup class="mandatory">*</sup></label>
-                                                        <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
-                                                            <input type="text" class="form-control required"  placeholder="Ex: 10-01-2021" ng-model="job_order.manual_delivery_receipt.date" name="receipt_date" />
+                                                        <label>{{label_name}} Number<sup
+                                                                class="mandatory">*</sup></label>
+                                                        <input type="text" name="receipt_number" maxlength="100"
+                                                            placeholder="Ex: INV20210101" class="form-control"
+                                                            value="{{job_order.manual_delivery_receipt[0].permanent_receipt_no}}">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3" ng-if="$ctrl.vehicle_payment_status">
+                                                    <div class="form-group">
+                                                        <label>{{label_name}} Date<sup class="mandatory">*</sup></label>
+                                                        <div class="input-group date" data-provide="datepicker"
+                                                            data-date-end-date="0d">
+                                                            <input type="text" class="form-control required"
+                                                                placeholder="Ex: 10-01-2021"
+                                                                ng-model="job_order.manual_delivery_receipt[0].date"
+                                                                name="receipt_date" />
                                                             <div class="input-group-addon">
-                                                                <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                                                <img class="img-responsive"
+                                                                    src="./public/theme/img/content/calender-gray-icon.svg"
+                                                                    alt="Calendar Image" />
                                                             </div>
                                                         </div><!-- Input Group -->
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3" ng-if="$ctrl.vehicle_payment_status">
                                                     <div class="form-group">
-                                                        <label>Receipt Amount<sup class="mandatory">*</sup></label>
-                                                        <input type="text" name="receipt_amount" maxlength="100" class="form-control receipt_amount" placeholder="Ex: 3000" value="{{job_order.manual_delivery_receipt.amount}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
-                                                        >
+                                                        <label>{{label_name}} Amount<sup
+                                                                class="mandatory">*</sup></label>
+                                                        <input type="text" name="receipt_amount" maxlength="100"
+                                                            class="form-control receipt_amount required"
+                                                            placeholder="Ex: 3000"
+                                                            value="{{job_order.manual_delivery_receipt[0].amount}}"
+                                                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3"
+                                                    ng-if="$ctrl.vehicle_payment_status && $ctrl.remarks_status == 1">
+                                                    <div class="form-group">
+                                                        <label>Reason<sup class="mandatory">*</sup></label>
+                                                        <md-select ng-model="job_order.pending_reason_id"
+                                                            placeholder="Select Reason"
+                                                            data-md-container-class="selectdemoSelectHeader">
+                                                            <md-select-header class="demo-select-header">
+                                                                <input ng-model="searchPendingReason" type="search"
+                                                                    placeholder="Search for a Reason.."
+                                                                    class="demo-header-searchbox md-text"
+                                                                    ng-keydown="$event.stopPropagation()">
+                                                            </md-select-header>
+                                                            <md-optgroup>
+                                                                <md-option ng-value="type.id"
+                                                                    ng-repeat="type in extras.pending_reasons | filter:searchPendingReason">
+                                                                    {{type.name}}
+                                                                </md-option>
+                                                            </md-optgroup>
+                                                        </md-select>
+                                                        <input type="hidden" class="required" name="pending_reason_id"
+                                                            value="{{job_order.pending_reason_id}}">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-6"
+                                                    ng-if="$ctrl.vehicle_payment_status && $ctrl.remarks_status == 1">
+                                                    <div class="form-group">
+                                                        <label>Remarks<sup class="mandatory">*</sup></label>
+                                                        <textarea class="form-control required" name="pending_remarks"
+                                                            rows="4"
+                                                            placeholder="Enter Remarks">{{job_order.pending_remarks}}</textarea>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-9" ng-if="$ctrl.vehicle_payment_status == 0">
                                                     <div class="form-group">
-                                                        <label>Vehicle Delivery Request Remarks<sup class="mandatory">*</sup></label>
-                                                        <textarea class="form-control" name="vehicle_delivery_request_remarks" rows="4" placeholder="Enter Remarks">{{job_order.vehicle_delivery_request_remarks}}</textarea>
+                                                        <label>Vehicle Delivery Request Remarks<sup
+                                                                class="mandatory">*</sup></label>
+                                                        <textarea class="form-control required"
+                                                            name="vehicle_delivery_request_remarks" rows="4"
+                                                            placeholder="Enter Remarks">{{job_order.vehicle_delivery_request_remarks}}</textarea>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
@@ -502,7 +618,8 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <button type="submit" class="btn btn-red btn-min-wdth submit" ng-click="saveVehicleDelivery()">Save</button>
+                                                    <button type="submit" class="btn btn-red btn-min-wdth submit"
+                                                        ng-click="saveVehicleDelivery()">Save</button>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->

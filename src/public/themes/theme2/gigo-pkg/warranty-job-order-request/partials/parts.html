@@ -72,7 +72,7 @@
                                 {{job_order_part.part.name}}
                             </td>
                             <td>
-                                {{job_order_part.purchase_type == 8480 ? 'Stock' : 'Local'}}
+                                {{job_order_part.purchase_type ? job_order_part.purchase_type.id ? job_order_part.purchase_type.id == 8480 ? 'Stock' : 'Local' : job_order_part.purchase_type == 8480 ? 'Stock' : 'Local' : 'Local'}}
                             </td>
                             <td class="text-right">
                                 {{job_order_part.qty | number}}
