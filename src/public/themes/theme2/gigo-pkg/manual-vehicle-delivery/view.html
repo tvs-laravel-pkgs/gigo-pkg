@@ -147,28 +147,36 @@
                                                                         <td class="text-center">Chassis Image</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <td><img ng-if="job_order.gate_log.vehicle_attachment" class="img-responsive"
+                                                                        <td><img ng-if="job_order.gate_log.vehicle_attachment"
+                                                                                class="img-responsive"
                                                                                 src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.vehicle_attachment.name}}"
                                                                                 alt="Vehicle Image" />
-                                                                            <span ng-if="!job_order.gate_log.vehicle_attachment">-</span>
+                                                                            <span
+                                                                                ng-if="!job_order.gate_log.vehicle_attachment">-</span>
                                                                         </td>
                                                                         <td></td>
-                                                                        <td><img ng-if="job_order.gate_log.km_attachment" class="img-responsive"
+                                                                        <td><img ng-if="job_order.gate_log.km_attachment"
+                                                                                class="img-responsive"
                                                                                 src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.km_attachment.name}}"
                                                                                 alt="KM" />
-                                                                            <span ng-if="!job_order.gate_log.km_attachment">-</span>
+                                                                            <span
+                                                                                ng-if="!job_order.gate_log.km_attachment">-</span>
                                                                         </td>
                                                                         <td>&nbsp;&nbsp;</td>
-                                                                        <td><img ng-if="job_order.gate_log.driver_attachment" class="img-responsive"
+                                                                        <td><img ng-if="job_order.gate_log.driver_attachment"
+                                                                                class="img-responsive"
                                                                                 src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.driver_attachment.name}}"
                                                                                 alt="Driver Image" />
-                                                                            <span ng-if="!job_order.gate_log.driver_attachment">-</span>
+                                                                            <span
+                                                                                ng-if="!job_order.gate_log.driver_attachment">-</span>
                                                                         </td>
                                                                         <td></td>
-                                                                        <td><img ng-if="job_order.gate_log.chassis_attachment" class="img-responsive"
+                                                                        <td><img ng-if="job_order.gate_log.chassis_attachment"
+                                                                                class="img-responsive"
                                                                                 src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.chassis_attachment.name}}"
                                                                                 alt="Chassis Image" />
-                                                                            <span ng-if="!job_order.gate_log.chassis_attachment">-</span>
+                                                                            <span
+                                                                                ng-if="!job_order.gate_log.chassis_attachment">-</span>
                                                                         </td>
                                                                     </tr>
                                                                 </tbody>
@@ -273,7 +281,8 @@
                                                         TVS Membership
                                                     </span>
                                                     <span class="view-col-value" ng-if="job_order.amc_member">
-                                                        <b>{{job_order.amc_member.amc_policy.name}}</b>-<b>{{job_order.amc_member.amc_policy.type}}</b> Eligible Upto <b>{{job_order.amc_member.expiry_date}}</b>
+                                                        <b>{{job_order.amc_member.amc_policy.name}}</b>-<b>{{job_order.amc_member.amc_policy.type}}</b>
+                                                        Eligible Upto <b>{{job_order.amc_member.expiry_date}}</b>
                                                     </span>
                                                     <span class="view-col-value" ng-if="!job_order.amc_member">
                                                         -
@@ -487,7 +496,7 @@
                                                 </li>
                                                 <li class="view-col-4" ng-if="job_order.jv_customer_id">
                                                     <span class="view-col-label">
-                                                        JV Customer
+                                                        Customer
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
@@ -506,7 +515,8 @@
                                                         </b>
                                                     </span>
                                                 </li>
-                                                <li class="view-col-4" ng-if="job_order.vehicle_delivery_request_remarks">
+                                                <li class="view-col-4"
+                                                    ng-if="job_order.vehicle_delivery_request_remarks">
                                                     <span class="view-col-label">
                                                         Vehicle Delivery Request Remarks
                                                     </span>
@@ -530,7 +540,8 @@
                                         </div><!-- Column -->
                                         <div class="col-md-12" ng-if="job_order.manual_delivery_receipt.length > 0">
                                             <h5 class="color-primary mb-10"><b>Transaction Details</b></h5>
-                                            <ul class="view-row mb-no" ng-repeat="(index, transactions) in job_order.manual_delivery_receipt">
+                                            <ul class="view-row mb-no"
+                                                ng-repeat="(index, transactions) in job_order.manual_delivery_receipt">
                                                 <li class="view-col-3">
                                                     <span class="view-col-label">
                                                         Payment Mode
@@ -574,6 +585,22 @@
                                             </ul>
                                             <!-- <button class="btn btn-secondary-dark btn-md btn-square">Edit</button> -->
                                         </div><!-- Column -->
+                                        <div class="col-md-12" ng-if="job_order.transcation_attachment.length > 0">
+                                            <h5 class="color-primary mb-10"><b>Attachments</b></h5>
+                                            <div class="col-md-12" ng-if="job_order.transcation_attachment.length > 0">
+                                                <div class="gatein-img-list">
+                                                    <div class="gatein-img-list-item attach-photo-view"
+                                                        ng-repeat="(key,transcation_attachment) in job_order.transcation_attachment">
+                                                        <a href="storage/app/public/gigo/job_order/attachments/{{transcation_attachment.name}}"
+                                                            target="_blank"><img title="{{transcation_attachment.name}}"
+                                                                class="img-responsive"
+                                                                src="storage/app/public/gigo/job_order/attachments/{{transcation_attachment.name}}"
+                                                                alt="Attachment">
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div><!-- Column -->
+                                        </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
@@ -585,7 +612,7 @@
                                                         Approve
                                                     </button>
                                                     <button type="button"
-                                                        ng-if="job_order.status_id == 8467 && !hasPerm('verify-manual-vehicle-delivery') "
+                                                        ng-if="job_order.status_id == 8467 && !hasPerm('verify-manual-vehicle-delivery')"
                                                         ng-click="showPaymentForm(job_order)"
                                                         class="btn btn-secondary-dark btn-min-wdth btn-nxt">
                                                         Payment
@@ -603,6 +630,7 @@
         </form>
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
+<script src="./public/theme/js/imageuploadify-mgatepass.min.js"></script>
 <div class="modal fade filter" id="approve_modal" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <form id="vehicle-delivery-approval-form" autocomplete="off">
@@ -672,10 +700,9 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Mode of Payment<sup class="mandatory">*</sup></label>
-                                    <md-select ng-model="$ctrl.type_id"
-                                        placeholder="Select Mode"
+                                    <md-select ng-model="$ctrl.payment_mode_id" placeholder="Select Mode"
                                         data-md-container-class="selectdemoSelectHeader"
-                                        ng-change="getSelectedPaymentMode($ctrl.type_id)">
+                                        ng-change="getSelectedPaymentMode($ctrl.payment_mode_id)">
                                         <md-select-header class="demo-select-header">
                                             <input ng-model="searchPaymentMode" type="search"
                                                 placeholder="Search for a Payment Mode.."
@@ -690,22 +717,26 @@
                                         </md-optgroup>
                                     </md-select>
                                     <input type="hidden" class="required" name="payment_mode_id"
-                                        value="{{$ctrl.type_id}}">
+                                        value="{{$ctrl.payment_mode_id}}">
                                 </div><!-- Feild -->
                             </div><!-- Column -->
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>{{label_name}} Number<sup class="mandatory">*</sup></label>
-                                    <input type="text" name="receipt_number" maxlength="100" placeholder="Ex: INV20210101"class="form-control" value="">
+                                    <input type="text" name="receipt_number" maxlength="100"
+                                        placeholder="Ex: INV20210101" class="form-control" value="">
                                 </div><!-- Feild -->
                             </div><!-- Column -->
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>{{label_name}} Date<sup class="mandatory">*</sup></label>
                                     <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
-                                        <input type="text" class="form-control required"  placeholder="Ex: 10-01-2021"  name="receipt_date" />
+                                        <input type="text" class="form-control required" placeholder="Ex: 10-01-2021"
+                                            name="receipt_date" />
                                         <div class="input-group-addon">
-                                            <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                            <img class="img-responsive"
+                                                src="./public/theme/img/content/calender-gray-icon.svg"
+                                                alt="Calendar Image" />
                                         </div>
                                     </div><!-- Input Group -->
                                 </div><!-- Feild -->
@@ -713,10 +744,29 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>{{label_name}} Amount<sup class="mandatory">*</sup></label>
-                                    <input type="text" name="receipt_amount" maxlength="100" class="form-control receipt_amount" placeholder="Ex: 3000" value="{{job_order.balance_amount}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
-                                    >
+                                    <input type="text" name="receipt_amount" maxlength="100"
+                                        class="form-control receipt_amount" placeholder="Ex: 3000"
+                                        value="{{job_order.balance_amount}}"
+                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                 </div><!-- Feild -->
                             </div><!-- Column -->
+                            <div class="col-md-12">
+                                <div class="light-box form-group">
+                                    <h6 class=""><b>Attachments</b></h6>
+                                    <div class="img-upload-preview">
+                                        <input type="file" class="image_uploadify" accept="image/*"
+                                            name="transaction_attachments[]" multiple />
+                                        <!-- ,application/pdf -->
+                                        <div class="imageuploadify">
+                                            <div class="imageuploadify-images-list">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="attachment_removal_ids" id="attachment_removal_ids"
+                                        value="">
+                                </div><!-- Form Group -->
+                            </div>
                         </div><!-- Row -->
                     </div><!-- Modal Form -->
                 </div><!-- Modal Body -->

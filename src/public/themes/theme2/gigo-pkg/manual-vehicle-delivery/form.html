@@ -280,7 +280,8 @@
                                                         TVS Membership
                                                     </span>
                                                     <span class="view-col-value" ng-if="job_order.amc_member">
-                                                        <b>{{job_order.amc_member.amc_policy.name}}</b>-<b>{{job_order.amc_member.amc_policy.type}}</b> Eligible Upto <b>{{job_order.amc_member.expiry_date}}</b>
+                                                        <b>{{job_order.amc_member.amc_policy.name}}</b>-<b>{{job_order.amc_member.amc_policy.type}}</b>
+                                                        Eligible Upto <b>{{job_order.amc_member.expiry_date}}</b>
                                                     </span>
                                                     <span class="view-col-value" ng-if="!job_order.amc_member">
                                                         -
@@ -437,6 +438,19 @@
                                                         </div><!-- Input Group -->
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
+                                                <div class="col-md-3"
+                                                    ng-if="$ctrl.vehicle_payment_status && $ctrl.remarks_status == 1 && $ctrl.customer_status == 1  ">
+                                                    <div class="customer-info" id="customer-info">
+                                                        <h6 class="heading">Customer Details</h6>
+                                                        <h5 class="title">
+                                                            {{job_order.customer.code}}-{{job_order.customer.name}}</h5>
+                                                        <p class="address">
+                                                            {{job_order.customer.primary_address.address_line1}}</p>
+                                                        <p class="contact">{{job_order.customer.mobile_no}} |
+                                                            {{job_order.customer.email ? job_order.customer.email : 'NA'}}
+                                                        </p>
+                                                    </div><!-- Customer Info -->
+                                                </div><!-- Column -->
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-3">
@@ -512,7 +526,8 @@
                                                 <div class="col-md-3" ng-if="$ctrl.vehicle_payment_status">
                                                     <div class="form-group">
                                                         <label>Mode of Payment<sup class="mandatory">*</sup></label>
-                                                        <md-select ng-model="job_order.manual_delivery_receipt[0].payment_mode_id"
+                                                        <md-select
+                                                            ng-model="job_order.manual_delivery_receipt[0].payment_mode_id"
                                                             placeholder="Select Mode"
                                                             data-md-container-class="selectdemoSelectHeader"
                                                             ng-change="getSelectedPaymentMode(job_order.manual_delivery_receipt[0].payment_mode_id)">
@@ -576,7 +591,8 @@
                                                         <label>Reason<sup class="mandatory">*</sup></label>
                                                         <md-select ng-model="job_order.pending_reason_id"
                                                             placeholder="Select Reason"
-                                                            data-md-container-class="selectdemoSelectHeader" ng-change="getSelectedReason(job_order.pending_reason_id)">
+                                                            data-md-container-class="selectdemoSelectHeader"
+                                                            ng-change="getSelectedReason(job_order.pending_reason_id)">
                                                             <md-select-header class="demo-select-header">
                                                                 <input ng-model="searchPendingReason" type="search"
                                                                     placeholder="Search for a Reason.."
@@ -597,8 +613,15 @@
                                                 <div class="col-md-3"
                                                     ng-if="$ctrl.vehicle_payment_status && $ctrl.remarks_status == 1 && $ctrl.customer_status == 1  ">
                                                     <div class="form-group">
-                                                        <label>JV Customer<sup class="mandatory">*</sup></label>
-                                                        <md-autocomplete md-selected-item="job_order.customer" md-search-text="customerSearchKey" md-items="customer in $ctrl.searchCustomer(customerSearchKey)" md-item-text="customer.code" md-min-length="3" md-escape-options="clear" placeholder="Customer Code/Name" md-selected-item-change="console.log(1);customerSelected(customer.id)" md-autofocus md-no-cache="true">
+                                                        <label>Customer Code / Name<sup
+                                                                class="mandatory">*</sup></label>
+                                                        <md-autocomplete md-selected-item="job_order.customer"
+                                                            md-search-text="customerSearchKey"
+                                                            md-items="customer in $ctrl.searchCustomer(customerSearchKey)"
+                                                            md-item-text="customer.code" md-min-length="3"
+                                                            md-escape-options="clear" placeholder="Customer Code/Name"
+                                                            md-selected-item-change="console.log(1);customerSelected(customer.id)"
+                                                            md-autofocus md-no-cache="true">
                                                             <md-item-template>
                                                                 <span>
                                                                     {{customer.code}} / {{customer.name}}
@@ -608,17 +631,9 @@
                                                                 No Customer matching "{{customerSearchKey}}" were found.
                                                             </md-not-found>
                                                         </md-autocomplete>
-                                                        <input type="hidden" id="jv_customer_id" class="required" name="jv_customer_id" value="{{job_order.customer.id}}">
+                                                        <input type="hidden" id="jv_customer_id" class="required"
+                                                            name="jv_customer_id" value="{{job_order.customer.id}}">
                                                     </div><!-- Feild -->
-                                                </div><!-- Column -->
-                                                <div class="col-md-3"
-                                                    ng-if="$ctrl.vehicle_payment_status && $ctrl.remarks_status == 1 && $ctrl.customer_status == 1  ">
-                                                    <div class="customer-info" id="customer-info">
-                                                        <h6 class="heading">Customer Details</h6>
-                                                        <h5 class="title">{{job_order.customer.code}}-{{job_order.customer.name}}</h5>
-                                                        <p class="address">{{job_order.customer.primary_address.address_line1}}</p>
-                                                        <p class="contact">{{job_order.customer.mobile_no}} | {{job_order.customer.email ? job_order.customer.email : 'NA'}}</p>
-                                                    </div><!-- Customer Info -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-6"
                                                     ng-if="$ctrl.vehicle_payment_status && $ctrl.remarks_status == 1">
@@ -629,6 +644,32 @@
                                                             placeholder="Enter Remarks">{{job_order.pending_remarks}}</textarea>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
+                                                <div class="col-md-6" ng-if="$ctrl.vehicle_payment_status">
+                                                    <div class="light-box form-group">
+                                                        <h6 class=""><b>Attachments</b></h6>
+                                                        <div class="img-upload-preview">
+                                                            <input type="file" class="image_uploadify" accept="image/*"
+                                                                name="transaction_attachments[]" multiple />
+                                                            <!-- ,application/pdf -->
+                                                            <div class="imageuploadify">
+                                                                <div class="imageuploadify-images-list">
+                                                                    <div class="imageuploadify-container"
+                                                                        style="margin-left: 4px; margin-right: 4px;"
+                                                                        ng-repeat="(key,transcation_attachment) in job_order.transcation_attachment">
+                                                                        <button type="button"
+                                                                            class="btn btn-danger glyphicon glyphicon-remove"
+                                                                            ng-click="remove_attachment(transcation_attachment.id,key)">
+                                                                        </button>
+                                                                        <img title="{{transcation_attachment.name}}"
+                                                                            src="./storage/app/public/gigo/job_order/attachments/{{transcation_attachment.name}}">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <input type="hidden" name="attachment_removal_ids"
+                                                            id="attachment_removal_ids" value="">
+                                                    </div><!-- Form Group -->
+                                                </div>
                                                 <div class="col-md-9" ng-if="$ctrl.vehicle_payment_status == 0">
                                                     <div class="form-group">
                                                         <label>Vehicle Delivery Request Remarks<sup
@@ -659,3 +700,4 @@
         </form>
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
+<script src="./public/theme/js/imageuploadify-mgatepass.min.js"></script>

@@ -427,6 +427,10 @@ class JobOrder extends BaseModel {
 		return $this->belongsTo('App\PendingReason', 'pending_reason_id');
 	}
 
+	public function transcationAttachment() {
+		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 11342);
+	}
+
 	// Query Scopes --------------------------------------------------------------
 
 	public function scopeFilterSearch($query, $term) {

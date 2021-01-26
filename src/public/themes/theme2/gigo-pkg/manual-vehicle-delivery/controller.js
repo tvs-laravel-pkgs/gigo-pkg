@@ -270,18 +270,22 @@ app.component('manualVehicleDeliveryView', {
                     $scope.extras = res.extras;
 
                     if ($scope.job_order.vehicle_payment_status && $scope.job_order.vehicle_payment_status == 1) {
-                        self.vehicle_payment_status = "Yes";
+                        if ($scope.job_order.balance_amount > 0) {
+                            self.vehicle_payment_status = "Partially Paid";
+                        } else {
+                            self.vehicle_payment_status = "Yes";
+                        }
                     } else {
                         self.vehicle_payment_status = "No";
                     }
 
-                    if ($scope.job_order.payment_mode_id == 1) {
+                    self.payment_mode_id = $scope.job_order.manual_delivery_receipt[0] ? $scope.job_order.manual_delivery_receipt[0].payment_mode_id : '0';
+
+                    if (self.payment_mode_id == 1) {
                         $scope.label_name = 'Receipt';
                     } else {
                         $scope.label_name = 'Transaction';
                     }
-
-                    self.type_id = '1';
 
                     $scope.$apply();
                 })
@@ -415,6 +419,9 @@ app.component('manualVehicleDeliveryView', {
             }
         }
 
+        /* Image Uploadify Funtion */
+        $('.image_uploadify').imageuploadify();
+
         //Scrollable Tabs
         setTimeout(function () {
             scrollableTabs();
@@ -468,6 +475,10 @@ app.component('manualVehicleDeliveryForm', {
 
                     if ($scope.job_order.vehicle_payment_status && $scope.job_order.vehicle_payment_status == 1) {
                         self.vehicle_payment_status = 1;
+                        /* Image Uploadify Funtion */
+                        setTimeout(function () {
+                            $('.image_uploadify').imageuploadify();
+                        }, 1000);
                     } else {
                         self.vehicle_payment_status = 0;
                     }
@@ -575,6 +586,12 @@ app.component('manualVehicleDeliveryForm', {
 
         $scope.vehiclePaymentStatus = function (status) {
             if (status == 1) {
+
+                /* Image Uploadify Funtion */
+                setTimeout(function () {
+                    $('.image_uploadify').imageuploadify();
+                }, 1000);
+
                 $scope.invoiceAmount();
                 $scope.billingAmount();
             }
@@ -674,8 +691,19 @@ app.component('manualVehicleDeliveryForm', {
             }
         }
 
-        //Scrollable Tabs
+        self.attachment_removal_id = [];
+        $scope.remove_attachment = function (attachment_id, index) {
+            console.log(attachment_id, index);
+            if (attachment_id) {
+                self.attachment_removal_id.push(attachment_id);
+                $('#attachment_removal_ids').val(JSON.stringify(self.attachment_removal_id));
+            }
+            $scope.job_order.transcation_attachment.splice(index, 1);
+        }
+
         setTimeout(function () {
+            /* Image Uploadify Funtion */
+            //Scrollable Tabs
             scrollableTabs();
         }, 1000);
     }
