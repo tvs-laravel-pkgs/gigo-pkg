@@ -29,8 +29,8 @@ use DB;
 use Entrust;
 use Illuminate\Http\Request;
 use Mail;
-use Validator;
 use Storage;
+use Validator;
 
 class ManualVehicleDeliveryController extends Controller
 {
@@ -480,6 +480,16 @@ class ManualVehicleDeliveryController extends Controller
                 $job_order->jv_customer_id = null;
                 if ($request->pending_reason_id == 4) {
                     $job_order->jv_customer_id = $request->jv_customer_id;
+
+                    if ($job_order->customer_id == $request->jv_customer_id) {
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'Validation Error',
+                            'errors' => [
+                                'JV Customer should be different from the Actual Customer!',
+                            ],
+                        ]);
+                    }
                 }
 
                 if ($payment_status) {
@@ -601,9 +611,9 @@ class ManualVehicleDeliveryController extends Controller
                 $job_order->invoice()->save($invoice_detail);
 
                 //CREATE DIRECTORY TO STORAGE PATH
-			    $attachment_path = storage_path('app/public/gigo/job_order/attachments/');
+                $attachment_path = storage_path('app/public/gigo/job_order/attachments/');
                 Storage::makeDirectory($attachment_path, 0777);
-            
+
                 //MULTIPLE ATTACHMENT REMOVAL
                 $attachment_removal_ids = json_decode($request->attachment_removal_ids);
                 if (!empty($attachment_removal_ids)) {
@@ -818,11 +828,11 @@ class ManualVehicleDeliveryController extends Controller
 
                 //Updare Invoice
                 $update_invoice = GigoManualInvoice::where('invoiceable_type', 'App\JobOrder')->where('invoiceable_id', $job_order->id)->update(['receipt_id' => $receipt_id]);
-                
+
                 //CREATE DIRECTORY TO STORAGE PATH
-			    $attachment_path = storage_path('app/public/gigo/job_order/attachments/');
+                $attachment_path = storage_path('app/public/gigo/job_order/attachments/');
                 Storage::makeDirectory($attachment_path, 0777);
-            
+
                 if (!empty($request->transaction_attachments)) {
                     foreach ($request->transaction_attachments as $key => $transaction_attachment) {
                         $value = rand(1, 20);
