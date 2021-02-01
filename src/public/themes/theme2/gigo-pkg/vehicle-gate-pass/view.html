@@ -69,6 +69,10 @@
                                                                                                         <td>{{$ctrl.vehicle_gate_pass.gate_in_date}}</td>
                                                                                                     </tr>
                                                                                                     <tr>
+                                                                                                        <td><b>Job Order No</b></td>
+                                                                                                        <td>{{$ctrl.vehicle_gate_pass.job_order ? $ctrl.vehicle_gate_pass.job_order.number : '--'}}</td>
+                                                                                                    </tr>
+                                                                                                    <tr ng-if="$ctrl.vehicle_gate_pass.job_order.job_card">
                                                                                                         <td><b>Job Card No</b></td>
                                                                                                         <td>{{$ctrl.vehicle_gate_pass.job_order.job_card ? $ctrl.vehicle_gate_pass.job_order.job_card.job_card_number : '--'}}</td>
                                                                                                     </tr>
