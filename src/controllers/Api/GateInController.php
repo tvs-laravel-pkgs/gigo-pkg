@@ -55,7 +55,7 @@ class GateInController extends Controller {
 				]),
 				'inventory_type_list' => VehicleInventoryItem::getInventoryList($job_order_id = NULL, $params),
 				'trade_plate_number_list' => TradePlateNumber::join('outlets', 'outlets.id', 'trade_plate_numbers.outlet_id')->select('trade_plate_numbers.id', DB::RAW('CONCAT(outlets.code," / ",trade_plate_numbers.trade_plate_number) as trade_plate_number'))->get(),
-				'upload_image_ratio' => 90,
+				'upload_image_ratio' => 80,
 			];
 			return response()->json([
 				'success' => true,
