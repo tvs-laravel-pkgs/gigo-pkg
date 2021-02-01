@@ -409,28 +409,28 @@ class GateInController extends Controller {
 				}
 			} else {
 				//Get vehicle recent service date
-				$job_order = JobOrder::where('vehicle_id', $vehicle->id)->orderBy('id', 'DESC')->first();
+				// $job_order = JobOrder::where('vehicle_id', $vehicle->id)->orderBy('id', 'DESC')->first();
 				$job_card_status = 1; // Create New
-				if ($job_order) {
-					$previous_job_date = $job_order->created_at;
+				// if ($job_order) {
+				// 	$previous_job_date = $job_order->created_at;
 
-					$job_card_reopen_date = Entity::where('entity_type_id', 35)->select('name')->first();
-					if ($job_card_reopen_date) {
-						$job_card_reopen_date = date("d-m-Y h:i A", strtotime('+' . $job_card_reopen_date->name . ' days', strtotime($job_order->created_at)));
-					} else {
-						$job_card_reopen_date = date("d-m-Y h:i A", strtotime('+60 days', strtotime($job_order->created_at)));
-					}
+				// 	$job_card_reopen_date = Entity::where('entity_type_id', 35)->select('name')->first();
+				// 	if ($job_card_reopen_date) {
+				// 		$job_card_reopen_date = date("d-m-Y h:i A", strtotime('+' . $job_card_reopen_date->name . ' days', strtotime($job_order->created_at)));
+				// 	} else {
+				// 		$job_card_reopen_date = date("d-m-Y h:i A", strtotime('+60 days', strtotime($job_order->created_at)));
+				// 	}
 
-					$job_card_reopen_date = date('Ymdhi', strtotime($job_card_reopen_date));
+				// 	$job_card_reopen_date = date('Ymdhi', strtotime($job_card_reopen_date));
 
-					$current_date = date('Ymdhi');
+				// 	$current_date = date('Ymdhi');
 
-					if ($job_card_reopen_date > $current_date) {
-						$job_card_status = 2; // Reopen Last JobOrder
-					} else {
-						$job_card_status = 1; // Create New JobOrder
-					}
-				}
+				// 	if ($job_card_reopen_date > $current_date) {
+				// 		$job_card_status = 2; // Reopen Last JobOrder
+				// 	} else {
+				// 		$job_card_status = 1; // Create New JobOrder
+				// 	}
+				// }
 
 				if ($job_card_status == 1) {
 					$job_order = new JobOrder;
