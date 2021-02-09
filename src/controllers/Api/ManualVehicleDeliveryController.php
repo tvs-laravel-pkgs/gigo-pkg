@@ -807,6 +807,8 @@ class ManualVehicleDeliveryController extends Controller
 
                         $job_order->invoice()->save($invoice_detail);
 
+                        $gate_pass = $this->generateGatePass($job_order);
+
                         DB::commit();
 
                         $message = "Vehicle delivery request saved successfully!";
@@ -1231,7 +1233,7 @@ class ManualVehicleDeliveryController extends Controller
     public function generateGatePass($job_order)
     {
         // dd($job_order);
-        $gate_log = GateLog::where('job_order_id', $job_order->id)->first();
+        $gate_log = GateLog::where('job_order_id', $job_order->id)->orderBy('id','DESC')->first();
         // dd($gate_log);
         if ($gate_log) {
 
