@@ -122,7 +122,7 @@ class ManualVehicleDeliveryController extends Controller {
 		}
 
 		if (Entrust::can('verify-manual-vehicle-delivery')) {
-			$vehicle_inwards->whereIn('job_orders.status_id', [8477,8478,8479]);
+			$vehicle_inwards->whereIn('job_orders.status_id', [8477]);
 		}
 
 		$vehicle_inwards->groupBy('job_orders.id');
