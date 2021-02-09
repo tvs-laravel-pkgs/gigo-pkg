@@ -492,9 +492,7 @@
                                                 <div class="col-md-6" ng-if="(job_order.billing_type_id == 11521 || job_order.billing_type_id == 11522) && $ctrl.vehicle_service_status">
                                                     <div class="form-group">
                                                         <label>Remarks<sup class="mandatory">*</sup></label>
-                                                        <textarea class="form-control required"
-                                                            name="warranty_reason" rows="4"
-                                                            placeholder="Enter Remarks">{{job_order.warranty_reason}}</textarea>
+                                                        <textarea class="form-control required" name="warranty_reason" rows="4" placeholder="Enter Remarks">{{job_order.warranty_reason}}</textarea>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                             </div>
@@ -503,15 +501,14 @@
                                             ng-if="$ctrl.vehicle_service_status == 1 && (job_order.billing_type_id == 11520 || job_order.billing_type_id == 11523 )">
                                             <h5 class="color-primary mb-10">
                                                 <b>
-                                                    Invoice Details
+                                                    {{invoice_label_name}} Invoice Details
                                                 </b>
                                             </h5>
                                             <!-- <hr class="hr-15"> -->
                                             <div class="row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label>{{invoice_label_name}} Invoice Date<sup
-                                                                class="mandatory">*</sup></label>
+                                                        <label>Invoice Date<sup class="mandatory">*</sup></label>
                                                         <div class="input-group date" data-provide="datepicker"
                                                             data-date-end-date="0d">
                                                             <input type="text" class="form-control required"
@@ -541,11 +538,9 @@
                                                 <div class="col-md-12">
                                                     <div class="clear-fix"></div>
                                                 </div>
-                                                <!-- </div>
-                                            <div class="row"> -->
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label>{{invoice_label_name}} Labour Invoice Number<sup
+                                                        <label>Labour Invoice Number<sup
                                                                 class="mandatory">*</sup></label>
                                                         <input type="text" name="labour_invoice_number" maxlength="100"
                                                             placeholder="Ex: INV20210101" class="form-control"
@@ -555,8 +550,7 @@
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label>{{invoice_label_name}} Labour Amount<sup
-                                                                class="mandatory">*</sup></label>
+                                                        <label>Labour Amount<sup class="mandatory">*</sup></label>
                                                         <input type="text" name="labour_amount" maxlength="100"
                                                             placeholder="Ex: 1000" class="form-control amount"
                                                             id="labour_invoice_amount"
@@ -564,11 +558,9 @@
                                                             oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <!-- </div>
-                                            <div class="row"> -->
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label>{{invoice_label_name}} Parts Invoice Number<sup
+                                                        <label>Parts Invoice Number<sup
                                                                 class="mandatory">*</sup></label>
                                                         <input type="text" name="parts_invoice_number" maxlength="100"
                                                             placeholder="Ex: INV20210101" class="form-control"
@@ -578,8 +570,7 @@
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label>{{invoice_label_name}} Parts Amount<sup
-                                                                class="mandatory">*</sup></label>
+                                                        <label>Parts Amount<sup class="mandatory">*</sup></label>
                                                         <input type="text" name="parts_amount" maxlength="100"
                                                             placeholder="Ex: 2000" class="form-control amount"
                                                             id="parts_invoice_amount"
@@ -737,32 +728,6 @@
                                                             placeholder="Enter Remarks">{{job_order.pending_remarks}}</textarea>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-6" ng-if="$ctrl.vehicle_payment_status">
-                                                    <div class="light-box form-group">
-                                                        <h6 class=""><b>Attachments</b></h6>
-                                                        <div class="img-upload-preview">
-                                                            <input type="file" class="image_uploadify" accept="image/*"
-                                                                name="transaction_attachments[]" multiple />
-                                                            <!-- ,application/pdf -->
-                                                            <div class="imageuploadify">
-                                                                <div class="imageuploadify-images-list">
-                                                                    <div class="imageuploadify-container"
-                                                                        style="margin-left: 4px; margin-right: 4px;"
-                                                                        ng-repeat="(key,transcation_attachment) in job_order.transcation_attachment">
-                                                                        <button type="button"
-                                                                            class="btn btn-danger glyphicon glyphicon-remove"
-                                                                            ng-click="remove_attachment(transcation_attachment.id,key)">
-                                                                        </button>
-                                                                        <img title="{{transcation_attachment.name}}"
-                                                                            src="./storage/app/public/gigo/job_order/attachments/{{transcation_attachment.name}}">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <input type="hidden" name="attachment_removal_ids"
-                                                            id="attachment_removal_ids" value="">
-                                                    </div><!-- Form Group -->
-                                                </div>
                                                 <div class="col-md-9" ng-if="$ctrl.vehicle_payment_status == 0">
                                                     <div class="form-group">
                                                         <label>Vehicle Delivery Request Remarks<sup
@@ -774,6 +739,32 @@
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
                                         </div><!-- Column -->
+                                        <div class="col-md-12" ng-show="$ctrl.vehicle_service_status == 1">
+                                            <div class="light-box form-group">
+                                                <h6 class=""><b>Attachments</b></h6>
+                                                <div class="img-upload-preview">
+                                                    <input type="file" class="image_uploadify" accept="image/*"
+                                                        name="transaction_attachments[]" multiple />
+                                                    <!-- ,application/pdf -->
+                                                    <div class="imageuploadify">
+                                                        <div class="imageuploadify-images-list">
+                                                            <div class="imageuploadify-container"
+                                                                style="margin-left: 4px; margin-right: 4px;"
+                                                                ng-repeat="(key,transcation_attachment) in job_order.transcation_attachment">
+                                                                <button type="button"
+                                                                    class="btn btn-danger glyphicon glyphicon-remove"
+                                                                    ng-click="remove_attachment(transcation_attachment.id,key)">
+                                                                </button>
+                                                                <img title="{{transcation_attachment.name}}"
+                                                                    src="./storage/app/public/gigo/job_order/attachments/{{transcation_attachment.name}}">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <input type="hidden" name="attachment_removal_ids"
+                                                    id="attachment_removal_ids" value="">
+                                            </div><!-- Form Group -->
+                                        </div>
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">

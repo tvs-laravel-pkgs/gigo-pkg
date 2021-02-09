@@ -461,7 +461,7 @@ app.component('manualVehicleDeliveryForm', {
 
         $scope.job_order_id = $routeParams.job_order_id;
         $scope.label_name = "Receipt";
-
+        $scope.attachment_count = 1;
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
@@ -486,10 +486,6 @@ app.component('manualVehicleDeliveryForm', {
 
                     if ($scope.job_order.vehicle_payment_status && $scope.job_order.vehicle_payment_status == 1) {
                         self.vehicle_payment_status = 1;
-                        /* Image Uploadify Funtion */
-                        setTimeout(function () {
-                            $('.image_uploadify').imageuploadify();
-                        }, 1000);
                     } else {
                         self.vehicle_payment_status = 0;
                     }
@@ -505,10 +501,21 @@ app.component('manualVehicleDeliveryForm', {
                         self.customer_status = 1;
                     }
 
-                    self.vehicle_service_status = 1;
                     if ($scope.job_order.inward_cancel_reason) {
                         self.vehicle_service_status = 0;
+                    } else {
+                        $scope.attachment_count = 0;
+                        self.vehicle_service_status = 1;
                     }
+
+                    if($scope.job_order.billing_type_id){
+                        $scope.getSelectedBillingType($scope.job_order.billing_type_id);
+                    }
+
+                    /* Image Uploadify Funtion */
+                    setTimeout(function () {
+                        $('.image_uploadify').imageuploadify();
+                    }, 1000);
 
                     $scope.$apply();
                 })
@@ -606,19 +613,40 @@ app.component('manualVehicleDeliveryForm', {
             } else {
                 $scope.invoice_label_name = "";
             }
+
+            if ($scope.attachment_count == 1) {
+                /* Image Uploadify Funtion */
+                setTimeout(function () {
+                    $('.image_uploadify').imageuploadify();
+                }, 1000);
+            }
+
+            $scope.attachment_count = 0;
         }
 
         $scope.vehiclePaymentStatus = function (status) {
             if (status == 1) {
 
-                /* Image Uploadify Funtion */
-                setTimeout(function () {
-                    $('.image_uploadify').imageuploadify();
-                }, 1000);
+                // /* Image Uploadify Funtion */
+                // setTimeout(function () {
+                //     $('.image_uploadify').imageuploadify();
+                // }, 1000);
 
                 $scope.invoiceAmount();
                 $scope.billingAmount();
             }
+        }
+
+        $scope.vehicleServiceStatus = function (status) {
+            if (status == 1) {
+                if ($scope.attachment_count == 1) {
+                    /* Image Uploadify Funtion */
+                    setTimeout(function () {
+                        $('.image_uploadify').imageuploadify();
+                    }, 1000);
+                }
+            }
+            $scope.attachment_count = 0;
         }
 
         $(document).on('keyup', ".amount", function () {

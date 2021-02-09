@@ -673,7 +673,6 @@ class ManualVehicleDeliveryController extends Controller
                         }
 
                     } elseif ($request->billing_type_id == 11523) {
-                        
                         $validator = Validator::make($request->all(), [
                             'job_order_id' => [
                                 'required',
@@ -807,6 +806,36 @@ class ManualVehicleDeliveryController extends Controller
 
                         $job_order->invoice()->save($invoice_detail);
 
+                        //CREATE DIRECTORY TO STORAGE PATH
+                        $attachment_path = storage_path('app/public/gigo/job_order/attachments/');
+                        Storage::makeDirectory($attachment_path, 0777);
+
+                        //MULTIPLE ATTACHMENT REMOVAL
+                        $attachment_removal_ids = json_decode($request->attachment_removal_ids);
+                        if (!empty($attachment_removal_ids)) {
+                            Attachment::whereIn('id', $attachment_removal_ids)->forceDelete();
+                        }
+
+                        if (!empty($request->transaction_attachments)) {
+                            foreach ($request->transaction_attachments as $key => $transaction_attachment) {
+                                $value = rand(1, 20);
+                                $image = $transaction_attachment;
+
+                                $file_name_with_extension = $image->getClientOriginalName();
+                                $file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
+                                $extension = $image->getClientOriginalExtension();
+                                $name = $job_order->id . '_Transcation_Attachment_' . date('Y_m_d_h_i_s') . '_' . $value . '.' . $extension;
+
+                                $transaction_attachment->move(storage_path('app/public/gigo/job_order/attachments/'), $name);
+                                $attachement = new Attachment;
+                                $attachement->attachment_of_id = 227; //Job order
+                                $attachement->attachment_type_id = 11342; //GIGO Transcation Attachment
+                                $attachement->entity_id = $job_order->id;
+                                $attachement->name = $name;
+                                $attachement->save();
+                            }
+                        }
+                        
                         $gate_pass = $this->generateGatePass($job_order);
 
                         DB::commit();
@@ -835,6 +864,16 @@ class ManualVehicleDeliveryController extends Controller
                                 'success' => false,
                                 'error' => 'Validation Error',
                                 'errors' => $validator->errors()->all(),
+                            ]);
+                        }
+
+                        if (empty($request->transaction_attachments) || count($request->transaction_attachments) == 0) {
+                            return response()->json([
+                                'success' => false,
+                                'error' => 'Validation Error',
+                                'errors' => [
+                                    'Attachment Not Found!',
+                                ],
                             ]);
                         }
 
@@ -869,6 +908,36 @@ class ManualVehicleDeliveryController extends Controller
                         $job_order->updated_by_id = Auth::user()->id;
                         $job_order->updated_at = Carbon::now();
                         $job_order->save();
+
+                        //CREATE DIRECTORY TO STORAGE PATH
+                        $attachment_path = storage_path('app/public/gigo/job_order/attachments/');
+                        Storage::makeDirectory($attachment_path, 0777);
+
+                        //MULTIPLE ATTACHMENT REMOVAL
+                        $attachment_removal_ids = json_decode($request->attachment_removal_ids);
+                        if (!empty($attachment_removal_ids)) {
+                            Attachment::whereIn('id', $attachment_removal_ids)->forceDelete();
+                        }
+
+                        if (!empty($request->transaction_attachments)) {
+                            foreach ($request->transaction_attachments as $key => $transaction_attachment) {
+                                $value = rand(1, 20);
+                                $image = $transaction_attachment;
+
+                                $file_name_with_extension = $image->getClientOriginalName();
+                                $file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
+                                $extension = $image->getClientOriginalExtension();
+                                $name = $job_order->id . '_Transcation_Attachment_' . date('Y_m_d_h_i_s') . '_' . $value . '.' . $extension;
+
+                                $transaction_attachment->move(storage_path('app/public/gigo/job_order/attachments/'), $name);
+                                $attachement = new Attachment;
+                                $attachement->attachment_of_id = 227; //Job order
+                                $attachement->attachment_type_id = 11342; //GIGO Transcation Attachment
+                                $attachement->entity_id = $job_order->id;
+                                $attachement->name = $name;
+                                $attachement->save();
+                            }
+                        }
 
                         $gate_pass = $this->generateGatePass($job_order);
 
@@ -1233,7 +1302,7 @@ class ManualVehicleDeliveryController extends Controller
     public function generateGatePass($job_order)
     {
         // dd($job_order);
-        $gate_log = GateLog::where('job_order_id', $job_order->id)->orderBy('id','DESC')->first();
+        $gate_log = GateLog::where('job_order_id', $job_order->id)->orderBy('id', 'DESC')->first();
         // dd($gate_log);
         if ($gate_log) {
 

@@ -473,11 +473,11 @@
                                             <!-- <button class="btn btn-secondary-dark btn-md btn-square">Edit</button> -->
                                         </div><!-- Column -->
                                         <div class="col-md-12"  ng-if="$ctrl.vehicle_service_status == 1 && (job_order.billing_type_id == 11520 || job_order.billing_type_id == 11523 )">
-                                            <h5 class="color-primary mb-10"><b>Invoice Details</b></h5>
+                                            <h5 class="color-primary mb-10"><b>{{invoice_label_name}} Invoice Details</b></h5>
                                             <ul class="view-row mb-no">
                                                 <li class="view-col-4">
                                                     <span class="view-col-label">
-                                                        {{invoice_label_name}} Invoice Date
+                                                        Invoice Date
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
@@ -487,7 +487,7 @@
                                                 </li>
                                                 <li class="view-col-4">
                                                     <span class="view-col-label">
-                                                        {{invoice_label_name}} Labour Invoice Number
+                                                        Labour Invoice Number
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
@@ -497,7 +497,7 @@
                                                 </li>
                                                 <li class="view-col-4">
                                                     <span class="view-col-label">
-                                                        {{invoice_label_name}} Labour Invoice Amount
+                                                        Labour Invoice Amount
                                                     </span>
                                                     <span class="view-col-value">
                                                         <b>
@@ -507,7 +507,7 @@
                                                 </li>
                                                 <li class="view-col-4">
                                                     <span class="view-col-label">
-                                                        {{invoice_label_name}} Parts Invoice Number
+                                                       Parts Invoice Number
                                                     </span>
                                                     <span class="view-col-value">
                                                         <b>
@@ -517,7 +517,7 @@
                                                 </li>
                                                 <li class="view-col-4">
                                                     <span class="view-col-label">
-                                                        {{invoice_label_name}} Parts Invoice Amount
+                                                        Parts Invoice Amount
                                                     </span>
                                                     <span class="view-col-value">
                                                         <b>
