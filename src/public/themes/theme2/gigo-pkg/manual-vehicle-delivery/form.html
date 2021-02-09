@@ -415,16 +415,105 @@
                                 <div class="tab-pane-wrap">
                                     <div class="row">
                                         <div class="col-md-12">
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Service Completed ?
+                                                        </label>
+                                                        <div class="common-radio-button type-4">
+                                                            <input type="radio" id="serivce_yes"
+                                                                name="vehicle_service_status"
+                                                                ng-model="$ctrl.vehicle_service_status" ng-value="1"
+                                                                ng-click="vehicleServiceStatus(1)">
+                                                            <label for="serivce_yes">Yes</label>
+                                                            <input type="radio" id="service_no"
+                                                                name="vehicle_service_status"
+                                                                ng-model="$ctrl.vehicle_service_status" ng-value="0"
+                                                                ng-click="vehicleServiceStatus(0)">
+                                                            <label for="service_no">No</label>
+                                                        </div>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3" ng-if="$ctrl.vehicle_service_status">
+                                                    <div class="form-group">
+                                                        <label>Billing Type<sup class="mandatory">*</sup></label>
+                                                        <md-select ng-model="job_order.billing_type_id"
+                                                            placeholder="Select Reason"
+                                                            data-md-container-class="selectdemoSelectHeader"
+                                                            ng-change="getSelectedBillingType(job_order.billing_type_id)">
+                                                            <md-select-header class="demo-select-header">
+                                                                <input ng-model="searchBillingType" type="search"
+                                                                    placeholder="Search Billing Type.."
+                                                                    class="demo-header-searchbox md-text"
+                                                                    ng-keydown="$event.stopPropagation()">
+                                                            </md-select-header>
+                                                            <md-optgroup>
+                                                                <md-option ng-value="type.id"
+                                                                    ng-repeat="type in extras.billing_types | filter:searchBillingType">
+                                                                    {{type.name}}
+                                                                </md-option>
+                                                            </md-optgroup>
+                                                        </md-select>
+                                                        <input type="hidden" class="required" name="billing_type_id"
+                                                            value="{{job_order.billing_type_id}}">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3" ng-if="!$ctrl.vehicle_service_status">
+                                                    <div class="form-group">
+                                                        <label>Reason<sup class="mandatory">*</sup></label>
+                                                        <md-select ng-model="job_order.inward_cancel_reason_id"
+                                                            placeholder="Select Reason"
+                                                            data-md-container-class="selectdemoSelectHeader">
+                                                            <md-select-header class="demo-select-header">
+                                                                <input ng-model="searchInwardReason" type="search"
+                                                                    placeholder="Search Reason.."
+                                                                    class="demo-header-searchbox md-text"
+                                                                    ng-keydown="$event.stopPropagation()">
+                                                            </md-select-header>
+                                                            <md-optgroup>
+                                                                <md-option ng-value="type.id"
+                                                                    ng-repeat="type in extras.inward_cancel_reasons | filter:searchInwardReason">
+                                                                    {{type.name}}
+                                                                </md-option>
+                                                            </md-optgroup>
+                                                        </md-select>
+                                                        <input type="hidden" class="required"
+                                                            name="inward_cancel_reason_id"
+                                                            value="{{job_order.inward_cancel_reason_id}}">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-6" ng-if="!$ctrl.vehicle_service_status">
+                                                    <div class="form-group">
+                                                        <label>Remarks<sup class="mandatory">*</sup></label>
+                                                        <textarea class="form-control required"
+                                                            name="inward_cancel_reason" rows="4"
+                                                            placeholder="Enter Remarks">{{job_order.inward_cancel_reason}}</textarea>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-6" ng-if="(job_order.billing_type_id == 11521 || job_order.billing_type_id == 11522) && $ctrl.vehicle_service_status">
+                                                    <div class="form-group">
+                                                        <label>Remarks<sup class="mandatory">*</sup></label>
+                                                        <textarea class="form-control required"
+                                                            name="warranty_reason" rows="4"
+                                                            placeholder="Enter Remarks">{{job_order.warranty_reason}}</textarea>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12"
+                                            ng-if="$ctrl.vehicle_service_status == 1 && (job_order.billing_type_id == 11520 || job_order.billing_type_id == 11523 )">
                                             <h5 class="color-primary mb-10">
                                                 <b>
                                                     Invoice Details
                                                 </b>
                                             </h5>
-                                            <hr class="hr-15">
+                                            <!-- <hr class="hr-15"> -->
                                             <div class="row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label>Invoice Date<sup class="mandatory">*</sup></label>
+                                                        <label>{{invoice_label_name}} Invoice Date<sup
+                                                                class="mandatory">*</sup></label>
                                                         <div class="input-group date" data-provide="datepicker"
                                                             data-date-end-date="0d">
                                                             <input type="text" class="form-control required"
@@ -451,11 +540,14 @@
                                                         </p>
                                                     </div><!-- Customer Info -->
                                                 </div><!-- Column -->
-                                            </div>
-                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="clear-fix"></div>
+                                                </div>
+                                                <!-- </div>
+                                            <div class="row"> -->
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label>Labour Invoice Number<sup
+                                                        <label>{{invoice_label_name}} Labour Invoice Number<sup
                                                                 class="mandatory">*</sup></label>
                                                         <input type="text" name="labour_invoice_number" maxlength="100"
                                                             placeholder="Ex: INV20210101" class="form-control"
@@ -465,7 +557,8 @@
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label>Labour Amount<sup class="mandatory">*</sup></label>
+                                                        <label>{{invoice_label_name}} Labour Amount<sup
+                                                                class="mandatory">*</sup></label>
                                                         <input type="text" name="labour_amount" maxlength="100"
                                                             placeholder="Ex: 1000" class="form-control amount"
                                                             id="labour_invoice_amount"
@@ -477,7 +570,7 @@
                                             <div class="row"> -->
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label>Parts Invoice Number<sup
+                                                        <label>{{invoice_label_name}} Parts Invoice Number<sup
                                                                 class="mandatory">*</sup></label>
                                                         <input type="text" name="parts_invoice_number" maxlength="100"
                                                             placeholder="Ex: INV20210101" class="form-control"
@@ -487,7 +580,8 @@
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label>Parts Amount<sup class="mandatory">*</sup></label>
+                                                        <label>{{invoice_label_name}} Parts Amount<sup
+                                                                class="mandatory">*</sup></label>
                                                         <input type="text" name="parts_amount" maxlength="100"
                                                             placeholder="Ex: 2000" class="form-control amount"
                                                             id="parts_invoice_amount"
@@ -497,7 +591,8 @@
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
                                         </div><!-- Column -->
-                                        <div class="col-md-12">
+                                        <div class="col-md-12"
+                                            ng-if="$ctrl.vehicle_service_status == 1  && job_order.billing_type_id == 11520">
                                             <h5 class="color-primary mb-10">
                                                 <b>
                                                     Payment Details
@@ -505,7 +600,7 @@
                                             </h5>
                                             <hr class="hr-15">
                                             <div class="row">
-                                                <div class="col-md-3" id="road_test_required">
+                                                <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>
                                                             Paid by Customer ?

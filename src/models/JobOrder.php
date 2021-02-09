@@ -431,6 +431,14 @@ class JobOrder extends BaseModel {
 		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 11342);
 	}
 
+	public function billingType() {
+		return $this->belongsTo('App\Config', 'billing_type_id');
+	}
+
+	public function inwardCancelReasonType() {
+		return $this->belongsTo('App\Config', 'inward_cancel_reason_id');
+	}
+
 	// Query Scopes --------------------------------------------------------------
 
 	public function scopeFilterSearch($query, $term) {

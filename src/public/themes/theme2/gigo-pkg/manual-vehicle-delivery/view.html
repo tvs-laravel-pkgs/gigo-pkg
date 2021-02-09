@@ -416,11 +416,70 @@
                                 <div class="tab-pane-wrap">
                                     <div class="row">
                                         <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>Service Details</b></h5>
+                                            <ul class="view-row mb-no">
+                                                <li class="view-col-4">
+                                                    <span class="view-col-label">
+                                                        Serivce Completed
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b ng-if="$ctrl.vehicle_service_status">
+                                                            Yes
+                                                        </b>
+                                                        <b ng-if="!$ctrl.vehicle_service_status">
+                                                            No
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-4" ng-if="job_order.billing_type_id">
+                                                    <span class="view-col-label">
+                                                        Billing Type
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b>
+                                                            {{job_order.billing_type.name}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-4" ng-if="job_order.billing_type_id == 11521 || job_order.billing_type_id == 11522">
+                                                    <span class="view-col-label">
+                                                        Remarks
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b>
+                                                            {{job_order.warranty_reason}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-4" ng-if="job_order.inward_cancel_reason_id">
+                                                    <span class="view-col-label">
+                                                       Inward Cancel Reason
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b>
+                                                            {{job_order.inward_cancel_reason_type.name}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-4" ng-if="job_order.inward_cancel_reason_id">
+                                                    <span class="view-col-label">
+                                                       Remarks
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b>
+                                                            {{job_order.inward_cancel_reason}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                            </ul>
+                                            <!-- <button class="btn btn-secondary-dark btn-md btn-square">Edit</button> -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-12"  ng-if="$ctrl.vehicle_service_status == 1 && (job_order.billing_type_id == 11520 || job_order.billing_type_id == 11523 )">
                                             <h5 class="color-primary mb-10"><b>Invoice Details</b></h5>
                                             <ul class="view-row mb-no">
                                                 <li class="view-col-4">
                                                     <span class="view-col-label">
-                                                        Invoice Date
+                                                        {{invoice_label_name}} Invoice Date
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
@@ -430,7 +489,7 @@
                                                 </li>
                                                 <li class="view-col-4">
                                                     <span class="view-col-label">
-                                                        Labour Invoice Number
+                                                        {{invoice_label_name}} Labour Invoice Number
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
@@ -440,7 +499,7 @@
                                                 </li>
                                                 <li class="view-col-4">
                                                     <span class="view-col-label">
-                                                        Labour Invoice Amount
+                                                        {{invoice_label_name}} Labour Invoice Amount
                                                     </span>
                                                     <span class="view-col-value">
                                                         <b>
@@ -450,7 +509,7 @@
                                                 </li>
                                                 <li class="view-col-4">
                                                     <span class="view-col-label">
-                                                        Parts Invoice Number
+                                                        {{invoice_label_name}} Parts Invoice Number
                                                     </span>
                                                     <span class="view-col-value">
                                                         <b>
@@ -460,7 +519,7 @@
                                                 </li>
                                                 <li class="view-col-4">
                                                     <span class="view-col-label">
-                                                        Parts Invoice Amount
+                                                        {{invoice_label_name}} Parts Invoice Amount
                                                     </span>
                                                     <span class="view-col-value">
                                                         <b>
@@ -471,7 +530,7 @@
                                             </ul>
                                             <!-- <button class="btn btn-secondary-dark btn-md btn-square">Edit</button> -->
                                         </div><!-- Column -->
-                                        <div class="col-md-12">
+                                        <div class="col-md-12" ng-if="$ctrl.vehicle_service_status == 1  && job_order.billing_type_id == 11520">
                                             <h5 class="color-primary mb-10"><b>Payment Status</b></h5>
                                             <ul class="view-row mb-no">
                                                 <li class="view-col-4">

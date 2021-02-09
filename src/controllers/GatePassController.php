@@ -64,7 +64,7 @@ class GatePassController extends Controller {
 				} elseif ($gate_passes->status_id == 11401 || $gate_passes->status_id == 11402) {
 					$status = '<p class="text-blue">' . $gate_passes->status_name . '</p>';
 				} else {
-					$status = $gate_passes->status_name;
+					$status = '<p class="text-red">' . $gate_passes->status_name . '</p>';
 				}
 				return $status;
 			})

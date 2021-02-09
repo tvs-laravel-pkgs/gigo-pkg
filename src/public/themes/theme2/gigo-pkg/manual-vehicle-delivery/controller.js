@@ -287,6 +287,17 @@ app.component('manualVehicleDeliveryView', {
                         $scope.label_name = 'Transaction';
                     }
 
+                    self.vehicle_service_status = 1;
+                    if ($scope.job_order.inward_cancel_reason) {
+                        self.vehicle_service_status = 0;
+                    }
+
+                    if ($scope.job_order.billing_type_id == 11523) {
+                        $scope.invoice_label_name = "DSP";
+                    } else {
+                        $scope.invoice_label_name = "";
+                    }
+
                     $scope.$apply();
                 })
                 .fail(function (xhr) {
@@ -494,6 +505,11 @@ app.component('manualVehicleDeliveryForm', {
                         self.customer_status = 1;
                     }
 
+                    self.vehicle_service_status = 1;
+                    if ($scope.job_order.inward_cancel_reason) {
+                        self.vehicle_service_status = 0;
+                    }
+
                     $scope.$apply();
                 })
                 .fail(function (xhr) {
@@ -581,6 +597,14 @@ app.component('manualVehicleDeliveryForm', {
                 $scope.label_name = "Receipt";
             } else {
                 $scope.label_name = "Transaction";
+            }
+        }
+
+        $scope.getSelectedBillingType = function (billing_typing_id) {
+            if (billing_typing_id == 11523) {
+                $scope.invoice_label_name = "DSP";
+            } else {
+                $scope.invoice_label_name = "";
             }
         }
 
