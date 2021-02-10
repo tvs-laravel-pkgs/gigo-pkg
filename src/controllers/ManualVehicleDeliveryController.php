@@ -162,7 +162,7 @@ class ManualVehicleDeliveryController extends Controller {
 
 				$output = '';
 
-				if($vehicle_inward->vehicle_delivery_status_id != 3){
+				if($vehicle_inward->vehicle_delivery_status_id != 3 && !Entrust::can('verify-manual-vehicle-delivery')){
 					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#change_vehicle_status" onclick="angular.element(this).scope().changeStatus(' . $vehicle_inward->id . ',' . $vehicle_inward->vehicle_delivery_status_id . ')" title="Change Vehicle Status"><img src="' . $status_img . '" alt="Change Vehicle Status" class="img-responsive delete" onmouseover=this.src="' . $status_img_hover . '" onmouseout=this.src="' . $status_img . '"></a>
 					';
 				}
