@@ -70,7 +70,7 @@ class ManualVehicleDeliveryController extends Controller {
 				'outlets.code as outlet_code',
 				DB::raw('COALESCE(customers.name, "-") as customer_name'),
 				'job_orders.vehicle_delivery_status_id',
-				DB::raw('IF(job_orders.vehicle_delivery_status_id IS NULL,"WIP",vehicle_delivery_statuses.name) as vehicle_status'),
+				DB::raw('IF(job_orders.vehicle_delivery_status_id IS NULL,"WIP",vehicle_delivery_statuses.name) as vehicle_status')
 			)
 			->where(function ($query) use ($request) {
 				if (!empty($request->gate_in_date)) {
