@@ -10,6 +10,7 @@ use App\Vehicle;
 use App\VehicleModel;
 use App\FinancialYear;
 use App\Customer;
+use App\VehicleDeliveryStatus;
 use Abs\SerialNumberPkg\SerialNumberGroup;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -377,6 +378,17 @@ class GateLog extends Model
 			}
 		}
 
+        if (!empty($import_record[$mandatory_columns['Status']->excel_column_name])) {
+            $vehicle_status = VehicleDeliveryStatus::where('name',$import_record[$mandatory_columns['Status']->excel_column_name])->first();
+            if($vehicle_status){
+                $data['vehicle_status_id'] = $vehicle_status->id;
+            }else{
+                $data['vehicle_status_id'] = 1;
+            }
+        }else{
+            $data['vehicle_status_id'] = 1;
+        }
+
         if (!$skip && $vehicle) {
             $data['vehicle_id'] = $vehicle->id;
         }
@@ -417,6 +429,7 @@ class GateLog extends Model
 		$job_order->company_id = $branch->company_id;
 		$job_order->vehicle_id = $vehicle->id;
 		$job_order->outlet_id = $branch->id;
+		$job_order->vehicle_delivery_status_id = $data['vehicle_status_id'];
 		if ($vehicle->currentOwner) {
 			$job_order->customer_id = $vehicle->currentOwner->customer_id;
 		}

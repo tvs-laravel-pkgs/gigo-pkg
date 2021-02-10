@@ -601,6 +601,8 @@ class GateInController extends Controller {
 				}
 			}
 
+			$job_order->vehicle_delivery_status_id = 1;
+			$job_order->save();
 			// $job_order->vehicleInventoryItem()->sync([]);
 			//Remove already saved gatelog inventories
 			$inventories = DB::table('job_order_vehicle_inventory_item')->where('gate_log_id', $gate_log->id)->delete();
