@@ -73,13 +73,17 @@ app.component('manualVehicleDeliveryList', {
                     searchable: false
                 },
                 {
+                    data: 'vehicle_status',
+                    name: 'vehicle_delivery_statuses.name'
+                },
+                {
                     data: 'outlet_code',
                     name: 'outlets.code'
                 },
-                {
-                    data: 'registration_type',
-                    name: 'registration_type'
-                },
+                // {
+                //     data: 'registration_type',
+                //     name: 'registration_type'
+                // },
                 {
                     data: 'registration_number',
                     name: 'vehicles.registration_number'
@@ -135,7 +139,7 @@ app.component('manualVehicleDeliveryList', {
         }
         // FOR FILTER
         $http.get(
-            laravel_routes['getVehicleInwardFilter']
+            laravel_routes['getManualDeliveryVehicleFilter']
         ).then(function (response) {
             self.extras = response.data.extras;
         });
@@ -219,6 +223,65 @@ app.component('manualVehicleDeliveryList', {
             $("#status_id").val('');
             dataTables.fnFilter();
             $('#vehicle-inward-filter-modal').modal('hide');
+        }
+
+        //Change Status
+        $scope.changeStatus = function (id, vehicle_delivery_status_id) {
+            setTimeout(function () {
+                $scope.job_order_id = id;
+                $scope.vehicle_delivery_status_id = vehicle_delivery_status_id;
+
+                $('#vehicle_delivery_status_id').val(vehicle_delivery_status_id);
+                $('#job_order_id').val(id);
+            }, 100);
+        }
+
+        $scope.vehicleStatusSave = function () {
+            var split_form_id = '#vehicle_status_form';
+            var v = jQuery(split_form_id).validate({
+                ignore: '',
+                rules: {
+                    'job_order_id': {
+                        required: true,
+                    },
+                    'vehicle_delivery_status_id': {
+                        required: true,
+                    },
+                },
+                submitHandler: function (form) {
+                    let formData = new FormData($(split_form_id)[0]);
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/manual-vehicle-delivery/update/vehicle-status',
+                            method: "POST",
+                            data: formData,
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function (res) {
+                            $('.submit').button('reset');
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            $scope.job_order_id = '';
+                            $scope.vehicle_delivery_status_id = '';
+                            $('#change_vehicle_status').modal('hide');
+                            $('#job_order_id').val('');
+                            $('#vehicle_delivery_status_id').val('');
+                            dataTables.fnFilter();
+                        })
+                        .fail(function (xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                            dataTables.fnFilter();
+                        });
+                }
+            });
         }
 
         $rootScope.loading = false;
@@ -508,7 +571,7 @@ app.component('manualVehicleDeliveryForm', {
                         self.vehicle_service_status = 1;
                     }
 
-                    if($scope.job_order.billing_type_id){
+                    if ($scope.job_order.billing_type_id) {
                         $scope.getSelectedBillingType($scope.job_order.billing_type_id);
                     }
 

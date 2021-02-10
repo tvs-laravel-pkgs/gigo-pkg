@@ -3,11 +3,13 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content title-block">
-                    <h1 class="title type-2">Vehicle Delivery <span class="badge badge-secondary" id="table_infos"></span></h1>
+                    <h1 class="title type-2">Vehicle Delivery <span class="badge badge-secondary"
+                            id="table_infos"></span></h1>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content reset-block">
                     <div class="reset-wrap">
-                        <button class="btn-reset reset-tooltip refresh_table my-tooltip" ng-shortcut="'meta+shift+r'" ng-shortcut-click data-title="ctrl+shift+r">
+                        <button class="btn-reset reset-tooltip refresh_table my-tooltip" ng-shortcut="'meta+shift+r'"
+                            ng-shortcut-click data-title="ctrl+shift+r">
                             <img class="img-responsive" src="./public/theme/img/content/reset.svg" alt="Reset" />
                         </button>
                     </div>
@@ -15,13 +17,17 @@
                 <div class="page-header-content search-block">
                     <div class="search_filter">
                         <label>
-                            <input type="search" id="search_inward_vehicle" class="form-control" placeholder="Search" ng-model="$ctrl.search_key" ng-keyup=searchInwardVehicle() autofocus />
-                            <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">Clear</button>
+                            <input type="search" id="search_inward_vehicle" class="form-control" placeholder="Search"
+                                ng-model="$ctrl.search_key" ng-keyup=searchInwardVehicle() autofocus />
+                            <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'"
+                                ng-shortcut-click data-title="ctrl+shift+c">Clear</button>
                         </label>
                     </div><!-- Search Filter -->
                 </div>
                 <div class="page-header-content button-block">
-                    <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#vehicle-inward-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>Filter</button>
+                    <button class="btn btn-bordered my-tooltip" data-toggle="modal"
+                        data-target="#vehicle-inward-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click
+                        data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>Filter</button>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
             <div class="page-header-content-right">
@@ -53,8 +59,9 @@
                             <tr>
                                 <th class="action width-100">Action</th>
                                 <th>Gate In Date & Time</th>
+                                <th>Vehicle Status</th>
                                 <th>Outlet</th>
-                                <th>Registration Type</th>
+                                <!-- <th>Registration Type</th> -->
                                 <th>Registration No</th>
                                 <th>Customer Name</th>
                                 <th>Veh. Model</th>
@@ -74,7 +81,8 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i
+                        class="icon ion-md-close"></i></button>
                 <h5 class="modal-title" id="myModalLabel">
                     Filter
                 </h5>
@@ -86,9 +94,12 @@
                             <div class="form-group">
                                 <label>Gate In Date</label>
                                 <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
-                                    <input type="text" class="form-control" placeholder="Select Gate In Date" ng-model="$ctrl.gate_in_date" id="gate_in_date" />
+                                    <input type="text" class="form-control" placeholder="Select Gate In Date"
+                                        ng-model="$ctrl.gate_in_date" id="gate_in_date" />
                                     <div class="input-group-addon">
-                                        <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                        <img class="img-responsive"
+                                            src="./public/theme/img/content/calender-gray-icon.svg"
+                                            alt="Calendar Image" />
                                     </div>
                                 </div><!-- Input Group -->
                             </div><!-- Feild -->
@@ -96,15 +107,23 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Registration Type</label>
-                                <md-select ng-model="$ctrl.registration_type_selected" md-on-close="clearSearchTerm()" ng-change="onSelectedRegistrationType($ctrl.registration_type_selected)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Registration Type">
+                                <md-select ng-model="$ctrl.registration_type_selected" md-on-close="clearSearchTerm()"
+                                    ng-change="onSelectedRegistrationType($ctrl.registration_type_selected)"
+                                    data-md-container-class="selectdemoSelectHeader"
+                                    placeholder="Select Registration Type">
                                     <md-select-header class="demo-select-header">
-                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Registration Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                        <input ng-model="searchTerm" type="search"
+                                            placeholder="Search for a Registration Type"
+                                            class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                     </md-select-header>
                                     <md-optgroup>
-                                        <md-option ng-value="registration_type.id" ng-repeat="registration_type in $ctrl.extras.registration_type_list | filter:searchTerm">{{registration_type.name}}</md-option>
+                                        <md-option ng-value="registration_type.id"
+                                            ng-repeat="registration_type in $ctrl.extras.registration_type_list | filter:searchTerm">
+                                            {{registration_type.name}}</md-option>
                                     </md-optgroup>
                                 </md-select>
-                                <input type="hidden" class="form-control type-sm" name="registration_type" id="registration_type" value="">
+                                <input type="hidden" class="form-control type-sm" name="registration_type"
+                                    id="registration_type" value="">
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <div class="col-md-6">
@@ -112,7 +131,8 @@
                                 <label>
                                     Registration No
                                 </label>
-                                <input type="text" class="form-control" id="reg_no" name="reg_no" placeholder="Enter Registration No" autocomplete="off" ng-model="$ctrl.reg_no">
+                                <input type="text" class="form-control" id="reg_no" name="reg_no"
+                                    placeholder="Enter Registration No" autocomplete="off" ng-model="$ctrl.reg_no">
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <div class="col-md-6">
@@ -120,13 +140,18 @@
                                 <label>
                                     Membership
                                 </label>
-                                <input type="text" class="form-control" id="membership" name="membership" placeholder="Enter Membership" autocomplete="off" ng-model="$ctrl.membership">
+                                <input type="text" class="form-control" id="membership" name="membership"
+                                    placeholder="Enter Membership" autocomplete="off" ng-model="$ctrl.membership">
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Customer</label>
-                                <md-autocomplete md-items="option in $ctrl.searchCustomer($ctrl.customerSearchText)" md-selected-item="$ctrl.customer" md-selected-item-change="selectedCustomer($ctrl.customer.id)" md-search-text="$ctrl.customerSearchText" md-item-text="option.name" md-min-length="3" placeholder="Customer Name" md-autofocus>
+                                <md-autocomplete md-items="option in $ctrl.searchCustomer($ctrl.customerSearchText)"
+                                    md-selected-item="$ctrl.customer"
+                                    md-selected-item-change="selectedCustomer($ctrl.customer.id)"
+                                    md-search-text="$ctrl.customerSearchText" md-item-text="option.name"
+                                    md-min-length="3" placeholder="Customer Name" md-autofocus>
                                     <md-item-template>
                                         <span>
                                             {{option.name}}
@@ -142,7 +167,12 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Vehicle Model</label>
-                                <md-autocomplete md-items="option in $ctrl.searchVehicleModel($ctrl.vehicleModelSearchText)" md-selected-item="$ctrl.vehicle_model" md-selected-item-change="selectedVehicleModel($ctrl.vehicle_model.id)" md-search-text="$ctrl.vehicleModelSearchText" md-item-text="option.model_name" md-min-length="3" placeholder="Vehicle Model Name" md-autofocus>
+                                <md-autocomplete
+                                    md-items="option in $ctrl.searchVehicleModel($ctrl.vehicleModelSearchText)"
+                                    md-selected-item="$ctrl.vehicle_model"
+                                    md-selected-item-change="selectedVehicleModel($ctrl.vehicle_model.id)"
+                                    md-search-text="$ctrl.vehicleModelSearchText" md-item-text="option.model_name"
+                                    md-min-length="3" placeholder="Vehicle Model Name" md-autofocus>
                                     <md-item-template>
                                         <span>
                                             {{option.model_name}}
@@ -160,21 +190,28 @@
                                 <label>
                                     Gate In No
                                 </label>
-                                <input type="text" class="form-control" id="gate_in_no" name="gate_in_no" placeholder="Enter Gate In No" autocomplete="off" ng-model="$ctrl.gate_in_no">
+                                <input type="text" class="form-control" id="gate_in_no" name="gate_in_no"
+                                    placeholder="Enter Gate In No" autocomplete="off" ng-model="$ctrl.gate_in_no">
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Status</label>
-                                <md-select ng-model="$ctrl.status_selected" md-on-close="clearSearchTerm()" ng-change="onSelectedStatus($ctrl.status_selected)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Status">
+                                <md-select ng-model="$ctrl.status_selected" md-on-close="clearSearchTerm()"
+                                    ng-change="onSelectedStatus($ctrl.status_selected)"
+                                    data-md-container-class="selectdemoSelectHeader" placeholder="Select Status">
                                     <md-select-header class="demo-select-header">
-                                        <input ng-model="searchTerm1" type="search" placeholder="Search for a Status" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                        <input ng-model="searchTerm1" type="search" placeholder="Search for a Status"
+                                            class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                     </md-select-header>
                                     <md-optgroup>
-                                        <md-option ng-value="status.id" ng-repeat="status in $ctrl.extras.status_list | filter:searchTerm1">{{status.name}}</md-option>
+                                        <md-option ng-value="status.id"
+                                            ng-repeat="status in $ctrl.extras.status_list | filter:searchTerm1">
+                                            {{status.name}}</md-option>
                                     </md-optgroup>
                                 </md-select>
-                                <input type="hidden" class="form-control type-sm" name="status_id" id="status_id" value="">
+                                <input type="hidden" class="form-control type-sm" name="status_id" id="status_id"
+                                    value="">
                             </div><!-- Field -->
                         </div><!-- Column -->
                     </div><!-- Row -->
@@ -183,7 +220,9 @@
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-md-6">
-                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.gate_in_date='';$ctrl.membership='';$ctrl.gate_in_no='';$ctrl.registration_type_selected='';$ctrl.reg_no='';$ctrl.customerSearchText='';$ctrl.vehicleModelSearchText='';$ctrl.status_selected='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">
+                        <button type="button" class="reset-link"
+                            ng-click="reset_filter();$ctrl.gate_in_date='';$ctrl.membership='';$ctrl.gate_in_no='';$ctrl.registration_type_selected='';$ctrl.reg_no='';$ctrl.customerSearchText='';$ctrl.vehicleModelSearchText='';$ctrl.status_selected='';"
+                            ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">
                             Reset Filter
                         </button>
                     </div><!-- Column -->
@@ -197,3 +236,57 @@
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal -->
+<!-- Modal -->
+<div class="modal fade filter" id="change_vehicle_status" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog  modal-xs" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i
+                        class="icon ion-md-close"></i></button>
+                <h5 class="modal-title" id="myModalLabel">
+                    Change Status
+                </h5>
+            </div><!-- Modal Header -->
+            <div class="modal-body">
+                <div class="modal-form">
+                    <form id="vehicle_status_form">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Vehicle Status</label>
+                                    <md-select ng-model="vehicle_delivery_status_id" md-on-close="clearSearchTerm()"
+                                        data-md-container-class="selectdemoSelectHeader"
+                                        placeholder="Select Vehicle Status">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchStatus" type="search" placeholder="Search Status"
+                                                class="demo-header-searchbox md-text"
+                                                ng-keydown="$event.stopPropagation()">
+                                        </md-select-header>
+                                        <md-optgroup>
+                                            <md-option ng-value="vehicle_delivery_status.id"
+                                                ng-repeat="vehicle_delivery_status in $ctrl.extras.vehicle_delivery_status_list | filter:searchStatus">
+                                                {{vehicle_delivery_status.name}}</md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" class="form-control required" name="vehicle_delivery_status_id"
+                                        id="vehicle_delivery_status_id" value="{{vehicle_delivery_status_id}}">
+                                    <input type="hidden" class="form-control required" id="job_order_id"
+                                        name="job_order_id" value="{{job_order_id}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-12 text-center mb-15">
+                                <button type="button" data-dismiss="modal" aria-label="Close"
+                                    class="btn btn-primary btn-bordered">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="btn btn-bordered submit"
+                                    ng-click="vehicleStatusSave();">Submit</button>
+                            </div><!-- Column -->
+                        </div><!-- Row -->
+                    </form>
+                </div><!-- Modal Form -->
+            </div><!-- Modal Body -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div>
+<!-- Modal -->

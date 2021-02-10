@@ -472,5 +472,6 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		//Manual Vehicle Delivery
 		Route::post('/manual-vehicle-delivery/get-form-data', 'ManualVehicleDeliveryController@getFormData');
 		Route::post('/manual-vehicle-delivery/save', 'ManualVehicleDeliveryController@save');
+		Route::post('/manual-vehicle-delivery/update/vehicle-status', 'ManualVehicleDeliveryController@updateVehicleStatus');
 	});
 });

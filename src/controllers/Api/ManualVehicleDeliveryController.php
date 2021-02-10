@@ -339,6 +339,72 @@ class ManualVehicleDeliveryController extends Controller
 
     }
 
+    public function updateVehicleStatus(Request $request)
+    {
+        // dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'job_order_id' => [
+                'required',
+                'integer',
+                'exists:job_orders,id',
+            ],
+            'vehicle_delivery_status_id' => [
+                'required',
+                'integer',
+                'exists:vehicle_delivery_statuses,id',
+            ],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Validation Error',
+                'errors' => $validator->errors()->all(),
+            ]);
+        }
+
+        $job_order = JobOrder::with('gateLog')->find($request->job_order_id);
+
+        if (!$job_order) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Validation Error',
+                'errors' => [
+                    'Job Order Not Found!',
+                ],
+            ]);
+        }
+
+        if (!$job_order->gateLog) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Validation Error',
+                'errors' => [
+                    'Gate Log Not Found!',
+                ],
+            ]);
+        }
+
+        DB::beginTransaction();
+
+        if ($job_order->gateLog->status_id == 8124) {
+            $job_order->vehicle_delivery_status_id = 3;
+        }else{
+            $job_order->vehicle_delivery_status_id = $request->vehicle_delivery_status_id;
+        }
+
+        $job_order->updated_by_id = Auth::user()->id;
+        $job_order->updated_at = Carbon::now();
+        $job_order->save();
+
+        DB::commit();
+        $message = "Vehicle Status Updated successfully!";
+
+        return response()->json([
+            'success' => true,
+            'message' => $message,
+        ]);
+    }
     public function save(Request $request)
     {
         // dd($request->all());
@@ -835,7 +901,7 @@ class ManualVehicleDeliveryController extends Controller
                                 $attachement->save();
                             }
                         }
-                        
+
                         $gate_pass = $this->generateGatePass($job_order);
 
                         DB::commit();
@@ -1282,21 +1348,25 @@ class ManualVehicleDeliveryController extends Controller
             if (!$user_details || count($to_email) == 0) {
                 $to_email = ['0' => 'parthiban@uitoux.in'];
             }
+
+            $user_details = MailConfiguration::where('config_id', 3011)->pluck('cc_email')->first();
+            $cc_email = explode(',', $user_details);
+            if (!$user_details || count($cc_email) == 0) {
+                $cc_email = ['0' => 'parthiban@uitoux.in'];
+            }
+            if ($to_email) {
+                // $cc_email = [];
+                $approver_view_url = url('/') . '/#!/manual-vehicle-delivery/view/' . $job_order->id;
+                $arr['job_order'] = $job_order;
+                $arr['subject'] = 'GIGO – Need approval for Vehicle Delivery';
+                $arr['to_email'] = $to_email;
+                $arr['cc_email'] = $cc_email;
+                $arr['approver_view_url'] = $approver_view_url;
+    
+                $MailInstance = new VehicleDeliveryRequestMail($arr);
+                $Mail = Mail::send($MailInstance);
+            }
         }
-
-        if ($to_email) {
-            $cc_email = [];
-            $approver_view_url = url('/') . '/#!/manual-vehicle-delivery/view/' . $job_order->id;
-            $arr['job_order'] = $job_order;
-            $arr['subject'] = 'GIGO – Need approval for Vehicle Delivery';
-            $arr['to_email'] = $to_email;
-            $arr['cc_email'] = $cc_email;
-            $arr['approver_view_url'] = $approver_view_url;
-
-            $MailInstance = new VehicleDeliveryRequestMail($arr);
-            $Mail = Mail::send($MailInstance);
-        }
-
     }
 
     public function generateGatePass($job_order)

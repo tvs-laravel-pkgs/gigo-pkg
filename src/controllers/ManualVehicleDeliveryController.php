@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\JobOrder;
 use App\Part;
 use App\VehicleModel;
+use App\VehicleDeliveryStatus;
 use Auth;
 use DB;
 use Entrust;
@@ -33,6 +34,7 @@ class ManualVehicleDeliveryController extends Controller {
 				['id' => '0', 'name' => 'Un-Registered Vehicle'],
 			],
 			'status_list' => Config::getDropDownList($params),
+			'vehicle_delivery_status_list' => VehicleDeliveryStatus::where('company_id',Auth::user()->company_id)->where('id','!=',3)->get(),
 		];
 		return response()->json($this->data);
 	}
@@ -49,6 +51,7 @@ class ManualVehicleDeliveryController extends Controller {
 			->leftJoin('models', 'models.id', 'vehicles.model_id')
 			->leftJoin('amc_members', 'amc_members.vehicle_id', 'vehicles.id')
 			->leftJoin('amc_policies', 'amc_policies.id', 'amc_members.policy_id')
+			->leftJoin('vehicle_delivery_statuses', 'vehicle_delivery_statuses.id', 'job_orders.vehicle_delivery_status_id')
 			->join('configs', 'configs.id', 'job_orders.status_id')
 			->join('outlets', 'outlets.id', 'job_orders.outlet_id')
 			->select(
@@ -65,7 +68,9 @@ class ManualVehicleDeliveryController extends Controller {
 				DB::raw('COALESCE(GROUP_CONCAT(amc_policies.name), "-") as amc_policies'),
 				'configs.name as status',
 				'outlets.code as outlet_code',
-				DB::raw('COALESCE(customers.name, "-") as customer_name')
+				DB::raw('COALESCE(customers.name, "-") as customer_name'),
+				'job_orders.vehicle_delivery_status_id',
+				DB::raw('IF(job_orders.vehicle_delivery_status_id IS NULL,"WIP",vehicle_delivery_statuses.name) as vehicle_status'),
 			)
 			->where(function ($query) use ($request) {
 				if (!empty($request->gate_in_date)) {
@@ -139,11 +144,29 @@ class ManualVehicleDeliveryController extends Controller {
 				$status = $vehicle_inward->status_id == '8460' || $vehicle_inward->status_id == '8469' || $vehicle_inward->status_id == '8477' || $vehicle_inward->status_id == '8479' ? 'green' : 'blue';
 				return '<span class="text-' . $status . '">' . $vehicle_inward->status . '</span>';
 			})
+			->editColumn('vehicle_status', function ($vehicle_inward) {
+				$status = 'blue';
+				if($vehicle_inward->vehicle_delivery_status_id == 3){
+					$status = 'green';
+				}elseif($vehicle_inward->vehicle_delivery_status_id == 2){
+					$status = 'red';
+				}
+				return '<span class="text-' . $status . '">' . $vehicle_inward->vehicle_status . '</span>';
+			})
 			->addColumn('action', function ($vehicle_inward) {
 				$view_img = asset('public/themes/' . $this->data['theme'] . '/img/content/table/view.svg');
 				$edit_img = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
 
+				$status_img = asset('public/theme/img/table/add-new-invoice.svg');
+				$status_img_hover = asset('public/theme/img/table/add-hover.svg');
+
 				$output = '';
+
+				if($vehicle_inward->vehicle_delivery_status_id != 3){
+					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#change_vehicle_status" onclick="angular.element(this).scope().changeStatus(' . $vehicle_inward->id . ',' . $vehicle_inward->vehicle_delivery_status_id . ')" title="Change Vehicle Status"><img src="' . $status_img . '" alt="Change Vehicle Status" class="img-responsive delete" onmouseover=this.src="' . $status_img_hover . '" onmouseout=this.src="' . $status_img . '"></a>
+					';
+				}
+
 				if($vehicle_inward->status_id != 8478 && $vehicle_inward->status_id != 8477 && $vehicle_inward->status_id != 8467 && $vehicle_inward->status_id != 8468 && $vehicle_inward->status_id != 8470 && !Entrust::can('verify-manual-vehicle-delivery'))
 				{
 					$output .= '<a href="#!/manual-vehicle-delivery/form/' . $vehicle_inward->id . '" id = "" title="Form"><img src="' . $edit_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $edit_img . '" onmouseout=this.src="' . $edit_img . '"></a>';
