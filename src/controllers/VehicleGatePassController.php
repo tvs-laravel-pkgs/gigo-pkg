@@ -98,12 +98,9 @@ class VehicleGatePassController extends Controller {
 		if (!Entrust::can('gate-out-all')) {
 			if (Entrust::can('gate-out-mapped-outlet')) {
 				$vehicle_gate_passes->whereIn('job_orders.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
-			} elseif (Entrust::can('gate-out-own-outlet')) {
-				$vehicle_gate_passes->where('job_orders.outlet_id', Auth::user()->employee->outlet_id);
 			} else {
-				$vehicle_gate_passes->where('gate_passes.created_by_id', Auth::user()->id);
+				$vehicle_gate_passes->where('job_orders.outlet_id', Auth::user()->employee->outlet_id);
 			}
-
 		}
 
 		return Datatables::of($vehicle_gate_passes)

@@ -21,6 +21,7 @@ use App\Vehicle;
 use App\VehicleInventoryItem;
 use Auth;
 use Carbon\Carbon;
+use Entrust;
 use DB;
 use Illuminate\Http\Request;
 use Validator;
@@ -113,6 +114,14 @@ class VehicleGatePassController extends Controller {
 				->orderBy('gate_passes.created_at', 'DESC')
 				->groupBy('gate_passes.id')
 			;
+
+			if (!Entrust::can('gate-out-all')) {
+				if (Entrust::can('gate-out-mapped-outlet')) {
+					$vehicle_gate_pass_list->whereIn('job_orders.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
+				} else {
+					$vehicle_gate_pass_list->where('job_orders.outlet_id', Auth::user()->employee->outlet_id);
+				}
+			}
 
 			$total_records = $vehicle_gate_pass_list->get()->count();
 
