@@ -354,7 +354,7 @@ class GateInController extends Controller {
 			$previous_job_order = JobOrder::where('vehicle_id', $vehicle->id)->orderBy('id', 'DESC')->first();
 
 			if ($previous_job_order) {
-				if ($previous_job_order->status_id != 8470 && $previous_job_order->status_id != 8476 && $previous_job_order->status_id != 8467 && $previous_job_order->status_id != 8468) {
+				if ($previous_job_order->status_id != 8470 && $previous_job_order->status_id != 8476 && $previous_job_order->status_id != 8467 && $previous_job_order->status_id != 8468 && $previous_job_order->status_id != '') {
 					return response()->json([
 						'success' => false,
 						'error' => 'Validation Error',
