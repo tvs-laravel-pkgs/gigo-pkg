@@ -602,6 +602,9 @@ class GateInController extends Controller {
 			}
 
 			$job_order->vehicle_delivery_status_id = 1;
+			if ($vehicle->currentOwner) {
+				$job_order->customer_id = $vehicle->currentOwner->customer_id;
+			}
 			$job_order->save();
 			// $job_order->vehicleInventoryItem()->sync([]);
 			//Remove already saved gatelog inventories
