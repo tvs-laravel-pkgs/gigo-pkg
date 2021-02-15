@@ -110,6 +110,10 @@
     var vehicle_service_schedule_part_modal_form = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-service-schedule/part-modal-form.html')}}";
 
     var vehicle_service_schedule_view_template_url= "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-service-schedule/view.html')}}";
+
+    //Manual Vehicle Delivery export
+    var exportManualVehicleDeliveryUrl = "{{route('getManualDeliveryVehicleExport')}}";
+
 </script>
 <!-- <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-segment/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-primary-application/controller.js')}}"></script>

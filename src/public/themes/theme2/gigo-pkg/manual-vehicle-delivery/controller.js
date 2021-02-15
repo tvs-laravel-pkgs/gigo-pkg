@@ -15,8 +15,10 @@ app.component('manualVehicleDeliveryList', {
         }
         self.search_key = '';
         self.user = $scope.user = HelperService.getLoggedUser();
-
+        self.export_url = exportManualVehicleDeliveryUrl;
         // var table_scroll;
+        self.csrf_token = $('meta[name="csrf-token"]').attr('content');
+
         // table_scroll = $('.page-main-content.list-page-content').height() - 37;
         $('.page-main-content.list-page-content').css("overflow-y", "auto");
         var dataTable = $('#delivery_vehicles_list').DataTable({

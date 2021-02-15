@@ -258,6 +258,7 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	//Vehicle Inward
 	Route::get('/manual-vehicle-delivery/get-list', 'ManualVehicleDeliveryController@getManualDeliveryVehicleList')->name('getManualDeliveryVehicleList');
 	Route::get('/manual-vehicle-delivery/get-filter-data', 'ManualVehicleDeliveryController@getManualDeliveryVehicleFilter')->name('getManualDeliveryVehicleFilter');
+	Route::post('/manual-vehicle-delivery/export', 'ManualVehicleDeliveryController@export')->name('getManualDeliveryVehicleExport');
 
 	//Job Order
 	Route::get('/job-order/get-list', 'JobOrderController@getJobOrderList')->name('getJobOrderList');

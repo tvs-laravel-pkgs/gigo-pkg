@@ -2164,7 +2164,12 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'view-all-outlet-manual-vehicle-delivery',
 				'display_name' => 'View all Outlet',
 			],
-
+			[
+				'display_order' => 8,
+				'parent' => 'gigo-manual-vehicle-delivery',
+				'name' => 'export-vehicle-delivery',
+				'display_name' => 'Export',
+			],
 		];
 		Permission::createFromArrays($permissions);
 	}
