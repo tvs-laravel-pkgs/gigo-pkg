@@ -256,7 +256,7 @@ app.component('inwardVehicleTableList', {
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.gate_in_date = $("#gate_in_date").val();
+                    d.date_range = $("#date_range").val();
                     d.registration_type = $("#registration_type").val();
                     d.reg_no = $("#reg_no").val();
                     d.customer_id = $("#customer_id").val();
@@ -384,12 +384,40 @@ app.component('inwardVehicleTableList', {
         $scope.onSelectedStatus = function(id) {
             $('#status_id').val(id);
         }
+
+        /* DateRange Picker */
+        $('.daterange').daterangepicker({
+            autoUpdateInput: false,
+            locale: {
+                cancelLabel: 'Clear',
+                format: "DD-MM-YYYY"
+            }
+        });
+
+        $('.align-left.daterange').daterangepicker({
+            autoUpdateInput: false,
+            "opens": "left",
+            locale: {
+                cancelLabel: 'Clear',
+                format: "DD-MM-YYYY"
+            }
+        });
+
+        $('.daterange').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('DD-MM-YYYY') + ' to ' + picker.endDate.format('DD-MM-YYYY'));
+            //dataTables.fnFilter();
+        });
+
+        $('.daterange').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+        });
+        
         $scope.applyFilter = function() {
             dataTables.fnFilter();
             $('#vehicle-inward-filter-modal').modal('hide');
         }
         $scope.reset_filter = function() {
-            $("#gate_in_date").val('');
+            $("#date_range").val('');
             $("#registration_type").val('');
             $("#reg_no").val('');
             $("#customer_id").val('');

@@ -1021,8 +1021,8 @@ class GateInController extends Controller {
 			})
 
 			->where(function ($query) use ($start_date, $end_date) {
-				$query->whereDate('gate_logs.created_at', '>=', $start_date)
-					->whereDate('gate_logs.created_at', '<=', $end_date);
+				$query->whereDate('gate_logs.gate_in_date', '>=', $start_date)
+					->whereDate('gate_logs.gate_in_date', '<=', $end_date);
 			});
 
 		if (!Entrust::can('overall-outlet-gatelog')) {

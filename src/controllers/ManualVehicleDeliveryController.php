@@ -41,6 +41,18 @@ class ManualVehicleDeliveryController extends Controller {
 
 	public function getManualDeliveryVehicleList(Request $request) {
 		// dd($request->all());
+		if ($request->date_range) {
+			$date_range = explode(' to ', $request->date_range);
+			$start_date = date('Y-m-d', strtotime($date_range[0]));
+			$start_date = $start_date . ' 00:00:00';
+
+			$end_date = date('Y-m-d', strtotime($date_range[1]));
+			$end_date = $end_date . ' 23:59:59';
+		} else {
+			$start_date = date('Y-m-01 00:00:00');
+			$end_date = date('Y-m-t 23:59:59');
+		}
+
 		$vehicle_inwards = JobOrder::join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
 			->leftJoin('vehicles', 'job_orders.vehicle_id', 'vehicles.id')
 			->leftJoin('vehicle_owners', function ($join) {
@@ -72,10 +84,9 @@ class ManualVehicleDeliveryController extends Controller {
 				'job_orders.vehicle_delivery_status_id',
 				DB::raw('IF(job_orders.vehicle_delivery_status_id IS NULL,"WIP",vehicle_delivery_statuses.name) as vehicle_status')
 			)
-			->where(function ($query) use ($request) {
-				if (!empty($request->gate_in_date)) {
-					$query->whereDate('gate_logs.gate_in_date', date('Y-m-d', strtotime($request->gate_in_date)));
-				}
+			->where(function ($query) use ($start_date, $end_date) {
+				$query->whereDate('gate_logs.gate_in_date', '>=', $start_date)
+					->whereDate('gate_logs.gate_in_date', '<=', $end_date);
 			})
 			->where(function ($query) use ($request) {
 				if (!empty($request->reg_no)) {
