@@ -354,7 +354,7 @@ class ManualVehicleDeliveryController extends Controller
             });
         })
         // ->store('xlsx')
-        ->download('xlsx')
+        ->download('xls')
             // ->download('csv')
         ;
     }
