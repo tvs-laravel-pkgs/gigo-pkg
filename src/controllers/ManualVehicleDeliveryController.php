@@ -303,11 +303,16 @@ class ManualVehicleDeliveryController extends Controller
                 $vehicle_detail['chassis_number'] = $vehicle_inward->chassis_number;
                 $vehicle_detail['engine_number'] = $vehicle_inward->engine_number;
                 $vehicle_detail['vehicle_status'] = $vehicle_inward->vehicle_delivery_status;
-                $vehicle_detail['service_completed'] = $vehicle_inward->inward_cancel_reason_id ? 'No' : 'Yes';
+                // $vehicle_detail['service_completed'] = $vehicle_inward->inward_cancel_reason_id ? 'No' : 'Yes';
                 // if( $vehicle_inward->inward_cancel_reason_id){
                 // $vehicle_detail['billing_type'] = '';
                 // }else{
                 $vehicle_detail['billing_type'] = $vehicle_inward->billing_type ? $vehicle_inward->billing_type : '-';
+                if($vehicle_inward->billing_type){
+                    $vehicle_detail['service_completed'] = 'Yes';
+                }else{
+                    $vehicle_detail['service_completed'] = 'No';
+                }
                 // }
 				
 				if( $vehicle_inward->inward_cancel_reason_id){
