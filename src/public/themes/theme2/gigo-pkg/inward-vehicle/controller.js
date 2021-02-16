@@ -1227,15 +1227,15 @@ app.component('inwardVehicleCustomerDetail', {
                     $scope.extras.state_list = res.state_list;
 
                     //ADD NEW OWNER TYPE
-                    if ($scope.type_id == 2) {
-                        self.state = $scope.job_order.state;
-                    } else {
+                    // if ($scope.type_id == 2) {
+                    //     self.state = $scope.job_order.state;
+                    // } else {
                         if (!$scope.customer) {
                             self.state = $scope.job_order.state;
                         } else {
                             self.state = $scope.customer.address.state;
                         }
-                    }
+                    // }
 
                     $scope.$apply();
                 })
