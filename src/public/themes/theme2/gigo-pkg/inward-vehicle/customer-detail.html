@@ -157,7 +157,7 @@
                                                             Search customer
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <md-autocomplete md-items="option in searchCustomer(customerSearchText)" md-selected-item="customer" md-search-text="customerSearchText" md-selected-item-change="customerChanged(job_order.vehicle.current_owner.customer)" md-item-text="option.code" md-min-length="3" placeholder="Customer Code / Name" md-input-id="customer_ac">
+                                                        <md-autocomplete md-items="option in searchCustomer(customerSearchText)" md-selected-item="customer" md-search-text="customerSearchText" md-selected-item-change="customerChanged(customer)" md-item-text="option.code" md-min-length="3" placeholder="Customer Code / Name" md-input-id="customer_ac"  md-autofocus md-no-cache="true">
                                                             <md-item-template>
                                                                 <span>
                                                                     {{option.name}} / {{option.code}}
