@@ -202,6 +202,11 @@ class ManualVehicleDeliveryController extends Controller
 
     public function export(Request $request)
     {
+        ob_end_clean();
+
+		// ini_set('memory_limit', '50M');
+		ini_set('max_execution_time', 0);
+
         // dd($request->all());
         if ($request->date_range) {
             $date_range = explode(' to ', $request->date_range);
@@ -275,10 +280,6 @@ class ManualVehicleDeliveryController extends Controller
             'Inward Cancel Reason',
             'Remarks',
             // 'Payment Status',
-            // 'Sno',
-            // 'Sno',
-            // 'Sno',
-            // 'Sno',
 
         ];
         // dd(count($vehicle_inward));
@@ -312,9 +313,9 @@ class ManualVehicleDeliveryController extends Controller
 				if( $vehicle_inward->inward_cancel_reason_id){
 					$vehicle_detail['invoice_date'] = '-';
 					$vehicle_detail['labour_inv_number'] = '-';
-					$vehicle_detail['labour_amount'] = '-';
+					$vehicle_detail['labour_amount'] = '';
 					$vehicle_detail['parts_inv_number'] = '-';
-					$vehicle_detail['parts_amount'] = '-';
+					$vehicle_detail['parts_amount'] = '';
 				}else{
 					// dump($vehicle_inward->manualDeliveryLabourInvoice);
 					if($vehicle_inward->manualDeliveryLabourInvoice){
@@ -324,14 +325,14 @@ class ManualVehicleDeliveryController extends Controller
 					}else{
 						$vehicle_detail['invoice_date'] = '-';
 						$vehicle_detail['labour_inv_number'] = '-';
-						$vehicle_detail['labour_amount'] = '-';
+						$vehicle_detail['labour_amount'] = '';
 					}
 					if($vehicle_inward->manualDeliveryPartsInvoice){
 						$vehicle_detail['parts_inv_number'] = $vehicle_inward->manualDeliveryPartsInvoice->number;
 						$vehicle_detail['parts_amount'] = $vehicle_inward->manualDeliveryPartsInvoice->amount;
 					}else{
 						$vehicle_detail['parts_inv_number'] = '-';
-						$vehicle_detail['parts_amount'] = '-';
+						$vehicle_detail['parts_amount'] = '';
 					}
 				}
 
@@ -342,21 +343,17 @@ class ManualVehicleDeliveryController extends Controller
                 $count++;
             }
         }
-		// dd();
-        $file_name = 'Vehicle-Delivery-' . date('Y-m-d-H-i-s');
-        Excel::create($file_name, function ($excel) use ($header, $vehicle_details) {
-            $excel->sheet('Summary', function ($sheet) use ($header, $vehicle_details) {
-                $sheet->fromArray($vehicle_details, null, 'A1');
-                $sheet->row(1, $header);
-                $sheet->row(1, function ($row) {
-                    $row->setBackground('#07c63a');
-                });
-            });
-        })
-        // ->store('xlsx')
-        ->download('xls')
-            // ->download('csv')
-        ;
-    }
 
+        $time_stamp = date('Y_m_d_h_i_s');
+		Excel::create('Vehicle Delivery - ' . $time_stamp, function ($excel) use ($header, $vehicle_details) {
+			$excel->sheet('Summary', function ($sheet) use ($header, $vehicle_details) {
+				$sheet->fromArray($vehicle_details, NULL, 'A1');
+				$sheet->row(1, $header);
+				$sheet->row(1, function ($row) {
+					$row->setBackground('#07c63a');
+				});
+			});
+			$excel->setActiveSheetIndex(0);
+		})->export('xlsx');
+    }
 }
