@@ -1,6 +1,6 @@
 app.component('inwardVehicleCardList', {
     templateUrl: inward_vehicle_card_list_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $rootScope.loading = true;
         $('#search_inward_vehicle').focus();
         var self = this;
@@ -30,7 +30,7 @@ app.component('inwardVehicleCardList', {
         }
 
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $.ajax({
                     url: base_url + '/api/vehicle-inward/get',
                     method: "POST",
@@ -46,11 +46,11 @@ app.component('inwardVehicleCardList', {
                         registration_type: self.registration_type,
                         status_id: self.status_id,
                     },
-                    beforeSend: function(xhr) {
+                    beforeSend: function (xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -58,37 +58,37 @@ app.component('inwardVehicleCardList', {
                     $scope.gate_logs = res.gate_logs;
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
         $scope.fetchData();
 
-        $('.refresh_table').on("click", function() {
+        $('.refresh_table').on("click", function () {
             $scope.fetchData();
         });
-        $scope.clear_search = function() {
+        $scope.clear_search = function () {
             self.search_key = '';
             localStorage.setItem('search_key', self.search_key);
             $scope.fetchData();
         }
-        $scope.searchInwardVehicle = function() {
+        $scope.searchInwardVehicle = function () {
             localStorage.setItem('search_key', self.search_key);
             $scope.fetchData();
         }
-        $("#gate_in_date").keyup(function() {
+        $("#gate_in_date").keyup(function () {
             self.gate_in_date = this.value;
         });
-        $("#reg_no").keyup(function() {
+        $("#reg_no").keyup(function () {
             self.reg_no = this.value;
         });
-        $("#membership").keyup(function() {
+        $("#membership").keyup(function () {
             self.membership = this.value;
         });
-        $("#gate_in_no").keyup(function() {
+        $("#gate_in_no").keyup(function () {
             self.gate_in_no = this.value;
         });
-        $scope.listRedirect = function(type) {
+        $scope.listRedirect = function (type) {
             if (type == 'table') {
                 window.location = "#!/inward-vehicle/table-list";
                 return false;
@@ -101,20 +101,20 @@ app.component('inwardVehicleCardList', {
         // FOR FILTER
         $http.get(
             laravel_routes['getVehicleInwardFilter']
-        ).then(function(response) {
+        ).then(function (response) {
             self.extras = response.data.extras;
         });
         //GET CUSTOMER LIST
-        self.searchCustomer = function(query) {
+        self.searchCustomer = function (query) {
             if (query) {
-                return new Promise(function(resolve, reject) {
+                return new Promise(function (resolve, reject) {
                     $http
                         .post(
                             laravel_routes['getCustomerSearchList'], {
                                 key: query,
                             }
                         )
-                        .then(function(response) {
+                        .then(function (response) {
                             resolve(response.data);
                         });
                     //reject(response);
@@ -124,16 +124,16 @@ app.component('inwardVehicleCardList', {
             }
         }
         //GET VEHICLE MODEL LIST
-        self.searchVehicleModel = function(query) {
+        self.searchVehicleModel = function (query) {
             if (query) {
-                return new Promise(function(resolve, reject) {
+                return new Promise(function (resolve, reject) {
                     $http
                         .post(
                             laravel_routes['getVehicleModelSearchList'], {
                                 key: query,
                             }
                         )
-                        .then(function(response) {
+                        .then(function (response) {
                             resolve(response.data);
                         });
                     //reject(response);
@@ -143,42 +143,42 @@ app.component('inwardVehicleCardList', {
             }
         }
 
-        $element.find('input').on('keydown', function(ev) {
+        $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
         });
-        $scope.clearSearchTerm = function() {
+        $scope.clearSearchTerm = function () {
             $scope.searchTerm = '';
             $scope.searchTerm1 = '';
             $scope.searchTerm2 = '';
             $scope.searchTerm3 = '';
         };
         /* Modal Md Select Hide */
-        $('.modal').bind('click', function(event) {
+        $('.modal').bind('click', function (event) {
             if ($('.md-select-menu-container').hasClass('md-active')) {
                 $mdSelect.hide();
             }
         });
-        $scope.selectedCustomer = function(id) {
+        $scope.selectedCustomer = function (id) {
             $('#customer_id').val(id);
             self.customer_id = id;
         }
-        $scope.selectedVehicleModel = function(id) {
+        $scope.selectedVehicleModel = function (id) {
             $('#model_id').val(id);
             self.model_id = id;
         }
-        $scope.onSelectedRegistrationType = function(id) {
+        $scope.onSelectedRegistrationType = function (id) {
             $('#registration_type').val(id);
             self.registration_type = id;
         }
-        $scope.onSelectedStatus = function(id) {
+        $scope.onSelectedStatus = function (id) {
             $('#status_id').val(id);
             self.status_id = id;
         }
-        $scope.applyFilter = function() {
+        $scope.applyFilter = function () {
             $scope.fetchData();
             $('#vehicle-inward-filter-modal').modal('hide');
         }
-        $scope.reset_filter = function() {
+        $scope.reset_filter = function () {
             $("#gate_in_date").val('');
             $("#registration_type").val('');
             $("#reg_no").val('');
@@ -191,7 +191,7 @@ app.component('inwardVehicleCardList', {
             self.model_id = '';
             self.registration_type = '';
             self.status_id = '';
-            setTimeout(function() {
+            setTimeout(function () {
                 $scope.fetchData();
             }, 1000);
             $('#vehicle-inward-filter-modal').modal('hide');
@@ -206,7 +206,7 @@ app.component('inwardVehicleCardList', {
 
 app.component('inwardVehicleTableList', {
     templateUrl: inward_vehicle_list_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $scope.loading = true;
         $('#search_inward_vehicle').focus();
         var self = this;
@@ -238,10 +238,10 @@ app.component('inwardVehicleTableList', {
             },
             pageLength: 10,
             processing: true,
-            stateSaveCallback: function(settings, data) {
+            stateSaveCallback: function (settings, data) {
                 localStorage.setItem('CDataTables_' + settings.sInstance, JSON.stringify(data));
             },
-            stateLoadCallback: function(settings) {
+            stateLoadCallback: function (settings) {
                 var state_save_val = JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
                 if (state_save_val) {
                     self.search_key = state_save_val.search.search;
@@ -255,7 +255,7 @@ app.component('inwardVehicleTableList', {
                 url: laravel_routes['getVehicleInwardList'],
                 type: "GET",
                 dataType: "json",
-                data: function(d) {
+                data: function (d) {
                     d.date_range = $("#date_range").val();
                     d.registration_type = $("#registration_type").val();
                     d.reg_no = $("#reg_no").val();
@@ -268,43 +268,74 @@ app.component('inwardVehicleTableList', {
                 },
             },
 
-            columns: [
-                { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'date', searchable: false },
-                { data: 'outlet_code', name: 'outlets.code' },
-                { data: 'registration_type', name: 'registration_type' },
-                { data: 'registration_number', name: 'vehicles.registration_number' },
-                { data: 'customer_name', name: 'customers.name' },
-                { data: 'model_number', name: 'models.model_number' },
-                { data: 'amc_policies', name: 'amc_policies.name' },
-                { data: 'number', name: 'gate_logs.number' },
-                { data: 'status', name: 'configs.name' },
+            columns: [{
+                    data: 'action',
+                    class: 'action',
+                    name: 'action',
+                    searchable: false
+                },
+                {
+                    data: 'date',
+                    searchable: false
+                },
+                {
+                    data: 'outlet_code',
+                    name: 'outlets.code'
+                },
+                {
+                    data: 'registration_type',
+                    name: 'registration_type'
+                },
+                {
+                    data: 'registration_number',
+                    name: 'vehicles.registration_number'
+                },
+                {
+                    data: 'customer_name',
+                    name: 'customers.name'
+                },
+                {
+                    data: 'model_number',
+                    name: 'models.model_number'
+                },
+                {
+                    data: 'amc_policies',
+                    name: 'amc_policies.name'
+                },
+                {
+                    data: 'number',
+                    name: 'gate_logs.number'
+                },
+                {
+                    data: 'status',
+                    name: 'configs.name'
+                },
 
             ],
-            "infoCallback": function(settings, start, end, max, total, pre) {
+            "infoCallback": function (settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)
                 $('.foot_info').html('Showing ' + start + ' to ' + end + ' of ' + max + ' entries')
             },
-            rowCallback: function(row, data) {
+            rowCallback: function (row, data) {
                 $(row).addClass('highlight-row');
             }
         });
         $('.dataTables_length select').select2();
 
-        $scope.clear_search = function() {
+        $scope.clear_search = function () {
             self.search_key = '';
             $('#inward_vehicles_list').DataTable().search('').draw();
         }
-        $('.refresh_table').on("click", function() {
+        $('.refresh_table').on("click", function () {
             $('#inward_vehicles_list').DataTable().ajax.reload();
         });
 
         var dataTables = $('#inward_vehicles_list').dataTable();
-        $scope.searchInwardVehicle = function() {
+        $scope.searchInwardVehicle = function () {
             dataTables.fnFilter(self.search_key);
         }
 
-        $scope.listRedirect = function(type) {
+        $scope.listRedirect = function (type) {
             if (type == 'table') {
                 window.location = "#!/inward-vehicle/table-list";
                 return false;
@@ -316,20 +347,20 @@ app.component('inwardVehicleTableList', {
         // FOR FILTER
         $http.get(
             laravel_routes['getVehicleInwardFilter']
-        ).then(function(response) {
+        ).then(function (response) {
             self.extras = response.data.extras;
         });
         //GET CUSTOMER LIST
-        self.searchCustomer = function(query) {
+        self.searchCustomer = function (query) {
             if (query) {
-                return new Promise(function(resolve, reject) {
+                return new Promise(function (resolve, reject) {
                     $http
                         .post(
                             laravel_routes['getCustomerSearchList'], {
                                 key: query,
                             }
                         )
-                        .then(function(response) {
+                        .then(function (response) {
                             resolve(response.data);
                         });
                     //reject(response);
@@ -339,16 +370,16 @@ app.component('inwardVehicleTableList', {
             }
         }
         //GET VEHICLE MODEL LIST
-        self.searchVehicleModel = function(query) {
+        self.searchVehicleModel = function (query) {
             if (query) {
-                return new Promise(function(resolve, reject) {
+                return new Promise(function (resolve, reject) {
                     $http
                         .post(
                             laravel_routes['getVehicleModelSearchList'], {
                                 key: query,
                             }
                         )
-                        .then(function(response) {
+                        .then(function (response) {
                             resolve(response.data);
                         });
                     //reject(response);
@@ -357,31 +388,31 @@ app.component('inwardVehicleTableList', {
                 return [];
             }
         }
-        $element.find('input').on('keydown', function(ev) {
+        $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
         });
-        $scope.clearSearchTerm = function() {
+        $scope.clearSearchTerm = function () {
             $scope.searchTerm = '';
             $scope.searchTerm1 = '';
             $scope.searchTerm2 = '';
             $scope.searchTerm3 = '';
         };
         /* Modal Md Select Hide */
-        $('.modal').bind('click', function(event) {
+        $('.modal').bind('click', function (event) {
             if ($('.md-select-menu-container').hasClass('md-active')) {
                 $mdSelect.hide();
             }
         });
-        $scope.selectedCustomer = function(id) {
+        $scope.selectedCustomer = function (id) {
             $('#customer_id').val(id);
         }
-        $scope.selectedVehicleModel = function(id) {
+        $scope.selectedVehicleModel = function (id) {
             $('#model_id').val(id);
         }
-        $scope.onSelectedRegistrationType = function(id) {
+        $scope.onSelectedRegistrationType = function (id) {
             $('#registration_type').val(id);
         }
-        $scope.onSelectedStatus = function(id) {
+        $scope.onSelectedStatus = function (id) {
             $('#status_id').val(id);
         }
 
@@ -403,20 +434,20 @@ app.component('inwardVehicleTableList', {
             }
         });
 
-        $('.daterange').on('apply.daterangepicker', function(ev, picker) {
+        $('.daterange').on('apply.daterangepicker', function (ev, picker) {
             $(this).val(picker.startDate.format('DD-MM-YYYY') + ' to ' + picker.endDate.format('DD-MM-YYYY'));
             //dataTables.fnFilter();
         });
 
-        $('.daterange').on('cancel.daterangepicker', function(ev, picker) {
+        $('.daterange').on('cancel.daterangepicker', function (ev, picker) {
             $(this).val('');
         });
-        
-        $scope.applyFilter = function() {
+
+        $scope.applyFilter = function () {
             dataTables.fnFilter();
             $('#vehicle-inward-filter-modal').modal('hide');
         }
-        $scope.reset_filter = function() {
+        $scope.reset_filter = function () {
             $("#date_range").val('');
             $("#registration_type").val('');
             $("#reg_no").val('');
@@ -438,7 +469,7 @@ app.component('inwardVehicleTableList', {
 
 app.component('inwardVehicleView', {
     templateUrl: inward_vehicle_view_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
@@ -452,18 +483,18 @@ app.component('inwardVehicleView', {
 
         $scope.job_order_id = $routeParams.job_order_id;
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $.ajax({
                     url: base_url + '/api/vehicle-inward/get-view-data',
                     method: "POST",
                     data: {
                         id: $routeParams.job_order_id
                     },
-                    beforeSend: function(xhr) {
+                    beforeSend: function (xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -513,29 +544,29 @@ app.component('inwardVehicleView', {
                     $scope.$apply();
 
                     //Scrollable Tabs
-                    setTimeout(function() {
+                    setTimeout(function () {
                         scrollableTabs();
                     }, 1000);
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
         $scope.fetchData();
 
-        $('.btn-nxt').on("click", function() {
+        $('.btn-nxt').on("click", function () {
             $('.cndn-tabs li.active').next().children('a').trigger("click");
             tabPaneFooter();
         });
-        $('.btn-prev').on("click", function() {
+        $('.btn-prev').on("click", function () {
             $('.cndn-tabs li.active').prev().children('a').trigger("click");
             tabPaneFooter();
         });
-        $('.btn-pills').on("click", function() {
+        $('.btn-pills').on("click", function () {
             tabPaneFooter();
         });
-        $scope.btnNxt = function() {}
-        $scope.prev = function() {}
+        $scope.btnNxt = function () {}
+        $scope.prev = function () {}
 
         /* Dropdown Arrow Function */
         arrowDropdown();
@@ -550,10 +581,10 @@ app.component('inwardVehicleView', {
             // messages: {
 
             // },
-            invalidHandler: function(event, validator) {
+            invalidHandler: function (event, validator) {
                 custom_noty('error', 'You have errors, Please check all tabs');
             },
-            submitHandler: function(form) {
+            submitHandler: function (form) {
                 let formData = new FormData($(form_id)[0]);
                 $('.submit').button('loading');
                 $.ajax({
@@ -563,7 +594,7 @@ app.component('inwardVehicleView', {
                         processData: false,
                         contentType: false,
                     })
-                    .done(function(res) {
+                    .done(function (res) {
                         if (res.success == true) {
                             custom_noty('success', res.message);
                             $location.path('/job-order/list');
@@ -579,7 +610,7 @@ app.component('inwardVehicleView', {
                             }
                         }
                     })
-                    .fail(function(xhr) {
+                    .fail(function (xhr) {
                         $('.submit').button('reset');
                         custom_noty('error', 'Something went wrong at server');
                     });
@@ -587,7 +618,7 @@ app.component('inwardVehicleView', {
         });
 
         //Save Form Data 
-        $scope.saveInwardCancel = function(id) {
+        $scope.saveInwardCancel = function (id) {
             var form_id = '#inward_cancel_form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -602,23 +633,23 @@ app.component('inwardVehicleView', {
                 messages: {
 
                 },
-                invalidHandler: function(event, validator) {
+                invalidHandler: function (event, validator) {
                     custom_noty('error', 'You have errors, Please check all tabs');
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(form_id)[0]);
                     $scope.button_action(id, 1);
                     $.ajax({
                             url: base_url + '/api/vehicle-inward/cancel',
                             method: "POST",
                             data: formData,
-                            beforeSend: function(xhr) {
+                            beforeSend: function (xhr) {
                                 xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                             },
                             processData: false,
                             contentType: false,
                         })
-                        .done(function(res) {
+                        .done(function (res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
                                 showErrorNoty(res);
@@ -626,11 +657,11 @@ app.component('inwardVehicleView', {
                             }
                             custom_noty('success', res.message);
 
-                            setTimeout(function() {
+                            setTimeout(function () {
                                 $scope.fetchData();
                             }, 1000);
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             $scope.button_action(id, 2);
                             custom_noty('error', 'Something went wrong at server');
                         });
@@ -638,7 +669,7 @@ app.component('inwardVehicleView', {
             });
         }
 
-        $scope.button_action = function(id, type) {
+        $scope.button_action = function (id, type) {
             if (type == 1) {
                 $('.submit').button('loading');
                 $('.btn-prev').bind('click', false);
@@ -656,9 +687,9 @@ app.component('inwardVehicleView', {
 
 app.component('inwardVehicleVehicleDetail', {
     templateUrl: inward_vehicle_vehicle_detail_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         //for md-select search
-        $element.find('input').on('keydown', function(ev) {
+        $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
         });
         var self = this;
@@ -677,7 +708,7 @@ app.component('inwardVehicleVehicleDetail', {
 
         $scope.job_order_id = $routeParams.job_order_id;
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $.ajax({
                     url: base_url + '/api/vehicle-inward/get-vehicle-detail',
                     method: "POST",
@@ -685,11 +716,11 @@ app.component('inwardVehicleVehicleDetail', {
                         id: $routeParams.job_order_id,
                         service_advisor_id: self.user.id
                     },
-                    beforeSend: function(xhr) {
+                    beforeSend: function (xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -716,18 +747,18 @@ app.component('inwardVehicleVehicleDetail', {
                     $scope.extras = res.extras;
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
         $scope.fetchData();
 
         //Scrollable Tabs
-        setTimeout(function() {
+        setTimeout(function () {
             scrollableTabs();
         }, 1000);
 
-        $(document).on('keyup', ".registration_number", function() {
+        $(document).on('keyup', ".registration_number", function () {
             if ($(this).val().length == 2) {
                 $('.registration_number').val($(this).val() + '-');
             }
@@ -750,16 +781,16 @@ app.component('inwardVehicleVehicleDetail', {
         });
 
         //GET VEHICLE MODEL LIST
-        self.searchVehicleModel = function(query) {
+        self.searchVehicleModel = function (query) {
             if (query) {
-                return new Promise(function(resolve, reject) {
+                return new Promise(function (resolve, reject) {
                     $http
                         .post(
                             laravel_routes['getVehicleModelSearchList'], {
                                 key: query,
                             }
                         )
-                        .then(function(response) {
+                        .then(function (response) {
                             resolve(response.data);
                         });
                     //reject(response);
@@ -770,7 +801,7 @@ app.component('inwardVehicleVehicleDetail', {
         }
 
         //Save Form Data 
-        $scope.onSubmit = function(id) {
+        $scope.onSubmit = function (id) {
             var form_id = '#form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -794,7 +825,7 @@ app.component('inwardVehicleVehicleDetail', {
                         // maxlength: 10,
                     },
                     'sold_date': {
-                        required: function(element) {
+                        required: function (element) {
                             if (self.is_sold) {
                                 return true;
                             }
@@ -834,10 +865,10 @@ app.component('inwardVehicleVehicleDetail', {
                         maxlength: 'Maximum 64 Numbers',
                     }
                 },
-                invalidHandler: function(event, validator) {
+                invalidHandler: function (event, validator) {
                     custom_noty('error', 'You have errors, Please check all fields');
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(form_id)[0]);
                     $scope.button_action(id, 1);
                     $.ajax({
@@ -847,7 +878,7 @@ app.component('inwardVehicleVehicleDetail', {
                             processData: false,
                             contentType: false,
                         })
-                        .done(function(res) {
+                        .done(function (res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
                                 $('.submit').button('reset');
@@ -862,7 +893,7 @@ app.component('inwardVehicleVehicleDetail', {
                             }
                             $scope.$apply();
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             $scope.button_action(id, 2);
                             custom_noty('error', 'Something went wrong at server');
                         });
@@ -871,7 +902,7 @@ app.component('inwardVehicleVehicleDetail', {
         }
 
 
-        $scope.showVehicleForm = function() {
+        $scope.showVehicleForm = function () {
             $scope.show_vehicle_detail = false;
             $scope.show_vehicle_form = true;
         }
@@ -881,7 +912,7 @@ app.component('inwardVehicleVehicleDetail', {
             $scope.show_vehicle_form = true;
         }
 
-        $scope.button_action = function(id, type) {
+        $scope.button_action = function (id, type) {
             if (type == 1) {
                 if (id == 1) {
                     $('.save').button('loading');
@@ -907,7 +938,7 @@ app.component('inwardVehicleVehicleDetail', {
 
 app.component('inwardVehicleCustomerDetail', {
     templateUrl: inward_vehicle_customer_detail_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element,CustomerSvc) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, CustomerSvc) {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
@@ -927,7 +958,7 @@ app.component('inwardVehicleCustomerDetail', {
         $scope.job_order_id = $routeParams.job_order_id;
         $scope.type_id = $routeParams.type_id ? $routeParams.type_id : '';
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $rootScope.loading = true;
             $.ajax({
                     url: base_url + '/api/vehicle-inward/get-customer-detail',
@@ -935,11 +966,11 @@ app.component('inwardVehicleCustomerDetail', {
                     data: {
                         id: $routeParams.job_order_id
                     },
-                    beforeSend: function(xhr) {
+                    beforeSend: function (xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     $rootScope.loading = false;
                     if (!res.success) {
                         showErrorNoty(res);
@@ -974,9 +1005,10 @@ app.component('inwardVehicleCustomerDetail', {
                         self.country = $scope.job_order.country;
                     }
 
+                    $scope.customer = $scope.job_order.vehicle.current_owner.customer;
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     $rootScope.loading = false;
                     custom_noty('error', 'Something went wrong at server');
                 });
@@ -984,16 +1016,16 @@ app.component('inwardVehicleCustomerDetail', {
         $scope.fetchData();
 
         //Scrollable Tabs
-        setTimeout(function() {
+        setTimeout(function () {
             scrollableTabs();
         }, 1000);
 
-        $element.find('input').on('keydown', function(ev) {
+        $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
         });
 
         //Save Form Data 
-        $scope.saveCustomer = function(id) {
+        $scope.saveCustomer = function (id) {
             var form_id = '#form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -1073,10 +1105,10 @@ app.component('inwardVehicleCustomerDetail', {
                         maxlength: 'Maximum 6 Numbers',
                     },
                 },
-                invalidHandler: function(event, validator) {
+                invalidHandler: function (event, validator) {
                     custom_noty('error', 'You have errors, Please check all tabs');
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(form_id)[0]);
                     $rootScope.loading = true;
                     $scope.button_action(id, 1);
@@ -1087,7 +1119,7 @@ app.component('inwardVehicleCustomerDetail', {
                             processData: false,
                             contentType: false,
                         })
-                        .done(function(res) {
+                        .done(function (res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
                                 $rootScope.loading = false;
@@ -1104,7 +1136,7 @@ app.component('inwardVehicleCustomerDetail', {
                                 $scope.$apply();
                             }
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             $rootScope.loading = false;
                             $scope.button_action(id, 2);
                             custom_noty('error', 'Something went wrong at server');
@@ -1113,24 +1145,29 @@ app.component('inwardVehicleCustomerDetail', {
             });
         }
 
-        $scope.searchCustomer = function(query) {
-            return new Promise(function(resolve, reject) {
-                CustomerSvc.options({ filter: { search: query } })
-                    .then(function(response) {
+        $scope.searchCustomer = function (query) {
+            return new Promise(function (resolve, reject) {
+                CustomerSvc.options({
+                        filter: {
+                            search: query
+                        }
+                    })
+                    .then(function (response) {
                         resolve(response.data.options);
                     });
             });
         }
 
-        $scope.customerChanged = function(customer) {
-            $scope.job_order.vehicle.current_owner.customer=[];
+        $scope.customerChanged = function (customer) {
+            $scope.customer = {};
+           
             CustomerSvc.read(customer.id)
-                .then(function(response) {
+                .then(function (response) {
                     console.log(response);
-                    $scope.job_order.vehicle.current_owner.customer = response.data.customer;
+                    $scope.customer = response.data.customer;
                     $country_id = response.data.customer.primary_address ? response.data.customer.primary_address.country_id : '1';
-                     if (typeof response.data.customer.primary_address != null && typeof response.data.customer.primary_address != 'string') {
-                        $scope.job_order.vehicle.current_owner.customer.address = response.data.customer.primary_address;
+                    if (typeof response.data.customer.primary_address != null && typeof response.data.customer.primary_address != 'string') {
+                        $scope.customer.address = response.data.customer.primary_address;
                     }
                     $scope.countryChanged();
                 });
@@ -1141,29 +1178,30 @@ app.component('inwardVehicleCustomerDetail', {
             $scope.show_customer_form = true;
         }
 
-        $scope.showOwnerForm = function() {
+        $scope.showOwnerForm = function () {
             $scope.show_customer_detail = false;
             $scope.show_customer_form = true;
         }
 
-        $scope.addNewOwner = function() {
+        $scope.addNewOwner = function () {
             $scope.show_customer_detail = false;
             $scope.show_customer_form = true;
-            $scope.job_order.vehicle.current_owner = {
+            // $scope.job_order.vehicle.current_owner = {
 
-            };
+            // };
+            $scope.customer = {};
         }
         //GET CITY LIST
-        self.searchCity = function(query) {
+        self.searchCity = function (query) {
             if (query) {
-                return new Promise(function(resolve, reject) {
+                return new Promise(function (resolve, reject) {
                     $http
                         .post(
                             laravel_routes['getCitySearchList'], {
                                 key: query,
                             }
                         )
-                        .then(function(response) {
+                        .then(function (response) {
                             resolve(response.data);
                         });
                     //reject(response);
@@ -1173,7 +1211,7 @@ app.component('inwardVehicleCustomerDetail', {
             }
         }
 
-        $scope.countryChanged = function(country_id) {
+        $scope.countryChanged = function (country_id) {
             $.ajax({
                     url: base_url + '/api/state/get-drop-down-List',
                     method: "POST",
@@ -1181,7 +1219,7 @@ app.component('inwardVehicleCustomerDetail', {
                         country_id: country_id,
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -1201,7 +1239,7 @@ app.component('inwardVehicleCustomerDetail', {
 
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
@@ -1227,7 +1265,7 @@ app.component('inwardVehicleCustomerDetail', {
         //         });
         // }
 
-        $scope.button_action = function(id, type) {
+        $scope.button_action = function (id, type) {
             if (type == 1) {
                 if (id == 1) {
                     $('.save').button('loading');
@@ -1253,9 +1291,9 @@ app.component('inwardVehicleCustomerDetail', {
 
 app.component('inwardVehiclePhotos', {
     templateUrl: inward_vehicle_photos_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         //for md-select search
-        $element.find('input').on('keydown', function(ev) {
+        $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
         });
 
@@ -1274,16 +1312,16 @@ app.component('inwardVehiclePhotos', {
         $scope.job_order_id = $routeParams.job_order_id;
 
         /* Profile Upload */
-        setTimeout(function() {
+        setTimeout(function () {
             profileImgUpload();
         }, 1000);
 
-        setTimeout(function() {
+        setTimeout(function () {
             $('.image_uploadify').imageuploadify();
         }, 1000);
 
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $.ajax({
                     url: base_url + '/api/vehicle-inward/vehicle/photos/get-form-data',
                     method: "POST",
@@ -1291,7 +1329,7 @@ app.component('inwardVehiclePhotos', {
                         id: $routeParams.job_order_id
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -1301,7 +1339,7 @@ app.component('inwardVehiclePhotos', {
                     console.log($scope.job_order);
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
@@ -1309,12 +1347,12 @@ app.component('inwardVehiclePhotos', {
         $scope.fetchData();
 
         //Scrollable Tabs
-        setTimeout(function() {
+        setTimeout(function () {
             scrollableTabs();
         }, 1000);
 
         //Save Form Data 
-        $scope.saveVehicleAttachments = function(id) {
+        $scope.saveVehicleAttachments = function (id) {
             var form_id = '#vehicle_attachment_form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -1352,7 +1390,7 @@ app.component('inwardVehiclePhotos', {
                     //     },
                     // },
                 },
-                errorPlacement: function(error, element) {
+                errorPlacement: function (error, element) {
                     if (element.attr('name') == 'front_side_image') {
                         error.appendTo($('.attachment_error'));
                     } else if (element.attr('name') == 'back_side_image') {
@@ -1365,10 +1403,10 @@ app.component('inwardVehiclePhotos', {
                         error.insertAfter(element);
                     }
                 },
-                invalidHandler: function(event, validator) {
+                invalidHandler: function (event, validator) {
                     custom_noty('error', 'You have errors, Please check all fields');
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(form_id)[0]);
                     $rootScope.loading = true;
                     $scope.button_action(id, 1);
@@ -1379,7 +1417,7 @@ app.component('inwardVehiclePhotos', {
                             processData: false,
                             contentType: false,
                         })
-                        .done(function(res) {
+                        .done(function (res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
                                 $rootScope.loading = false;
@@ -1396,7 +1434,7 @@ app.component('inwardVehiclePhotos', {
                                 $scope.$apply();
                             }
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             $rootScope.loading = false;
                             $scope.button_action(id, 2);
                             custom_noty('error', 'Something went wrong at server');
@@ -1406,7 +1444,7 @@ app.component('inwardVehiclePhotos', {
         }
 
         self.attachment_removal_id = [];
-        $scope.remove_attachment = function(attachment_id, index) {
+        $scope.remove_attachment = function (attachment_id, index) {
             console.log(attachment_id, index);
             if (attachment_id) {
                 self.attachment_removal_id.push(attachment_id);
@@ -1415,7 +1453,7 @@ app.component('inwardVehiclePhotos', {
             $scope.job_order.other_vehicle_attachment.splice(index, 1);
         }
 
-        $scope.button_action = function(id, type) {
+        $scope.button_action = function (id, type) {
             if (type == 1) {
                 if (id == 1) {
                     $('.submit').button('loading');
@@ -1440,9 +1478,9 @@ app.component('inwardVehiclePhotos', {
 
 app.component('inwardVehicleOrderDetailForm', {
     templateUrl: inward_vehicle_order_detail_form_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         //for md-select search
-        $element.find('input').on('keydown', function(ev) {
+        $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
         });
 
@@ -1477,7 +1515,7 @@ app.component('inwardVehicleOrderDetailForm', {
         $scope.current_date = current_date.concat(currentdate_split[2], currentdate_split[1], currentdate_split[0]);
 
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $rootScope.loading = true;
             $.ajax({
                     url: base_url + '/api/vehicle-inward/order-detail/get-form-data',
@@ -1486,7 +1524,7 @@ app.component('inwardVehicleOrderDetailForm', {
                         id: $routeParams.job_order_id
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     $rootScope.loading = false;
                     if (!res.success) {
                         showErrorNoty(res);
@@ -1505,7 +1543,7 @@ app.component('inwardVehicleOrderDetailForm', {
                     }
 
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     $rootScope.loading = false;
                     custom_noty('error', 'Something went wrong at server');
                 });
@@ -1513,16 +1551,16 @@ app.component('inwardVehicleOrderDetailForm', {
         $scope.fetchData();
 
         /* Profile Upload */
-        setTimeout(function() {
+        setTimeout(function () {
             profileImgUpload();
         }, 1000);
 
         //Scrollable Tabs
-        setTimeout(function() {
+        setTimeout(function () {
             scrollableTabs();
         }, 1000);
 
-        $scope.checkLicenseExpiryDate = function(date) {
+        $scope.checkLicenseExpiryDate = function (date) {
             var selectdate_split = date.split("-");
 
             var selected_date = '';
@@ -1534,7 +1572,7 @@ app.component('inwardVehicleOrderDetailForm', {
                 $('#driver_license_expiry_date_error').html('');
             }
         }
-        $scope.checkInsuranceExpiryDate = function(date) {
+        $scope.checkInsuranceExpiryDate = function (date) {
             var selectdate_split = date.split("-");
 
             var selected_date = '';
@@ -1548,7 +1586,7 @@ app.component('inwardVehicleOrderDetailForm', {
         }
 
         //Save Form Data 
-        $scope.saveOrderDetailForm = function(id) {
+        $scope.saveOrderDetailForm = function (id) {
             var form_id = '#order_detail_form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -1619,7 +1657,7 @@ app.component('inwardVehicleOrderDetailForm', {
                     //     },
                     // },
                     'call_date': {
-                        required: function(element) {
+                        required: function (element) {
                             if (self.appointment_status == '1') {
                                 return true;
                             }
@@ -1633,7 +1671,7 @@ app.component('inwardVehicleOrderDetailForm', {
                     //     required: true,
                     // },
                 },
-                errorPlacement: function(error, element) {
+                errorPlacement: function (error, element) {
                     if (element.attr('name') == 'driving_license_image') {
                         error.appendTo($('.attachment_error'));
                     } else if (element.attr('name') == 'insurance_image') {
@@ -1644,10 +1682,10 @@ app.component('inwardVehicleOrderDetailForm', {
                         error.insertAfter(element);
                     }
                 },
-                invalidHandler: function(event, validator) {
+                invalidHandler: function (event, validator) {
                     custom_noty('error', 'You have errors, Please check all tabs');
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(form_id)[0]);
                     $rootScope.loading = true;
                     $scope.button_action(id, 1);
@@ -1658,7 +1696,7 @@ app.component('inwardVehicleOrderDetailForm', {
                             processData: false,
                             contentType: false,
                         })
-                        .done(function(res) {
+                        .done(function (res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
                                 $rootScope.loading = false;
@@ -1677,7 +1715,7 @@ app.component('inwardVehicleOrderDetailForm', {
                                 $scope.$apply();
                             }
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             $rootScope.loading = false;
                             $scope.button_action(id, 2);
                             custom_noty('error', 'Something went wrong at server');
@@ -1695,7 +1733,7 @@ app.component('inwardVehicleOrderDetailForm', {
         /* Range Slider Function */
         rangeSliderChange();
 
-        $scope.button_action = function(id, type) {
+        $scope.button_action = function (id, type) {
             if (type == 1) {
                 if (id == 1) {
                     $('.submit').button('loading');
@@ -1721,9 +1759,9 @@ app.component('inwardVehicleOrderDetailForm', {
 //------------------------------------------------------------------------------------------------------------------------
 app.component('inwardVehicleInventoryDetailForm', {
     templateUrl: inward_vehicle_inventory_detail_form_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         //for md-select search
-        $element.find('input').on('keydown', function(ev) {
+        $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
         });
 
@@ -1745,7 +1783,7 @@ app.component('inwardVehicleInventoryDetailForm', {
 
         $scope.job_order_id = $routeParams.job_order_id;
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $rootScope.loading = true;
             $.ajax({
                     url: base_url + '/api/vehicle-inward/inventory/get-form-data',
@@ -1754,7 +1792,7 @@ app.component('inwardVehicleInventoryDetailForm', {
                         id: $routeParams.job_order_id
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     $rootScope.loading = false;
                     if (!res.success) {
                         showErrorNoty(res);
@@ -1765,14 +1803,14 @@ app.component('inwardVehicleInventoryDetailForm', {
                     $scope.extras = res.extras;
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     $rootScope.loading = false;
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
         $scope.fetchData();
 
-        $scope.showDiv = function(id) {
+        $scope.showDiv = function (id) {
             if (event.target.checked == true) {
                 $("#remarks_div_" + id).removeClass('ng-hide');
                 $("#remarks_div_" + id).val('');
@@ -1785,7 +1823,7 @@ app.component('inwardVehicleInventoryDetailForm', {
         }
 
         //Save Form Data 
-        $scope.saveInventoryForm = function(id) {
+        $scope.saveInventoryForm = function (id) {
             $('#slide_val').val($('#range_val').val());
             var form_id = '#inventory_form';
             var v = jQuery(form_id).validate({
@@ -1801,10 +1839,10 @@ app.component('inwardVehicleInventoryDetailForm', {
                         maxlength: 'Maximum 32 Characters',
                     },
                 },*/
-                invalidHandler: function(event, validator) {
+                invalidHandler: function (event, validator) {
                     custom_noty('error', 'You have errors, Please check all sections');
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(form_id)[0]);
                     $rootScope.loading = true;
                     $scope.button_action(id, 1);
@@ -1815,7 +1853,7 @@ app.component('inwardVehicleInventoryDetailForm', {
                             processData: false,
                             contentType: false,
                         })
-                        .done(function(res) {
+                        .done(function (res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
                                 $rootScope.loading = false;
@@ -1832,7 +1870,7 @@ app.component('inwardVehicleInventoryDetailForm', {
                                 $scope.$apply();
                             }
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             $rootScope.loading = false;
                             $scope.button_action(id, 2);
                             custom_noty('error', 'Something went wrong at server');
@@ -1845,7 +1883,7 @@ app.component('inwardVehicleInventoryDetailForm', {
         arrowDropdown();
 
         //Scrollable Tabs
-        setTimeout(function() {
+        setTimeout(function () {
             scrollableTabs();
         }, 1000);
 
@@ -1855,7 +1893,7 @@ app.component('inwardVehicleInventoryDetailForm', {
         /* Range Slider Function */
         rangeSliderChange();
 
-        $scope.button_action = function(id, type) {
+        $scope.button_action = function (id, type) {
             if (type == 1) {
                 if (id == 1) {
                     $('.submit').button('loading');
@@ -1880,9 +1918,9 @@ app.component('inwardVehicleInventoryDetailForm', {
 //------------------------------------------------------------------------------------------------------------------------
 app.component('inwardVehicleVocDetailForm', {
     templateUrl: inward_vehicle_voc_detail_form_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         //for md-select search
-        $element.find('input').on('keydown', function(ev) {
+        $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
         });
 
@@ -1905,18 +1943,18 @@ app.component('inwardVehicleVocDetailForm', {
         $scope.job_order_id = $routeParams.job_order_id;
 
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $.ajax({
                     url: base_url + '/api/vehicle-inward/voc/get-form-data',
                     method: "POST",
                     data: {
                         id: $routeParams.job_order_id
                     },
-                    beforeSend: function(xhr) {
+                    beforeSend: function (xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -1925,9 +1963,9 @@ app.component('inwardVehicleVocDetailForm', {
                     // self.job_order = $scope.job_order = res.job_order;
                     $scope.job_order = res.job_order;
                     $scope.extras = res.extras;
-                    angular.forEach($scope.job_order.customer_voices, function(value, key) {
+                    angular.forEach($scope.job_order.customer_voices, function (value, key) {
                         // console.log(value.id);
-                        setTimeout(function() {
+                        setTimeout(function () {
                             $scope.onSelectedVoc(value.id, key);
                         }, 500);
                     });
@@ -1937,21 +1975,21 @@ app.component('inwardVehicleVocDetailForm', {
                     $scope.action = res.action;
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
         $scope.fetchData();
 
         //Scrollable Tabs
-        setTimeout(function() {
+        setTimeout(function () {
             scrollableTabs();
         }, 1000);
 
         // $('.voc_remark_details_0').hide();
-        $scope.onSelectedVoc = function(id, index) {
+        $scope.onSelectedVoc = function (id, index) {
             $scope.previous_customer_voice_ids = [];
-            angular.forEach($scope.job_order.previous_customer_voice_ids, function(value, key) {
+            angular.forEach($scope.job_order.previous_customer_voice_ids, function (value, key) {
                 $scope.previous_customer_voice_ids.push(value);
             });
 
@@ -1978,7 +2016,7 @@ app.component('inwardVehicleVocDetailForm', {
         }
 
         //Save Form Data 
-        $scope.saveVocDetailForm = function(id) {
+        $scope.saveVocDetailForm = function (id) {
             var voc_form_id = '#voc_form';
             var v = jQuery(voc_form_id).validate({
                 ignore: '',
@@ -1986,10 +2024,10 @@ app.component('inwardVehicleVocDetailForm', {
                 // },
                 // messages: {
                 // },
-                invalidHandler: function(event, validator) {
+                invalidHandler: function (event, validator) {
                     custom_noty('error', 'You have errors, Please check all fields');
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(voc_form_id)[0]);
                     $rootScope.loading = true;
                     $scope.button_action(id, 1);
@@ -2000,7 +2038,7 @@ app.component('inwardVehicleVocDetailForm', {
                             processData: false,
                             contentType: false,
                         })
-                        .done(function(res) {
+                        .done(function (res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
                                 $rootScope.loading = false;
@@ -2017,7 +2055,7 @@ app.component('inwardVehicleVocDetailForm', {
                                 $scope.$apply();
                             }
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             $rootScope.loading = false;
                             $scope.button_action(id, 2);
                             custom_noty('error', 'Something went wrong at server');
@@ -2026,13 +2064,13 @@ app.component('inwardVehicleVocDetailForm', {
             });
         }
 
-        $scope.addNewCustomerVoice = function() {
+        $scope.addNewCustomerVoice = function () {
             $scope.job_order.customer_voices.push({
                 id: '',
             });
         }
 
-        self.removeCustomerVoice = function(index) {
+        self.removeCustomerVoice = function (index) {
             // if (index == 6) {
             //     $scope.job_order.customer_voices.splice(index, 1);
             //     $('#voc_remark_details').hide();
@@ -2044,7 +2082,7 @@ app.component('inwardVehicleVocDetailForm', {
         /* Image Uploadify Funtion */
         $('.image_uploadify').imageuploadify();
 
-        $scope.button_action = function(id, type) {
+        $scope.button_action = function (id, type) {
             if (type == 1) {
                 if (id == 1) {
                     $('.submit').button('loading');
@@ -2070,9 +2108,9 @@ app.component('inwardVehicleVocDetailForm', {
 
 app.component('inwardVehicleRoadTestDetailForm', {
     templateUrl: inward_vehicle_road_test_detail_form_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         //for md-select search
-        $element.find('input').on('keydown', function(ev) {
+        $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
         });
 
@@ -2095,18 +2133,18 @@ app.component('inwardVehicleRoadTestDetailForm', {
 
         $scope.job_order_id = $routeParams.job_order_id;
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $.ajax({
                     url: base_url + '/api/vehicle-inward/road-test-observation/get-form-data',
                     method: "POST",
                     data: {
                         id: $routeParams.job_order_id
                     },
-                    beforeSend: function(xhr) {
+                    beforeSend: function (xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -2126,19 +2164,19 @@ app.component('inwardVehicleRoadTestDetailForm', {
 
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
         $scope.fetchData();
 
         //Scrollable Tabs
-        setTimeout(function() {
+        setTimeout(function () {
             scrollableTabs();
         }, 1000);
 
         //Save Form Data 
-        $scope.saveRoadTestDetailForm = function(id) {
+        $scope.saveRoadTestDetailForm = function (id) {
             var form_id = '#road_test_form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -2159,7 +2197,7 @@ app.component('inwardVehicleRoadTestDetailForm', {
                     //     required: true,
                     // },
                 },
-                errorPlacement: function(error, element) {
+                errorPlacement: function (error, element) {
                     if (element.attr("name") == "is_road_test_required") {
                         error.appendTo('#errorRoadTestRequired');
                         return;
@@ -2178,10 +2216,10 @@ app.component('inwardVehicleRoadTestDetailForm', {
                 messages: {
 
                 },
-                invalidHandler: function(event, validator) {
+                invalidHandler: function (event, validator) {
                     custom_noty('error', 'You have errors, Please check all tabs');
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(form_id)[0]);
                     $scope.button_action(id, 1);
                     $.ajax({
@@ -2191,7 +2229,7 @@ app.component('inwardVehicleRoadTestDetailForm', {
                             processData: false,
                             contentType: false,
                         })
-                        .done(function(res) {
+                        .done(function (res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
                                 showErrorNoty(res);
@@ -2208,7 +2246,7 @@ app.component('inwardVehicleRoadTestDetailForm', {
                                 $scope.$apply();
                             }
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             $scope.button_action(id, 2);
                             custom_noty('error', 'Something went wrong at server');
                         });
@@ -2216,7 +2254,7 @@ app.component('inwardVehicleRoadTestDetailForm', {
             });
         }
 
-        $scope.button_action = function(id, type) {
+        $scope.button_action = function (id, type) {
             if (type == 1) {
                 if (id == 1) {
                     $('.submit').button('loading');
@@ -2244,8 +2282,8 @@ app.component('inwardVehicleRoadTestDetailForm', {
 //Vehicle Diagonis Details
 app.component('inwardVehicleExpertDiagnosisDetailForm', {
     templateUrl: inward_vehicle_export_diagnosis_details_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
-        $element.find('input').on('keydown', function(ev) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
         });
         var self = this;
@@ -2265,18 +2303,18 @@ app.component('inwardVehicleExpertDiagnosisDetailForm', {
 
         $scope.job_order_id = $routeParams.job_order_id;
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $.ajax({
                     url: base_url + '/api/vehicle-inward/expert-diagnosis-report/get-form-data',
                     method: "POST",
                     data: {
                         id: $routeParams.job_order_id
                     },
-                    beforeSend: function(xhr) {
+                    beforeSend: function (xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -2292,19 +2330,19 @@ app.component('inwardVehicleExpertDiagnosisDetailForm', {
 
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
         $scope.fetchData();
 
         //Scrollable Tabs
-        setTimeout(function() {
+        setTimeout(function () {
             scrollableTabs();
         }, 1000);
 
         //Save Form Data 
-        $scope.saveExportDiagonis = function(id) {
+        $scope.saveExportDiagonis = function (id) {
             var form_id = '#form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -2319,23 +2357,23 @@ app.component('inwardVehicleExpertDiagnosisDetailForm', {
                 messages: {
 
                 },
-                invalidHandler: function(event, validator) {
+                invalidHandler: function (event, validator) {
                     custom_noty('error', 'You have errors, Please check all tabs');
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(form_id)[0]);
                     $scope.button_action(id, 1);
                     $.ajax({
                             url: base_url + '/api/vehicle-inward/expert-diagnosis-report/save',
                             method: "POST",
                             data: formData,
-                            beforeSend: function(xhr) {
+                            beforeSend: function (xhr) {
                                 xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                             },
                             processData: false,
                             contentType: false,
                         })
-                        .done(function(res) {
+                        .done(function (res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
                                 showErrorNoty(res);
@@ -2350,7 +2388,7 @@ app.component('inwardVehicleExpertDiagnosisDetailForm', {
                                 $scope.$apply();
                             }
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             $scope.button_action(id, 2);
                             custom_noty('error', 'Something went wrong at server');
                         });
@@ -2358,12 +2396,12 @@ app.component('inwardVehicleExpertDiagnosisDetailForm', {
             });
         }
 
-        $scope.showVehicleForm = function() {
+        $scope.showVehicleForm = function () {
             $scope.show_vehicle_detail = false;
             $scope.show_vehicle_form = true;
         }
 
-        $scope.button_action = function(id, type) {
+        $scope.button_action = function (id, type) {
             if (type == 1) {
                 if (id == 1) {
                     $('.submit').button('loading');
@@ -2392,8 +2430,8 @@ app.component('inwardVehicleExpertDiagnosisDetailForm', {
 //Vehicle Inspection Details
 app.component('inwardVehicleInspectionDetailForm', {
     templateUrl: inward_vehicle_inspection_detail_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
-        $element.find('input').on('keydown', function(ev) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
         });
         var self = this;
@@ -2412,18 +2450,18 @@ app.component('inwardVehicleInspectionDetailForm', {
 
         $scope.job_order_id = $routeParams.job_order_id;
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $.ajax({
                     url: base_url + '/api/vehicle-inward/vehicle-inspection/get-form-data',
                     method: "POST",
                     data: {
                         id: $routeParams.job_order_id
                     },
-                    beforeSend: function(xhr) {
+                    beforeSend: function (xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -2433,41 +2471,41 @@ app.component('inwardVehicleInspectionDetailForm', {
                     $scope.vehicle_inspection_item_groups = res.vehicle_inspection_item_groups;
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
         $scope.fetchData();
 
         //Scrollable Tabs
-        setTimeout(function() {
+        setTimeout(function () {
             scrollableTabs();
         }, 1000);
 
         //Save Form Data 
-        $scope.saveInspectionReport = function(id) {
+        $scope.saveInspectionReport = function (id) {
             var form_id = '#form';
             var v = jQuery(form_id).validate({
                 ignore: '',
                 rules: {},
                 messages: {},
-                invalidHandler: function(event, validator) {
+                invalidHandler: function (event, validator) {
                     custom_noty('error', 'You have errors, Please check all tabs');
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(form_id)[0]);
                     $scope.button_action(id, 1);
                     $.ajax({
                             url: base_url + '/api/vehicle-inward/vehicle-inspection/save',
                             method: "POST",
                             data: formData,
-                            beforeSend: function(xhr) {
+                            beforeSend: function (xhr) {
                                 xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                             },
                             processData: false,
                             contentType: false,
                         })
-                        .done(function(res) {
+                        .done(function (res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
                                 showErrorNoty(res);
@@ -2482,7 +2520,7 @@ app.component('inwardVehicleInspectionDetailForm', {
                                 $scope.$apply();
                             }
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             $scope.button_action(id, 2);
                             custom_noty('error', 'Something went wrong at server');
                         });
@@ -2490,12 +2528,12 @@ app.component('inwardVehicleInspectionDetailForm', {
             });
         }
 
-        $scope.showVehicleForm = function() {
+        $scope.showVehicleForm = function () {
             $scope.show_vehicle_detail = false;
             $scope.show_vehicle_form = true;
         }
 
-        $scope.button_action = function(id, type) {
+        $scope.button_action = function (id, type) {
             if (type == 1) {
                 if (id == 1) {
                     $('.submit').button('loading');
@@ -2524,8 +2562,8 @@ app.component('inwardVehicleInspectionDetailForm', {
 //DMS Check list
 app.component('inwardVehicleDmsCheckListForm', {
     templateUrl: inward_vehicle_dms_checklist_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
-        $element.find('input').on('keydown', function(ev) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
         });
         var self = this;
@@ -2547,28 +2585,28 @@ app.component('inwardVehicleDmsCheckListForm', {
         self.user = $scope.user = HelperService.getLoggedUser();
 
         /* Profile Upload */
-        setTimeout(function() {
+        setTimeout(function () {
             profileImgUpload();
         }, 1000);
 
-        setTimeout(function() {
+        setTimeout(function () {
             $('.image_uploadify').imageuploadify();
         }, 1000);
 
         $scope.job_order_id = $routeParams.job_order_id;
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $.ajax({
                     url: base_url + '/api/vehicle-inward/dms-checklist/get-form-data',
                     method: "POST",
                     data: {
                         id: $routeParams.job_order_id
                     },
-                    beforeSend: function(xhr) {
+                    beforeSend: function (xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -2603,22 +2641,22 @@ app.component('inwardVehicleDmsCheckListForm', {
 
                     $scope.$apply();
 
-                    setTimeout(function() {
+                    setTimeout(function () {
                         self.checkbox();
                     }, 1000);
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
         $scope.fetchData();
 
         //Scrollable Tabs
-        setTimeout(function() {
+        setTimeout(function () {
             scrollableTabs();
         }, 1000);
 
-        self.checkbox = function() {
+        self.checkbox = function () {
             if ($("#check_verify").prop('checked')) {
                 $('#check_val').val(1);
                 $(".btn-next").removeAttr("disabled");
@@ -2631,7 +2669,7 @@ app.component('inwardVehicleDmsCheckListForm', {
         }
 
         self.attachment_removal_id = [];
-        $scope.remove_attachment = function(attachment_id, index) {
+        $scope.remove_attachment = function (attachment_id, index) {
             console.log(attachment_id, index);
             if (attachment_id) {
                 self.attachment_removal_id.push(attachment_id);
@@ -2642,19 +2680,19 @@ app.component('inwardVehicleDmsCheckListForm', {
 
 
         $.validator.addMethod("greaterThan",
-            function(value, element, param) {
+            function (value, element, param) {
                 var $otherElement = $(param);
                 return parseInt(value, 10) > parseInt($otherElement.val(), 10);
             });
 
         //Save Form Data 
-        $scope.saveDms = function(id) {
+        $scope.saveDms = function (id) {
             var form_id = '#form';
             var v = jQuery(form_id).validate({
                 ignore: '',
                 rules: {
                     'ewp_expiry_date': {
-                        required: function(element) {
+                        required: function (element) {
                             if (self.exwarrany_status == '1') {
                                 return true;
                             }
@@ -2662,7 +2700,7 @@ app.component('inwardVehicleDmsCheckListForm', {
                         },
                     },
                     'warranty_expiry_attachment': {
-                        required: function(element) {
+                        required: function (element) {
                             if (self.amc_status == '1' && !$scope.job_order.warrenty_policy_attachment) {
                                 return true;
                             }
@@ -2670,7 +2708,7 @@ app.component('inwardVehicleDmsCheckListForm', {
                         },
                     },
                     'ewp_expiry_attachment': {
-                        required: function(element) {
+                        required: function (element) {
                             if (self.exwarrany_status == '1' && !$scope.job_order.e_w_p_attachment) {
                                 return true;
                             }
@@ -2720,10 +2758,10 @@ app.component('inwardVehicleDmsCheckListForm', {
                 messages: {
 
                 },
-                invalidHandler: function(event, validator) {
+                invalidHandler: function (event, validator) {
                     custom_noty('error', 'You have errors, Please check all fields');
                 },
-                errorPlacement: function(error, element) {
+                errorPlacement: function (error, element) {
                     if (element.hasClass("warranty_expiry_attachment")) {
                         custom_noty('error', 'AMC Photo is Required')
                     } else if (element.hasClass("ewp_expiry_attachment")) {
@@ -2734,20 +2772,20 @@ app.component('inwardVehicleDmsCheckListForm', {
                         error.insertAfter(element)
                     }
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(form_id)[0]);
                     $scope.button_action(id, 1);
                     $.ajax({
                             url: base_url + '/api/vehicle-inward/dms-checklist/save',
                             method: "POST",
                             data: formData,
-                            beforeSend: function(xhr) {
+                            beforeSend: function (xhr) {
                                 xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                             },
                             processData: false,
                             contentType: false,
                         })
-                        .done(function(res) {
+                        .done(function (res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
                                 showErrorNoty(res);
@@ -2762,7 +2800,7 @@ app.component('inwardVehicleDmsCheckListForm', {
                                 $scope.$apply();
                             }
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             $('.submit').button('reset');
                             custom_noty('error', 'Something went wrong at server');
                         });
@@ -2770,7 +2808,7 @@ app.component('inwardVehicleDmsCheckListForm', {
             });
         }
 
-        $scope.button_action = function(id, type) {
+        $scope.button_action = function (id, type) {
             if (type == 1) {
                 if (id == 1) {
                     $('.submit').button('loading');
@@ -2790,7 +2828,7 @@ app.component('inwardVehicleDmsCheckListForm', {
             }
         }
 
-        $scope.showVehicleForm = function() {
+        $scope.showVehicleForm = function () {
             $scope.show_vehicle_detail = false;
             $scope.show_vehicle_form = true;
         }
@@ -2805,8 +2843,8 @@ app.component('inwardVehicleDmsCheckListForm', {
 //Schedule Maintenance
 app.component('inwardVehicleScheduledMaintenanceForm', {
     templateUrl: inward_vehicle_schedule_maintenance_form_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, RepairOrderSvc, SplitOrderTypeSvc, PartSvc, $mdSelect) {
-        $element.find('input').on('keydown', function(ev) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, RepairOrderSvc, SplitOrderTypeSvc, PartSvc, $mdSelect) {
+        $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
         });
         var self = this;
@@ -2826,7 +2864,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
         self.user = $scope.user = HelperService.getLoggedUser();
 
         /* Modal Md Select Hide */
-        $('.modal').bind('click', function(event) {
+        $('.modal').bind('click', function (event) {
             if ($('.md-select-menu-container').hasClass('md-active')) {
                 $mdSelect.hide();
             }
@@ -2834,18 +2872,18 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
 
         $scope.job_order_id = $routeParams.job_order_id;
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $.ajax({
                     url: base_url + '/api/vehicle-inward/schedule-maintenance/get-form-data',
                     method: "POST",
                     data: {
                         id: $routeParams.job_order_id
                     },
-                    beforeSend: function(xhr) {
+                    beforeSend: function (xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -2862,18 +2900,18 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
 
                     self.repair_order_ids = [];
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
         $scope.fetchData();
 
         //Scrollable Tabs
-        setTimeout(function() {
+        setTimeout(function () {
             scrollableTabs();
         }, 1000);
 
-        self.checkbox = function() {
+        self.checkbox = function () {
             if ($("#check_verify").prop('checked')) {
                 $('#check_val').val(1);
             } else {
@@ -2881,10 +2919,10 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             }
         }
 
-        $scope.selectingRepairOrder = function(val) {
+        $scope.selectingRepairOrder = function (val) {
             if (val) {
                 list = [];
-                angular.forEach($scope.job_order.repair_order, function(value, key) {
+                angular.forEach($scope.job_order.repair_order, function (value, key) {
                     // angular.forEach($scope.parts_indent.repair_order, function(value, key) {
                     list.push(value.id);
                 });
@@ -2894,12 +2932,12 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             self.repair_order_ids = list;
         }
 
-        self.removeLabourDetails = function($id, $labour_id) {
+        self.removeLabourDetails = function ($id, $labour_id) {
             $('.delete_labour_details').val($id);
             $('.labour_detail_id').val($labour_id);
         }
 
-        $scope.deleteConfirm = function() {
+        $scope.deleteConfirm = function () {
             $id = $('.delete_labour_details').val();
             $labour_id = $('.labour_detail_id').val();
 
@@ -2910,7 +2948,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
 
             $scope.labour_details.splice($id, 1);
 
-            setTimeout(function() {
+            setTimeout(function () {
                 var total_labour_amount = 0;
                 for (var i = 0; i < $scope.labour_details.length; i++) {
                     var labour_amount = parseFloat($('#labour_amount_' + i).val());
@@ -2935,12 +2973,12 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             }, 1000);
         }
 
-        self.delete_parts_details = function($id, $part_id) {
+        self.delete_parts_details = function ($id, $part_id) {
             $('.delete_parts_details').val($id);
             $('.part_detail_id').val($part_id);
         }
 
-        $scope.saveLabour = function() {
+        $scope.saveLabour = function () {
             var form_id = '#labour_form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -2952,7 +2990,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                         required: true,
                     },
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(form_id)[0]);
                     $('.save_labour').button('loading');
                     $.ajax({
@@ -2962,7 +3000,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                             processData: false,
                             contentType: false,
                         })
-                        .done(function(res) {
+                        .done(function (res) {
                             if (!res.success) {
                                 $('.save_labour').button('reset');
                                 showErrorNoty(res);
@@ -2975,7 +3013,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                             $('.modal-backdrop').remove();
                             $scope.fetchData();
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             $('.save_labour').button('reset');
                             custom_noty('error', 'Something went wrong at server');
                         });
@@ -2983,7 +3021,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             });
         }
 
-        $scope.savePart = function() {
+        $scope.savePart = function () {
             var form_id = '#part_form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -2999,7 +3037,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                         required: true,
                     },
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(form_id)[0]);
                     $('.save_part').button('loading');
                     $.ajax({
@@ -3009,7 +3047,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                             processData: false,
                             contentType: false,
                         })
-                        .done(function(res) {
+                        .done(function (res) {
                             if (!res.success) {
                                 $('.save_part').button('reset');
                                 showErrorNoty(res);
@@ -3022,7 +3060,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                             $('.modal-backdrop').remove();
                             $scope.fetchData();
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             $('.submit').button('reset');
                             custom_noty('error', 'Something went wrong at server');
                         });
@@ -3030,7 +3068,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             });
         }
 
-        $scope.deletePartsConfirm = function() {
+        $scope.deletePartsConfirm = function () {
             $id = $('.delete_parts_details').val();
             $part_id = $('.part_detail_id').val();
 
@@ -3042,7 +3080,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             $scope.part_details.splice($id, 1);
 
             console.log($scope.part_details);
-            setTimeout(function() {
+            setTimeout(function () {
                 var total_part_amount = 0;
                 for (var i = 0; i < $scope.part_details.length; i++) {
                     var part_amount = parseFloat($('#part_amount_' + i).val());
@@ -3082,7 +3120,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
         }
 
         //Save Form Data 
-        $scope.saveSchedule = function(id) {
+        $scope.saveSchedule = function (id) {
             if (id == 1) {
                 $location.path('/inward-vehicle/table-list');
             } else {
@@ -3090,7 +3128,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             }
         }
 
-        $scope.button_action = function(id, type) {
+        $scope.button_action = function (id, type) {
             if (type == 1) {
                 if (id == 1) {
                     $('.submit').button('loading');
@@ -3110,12 +3148,12 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             }
         }
 
-        $scope.showVehicleForm = function() {
+        $scope.showVehicleForm = function () {
             $scope.show_vehicle_detail = false;
             $scope.show_vehicle_form = true;
         }
 
-        $scope.init = function() {
+        $scope.init = function () {
             $rootScope.loading = true;
             let promises = {
                 split_order_type_options: SplitOrderTypeSvc.options(),
@@ -3123,35 +3161,43 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
 
             $scope.options = {};
             $q.all(promises)
-                .then(function(responses) {
+                .then(function (responses) {
                     $scope.options.split_order_types = responses.split_order_type_options.data.options;
                     $rootScope.loading = false;
 
                 });
 
-            setTimeout(function() {
+            setTimeout(function () {
                 $scope.calculateLabourTotal();
                 $scope.calculatePartTotal();
             }, 2000);
         };
         $scope.init();
-        $scope.searchRepairOrders = function(query) {
-            return new Promise(function(resolve, reject) {
-                RepairOrderSvc.options({ filter: { search: query } })
-                    .then(function(response) {
+        $scope.searchRepairOrders = function (query) {
+            return new Promise(function (resolve, reject) {
+                RepairOrderSvc.options({
+                        filter: {
+                            search: query
+                        }
+                    })
+                    .then(function (response) {
                         resolve(response.data.options);
                     });
             });
         }
-        $scope.searchParts = function(query) {
-            return new Promise(function(resolve, reject) {
-                PartSvc.options({ filter: { search: query } })
-                    .then(function(response) {
+        $scope.searchParts = function (query) {
+            return new Promise(function (resolve, reject) {
+                PartSvc.options({
+                        filter: {
+                            search: query
+                        }
+                    })
+                    .then(function (response) {
                         resolve(response.data.options);
                     });
             });
         }
-        $scope.partSelected = function(part) {
+        $scope.partSelected = function (part) {
             $qty = 1;
             if (!part) {
                 return;
@@ -3176,8 +3222,11 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             //         $scope.schedule_maintainance_part.part.qty = $qty;
             //         $scope.calculatePartAmount();
             //     });
-            PartSvc.getFormData({ outletId: $scope.job_order.outlet_id, partId: part.id })
-                .then(function(response) {
+            PartSvc.getFormData({
+                    outletId: $scope.job_order.outlet_id,
+                    partId: part.id
+                })
+                .then(function (response) {
                     console.log(response);
 
                     $local_purchase_part = '(L)';
@@ -3186,9 +3235,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                     if ($part_code.indexOf($local_purchase_part) != -1) {
                         $scope.schedule_maintainance_part.part.mrp = 0;
                         $scope.mrp_change = 1;
-                    }
-                    else
-                    {
+                    } else {
                         $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
                         $scope.mrp_change = 0;
                     }
@@ -3204,12 +3251,12 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                     $scope.available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
                     $scope.schedule_maintainance_part.part.qty = $qty;
                     $scope.calculatePartAmount();
-                }).catch(function(error) {
+                }).catch(function (error) {
                     console.log(error);
                 });
 
         }
-        $scope.calculatePartAmount = function() {
+        $scope.calculatePartAmount = function () {
             if (!$scope.schedule_maintainance_part.part.pivot) {
                 $scope.schedule_maintainance_part.part.pivot = {};
             }
@@ -3218,7 +3265,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             $scope.schedule_maintainance_part.part.pivot.amount = $scope.schedule_maintainance_part.part.total_amount;
             $scope.calculatePartTotal();
         }
-        $scope.showLabourForm = function(labour_index, labour = null) {
+        $scope.showLabourForm = function (labour_index, labour = null) {
             $scope.schedule_maintainance_ro = [];
             $scope.repair_order_id = '';
             self.labour_customer_voice_id = '';
@@ -3234,13 +3281,13 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                         $split_id = labour.split_order_type_id;
                     }
                     SplitOrderTypeSvc.read($split_id)
-                        .then(function(response) {
+                        .then(function (response) {
                             $scope.schedule_maintainance_ro.split_order_type = response.data.split_order_type;
                         });
                 }
                 if (labour.category == undefined) {
                     RepairOrderSvc.read(labour.labour_id)
-                        .then(function(response) {
+                        .then(function (response) {
                             $scope.schedule_maintainance_ro.repair_order = response.data.repair_order;
 
                             if (labour.repair_order.is_editable == 1) {
@@ -3257,7 +3304,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             $('#labour_form_modal').modal('show');
         }
 
-        $scope.showPartForm = function(part_index, part = null) {
+        $scope.showPartForm = function (part_index, part = null) {
             // console.log(part);
             $scope.part_mrp = 0;
             $scope.part_id = '';
@@ -3274,7 +3321,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                 $scope.part_id = part.part_id;
                 $scope.job_order_part_id = part.id;
 
-                angular.forEach(part.repair_order, function(rep_order, key) {
+                angular.forEach(part.repair_order, function (rep_order, key) {
                     self.repair_order_ids.push(rep_order.id)
                 });
 
@@ -3286,7 +3333,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                         $split_id = part.split_order_type_id;
                     }
                     SplitOrderTypeSvc.read($split_id)
-                        .then(function(response) {
+                        .then(function (response) {
                             $scope.schedule_maintainance_part.split_order_type = response.data.split_order_type;
                         });
                 }
@@ -3298,13 +3345,16 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                     //         $scope.job_order.repair_order = $scope.repair_orders;
                     //         $scope.calculatePartAmount();
                     //     });
-                    PartSvc.getFormData({ outletId: $scope.job_order.outlet_id, partId: part.part_id })
-                        .then(function(response) {
+                    PartSvc.getFormData({
+                            outletId: $scope.job_order.outlet_id,
+                            partId: part.part_id
+                        })
+                        .then(function (response) {
                             $scope.schedule_maintainance_part.part = response.data.part;
                             $scope.schedule_maintainance_part.part.qty = part.qty;
                             $scope.job_order.repair_order = $scope.repair_orders;
                             $scope.calculatePartAmount();
-                        }).catch(function(error) {
+                        }).catch(function (error) {
                             console.log(error);
                         });
                 }
@@ -3333,10 +3383,10 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             messages: {
 
             },
-            invalidHandler: function(event, validator) {
+            invalidHandler: function (event, validator) {
                 custom_noty('error', 'You have errors, Please check all fields');
             },
-            submitHandler: function(form) {
+            submitHandler: function (form) {
 
                 $scope.schedule_maintainance_part.part.split_order_type = $scope.schedule_maintainance_part.split_order_type.name;
                 $scope.schedule_maintainance_part.part.type = $scope.schedule_maintainance_part.part.tax_code.code;
@@ -3344,7 +3394,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                 $scope.schedule_maintainance_part.part.split_order_type_id = $scope.schedule_maintainance_part.split_order_type.id;
                 // $scope.schedule_maintainance_part.part.name = $scope.schedule_maintainance_part.part.code + ' | ' + $scope.schedule_maintainance_part.part.name;
                 if ($scope.part_modal_action == 'Add') {
-                    angular.forEach($scope.part_details, function(part, key) {
+                    angular.forEach($scope.part_details, function (part, key) {
                         if (part.name == $scope.schedule_maintainance_part.part.name) {
                             $scope.part_details.splice(key, 1);
                         }
@@ -3374,17 +3424,17 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             messages: {
 
             },
-            invalidHandler: function(event, validator) {
+            invalidHandler: function (event, validator) {
                 custom_noty('error', 'You have errors, Please check all fields');
             },
-            submitHandler: function(form) {
+            submitHandler: function (form) {
                 $scope.schedule_maintainance_ro.repair_order.split_order_type_id = $scope.schedule_maintainance_ro.split_order_type.id;
                 $scope.schedule_maintainance_ro.repair_order.split_order_type = $scope.schedule_maintainance_ro.split_order_type.name;
                 $scope.schedule_maintainance_ro.repair_order.qty = $scope.schedule_maintainance_ro.repair_order.hours;
                 $scope.schedule_maintainance_ro.repair_order.type = $scope.schedule_maintainance_ro.repair_order.category.name;
                 // $scope.schedule_maintainance_ro.repair_order.name = $scope.schedule_maintainance_ro.repair_order.code + ' | ' + $scope.schedule_maintainance_ro.repair_order.name;
                 if ($scope.labour_modal_action == 'Add') {
-                    angular.forEach($scope.labour_details, function(labour, key) {
+                    angular.forEach($scope.labour_details, function (labour, key) {
                         if (labour.name == $scope.schedule_maintainance_ro.repair_order.name) {
                             $scope.labour_details.splice(key, 1);
                         }
@@ -3402,9 +3452,9 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                 $('.modal-backdrop').remove();
             }
         });
-        $scope.calculateLabourTotal = function() {
+        $scope.calculateLabourTotal = function () {
             $total_amount = 0;
-            angular.forEach($scope.labour_details, function(labour, key) {
+            angular.forEach($scope.labour_details, function (labour, key) {
                 if (labour.removal_reason_id == undefined || labour.removal_reason_id == null) {
                     $total_amount += parseFloat(labour.amount);
                 }
@@ -3412,9 +3462,9 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             $scope.labour_amount = $total_amount.toFixed(2);
             $scope.calculateTotalLabourParts();
         }
-        $scope.calculatePartTotal = function() {
+        $scope.calculatePartTotal = function () {
             $total_amount = 0;
-            angular.forEach($scope.part_details, function(part, key) {
+            angular.forEach($scope.part_details, function (part, key) {
                 if (part.removal_reason_id == null || part.removal_reason_id == undefined) {
                     $total_amount += parseFloat(part.amount);
                 }
@@ -3422,12 +3472,12 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             $scope.parts_rate = $total_amount.toFixed(2);
             $scope.calculateTotalLabourParts();
         }
-        $scope.calculateTotalLabourParts = function() {
+        $scope.calculateTotalLabourParts = function () {
             $scope.total_amount = parseFloat($scope.parts_rate) + parseFloat($scope.labour_amount);
             $scope.total_amount = $scope.total_amount.toFixed(2);
         }
 
-        $scope.removeScheduledPart = function(index, id, type) {
+        $scope.removeScheduledPart = function (index, id, type) {
             if (id == undefined) {
                 $scope.part_details.splice(index, 1);
                 $scope.calculatePartTotal();
@@ -3440,7 +3490,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                 $scope.laboutPartsDelete(index, id, type);
             }
         }
-        $scope.removeScheduledLabour = function(index, id, type) {
+        $scope.removeScheduledLabour = function (index, id, type) {
             // console.log(index, id, type);
             $scope.delete_reason = 10021;
             $('#removal_reason').val('');
@@ -3450,12 +3500,12 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             $scope.laboutPartsDelete(index, id, type);
         }
 
-        $scope.laboutPartsDelete = function(index, id, type) {
+        $scope.laboutPartsDelete = function (index, id, type) {
             $('#delete_labour_parts').modal('show');
             $('#labour_parts_id').val(id);
             $('#payable_type').val(type);
 
-            $scope.saveLabourPartDeleteForm = function() {
+            $scope.saveLabourPartDeleteForm = function () {
                 var delete_form_id = '#labour_parts_remove';
                 var v = jQuery(delete_form_id).validate({
                     ignore: '',
@@ -3467,7 +3517,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                             required: true,
                         },
                     },
-                    errorPlacement: function(error, element) {
+                    errorPlacement: function (error, element) {
                         if (element.attr("name") == "removal_reason_id") {
                             error.appendTo('#errorDeleteReasonRequired');
                             return;
@@ -3475,7 +3525,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                             error.insertAfter(element);
                         }
                     },
-                    submitHandler: function(form) {
+                    submitHandler: function (form) {
                         let formData = new FormData($(delete_form_id)[0]);
                         $rootScope.loading = true;
                         $.ajax({
@@ -3485,7 +3535,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                                 processData: false,
                                 contentType: false,
                             })
-                            .done(function(res) {
+                            .done(function (res) {
                                 if (!res.success) {
                                     $rootScope.loading = false;
                                     showErrorNoty(res);
@@ -3497,7 +3547,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                                 $scope.fetchData();
                                 custom_noty('success', res.message);
                             })
-                            .fail(function(xhr) {
+                            .fail(function (xhr) {
                                 $rootScope.loading = false;
                                 $scope.button_action(id, 2);
                                 custom_noty('error', 'Something went wrong at server');
@@ -3514,9 +3564,9 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
 //------------------------------------------------------------------------------------------------------------------------
 app.component('inwardVehiclePayableLabourPartForm', {
     templateUrl: inward_vehicle_payable_labour_part_form_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, RepairOrderSvc, SplitOrderTypeSvc, PartSvc, $mdSelect) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, RepairOrderSvc, SplitOrderTypeSvc, PartSvc, $mdSelect) {
         //for md-select search
-        $element.find('input').on('keydown', function(ev) {
+        $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
         });
 
@@ -3533,7 +3583,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
         self.angular_routes = angular_routes;
 
         /* Modal Md Select Hide */
-        $('.modal').bind('click', function(event) {
+        $('.modal').bind('click', function (event) {
             if ($('.md-select-menu-container').hasClass('md-active')) {
                 $mdSelect.hide();
             }
@@ -3545,7 +3595,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
         $scope.job_order_id = $routeParams.job_order_id;
 
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $rootScope.loading = true;
             $.ajax({
                     url: base_url + '/api/vehicle-inward/addtional-rot-part/get-form-data',
@@ -3554,7 +3604,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                         id: $routeParams.job_order_id
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     $rootScope.loading = false;
                     if (!res.success) {
                         showErrorNoty(res);
@@ -3573,7 +3623,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                     self.repair_order_ids = [];
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     $rootScope.loading = false;
                     custom_noty('error', 'Something went wrong at server');
                 });
@@ -3581,12 +3631,12 @@ app.component('inwardVehiclePayableLabourPartForm', {
         $scope.fetchData();
 
         //Scrollable Tabs
-        setTimeout(function() {
+        setTimeout(function () {
             scrollableTabs();
         }, 1000);
 
         //Save Form Data 
-        $scope.savePayableForm = function(id) {
+        $scope.savePayableForm = function (id) {
             // var form_id = '#payable_form';
             // var v = jQuery(form_id).validate({
             //     ignore: '',
@@ -3626,10 +3676,10 @@ app.component('inwardVehiclePayableLabourPartForm', {
             // });
         }
 
-        $scope.selectingRepairOrder = function(val) {
+        $scope.selectingRepairOrder = function (val) {
             if (val) {
                 list = [];
-                angular.forEach($scope.job_order.repair_order, function(value, key) {
+                angular.forEach($scope.job_order.repair_order, function (value, key) {
                     // angular.forEach($scope.parts_indent.repair_order, function(value, key) {
                     list.push(value.id);
                 });
@@ -3639,7 +3689,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
             self.repair_order_ids = list;
         }
 
-        $scope.saveLabour = function() {
+        $scope.saveLabour = function () {
             var form_id = '#labour_form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -3651,7 +3701,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                         required: true,
                     },
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(form_id)[0]);
                     $('.save_labour').button('loading');
                     $.ajax({
@@ -3661,7 +3711,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                             processData: false,
                             contentType: false,
                         })
-                        .done(function(res) {
+                        .done(function (res) {
                             if (!res.success) {
                                 $('.save_labour').button('reset');
                                 showErrorNoty(res);
@@ -3674,7 +3724,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                             $('.modal-backdrop').remove();
                             $scope.fetchData();
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             $('.save_labour').button('reset');
                             custom_noty('error', 'Something went wrong at server');
                         });
@@ -3682,7 +3732,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
             });
         }
 
-        $scope.savePart = function() {
+        $scope.savePart = function () {
             var form_id = '#part_form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -3698,7 +3748,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                         required: true,
                     },
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(form_id)[0]);
                     $('.save_part').button('loading');
                     $.ajax({
@@ -3708,7 +3758,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                             processData: false,
                             contentType: false,
                         })
-                        .done(function(res) {
+                        .done(function (res) {
                             if (!res.success) {
                                 $('.save_part').button('reset');
                                 showErrorNoty(res);
@@ -3721,7 +3771,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                             $('.modal-backdrop').remove();
                             $scope.fetchData();
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             $('.submit').button('reset');
                             custom_noty('error', 'Something went wrong at server');
                         });
@@ -3729,7 +3779,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
             });
         }
 
-        $scope.init = function() {
+        $scope.init = function () {
             $rootScope.loading = true;
             let promises = {
                 split_order_type_options: SplitOrderTypeSvc.options(),
@@ -3737,35 +3787,43 @@ app.component('inwardVehiclePayableLabourPartForm', {
 
             $scope.options = {};
             $q.all(promises)
-                .then(function(responses) {
+                .then(function (responses) {
                     $scope.options.split_order_types = responses.split_order_type_options.data.options;
                     $rootScope.loading = false;
 
                 });
 
-            setTimeout(function() {
+            setTimeout(function () {
                 $scope.calculateLabourTotal();
                 $scope.calculatePartTotal();
             }, 2000);
         };
         $scope.init();
-        $scope.searchRepairOrders = function(query) {
-            return new Promise(function(resolve, reject) {
-                RepairOrderSvc.options({ filter: { search: query } })
-                    .then(function(response) {
+        $scope.searchRepairOrders = function (query) {
+            return new Promise(function (resolve, reject) {
+                RepairOrderSvc.options({
+                        filter: {
+                            search: query
+                        }
+                    })
+                    .then(function (response) {
                         resolve(response.data.options);
                     });
             });
         }
-        $scope.searchParts = function(query) {
-            return new Promise(function(resolve, reject) {
-                PartSvc.options({ filter: { search: query } })
-                    .then(function(response) {
+        $scope.searchParts = function (query) {
+            return new Promise(function (resolve, reject) {
+                PartSvc.options({
+                        filter: {
+                            search: query
+                        }
+                    })
+                    .then(function (response) {
                         resolve(response.data.options);
                     });
             });
         }
-        $scope.partSelected = function(part) {
+        $scope.partSelected = function (part) {
             $qty = 1;
             if (!part) {
                 return;
@@ -3789,8 +3847,11 @@ app.component('inwardVehiclePayableLabourPartForm', {
             //         $scope.schedule_maintainance_part.part.qty = $qty;
             //         $scope.calculatePartAmount();
             //     });
-            PartSvc.getFormData({ outletId: $scope.job_order.outlet_id, partId: part.id })
-                .then(function(response) {
+            PartSvc.getFormData({
+                    outletId: $scope.job_order.outlet_id,
+                    partId: part.id
+                })
+                .then(function (response) {
                     console.log(response);
                     // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.stock > 0 ? response.data.part.part_stock.mrp : '0' : '0';
 
@@ -3800,9 +3861,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                     if ($part_code.indexOf($local_purchase_part) != -1) {
                         $scope.schedule_maintainance_part.part.mrp = 0;
                         $scope.mrp_change = 1;
-                    }
-                    else
-                    {
+                    } else {
                         $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
                         $scope.mrp_change = 0;
                     }
@@ -3816,12 +3875,12 @@ app.component('inwardVehiclePayableLabourPartForm', {
                     $scope.available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
                     $scope.schedule_maintainance_part.part.qty = $qty;
                     $scope.calculatePartAmount();
-                }).catch(function(error) {
+                }).catch(function (error) {
                     console.log(error);
                 });
 
         }
-        $scope.calculatePartAmount = function() {
+        $scope.calculatePartAmount = function () {
             if (!$scope.schedule_maintainance_part.part.pivot) {
                 $scope.schedule_maintainance_part.part.pivot = {};
             }
@@ -3830,7 +3889,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
             $scope.schedule_maintainance_part.part.pivot.amount = $scope.schedule_maintainance_part.part.total_amount;
             $scope.calculatePartTotal();
         }
-        $scope.showLabourForm = function(labour_index, labour = null) {
+        $scope.showLabourForm = function (labour_index, labour = null) {
             $scope.schedule_maintainance_ro = [];
             $scope.repair_order_id = '';
             self.labour_customer_voice_id = '';
@@ -3848,14 +3907,14 @@ app.component('inwardVehiclePayableLabourPartForm', {
                         $split_id = labour.split_order_type_id;
                     }
                     SplitOrderTypeSvc.read($split_id)
-                        .then(function(response) {
+                        .then(function (response) {
                             $scope.schedule_maintainance_ro.split_order_type = response.data.split_order_type;
                         });
                 }
                 $scope.schedule_maintainance_ro.repair_order = labour;
                 if (labour.category == undefined) {
                     RepairOrderSvc.read(labour.labour_id)
-                        .then(function(response) {
+                        .then(function (response) {
                             $scope.schedule_maintainance_ro.repair_order = response.data.repair_order;
 
                             if (labour.repair_order.is_editable == 1) {
@@ -3869,7 +3928,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
             $scope.labour_modal_action = labour_index === false ? 'Add' : 'Edit';
             $('#labour_form_modal').modal('show');
         }
-        $scope.showPartForm = function(part_index, part = null) {
+        $scope.showPartForm = function (part_index, part = null) {
             // console.log(part.qty);
             // console.log(part);
             $scope.part_mrp = 0;
@@ -3887,7 +3946,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                 $scope.part_id = part.part_id;
                 $scope.job_order_part_id = part.id;
 
-                angular.forEach(part.repair_order, function(rep_order, key) {
+                angular.forEach(part.repair_order, function (rep_order, key) {
                     self.repair_order_ids.push(rep_order.id)
                 });
                 $scope.repair_orders = part.repair_order;
@@ -3898,7 +3957,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                         $split_id = part.split_order_type_id;
                     }
                     SplitOrderTypeSvc.read($split_id)
-                        .then(function(response) {
+                        .then(function (response) {
                             $scope.schedule_maintainance_part.split_order_type = response.data.split_order_type;
                         });
                 }
@@ -3910,13 +3969,16 @@ app.component('inwardVehiclePayableLabourPartForm', {
                     //         $scope.job_order.repair_order = $scope.repair_orders;
                     //         $scope.calculatePartAmount();
                     //     });
-                    PartSvc.getFormData({ outletId: $scope.job_order.outlet_id, partId: part.part_id })
-                        .then(function(response) {
+                    PartSvc.getFormData({
+                            outletId: $scope.job_order.outlet_id,
+                            partId: part.part_id
+                        })
+                        .then(function (response) {
                             $scope.schedule_maintainance_part.part = response.data.part;
                             $scope.schedule_maintainance_part.part.qty = part.qty;
                             $scope.job_order.repair_order = $scope.repair_orders;
                             $scope.calculatePartAmount();
-                        }).catch(function(error) {
+                        }).catch(function (error) {
                             console.log(error);
                         });
                 }
@@ -3928,7 +3990,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
             $('#part_form_modal').modal('show');
         }
 
-        $scope.button_action = function(id, type) {
+        $scope.button_action = function (id, type) {
             if (type == 1) {
                 if (id == 1) {
                     $('.submit').button('loading');
@@ -3951,7 +4013,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
         arrowDropdown();
 
         // self.remove_job_order_part_ids = [];
-        $scope.removePayablePart = function(index, id, type) {
+        $scope.removePayablePart = function (index, id, type) {
             // console.log(index, id, type);
             $scope.delete_reason = 10021;
             $('#removal_reason').val('');
@@ -3967,7 +4029,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
             // $scope.calTotal();
         }
         // self.remove_job_order_repair_order_ids = [];
-        $scope.removePayableLabour = function(index, id, type) {
+        $scope.removePayableLabour = function (index, id, type) {
             // console.log(index, id, type);
             $scope.delete_reason = 10021;
             $('#removal_reason').val('');
@@ -3984,12 +4046,12 @@ app.component('inwardVehiclePayableLabourPartForm', {
             // $scope.calTotal();
         }
 
-        $scope.laboutPartsDelete = function(index, id, type) {
+        $scope.laboutPartsDelete = function (index, id, type) {
             $('#delete_labour_parts').modal('show');
             $('#labour_parts_id').val(id);
             $('#payable_type').val(type);
 
-            $scope.saveLabourPartDeleteForm = function() {
+            $scope.saveLabourPartDeleteForm = function () {
                 var form_id = '#labour_parts_remove';
                 var v = jQuery(form_id).validate({
                     ignore: '',
@@ -4001,7 +4063,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                             required: true,
                         },
                     },
-                    errorPlacement: function(error, element) {
+                    errorPlacement: function (error, element) {
                         if (element.attr("name") == "removal_reason_id") {
                             error.appendTo('#errorDeleteReasonRequired');
                             return;
@@ -4009,7 +4071,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                             error.insertAfter(element);
                         }
                     },
-                    submitHandler: function(form) {
+                    submitHandler: function (form) {
                         let formData = new FormData($(form_id)[0]);
                         $rootScope.loading = true;
                         // $scope.button_action(id, 1);
@@ -4020,7 +4082,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                                 processData: false,
                                 contentType: false,
                             })
-                            .done(function(res) {
+                            .done(function (res) {
                                 // $scope.button_action(id, 2);
                                 if (!res.success) {
                                     $rootScope.loading = false;
@@ -4040,7 +4102,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                                 //     $scope.$apply();
                                 // }
                             })
-                            .fail(function(xhr) {
+                            .fail(function (xhr) {
                                 $rootScope.loading = false;
                                 $scope.button_action(id, 2);
                                 custom_noty('error', 'Something went wrong at server');
@@ -4049,9 +4111,9 @@ app.component('inwardVehiclePayableLabourPartForm', {
                 });
             }
         }
-        $scope.calculateLabourTotal = function() {
+        $scope.calculateLabourTotal = function () {
             $total_amount = 0;
-            angular.forEach($scope.labour_details, function(labour, key) {
+            angular.forEach($scope.labour_details, function (labour, key) {
                 if (labour.removal_reason_id == undefined || labour.removal_reason_id == null) {
                     $total_amount += parseFloat(labour.amount);
                 }
@@ -4059,9 +4121,9 @@ app.component('inwardVehiclePayableLabourPartForm', {
             $scope.labour_amount = $total_amount.toFixed(2);
             // $scope.calculateTotalLabourParts();
         }
-        $scope.calculatePartTotal = function() {
+        $scope.calculatePartTotal = function () {
             $total_amount = 0;
-            angular.forEach($scope.part_details, function(part, key) {
+            angular.forEach($scope.part_details, function (part, key) {
                 if (part.removal_reason_id == null || part.removal_reason_id == undefined) {
                     $total_amount += parseFloat(part.amount);
                 }
@@ -4073,7 +4135,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
         /* Image Uploadify Funtion */
         $('.image_uploadify').imageuploadify();
 
-        $scope.sendConfirm = function() {
+        $scope.sendConfirm = function () {
             var job_order_id = $scope.job_order.id;
             if (job_order_id) {
                 $('.send_confirm').button('loading');
@@ -4085,7 +4147,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                             type_id: 1,
                         },
                     })
-                    .done(function(res) {
+                    .done(function (res) {
                         $('.send_confirm').button('reset');
                         if (!res.success) {
                             showErrorNoty(res);
@@ -4099,7 +4161,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                         window.location = "#!/inward-vehicle/table-list";
                         // $scope.fetchData();
                     })
-                    .fail(function(xhr) {
+                    .fail(function (xhr) {
                         $('.send_confirm').button('reset');
                     });
             }
@@ -4111,9 +4173,9 @@ app.component('inwardVehiclePayableLabourPartForm', {
 //------------------------------------------------------------------------------------------------------------------------
 app.component('inwardVehiclePayableAddPartForm', {
     templateUrl: inward_vehicle_payable_labour_part_add_part_form_template_url,
-    controller: function($http, $location, HelperService, $scope, $route, $routeParams, $rootScope, $element) {
+    controller: function ($http, $location, HelperService, $scope, $route, $routeParams, $rootScope, $element) {
         //for md-select search
-        $element.find('input').on('keydown', function(ev) {
+        $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
         });
 
@@ -4137,7 +4199,7 @@ app.component('inwardVehiclePayableAddPartForm', {
         }
 
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $.ajax({
                     url: base_url + '/api/vehicle-inward/part-list/get',
                     method: "POST",
@@ -4145,7 +4207,7 @@ app.component('inwardVehiclePayableAddPartForm', {
                         id: $routeParams.job_order_id
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -4158,28 +4220,28 @@ app.component('inwardVehiclePayableAddPartForm', {
                     }
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
         $scope.fetchData();
 
         //Scrollable Tabs
-        setTimeout(function() {
+        setTimeout(function () {
             scrollableTabs();
         }, 1000);
 
         //GET PART LIST
-        self.searchPart = function(query) {
+        self.searchPart = function (query) {
             if (query) {
-                return new Promise(function(resolve, reject) {
+                return new Promise(function (resolve, reject) {
                     $http
                         .post(
                             laravel_routes['getPartSearchList'], {
                                 key: query,
                             }
                         )
-                        .then(function(response) {
+                        .then(function (response) {
                             resolve(response.data);
                         });
                     //reject(response);
@@ -4189,7 +4251,7 @@ app.component('inwardVehiclePayableAddPartForm', {
             }
         }
 
-        $scope.getJobOrderPartFormData = function(job_order_part_id) {
+        $scope.getJobOrderPartFormData = function (job_order_part_id) {
             $.ajax({
                     url: base_url + '/api/vehicle-inward/job_order-part/get-form-data',
                     method: "POST",
@@ -4198,7 +4260,7 @@ app.component('inwardVehiclePayableAddPartForm', {
                         job_order_id: $routeParams.job_order_id
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -4214,7 +4276,7 @@ app.component('inwardVehiclePayableAddPartForm', {
                     self.part = res.job_order_part.part;
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
@@ -4223,7 +4285,7 @@ app.component('inwardVehiclePayableAddPartForm', {
             $scope.getJobOrderPartFormData($scope.job_order_part_id);
         }
 
-        $scope.getPartFormData = function(part_id) {
+        $scope.getPartFormData = function (part_id) {
             if (!part_id) {
                 $scope.job_order_part = [];
                 return;
@@ -4236,7 +4298,7 @@ app.component('inwardVehiclePayableAddPartForm', {
                         job_order_id: $routeParams.job_order_id
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -4253,12 +4315,12 @@ app.component('inwardVehiclePayableAddPartForm', {
                     }
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
 
-        $scope.onChangeQty = function() {
+        $scope.onChangeQty = function () {
             if (!isNaN(self.qty)) {
                 $scope.job_order_part.qty = self.qty;
             } else {
@@ -4268,7 +4330,7 @@ app.component('inwardVehiclePayableAddPartForm', {
         }
 
         //Save Form Data 
-        $scope.savePartForm = function() {
+        $scope.savePartForm = function () {
             var form_id = '#part_form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -4284,7 +4346,7 @@ app.component('inwardVehiclePayableAddPartForm', {
                         required: true,
                     },
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(form_id)[0]);
                     $('.submit').button('loading');
                     $.ajax({
@@ -4294,7 +4356,7 @@ app.component('inwardVehiclePayableAddPartForm', {
                             processData: false,
                             contentType: false,
                         })
-                        .done(function(res) {
+                        .done(function (res) {
                             if (!res.success) {
                                 $('.submit').button('reset');
                                 showErrorNoty(res);
@@ -4305,7 +4367,7 @@ app.component('inwardVehiclePayableAddPartForm', {
                             $location.path('/inward-vehicle/payable-labour-part-detail/form/' + $scope.job_order_id);
                             $scope.$apply();
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             $('.submit').button('reset');
                             custom_noty('error', 'Something went wrong at server');
                         });
@@ -4326,9 +4388,9 @@ app.component('inwardVehiclePayableAddPartForm', {
 //------------------------------------------------------------------------------------------------------------------------
 app.component('inwardVehiclePayableAddLabourForm', {
     templateUrl: inward_vehicle_payable_labour_part_add_labour_form_template_url,
-    controller: function($http, $location, HelperService, $scope, $route, $routeParams, $rootScope, $element) {
+    controller: function ($http, $location, HelperService, $scope, $route, $routeParams, $rootScope, $element) {
         //for md-select search
-        $element.find('input').on('keydown', function(ev) {
+        $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
         });
 
@@ -4352,7 +4414,7 @@ app.component('inwardVehiclePayableAddLabourForm', {
             self.action = 'Add';
         }
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $.ajax({
                     url: base_url + '/api/vehicle-inward/repair-order-type-list/get',
                     method: "POST",
@@ -4360,7 +4422,7 @@ app.component('inwardVehiclePayableAddLabourForm', {
                         id: $routeParams.job_order_id
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -4373,19 +4435,19 @@ app.component('inwardVehiclePayableAddLabourForm', {
                     }
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
         $scope.fetchData();
 
         //Scrollable Tabs
-        setTimeout(function() {
+        setTimeout(function () {
             scrollableTabs();
         }, 1000);
 
         //GET JOB ORDER ROT FORM DATA
-        $scope.getJobOrderRotFormData = function(job_order_repair_order_id) {
+        $scope.getJobOrderRotFormData = function (job_order_repair_order_id) {
             $.ajax({
                     url: base_url + '/api/vehicle-inward/job-order-repair-order/get-form-data',
                     method: "POST",
@@ -4393,7 +4455,7 @@ app.component('inwardVehiclePayableAddLabourForm', {
                         id: job_order_repair_order_id
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -4408,12 +4470,12 @@ app.component('inwardVehiclePayableAddLabourForm', {
                     $scope.job_order_labour.uom = res.job_order_repair_order.repair_order.uom;
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
         //GET ROT LIST BASE ON ROT TYPE
-        $scope.fetchRotData = function(id) {
+        $scope.fetchRotData = function (id) {
             $.ajax({
                     url: base_url + '/api/vehicle-inward/get-repair-order-list/get',
                     method: "POST",
@@ -4421,7 +4483,7 @@ app.component('inwardVehiclePayableAddLabourForm', {
                         id: id
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -4430,13 +4492,13 @@ app.component('inwardVehiclePayableAddLabourForm', {
                     $scope.split_order_list = res.split_order_list;
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
 
         //GET ROT FORM DATA BASED ON SELECTED ROT
-        $scope.getRotFormData = function(repair_order_id) {
+        $scope.getRotFormData = function (repair_order_id) {
             $.ajax({
                     url: base_url + '/api/vehicle-inward/repair-order/get-form-data',
                     method: "POST",
@@ -4444,7 +4506,7 @@ app.component('inwardVehiclePayableAddLabourForm', {
                         id: repair_order_id
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -4453,14 +4515,14 @@ app.component('inwardVehiclePayableAddLabourForm', {
                     $scope.job_order_labour.qty = res.repair_order.hours;
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
 
 
         //Save Form Data 
-        $scope.saveLabourForm = function() {
+        $scope.saveLabourForm = function () {
             var form_id = '#labour_form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -4475,7 +4537,7 @@ app.component('inwardVehiclePayableAddLabourForm', {
                         required: true,
                     },
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(form_id)[0]);
                     $('.submit').button('loading');
                     $.ajax({
@@ -4485,7 +4547,7 @@ app.component('inwardVehiclePayableAddLabourForm', {
                             processData: false,
                             contentType: false,
                         })
-                        .done(function(res) {
+                        .done(function (res) {
                             if (!res.success) {
                                 $('.submit').button('reset');
                                 showErrorNoty(res);
@@ -4497,7 +4559,7 @@ app.component('inwardVehiclePayableAddLabourForm', {
                             $location.path('/inward-vehicle/payable-labour-part-detail/form/' + $scope.job_order_id);
                             $scope.$apply();
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             $('.submit').button('reset');
                             custom_noty('error', 'Something went wrong at server');
                         });
@@ -4515,8 +4577,8 @@ app.component('inwardVehiclePayableAddLabourForm', {
 //Estimate
 app.component('inwardVehicleEstimateForm', {
     templateUrl: inward_vehicle_estimate_form_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $window) {
-        $element.find('input').on('keydown', function(ev) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $window) {
+        $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
         });
         var self = this;
@@ -4536,18 +4598,18 @@ app.component('inwardVehicleEstimateForm', {
 
         $scope.job_order_id = $routeParams.job_order_id;
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $.ajax({
                     url: base_url + '/api/vehicle-inward/estimate/get-form-data',
                     method: "POST",
                     data: {
                         id: $routeParams.job_order_id
                     },
-                    beforeSend: function(xhr) {
+                    beforeSend: function (xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -4576,18 +4638,18 @@ app.component('inwardVehicleEstimateForm', {
                     $scope.status_id = $scope.job_order.status_id;
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
         $scope.fetchData();
 
         //Scrollable Tabs
-        setTimeout(function() {
+        setTimeout(function () {
             scrollableTabs();
         }, 1000);
 
-        self.checkbox = function(id) {
+        self.checkbox = function (id) {
             if (id == 1) {
                 $('.is_customer_agreed').show();
                 $('#is_customer_agreed').val(1);
@@ -4600,7 +4662,7 @@ app.component('inwardVehicleEstimateForm', {
         };
 
         //Save Form Data 
-        $scope.saveEstimate = function(id) {
+        $scope.saveEstimate = function (id) {
             var form_id = '#form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -4618,23 +4680,23 @@ app.component('inwardVehicleEstimateForm', {
                 messages: {
 
                 },
-                invalidHandler: function(event, validator) {
+                invalidHandler: function (event, validator) {
                     custom_noty('error', 'You have errors, Please check all tabs');
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(form_id)[0]);
                     // $scope.button_action(id, 1);
                     $.ajax({
                             url: base_url + '/api/vehicle-inward/estimate/save',
                             method: "POST",
                             data: formData,
-                            beforeSend: function(xhr) {
+                            beforeSend: function (xhr) {
                                 xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                             },
                             processData: false,
                             contentType: false,
                         })
-                        .done(function(res) {
+                        .done(function (res) {
                             // $scope.button_action(id, 2);
                             if (!res.success) {
                                 showErrorNoty(res);
@@ -4672,7 +4734,7 @@ app.component('inwardVehicleEstimateForm', {
                             }
                             $scope.$apply();
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             // $scope.button_action(id, 2);
                             custom_noty('error', 'Something went wrong at server');
                         });
@@ -4681,7 +4743,7 @@ app.component('inwardVehicleEstimateForm', {
         }
 
         //URL SEND TO CUSTOMER
-        $scope.send_customer_approval = function() {
+        $scope.send_customer_approval = function () {
             $(".send_to_customer_approval").button('loading');
             $.ajax({
                 url: base_url + '/api/vehicle-inward/estimate/link/generate',
@@ -4690,16 +4752,16 @@ app.component('inwardVehicleEstimateForm', {
                     job_order_id: $routeParams.job_order_id,
                 },
                 dataType: "json",
-                beforeSend: function(xhr) {
+                beforeSend: function (xhr) {
                     xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                 },
-                success: function(response) {
+                success: function (response) {
                     $(".send_to_customer_approval").button('reset');
                     custom_noty('success', response.message);
                     // $location.path('/inward-vehicle/card-list');
                     location.href = '#!/inward-vehicle/table-list';
                 },
-                error: function(textStatus, errorThrown) {
+                error: function (textStatus, errorThrown) {
                     $(".send_to_customer_approval").button('reset');
                     custom_noty('error', 'Something went wrong at server');
                 }
@@ -4707,7 +4769,7 @@ app.component('inwardVehicleEstimateForm', {
         }
 
         //SEND OTP TO CUSTOMER
-        $scope.approveBehalfCustomer = function() {
+        $scope.approveBehalfCustomer = function () {
             $(".approval_behalf").button('loading');
             $.ajax({
                 url: base_url + '/api/vehicle-inward/send/customer/otp',
@@ -4716,21 +4778,21 @@ app.component('inwardVehicleEstimateForm', {
                     id: $routeParams.job_order_id,
                 },
                 dataType: "json",
-                beforeSend: function(xhr) {
+                beforeSend: function (xhr) {
                     xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                 },
-                success: function(response) {
+                success: function (response) {
                     $(".approval_behalf").button('loading');
                     console.log(response);
                     $('#otp').modal('show');
                     $('#otp_no').val('');
-                    $('#otp').on('shown.bs.modal', function() {
+                    $('#otp').on('shown.bs.modal', function () {
                         $(this).find('[autofocus]').focus();
                     });
                     $('.customer_mobile_no').html(response.mobile_number);
                     $(".approval_behalf").button('reset');
                 },
-                error: function(textStatus, errorThrown) {
+                error: function (textStatus, errorThrown) {
                     $(".approval_behalf").button('reset');
                     custom_noty('error', 'Something went wrong at server');
                 }
@@ -4738,7 +4800,7 @@ app.component('inwardVehicleEstimateForm', {
         }
 
         //RESEND OTP
-        $scope.ResendOtp = function() {
+        $scope.ResendOtp = function () {
             $.ajax({
                 url: base_url + '/api/vehicle-inward/send/customer/otp',
                 type: "POST",
@@ -4746,21 +4808,21 @@ app.component('inwardVehicleEstimateForm', {
                     id: $routeParams.job_order_id,
                 },
                 dataType: "json",
-                beforeSend: function(xhr) {
+                beforeSend: function (xhr) {
                     xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                 },
-                success: function(response) {
+                success: function (response) {
                     console.log(response);
                     custom_noty('success', response.message);
                 },
-                error: function(textStatus, errorThrown) {
+                error: function (textStatus, errorThrown) {
                     custom_noty('error', 'Something went wrong at server');
                 }
             });
         }
 
         //SAVE OTP
-        $scope.saveOTP = function(id) {
+        $scope.saveOTP = function (id) {
             var form_id = '#approve_behalf_customer_confirm';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -4780,7 +4842,7 @@ app.component('inwardVehicleEstimateForm', {
                         maxlength: 'OTP Maximum 6 Characters',
                     },
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(form_id)[0]);
                     $('.submit_confirm').button('loading');
                     $.ajax({
@@ -4789,11 +4851,11 @@ app.component('inwardVehicleEstimateForm', {
                             data: formData,
                             processData: false,
                             contentType: false,
-                            beforeSend: function(xhr) {
+                            beforeSend: function (xhr) {
                                 xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                             },
                         })
-                        .done(function(res) {
+                        .done(function (res) {
                             console.log(res);
                             if (!res.success) {
                                 showErrorNoty(res);
@@ -4814,7 +4876,7 @@ app.component('inwardVehicleEstimateForm', {
 
                             $scope.$apply();
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             console.log(xhr);
                             $('#otp_no').val('');
                             $('.submit_confirm').button('reset');
@@ -4825,12 +4887,12 @@ app.component('inwardVehicleEstimateForm', {
         }
 
 
-        $scope.showVehicleForm = function() {
+        $scope.showVehicleForm = function () {
             $scope.show_vehicle_detail = false;
             $scope.show_vehicle_form = true;
         }
 
-        $scope.button_action = function(id, type) {
+        $scope.button_action = function (id, type) {
             if (type == 1) {
                 if (id == 1) {
                     $('.submit').button('loading');
@@ -4857,9 +4919,9 @@ app.component('inwardVehicleEstimateForm', {
 //ESTIMATION DENIED
 app.component('inwardVehicleEstimationStatusDetailForm', {
     templateUrl: inward_vehicle_estimation_status_detail_form_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         //for md-select search
-        $element.find('input').on('keydown', function(ev) {
+        $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
         });
 
@@ -4881,18 +4943,18 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
         $scope.job_order_id = $routeParams.job_order_id;
 
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $.ajax({
                     url: base_url + '/api/vehicle-inward/estimation-denied/get-form-data',
                     method: "POST",
                     data: {
                         id: $routeParams.job_order_id
                     },
-                    beforeSend: function(xhr) {
+                    beforeSend: function (xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -4914,23 +4976,23 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
 
                     $scope.minimum_payable_amount = $scope.job_order.minimum_payable_amount;
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
         $scope.fetchData();
 
         //Scrollable Tabs
-        setTimeout(function() {
+        setTimeout(function () {
             scrollableTabs();
         }, 1000);
 
-        $(document).on("wheel", "input[type=number]", function(e) {
+        $(document).on("wheel", "input[type=number]", function (e) {
             $(this).blur();
         });
 
-        $scope.getSelectedEstimationType = function(estimation_type_id, type) {
-            $.each($scope.estimation_type, function(key, val) {
+        $scope.getSelectedEstimationType = function (estimation_type_id, type) {
+            $.each($scope.estimation_type, function (key, val) {
                 if (estimation_type_id == val['id']) {
                     if (type != 1) {
                         $scope.minimum_payable_amount = val['minimum_amount'];
@@ -4942,7 +5004,7 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
         }
 
         //Save Form Data 
-        $scope.saveStatusDetaiForm = function(id) {
+        $scope.saveStatusDetaiForm = function (id) {
             var form_id = '#status_detail_form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -4955,10 +5017,10 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
                         number: true,
                     },
                 },
-                invalidHandler: function(event, validator) {
+                invalidHandler: function (event, validator) {
                     custom_noty('error', 'You have errors, Please check all tabs');
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(form_id)[0]);
                     // console.log('submit');
                     $rootScope.loading = true;
@@ -4970,7 +5032,7 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
                             processData: false,
                             contentType: false,
                         })
-                        .done(function(res) {
+                        .done(function (res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
                                 $rootScope.loading = false;
@@ -4991,7 +5053,7 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
 
                             $scope.$apply();
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             $rootScope.loading = false;
                             $scope.button_action(id, 2);
                             custom_noty('error', 'Something went wrong at server');
@@ -5000,10 +5062,10 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
             });
         }
 
-        $scope.redirectPage = function() {
+        $scope.redirectPage = function () {
             window.location = base_url + '#!/inward-vehicle/table-list';
         }
-        $scope.button_action = function(id, type) {
+        $scope.button_action = function (id, type) {
             if (type == 1) {
                 if (id == 1) {
                     $('.submit').button('loading');
@@ -5035,7 +5097,7 @@ angular.module('app').requires.push('webcam');
 // angular.module('app').requires.push('signature');
 app.component('inwardVehicleCustomerConfirmationForm', {
     templateUrl: inward_vehicle_customer_confirmation_form_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
 
@@ -5046,7 +5108,7 @@ app.component('inwardVehicleCustomerConfirmationForm', {
         $scope.job_order_id = $routeParams.job_order_id;
 
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $rootScope.loading = true;
             $.ajax({
                     url: base_url + '/api/vehicle-inward/customer-confirmation/get-form-data',
@@ -5054,11 +5116,11 @@ app.component('inwardVehicleCustomerConfirmationForm', {
                     data: {
                         id: $routeParams.job_order_id
                     },
-                    beforeSend: function(xhr) {
+                    beforeSend: function (xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     $rootScope.loading = false;
                     if (!res.success) {
                         showErrorNoty(res);
@@ -5074,7 +5136,7 @@ app.component('inwardVehicleCustomerConfirmationForm', {
                     $scope.cameraOn();
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     $rootScope.loading = false;
                     custom_noty('error', 'Something went wrong at server');
                 });
@@ -5083,7 +5145,7 @@ app.component('inwardVehicleCustomerConfirmationForm', {
         $scope.fetchData();
 
         //Scrollable Tabs
-        setTimeout(function() {
+        setTimeout(function () {
             scrollableTabs();
         }, 1000);
 
@@ -5093,13 +5155,15 @@ app.component('inwardVehicleCustomerConfirmationForm', {
         //WEBCAM TO TAKE CUSTOMER PHOTO
         // Grab elements, create settings, etc.
         var video = document.getElementById('video');
-        $scope.cameraOn = function() {
+        $scope.cameraOn = function () {
             self.video = true;
             self.screenShot = true;
             // Get access to the camera!
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 // Not adding `{ audio: true }` since we only want video now
-                navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+                navigator.mediaDevices.getUserMedia({
+                    video: true
+                }).then(function (stream) {
                     //video.src = window.URL.createObjectURL(stream);
                     video.srcObject = stream;
                     video.play();
@@ -5113,7 +5177,7 @@ app.component('inwardVehicleCustomerConfirmationForm', {
             var context = canvas_photo.getContext('2d');
             var video = document.getElementById('video');
 
-            $scope.snapshot = function() {
+            $scope.snapshot = function () {
                 $('#customer_pic').hide();
                 // Trigger photo take
                 context.drawImage(video, 0, 0, 460, 360);
@@ -5124,19 +5188,19 @@ app.component('inwardVehicleCustomerConfirmationForm', {
 
         //SIGN PAD
         var signaturePad;
-        $(document).ready(function($) {
+        $(document).ready(function ($) {
             $("#customer_sign").val('');
             var canvas_sign = document.getElementById("signature");
             signaturePad = new SignaturePad(canvas_sign);
 
-            $('#clear-signature').on('click', function() {
+            $('#clear-signature').on('click', function () {
                 signaturePad.clear();
                 $("#customer_sign").val('');
             });
         });
 
         //SIGN VALIDATION
-        jQuery.validator.addMethod("customer_e_sign", function(value, element, options) {
+        jQuery.validator.addMethod("customer_e_sign", function (value, element, options) {
             if (signaturePad.isEmpty()) {
                 return false;
             }
@@ -5144,7 +5208,7 @@ app.component('inwardVehicleCustomerConfirmationForm', {
         }, "Your signature is required");
 
         //Save Form Data 
-        $scope.saveForm = function() {
+        $scope.saveForm = function () {
             //GET AND APPEND SIGNATURE VALUE
             var canvas_sign = document.getElementById("signature");
             var customer_sign = canvas_sign.toDataURL('image/png');
@@ -5153,7 +5217,7 @@ app.component('inwardVehicleCustomerConfirmationForm', {
             var form_id = '#form';
             var v = jQuery(form_id).validate({
                 ignore: '',
-                errorPlacement: function(error, element) {
+                errorPlacement: function (error, element) {
                     if (element.attr("name") == "customer_photo") {
                         error.insertAfter("#eror_customer_photo");
                     } else if (element.attr("name") == "customer_e_sign") {
@@ -5164,7 +5228,7 @@ app.component('inwardVehicleCustomerConfirmationForm', {
                 },
                 rules: {
                     'customer_photo': {
-                        required: function(element) {
+                        required: function (element) {
                             if ($scope.job_order.customer_approval_attachment.length == 0) {
                                 return true;
                             }
@@ -5172,7 +5236,7 @@ app.component('inwardVehicleCustomerConfirmationForm', {
                         },
                     },
                     'customer_e_sign': {
-                        required: function(element) {
+                        required: function (element) {
                             if ($scope.job_order.customer_e_sign.length == 0) {
                                 return true;
                             }
@@ -5180,10 +5244,10 @@ app.component('inwardVehicleCustomerConfirmationForm', {
                         },
                     },
                 },
-                invalidHandler: function(event, validator) {
+                invalidHandler: function (event, validator) {
                     custom_noty('error', 'You have errors, Please check all tabs');
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(form_id)[0]);
                     $('.submit').button('loading');
                     $('.btn-prev').bind('click', false);
@@ -5191,13 +5255,13 @@ app.component('inwardVehicleCustomerConfirmationForm', {
                             url: base_url + '/api/vehicle-inward/customer-confirmation/save',
                             method: "POST",
                             data: formData,
-                            beforeSend: function(xhr) {
+                            beforeSend: function (xhr) {
                                 xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                             },
                             processData: false,
                             contentType: false,
                         })
-                        .done(function(res) {
+                        .done(function (res) {
                             $('.btn-prev').unbind('click', false);
                             $('.submit').button('reset');
                             if (!res.success) {
@@ -5213,7 +5277,7 @@ app.component('inwardVehicleCustomerConfirmationForm', {
                             // $location.path('/inward-vehicle/card-list');
                             $scope.$apply();
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             $('.submit').button('reset');
                             custom_noty('error', 'Something went wrong at server');
                         });
@@ -5222,11 +5286,11 @@ app.component('inwardVehicleCustomerConfirmationForm', {
         }
 
         //INITIATE JOB
-        $scope.initiateJob = function() {
+        $scope.initiateJob = function () {
             var form_id = '#initiateJob';
             var v = jQuery(form_id).validate({
                 ignore: '',
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(form_id)[0]);
                     // console.log(formData);
                     $('.initiate_job').button('loading');
@@ -5234,13 +5298,13 @@ app.component('inwardVehicleCustomerConfirmationForm', {
                             url: base_url + '/api/vehicle-inward/initiate-job/save',
                             method: "POST",
                             data: formData,
-                            beforeSend: function(xhr) {
+                            beforeSend: function (xhr) {
                                 xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                             },
                             processData: false,
                             contentType: false,
                         })
-                        .done(function(res) {
+                        .done(function (res) {
                             if (!res.success) {
                                 $('.initiate_job').button('reset');
                                 showErrorNoty(res);
@@ -5254,7 +5318,7 @@ app.component('inwardVehicleCustomerConfirmationForm', {
                             $location.path('/inward-vehicle/table-list');
                             $scope.$apply();
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             $('.initiate_job').button('reset');
                             custom_noty('error', 'Something went wrong at server');
                         });
@@ -5267,8 +5331,8 @@ app.component('inwardVehicleCustomerConfirmationForm', {
 //Update JOb Card
 app.component('inwardVehicleUpdatejcForm', {
     templateUrl: inward_vehicle_updatejc_form_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
-        $element.find('input').on('keydown', function(ev) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
         });
         var self = this;
@@ -5280,7 +5344,7 @@ app.component('inwardVehicleUpdatejcForm', {
         self.angular_routes = angular_routes;
 
         /* Profile Upload */
-        setTimeout(function() {
+        setTimeout(function () {
             profileImgUpload();
         }, 1000);
 
@@ -5290,18 +5354,18 @@ app.component('inwardVehicleUpdatejcForm', {
         $scope.job_order_id = $routeParams.job_order_id;
 
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $.ajax({
                     url: base_url + '/api/vehicle-inward/update-jc/get-form-data',
                     method: "POST",
                     data: {
                         id: $routeParams.job_order_id
                     },
-                    beforeSend: function(xhr) {
+                    beforeSend: function (xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                     },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -5311,32 +5375,32 @@ app.component('inwardVehicleUpdatejcForm', {
                     $scope.tax_count = res.tax_count;
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
         $scope.fetchData();
 
         //Scrollable Tabs
-        setTimeout(function() {
+        setTimeout(function () {
             scrollableTabs();
         }, 1000);
 
-        $('.btn-nxt').on("click", function() {
+        $('.btn-nxt').on("click", function () {
             $('.cndn-tabs li.active').next().children('a').trigger("click");
             tabPaneFooter();
         });
-        $('.btn-prev').on("click", function() {
+        $('.btn-prev').on("click", function () {
             $('.cndn-tabs li.active').prev().children('a').trigger("click");
             tabPaneFooter();
         });
-        $('.btn-pills').on("click", function() {
+        $('.btn-pills').on("click", function () {
             tabPaneFooter();
         });
-        $scope.btnNxt = function() {}
+        $scope.btnNxt = function () {}
 
         //Save Form Data 
-        $scope.saveJobCard = function(id) {
+        $scope.saveJobCard = function (id) {
             var form_id = '#update_jc_form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -5346,7 +5410,7 @@ app.component('inwardVehicleUpdatejcForm', {
                         minlength: 10,
                     },
                     'job_card_photo': {
-                        required: function(element) {
+                        required: function (element) {
                             if (!$scope.job_order.job_card) {
                                 return true;
                             }
@@ -5357,7 +5421,7 @@ app.component('inwardVehicleUpdatejcForm', {
                         required: true,
                     },
                 },
-                errorPlacement: function(error, element) {
+                errorPlacement: function (error, element) {
                     if (element.attr('name') == 'job_card_number') {
                         error.appendTo($('.job_card_error'));
                     } else if (element.attr('name') == 'job_card_photo') {
@@ -5366,23 +5430,23 @@ app.component('inwardVehicleUpdatejcForm', {
                         error.insertAfter(element);
                     }
                 },
-                invalidHandler: function(event, validator) {
+                invalidHandler: function (event, validator) {
                     custom_noty('error', 'You have errors, Please check all fields');
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(form_id)[0]);
                     $('.save_close').button('loading');
                     $.ajax({
                             url: base_url + '/api/vehicle-inward/job-card/save',
                             method: "POST",
                             data: formData,
-                            beforeSend: function(xhr) {
+                            beforeSend: function (xhr) {
                                 xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                             },
                             processData: false,
                             contentType: false,
                         })
-                        .done(function(res) {
+                        .done(function (res) {
                             $('.save_close').button('reset');
                             if (!res.success) {
                                 showErrorNoty(res);
@@ -5394,7 +5458,7 @@ app.component('inwardVehicleUpdatejcForm', {
 
                             $scope.$apply();
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             $('.save_close').button('reset');
                             custom_noty('error', 'Something went wrong at server');
                         });
@@ -5402,7 +5466,7 @@ app.component('inwardVehicleUpdatejcForm', {
             });
         }
 
-        $scope.send_customer_approval = function() {
+        $scope.send_customer_approval = function () {
             $(".send_to_customer_approval").button('loading');
             $.ajax({
                 url: base_url + '/api/vehicle-inward/estimate/link/generate',
@@ -5411,16 +5475,16 @@ app.component('inwardVehicleUpdatejcForm', {
                     job_order_id: $routeParams.job_order_id,
                 },
                 dataType: "json",
-                beforeSend: function(xhr) {
+                beforeSend: function (xhr) {
                     xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                 },
-                success: function(response) {
+                success: function (response) {
                     custom_noty('success', response.message);
                     $(".send_to_customer_approval").button('reset');
                     $location.path('/inward-vehicle/table-list');
                     $scope.$apply();
                 },
-                error: function(textStatus, errorThrown) {
+                error: function (textStatus, errorThrown) {
                     $(".send_to_customer_approval").button('reset');
                     custom_noty('error', 'Something went wrong at server');
                 }
@@ -5447,7 +5511,7 @@ app.component('inwardVehicleUpdatejcForm', {
                     maxlength: 'OTP Maximum 6 Characters',
                 },
             },
-            submitHandler: function(form) {
+            submitHandler: function (form) {
                 let formData = new FormData($(approve_behalf_customer_confirm)[0]);
                 $('.submit_confirm').button('loading');
                 $.ajax({
@@ -5456,11 +5520,11 @@ app.component('inwardVehicleUpdatejcForm', {
                         data: formData,
                         processData: false,
                         contentType: false,
-                        beforeSend: function(xhr) {
+                        beforeSend: function (xhr) {
                             xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                         },
                     })
-                    .done(function(res) {
+                    .done(function (res) {
                         console.log(res);
                         if (!res.success) {
                             showErrorNoty(res);
@@ -5479,7 +5543,7 @@ app.component('inwardVehicleUpdatejcForm', {
                         $location.path('/inward-vehicle/table-list');
                         $scope.$apply();
                     })
-                    .fail(function(xhr) {
+                    .fail(function (xhr) {
                         console.log(xhr);
                         $('#otp_no').val('');
                         $('.submit_confirm').button('reset');
@@ -5488,7 +5552,7 @@ app.component('inwardVehicleUpdatejcForm', {
             }
         });
 
-        $scope.showVehicleForm = function() {
+        $scope.showVehicleForm = function () {
             $scope.show_vehicle_detail = false;
             $scope.show_vehicle_form = true;
         }
@@ -5500,7 +5564,7 @@ app.component('inwardVehicleUpdatejcForm', {
 
 app.component('jobOrderView', {
     templateUrl: job_order_view_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
@@ -5514,7 +5578,7 @@ app.component('jobOrderView', {
 
         $scope.job_order_id = $routeParams.job_order_id;
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $.ajax({
                     url: base_url + '/api/job-order/view',
                     method: "POST",
@@ -5525,7 +5589,7 @@ app.component('jobOrderView', {
                     //     xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                     // },
                 })
-                .done(function(res) {
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -5533,7 +5597,7 @@ app.component('jobOrderView', {
                     $scope.gate_log = res.gate_log;
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
@@ -5573,10 +5637,10 @@ app.component('jobOrderView', {
                     maxlength: 'Maximum 255 Characters',
                 }
             },
-            invalidHandler: function(event, validator) {
+            invalidHandler: function (event, validator) {
                 custom_noty('error', 'You have errors, Please check all tabs');
             },
-            submitHandler: function(form) {
+            submitHandler: function (form) {
                 let formData = new FormData($(form_id)[0]);
                 $('.submit').button('loading');
                 $.ajax({
@@ -5586,7 +5650,7 @@ app.component('jobOrderView', {
                         processData: false,
                         contentType: false,
                     })
-                    .done(function(res) {
+                    .done(function (res) {
                         if (res.success == true) {
                             custom_noty('success', res.message);
                             $location.path('/job-order/list');
@@ -5602,7 +5666,7 @@ app.component('jobOrderView', {
                             }
                         }
                     })
-                    .fail(function(xhr) {
+                    .fail(function (xhr) {
                         $('.submit').button('reset');
                         custom_noty('error', 'Something went wrong at server');
                     });
@@ -5617,12 +5681,12 @@ app.component('jobOrderView', {
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 
-app.directive('jobOrderHeader', function() {
+app.directive('jobOrderHeader', function () {
     return {
         templateUrl: job_order_header_template_url,
-        controller: function() {
+        controller: function () {
             /* Work Tooltip */
-            $(document).on('mouseover', ".work-tooltip", function() {
+            $(document).on('mouseover', ".work-tooltip", function () {
                 var $this = $(this);
                 if (!$this.attr('title')) {
                     console.log('true');
@@ -5640,18 +5704,18 @@ app.directive('jobOrderHeader', function() {
 });
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
-app.directive('inwardTabs', function() {
+app.directive('inwardTabs', function () {
     return {
         templateUrl: inward_tabs_template_url,
-        controller: function() {}
+        controller: function () {}
     }
 });
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
-app.directive('inwardViewTabs', function() {
+app.directive('inwardViewTabs', function () {
     return {
         templateUrl: inward_view_tabs_template_url,
-        controller: function() {}
+        controller: function () {}
     }
 });
 //------------------------------------------------------------------------------------------------------------------------

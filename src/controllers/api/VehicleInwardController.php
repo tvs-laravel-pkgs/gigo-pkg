@@ -2325,6 +2325,7 @@ class VehicleInwardController extends Controller {
 					'vehicle_id' => $vehicle->id,
 					'customer_id' => $customer->id,
 				]);
+				$vehicle_owner->from_date = Carbon::now();
 				$vehicle_owner->updated_by_id = Auth::user()->id;
 				$vehicle_owner->updated_at = Carbon::now();
 			}

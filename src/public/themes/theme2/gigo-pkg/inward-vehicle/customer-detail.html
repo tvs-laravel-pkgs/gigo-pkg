@@ -41,7 +41,7 @@
                                                         </span>
                                                         <span class="view-data-list-value">
                                                             <b>
-                                                                {{job_order.vehicle.current_owner.customer.code}}
+                                                                {{customer.code}}
                                                             </b>
                                                         </span>
                                                     </li>
@@ -51,7 +51,7 @@
                                                         </span>
                                                         <span class="view-data-list-value">
                                                             <b>
-                                                                {{job_order.vehicle.current_owner.customer.name}}
+                                                                {{customer.name}}
                                                             </b>
                                                         </span>
                                                     </li>
@@ -61,7 +61,7 @@
                                                         </span>
                                                         <span class="view-col-value">
                                                             <b>
-                                                                {{job_order.vehicle.current_owner.customer.mobile_no}}
+                                                                {{customer.mobile_no}}
                                                             </b>
                                                         </span>
                                                     </li>
@@ -71,7 +71,7 @@
                                                         </span>
                                                         <span class="view-col-value">
                                                             <b>
-                                                                {{job_order.vehicle.current_owner.customer.email}}
+                                                                {{customer.email}}
                                                             </b>
                                                         </span>
                                                     </li>
@@ -80,7 +80,7 @@
                                                             Address
                                                         </span>
                                                         <span class="view-col-value">
-                                                            {{job_order.vehicle.current_owner.customer.address.address_line1}},{{job_order.vehicle.current_owner.customer.address.address_line2}},{{job_order.vehicle.current_owner.customer.address.city.name}},{{job_order.vehicle.current_owner.customer.address.state.name}},{{job_order.vehicle.current_owner.customer.address.pincode}},{{job_order.vehicle.current_owner.customer.address.country.name}}.
+                                                            {{customer.address.address_line1}},{{customer.address.address_line2}},{{customer.address.city.name}},{{customer.address.state.name}},{{customer.address.pincode}},{{customer.address.country.name}}.
                                                         </span>
                                                     </li>
                                                     <li class="view-col-3">
@@ -88,7 +88,7 @@
                                                             GST No
                                                         </span>
                                                         <span class="view-col-value">
-                                                            {{job_order.vehicle.current_owner.customer.gst_number}}
+                                                            {{customer.gst_number}}
                                                         </span>
                                                     </li>
                                                     <li class="view-col-3">
@@ -98,7 +98,7 @@
                                                         </span>
                                                         <span class="view-data-list-value">
                                                             <b>
-                                                                {{job_order.vehicle.current_owner.customer.pan_number}}
+                                                                {{customer.pan_number}}
                                                             </b>
                                                         </span>
                                                     </li>
@@ -108,7 +108,7 @@
                                                         </span>
                                                         <span class="view-data-list-value">
                                                             <b>
-                                                                {{job_order.vehicle.current_owner.ownership_type.name}}
+                                                                {{customer.ownership_type.name}}
                                                             </b>
                                                         </span>
                                                     </li>
@@ -131,7 +131,7 @@
                                                 </button>
                                             </div> <!-- customer-detail -->
                                             <div class="row" ng-show="show_customer_form">
-                                                <input type="hidden" name="id" value="{{job_order.vehicle.current_owner.customer.id}}">
+                                                <input type="hidden" name="id" value="{{customer.id}}">
                                                 <input type="hidden" name="job_order_id" value="{{job_order.id}}">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
@@ -157,7 +157,7 @@
                                                             Search customer
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <md-autocomplete md-items="option in searchCustomer(customerSearchText)" md-selected-item="customer" md-search-text="customerSearchText" md-selected-item-change="customerChanged(customer)" md-item-text="option.code" md-min-length="3" placeholder="Customer Code / Name" md-input-id="customer_ac"  md-autofocus md-no-cache="true">
+                                                        <md-autocomplete md-items="option in searchCustomer(customerSearchText)" md-selected-item="customerResult" md-search-text="customerSearchText" md-selected-item-change="customerChanged(customerResult)" md-item-text="option.code" md-min-length="3" placeholder="Customer Code / Name" md-input-id="customer_ac"  md-autofocus md-no-cache="true">
                                                             <md-item-template>
                                                                 <span>
                                                                     {{option.name}} / {{option.code}}
@@ -167,7 +167,7 @@
                                                                 No Customer matching "{{$ctrl.customerSearchText}}" were found.
                                                             </md-not-found>
                                                         </md-autocomplete>
-                                                        <input type="hidden" class="form-control required" id="customer_id" name="customer_id" value="{{job_order.vehicle.current_owner.customer.id}}">
+                                                        <input type="hidden" class="form-control required" id="customer_id" name="customer_id" value="{{customer.id}}">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -176,7 +176,7 @@
                                                             Code
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <input type="text" class="form-control required" placeholder="Enter Code" autocomplete="off" ng-model="job_order.vehicle.current_owner.customer.code" name="code" />
+                                                        <input type="text" class="form-control required" placeholder="Enter Code" autocomplete="off" ng-model="customer.code" name="code" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -185,7 +185,7 @@
                                                             Name
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <input type="text" class="form-control" placeholder="Enter Name" autocomplete="off" ng-model="job_order.vehicle.current_owner.customer.name" name="name" />
+                                                        <input type="text" class="form-control" placeholder="Enter Name" autocomplete="off" ng-model="customer.name" name="name" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -194,7 +194,7 @@
                                                             Mobile Number
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <input type="text" class="form-control" minlength="10" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter Mobile No" autocomplete="off" maxlength="10" ng-model="job_order.vehicle.current_owner.customer.mobile_no" name="mobile_no" />
+                                                        <input type="text" class="form-control" minlength="10" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter Mobile No" autocomplete="off" maxlength="10" ng-model="customer.mobile_no" name="mobile_no" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -202,7 +202,7 @@
                                                         <label>
                                                             Email
                                                         </label>
-                                                        <input type="text" class="form-control" placeholder="Enter Email" autocomplete="off" ng-model="job_order.vehicle.current_owner.customer.email" name="email" />
+                                                        <input type="text" class="form-control" placeholder="Enter Email" autocomplete="off" ng-model="customer.email" name="email" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -211,7 +211,7 @@
                                                             Address Line 1
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <input type="text" class="form-control" placeholder="Enter Address" autocomplete="off" maxlength="32" ng-model="job_order.vehicle.current_owner.customer.address.address_line1" name="address_line1" />
+                                                        <input type="text" class="form-control" placeholder="Enter Address" autocomplete="off" maxlength="32" ng-model="customer.address.address_line1" name="address_line1" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -219,7 +219,7 @@
                                                         <label>
                                                             Address Line 2
                                                         </label>
-                                                        <input type="text" class="form-control" placeholder="Enter Address" autocomplete="off" maxlength="64" ng-model="job_order.vehicle.current_owner.customer.address.address_line2" name="address_line2" />
+                                                        <input type="text" class="form-control" placeholder="Enter Address" autocomplete="off" maxlength="64" ng-model="customer.address.address_line2" name="address_line2" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -266,7 +266,7 @@
                                                             City
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <md-autocomplete md-items="option in $ctrl.searchCity($ctrl.citySearchText)" md-selected-item="job_order.vehicle.current_owner.customer.address.city" md-search-text="$ctrl.citySearchText" md-item-text="option.name" md-min-length="3" placeholder="City Name" md-autofocus>
+                                                        <md-autocomplete md-items="option in $ctrl.searchCity($ctrl.citySearchText)" md-selected-item="customer.address.city" md-search-text="$ctrl.citySearchText" md-item-text="option.name" md-min-length="3" placeholder="City Name" md-autofocus>
                                                             <md-item-template>
                                                                 <span>
                                                                     {{option.name}}
@@ -276,7 +276,7 @@
                                                                 No City matching "{{$ctrl.citySearchText}}" were found.
                                                             </md-not-found>
                                                         </md-autocomplete>
-                                                        <input type="hidden" id="city_id" name="city_id" value="{{job_order.vehicle.current_owner.customer.address.city.id}}">
+                                                        <input type="hidden" id="city_id" name="city_id" value="{{customer.address.city.id}}">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -285,7 +285,7 @@
                                                             PIN Code
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <input type="text" class="form-control" minlength="6" maxlength="6" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="6" placeholder="Enter PIN Code" autocomplete="off" ng-model="job_order.vehicle.current_owner.customer.address.pincode" name="pincode" />
+                                                        <input type="text" class="form-control" minlength="6" maxlength="6" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="6" placeholder="Enter PIN Code" autocomplete="off" ng-model="customer.address.pincode" name="pincode" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -293,7 +293,7 @@
                                                         <label>
                                                             GST No
                                                         </label>
-                                                        <input type="text" class="form-control" minlength="15" maxlength="15" placeholder="Enter GST No" autocomplete="off" ng-model="job_order.vehicle.current_owner.customer.gst_number" name="gst_number" />
+                                                        <input type="text" class="form-control" minlength="15" maxlength="15" placeholder="Enter GST No" autocomplete="off" ng-model="customer.gst_number" name="gst_number" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -302,7 +302,7 @@
                                                             PAN
                                                             <!-- No -->
                                                         </label>
-                                                        <input type="text" class="form-control" placeholder="Enter PAN" autocomplete="off" ng-model="job_order.vehicle.current_owner.customer.pan_number" minlength="10" maxlength="10" name="pan_number" />
+                                                        <input type="text" class="form-control" placeholder="Enter PAN" autocomplete="off" ng-model="customer.pan_number" minlength="10" maxlength="10" name="pan_number" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
