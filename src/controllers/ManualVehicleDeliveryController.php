@@ -307,12 +307,12 @@ class ManualVehicleDeliveryController extends Controller
                 // if( $vehicle_inward->inward_cancel_reason_id){
                 // $vehicle_detail['billing_type'] = '';
                 // }else{
-                $vehicle_detail['billing_type'] = $vehicle_inward->billing_type ? $vehicle_inward->billing_type : '-';
                 if($vehicle_inward->billing_type){
                     $vehicle_detail['service_completed'] = 'Yes';
                 }else{
                     $vehicle_detail['service_completed'] = 'No';
                 }
+                $vehicle_detail['billing_type'] = $vehicle_inward->billing_type ? $vehicle_inward->billing_type : '-';
                 // }
 				
 				if( $vehicle_inward->inward_cancel_reason_id){
