@@ -136,6 +136,43 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>
+                                                            Search Type
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <div class="common-radio-button type-4">
+                                                            <input type="radio" id="customer_search_type_yes" name="customer_search_type" ng-model="$ctrl.customer_search_type" ng-value="true">
+                                                            <label for="customer_search_type_yes">
+                                                                Existing<span class="rd-focused"></span>
+                                                            </label>
+                                                            <input type="radio" id="customer_search_type_no" name="customer_search_type" ng-model="$ctrl.customer_search_type" ng-value="false">
+                                                            <label for="customer_search_type_no">
+                                                                New<span class="rd-focused"></span>
+                                                            </label>
+                                                        </div>
+                                                    </div><!-- Feild -->
+                                                </div>
+                                                <div class="col-md-3"  ng-if="$ctrl.customer_search_type == true ">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Search customer
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <md-autocomplete md-items="option in searchCustomer(customerSearchText)" md-selected-item="customer" md-search-text="customerSearchText" md-selected-item-change="customerChanged(job_order.vehicle.current_owner.customer)" md-item-text="option.code" md-min-length="3" placeholder="Customer Code / Name" md-input-id="customer_ac">
+                                                            <md-item-template>
+                                                                <span>
+                                                                    {{option.name}} / {{option.code}}
+                                                                </span>
+                                                            </md-item-template>
+                                                            <md-not-found>
+                                                                No Customer matching "{{$ctrl.customerSearchText}}" were found.
+                                                            </md-not-found>
+                                                        </md-autocomplete>
+                                                        <input type="hidden" class="form-control required" id="customer_id" name="customer_id" value="{{job_order.vehicle.current_owner.customer.id}}">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
                                                             Code
                                                             <sup class="mandatory">*</sup>
                                                         </label>
@@ -191,7 +228,7 @@
                                                             Country
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <md-select ng-model="$ctrl.country" placeholder="Select Country" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }" ng-change="countryChanged()">
+                                                        <md-select ng-model="$ctrl.country" placeholder="Select Country" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }" ng-change="countryChanged($ctrl.country.id)">
                                                             <md-select-header class="demo-select-header">
                                                                 <input ng-model="searchCountry" type="search" placeholder="Search for a country.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                             </md-select-header>

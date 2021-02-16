@@ -500,7 +500,7 @@
                                             Search customer
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete class="type-sm" md-items="option in searchCustomer(customerSearchText)" md-selected-item="customer" md-search-text="customerSearchText" md-selected-item-change="customerChanged(customer)" md-item-text="option.code" md-min-length="3" placeholder="Customer Name" ng-model-options="{trackBy: '$value.id' }" md-input-id="customer_ac">
+                                        <md-autocomplete md-items="option in searchCustomer(customerSearchText)" md-selected-item="customer" md-search-text="customerSearchText" md-selected-item-change="customerChanged(customer)" md-item-text="option.code" md-min-length="3" placeholder="Customer Name" ng-model-options="{trackBy: '$value.id' }" md-input-id="customer_ac">
                                             <md-item-template>
                                                 <span>
                                                     {{option.name}} / {{option.code}}

@@ -907,7 +907,7 @@ app.component('inwardVehicleVehicleDetail', {
 
 app.component('inwardVehicleCustomerDetail', {
     templateUrl: inward_vehicle_customer_detail_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element,CustomerSvc) {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
@@ -923,6 +923,7 @@ app.component('inwardVehicleCustomerDetail', {
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
 
+        self.customer_search_type = true;
         $scope.job_order_id = $routeParams.job_order_id;
         $scope.type_id = $routeParams.type_id ? $routeParams.type_id : '';
         //FETCH DATA
@@ -1112,6 +1113,29 @@ app.component('inwardVehicleCustomerDetail', {
             });
         }
 
+        $scope.searchCustomer = function(query) {
+            return new Promise(function(resolve, reject) {
+                CustomerSvc.options({ filter: { search: query } })
+                    .then(function(response) {
+                        resolve(response.data.options);
+                    });
+            });
+        }
+
+        $scope.customerChanged = function(customer) {
+            $scope.job_order.vehicle.current_owner.customer=[];
+            CustomerSvc.read(customer.id)
+                .then(function(response) {
+                    console.log(response);
+                    $scope.job_order.vehicle.current_owner.customer = response.data.customer;
+                    $country_id = response.data.customer.primary_address ? response.data.customer.primary_address.country_id : '1';
+                     if (typeof response.data.customer.primary_address != null && typeof response.data.customer.primary_address != 'string') {
+                        $scope.job_order.vehicle.current_owner.customer.address = response.data.customer.primary_address;
+                    }
+                    $scope.countryChanged();
+                });
+        }
+
         if ($routeParams.type_id == 1) {
             $scope.show_customer_detail = false;
             $scope.show_customer_form = true;
@@ -1149,12 +1173,12 @@ app.component('inwardVehicleCustomerDetail', {
             }
         }
 
-        $scope.countryChanged = function() {
+        $scope.countryChanged = function(country_id) {
             $.ajax({
                     url: base_url + '/api/state/get-drop-down-List',
                     method: "POST",
                     data: {
-                        country_id: self.country.id,
+                        country_id: country_id,
                     },
                 })
                 .done(function(res) {
