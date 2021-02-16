@@ -1230,10 +1230,10 @@ app.component('inwardVehicleCustomerDetail', {
                     if ($scope.type_id == 2) {
                         self.state = $scope.job_order.state;
                     } else {
-                        if (!$scope.job_order.vehicle.current_owner) {
+                        if (!$scope.customer) {
                             self.state = $scope.job_order.state;
                         } else {
-                            self.state = $scope.job_order.vehicle.current_owner.customer.address.state;
+                            self.state = $scope.customer.address.state;
                         }
                     }
 
