@@ -1005,7 +1005,7 @@ app.component('inwardVehicleCustomerDetail', {
                         self.country = $scope.job_order.country;
                     }
 
-                    $scope.customer = $scope.job_order.vehicle.current_owner.customer;
+                    $scope.customer = $scope.job_order.vehicle.current_owner ? $scope.job_order.vehicle.current_owner.customer : [];
                     $scope.$apply();
                 })
                 .fail(function (xhr) {
