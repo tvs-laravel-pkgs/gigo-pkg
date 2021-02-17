@@ -490,6 +490,44 @@ class DashboardController extends Controller {
 		//Profile Image Path
 		$user->path = $path;
 
+		//Dashbord data
+		$date = date('Y-m-d');
+		
+		//GateIn 
+		$gate_in = GateLog::whereBetween('gate_in_date', [$date . " 00:00:00", $date . " 23:59:59"])->where('outlet_id',$user->working_outlet_id)->count();
+                   
+		//Total GateOut
+		$gate_out = GateLog::whereBetween('gate_out_date', [$date . " 00:00:00", $date . " 23:59:59"])->where('outlet_id',$user->working_outlet_id)->where('status_id', 8124)->count();
+
+		//Previous dates Undelivered Vehicles
+		$previous_undelivered_vehicles = GateLog::join('job_orders', 'job_orders.id', 'gate_logs.job_order_id')->where('job_orders.outlet_id', $user->working_outlet_id)->where('job_orders.vehicle_delivery_status_id', 2)->whereDate('gate_logs.gate_in_date', '<', $date . " 00:00:00")->count();
+
+		//Current date undelivered Vehicles
+		$current_undelivered_vehicles = GateLog::join('job_orders', 'job_orders.id', 'gate_logs.job_order_id')->whereBetween('gate_in_date', [$date . " 00:00:00", $date . " 23:59:59"])->where('job_orders.outlet_id', $user->working_outlet_id)->where('job_orders.vehicle_delivery_status_id', 2)->count();
+
+		//Total undelivered vehicles
+		$total_undelivered_vehicles = $previous_undelivered_vehicles + $current_undelivered_vehicles;
+
+		//Previous Work In Progress Vehicles
+		$previous_wip_vehicles = GateLog::join('job_orders', 'job_orders.id', 'gate_logs.job_order_id')->where('job_orders.outlet_id', $user->working_outlet_id)->where('job_orders.vehicle_delivery_status_id', 1)->whereDate('gate_logs.gate_in_date', '<', $date . " 00:00:00")->count();
+
+		//Today Work In Progress Vehicles
+		$today_wip_vehicles = GateLog::join('job_orders', 'job_orders.id', 'gate_logs.job_order_id')->where('job_orders.outlet_id', $user->working_outlet_id)->where('job_orders.vehicle_delivery_status_id', 1)->whereBetween('gate_in_date', [$date . " 00:00:00", $date . " 23:59:59"])->count();
+
+		//Total WIP vehicles
+		$total_wip_vehicles = $previous_wip_vehicles + $today_wip_vehicles;
+
+		$vehicle_details['today_gate_in_vehicles'] = $gate_in;
+		$vehicle_details['today_gate_out_vehicles'] = $gate_out;
+		$vehicle_details['previous_undelivered_vehicles'] = $previous_undelivered_vehicles;
+		$vehicle_details['current_undelivered_vehicles'] = $current_undelivered_vehicles;
+		$vehicle_details['total_undelivered_vehicles'] = $total_undelivered_vehicles;
+		$vehicle_details['previous_wip_vehicles'] = $previous_wip_vehicles;
+		$vehicle_details['today_wip_vehicles'] = $today_wip_vehicles;
+		$vehicle_details['total_wip_vehicles'] = $total_wip_vehicles;
+
+		$user->vehicle_details = $vehicle_details;
+
 		return response()->json(['success' => true, 'version_details' => $version_details, 'user' => $user]);
 
 	}
