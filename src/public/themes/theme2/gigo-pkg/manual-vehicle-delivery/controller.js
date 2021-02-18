@@ -232,12 +232,12 @@ app.component('manualVehicleDeliveryList', {
             }
         });
 
-        $('.daterange').on('apply.daterangepicker', function(ev, picker) {
+        $('.daterange').on('apply.daterangepicker', function (ev, picker) {
             $(this).val(picker.startDate.format('DD-MM-YYYY') + ' to ' + picker.endDate.format('DD-MM-YYYY'));
             //dataTables.fnFilter();
         });
 
-        $('.daterange').on('cancel.daterangepicker', function(ev, picker) {
+        $('.daterange').on('cancel.daterangepicker', function (ev, picker) {
             $(this).val('');
         });
 
@@ -319,7 +319,7 @@ app.component('manualVehicleDeliveryList', {
 
 app.component('manualVehicleDeliveryView', {
     templateUrl: manual_vehicle_delivery_view_template_url,
-    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect, $window) {
         //for md-select search
         $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
@@ -379,6 +379,13 @@ app.component('manualVehicleDeliveryView', {
                         $scope.label_name = 'Transaction';
                     }
 
+                    if ($scope.job_order.pending_reason_id == 2 || $scope.job_order.pending_reason_id == 3 || $scope.job_order.pending_reason_id == 4 || $scope.job_order.pending_reason_id == 5) {
+                        $scope.payment_mode_status = 'false';
+                        $scope.label_name = 'Transaction';
+                    } else {
+                        $scope.payment_mode_status = 'true';
+                    }
+
                     self.vehicle_service_status = 1;
                     if ($scope.job_order.inward_cancel_reason) {
                         self.vehicle_service_status = 0;
@@ -408,8 +415,6 @@ app.component('manualVehicleDeliveryView', {
 
         //Save Form Data 
         $scope.approveVehicleDelivery = function () {
-            // alert(111);
-            // return;
             var form_id = '#vehicle-delivery-approval-form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -498,12 +503,12 @@ app.component('manualVehicleDeliveryView', {
                                 showErrorNoty(res);
                                 return;
                             }
-                            $('#approve_modal').modal('hide');
+                            $('#payment_modal').modal('hide');
                             $('body').removeClass('modal-open');
                             $('.modal-backdrop').remove();
                             custom_noty('success', res.message);
-                            $location.path('/manual-vehicle-delivery/table-list');
-
+                            // $location.path('/manual-vehicle-delivery/table-list');
+                            $window.location.reload();
                             $scope.$apply();
                         })
                         .fail(function (xhr) {
@@ -529,6 +534,13 @@ app.component('manualVehicleDeliveryView', {
         setTimeout(function () {
             scrollableTabs();
         }, 1000);
+
+        /* Modal Md Select Hide */
+        $('.modal').bind('click', function (event) {
+            if ($('.md-select-menu-container').hasClass('md-active')) {
+                $mdSelect.hide();
+            }
+        });
     }
 });
 
@@ -574,6 +586,7 @@ app.component('manualVehicleDeliveryForm', {
                     }
                     $scope.job_order = res.job_order;
                     $scope.invoice_date = res.invoice_date;
+                    $scope.warranty_date = res.warranty_date;
                     $scope.extras = res.extras;
 
                     if ($scope.job_order.vehicle_payment_status && $scope.job_order.vehicle_payment_status == 1) {
@@ -850,5 +863,12 @@ app.component('manualVehicleDeliveryForm', {
             //Scrollable Tabs
             scrollableTabs();
         }, 1000);
+
+        /* Modal Md Select Hide */
+        $('.modal').bind('click', function (event) {
+            if ($('.md-select-menu-container').hasClass('md-active')) {
+                $mdSelect.hide();
+            }
+        });
     }
 });

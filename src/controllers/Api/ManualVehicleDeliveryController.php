@@ -15,6 +15,8 @@ use App\GigoManualInvoice;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\WpoSoapController;
 use App\JobOrder;
+use App\JobOrderWarrantyDetail;
+use App\JobOrderPaymentDetail;
 use App\MailConfiguration;
 use App\Mail\VehicleDeliveryRequestMail;
 use App\Outlet;
@@ -241,6 +243,9 @@ class ManualVehicleDeliveryController extends Controller
             'transcationAttachment',
             'billingType',
             'inwardCancelReasonType',
+            'warrantyDetail',
+            'paymentDetail',
+            'paymentDetail.paymentMode',
         ])
             ->select([
                 'job_orders.*',
@@ -274,6 +279,12 @@ class ManualVehicleDeliveryController extends Controller
             $invoice_date = date('d-m-Y');
         }
 
+        if ($job_order->warrantyDetail) {
+            $warranty_date = $job_order->warrantyDetail->warranty_date;
+        } else {
+            $warranty_date = date('d-m-Y');
+        }
+
         //Labour Amount
         $labour_amount = $job_order->manualDeliveryLabourInvoice ? $job_order->manualDeliveryLabourInvoice->amount : 0;
         $parts_amount = $job_order->manualDeliveryPartsInvoice ? $job_order->manualDeliveryPartsInvoice->amount : 0;
@@ -292,6 +303,7 @@ class ManualVehicleDeliveryController extends Controller
         $this->data['success'] = true;
         $this->data['job_order'] = $job_order;
         $this->data['invoice_date'] = $invoice_date;
+        $this->data['warranty_date'] = $warranty_date;
 
         //Check Vehicle Membership
         // $vehicle_membership = AmcMember::join('amc_policies', 'amc_policies.id', 'amc_members.policy_id')->whereIn('amc_policies.name', ['TVS ONE', 'TVS CARE'])->where('amc_members.vehicle_id', $job_order->vehicle_id)->first();
@@ -318,7 +330,7 @@ class ManualVehicleDeliveryController extends Controller
                 'orderBy' => 'id',
                 'default_text' => 'Select Category',
             ]),
-            'payment_modes' => collect(PaymentMode::where('company_id', Auth::user()->company_id)
+            'payment_modes' => collect(PaymentMode::where('company_id', Auth::user()->company_id)->whereNotIn('id', [9, 10, 11])
                     ->select('payment_modes.id', 'payment_modes.name')->get())->prepend(['id' => '', 'name' => 'Select Payment Mode']),
             'pending_reasons' => $pending_reasons,
             'billing_types' => Config::getDropDownList([
@@ -389,7 +401,7 @@ class ManualVehicleDeliveryController extends Controller
 
         if ($job_order->gateLog->status_id == 8124) {
             $job_order->vehicle_delivery_status_id = 3;
-        }else{
+        } else {
             $job_order->vehicle_delivery_status_id = $request->vehicle_delivery_status_id;
         }
 
@@ -474,6 +486,7 @@ class ManualVehicleDeliveryController extends Controller
                                     'required',
                                     'unique:receipts,temporary_receipt_no,' . $request->job_order_id . ',entity_id,receipt_of_id,7622',
                                     'unique:receipts,permanent_receipt_no,' . $request->job_order_id . ',entity_id,receipt_of_id,7622',
+                                    'unique:job_order_payment_details,transaction_number,' . $request->job_order_id . ',job_order_id',
                                 ],
                             ]);
 
@@ -661,6 +674,15 @@ class ManualVehicleDeliveryController extends Controller
                             $payment->received_amount = $request->receipt_amount;
                             $payment->receipt_id = $receipt_id;
                             $job_order->payment()->save($payment);
+
+                            //save payment detail
+                            $payment = new JobOrderPaymentDetail;
+                            $payment->payment_mode_id =  $request->payment_mode_id;
+                            $payment->job_order_id = $job_order->id;
+                            $payment->transaction_number = $request->receipt_number;
+                            $payment->transaction_date = date('Y-m-d', strtotime($request->receipt_date));
+                            $payment->amount = $request->receipt_amount;
+                            $payment->save();
                         }
 
                         //Save Labour Invoice Details
@@ -957,6 +979,53 @@ class ManualVehicleDeliveryController extends Controller
 
                         DB::beginTransaction();
 
+                        if ($request->warranty_number) {
+
+                            $validator = Validator::make($request->all(), [
+                                'warranty_date' => [
+                                    'required',
+                                ],
+                                'warranty_parts_amount' => [
+                                    'required',
+                                ],
+                                'warranty_labour_amount' => [
+                                    'required',
+                                ],
+                                'warranty_number' => [
+                                    'unique:job_order_warranty_details,number,' . $request->job_order_id . ',job_order_id',
+                                ],
+                            ]);
+    
+                            if ($validator->fails()) {
+                                return response()->json([
+                                    'success' => false,
+                                    'error' => 'Validation Error',
+                                    'errors' => $validator->errors()->all(),
+                                ]);
+                            }
+
+                            $gate_in_date = $job_order->gateLog->gate_in_date;
+                            $gate_in_date = date('d-m-Y', strtotime($gate_in_date));
+
+                            if (strtotime($gate_in_date) > strtotime($request->warranty_date)) {
+                                return response()->json([
+                                    'success' => false,
+                                    'error' => 'Validation Error',
+                                    'errors' => [
+                                        'Warranty Date should be greater than Gate In Date',
+                                    ],
+                                ]);
+                            }
+
+                            //Save Warranty Detail
+                            $warranty_detail = JobOrderWarrantyDetail::firstorNew(['job_order_id' => $job_order->id]);
+                            $warranty_detail->number = $request->warranty_number;
+                            $warranty_detail->labour_amount = $request->warranty_labour_amount;
+                            $warranty_detail->parts_amount = $request->warranty_parts_amount;
+                            $warranty_detail->warranty_date = date('Y-m-d', strtotime($request->warranty_date));
+                            $warranty_detail->save();
+                        }
+
                         $job_order->billing_type_id = $request->billing_type_id;
                         $job_order->inward_cancel_reason_id = null;
                         $job_order->inward_cancel_reason = null;
@@ -1159,7 +1228,9 @@ class ManualVehicleDeliveryController extends Controller
                         // 'unique:receipts,permanent_receipt_no,' . $request->job_order_id . ',entity_id,receipt_of_id,7622',
                         'unique:receipts,temporary_receipt_no',
                         'unique:receipts,permanent_receipt_no',
+                        'unique:job_order_payment_details,transaction_number,' . $request->job_order_id . ',job_order_id',
                     ],
+
                     'receipt_date' => [
                         'required',
                     ],
@@ -1233,6 +1304,15 @@ class ManualVehicleDeliveryController extends Controller
                 //Save Receipt
                 $customer = Customer::find($job_order->customer_id);
 
+                if ($job_order->pending_reason_id == 2 || $job_order->pending_reason_id == 3) {
+                    $payment_mode_id = 9;
+                } elseif ($job_order->pending_reason_id == 4) {
+                    $payment_mode_id = 10;
+                } elseif ($job_order->pending_reason_id == 5) {
+                    $payment_mode_id = 11;
+                } else {
+                    $payment_mode_id = $request->payment_mode_id;
+                }
                 //Delete previous receipt
                 // $remove_receipt = Receipt::where('receipt_of_id', 7622)->where('entity_id', $job_order->id)->forceDelete();
 
@@ -1246,7 +1326,7 @@ class ManualVehicleDeliveryController extends Controller
                 $receipt->permanent_receipt_no = $request->receipt_number;
                 $receipt->amount = $request->receipt_amount;
                 $receipt->settled_amount = $request->receipt_amount;
-                $receipt->payment_mode_id = $request->payment_mode_id;
+                $receipt->payment_mode_id = $payment_mode_id;
                 $receipt->created_at = Carbon::now();
 
                 $customer->receipt()->save($receipt);
@@ -1261,6 +1341,15 @@ class ManualVehicleDeliveryController extends Controller
                 $payment->received_amount = $request->receipt_amount;
                 $payment->receipt_id = $receipt_id;
                 $job_order->payment()->save($payment);
+
+                //save payment detail
+                $payment = new JobOrderPaymentDetail;
+                $payment->payment_mode_id = $payment_mode_id;
+                $payment->job_order_id = $job_order->id;
+                $payment->transaction_number = $request->receipt_number;
+                $payment->transaction_date = date('Y-m-d', strtotime($request->receipt_date));
+                $payment->amount = $request->receipt_amount;
+                $payment->save();
 
                 //Updare Invoice
                 $update_invoice = GigoManualInvoice::where('invoiceable_type', 'App\JobOrder')->where('invoiceable_id', $job_order->id)->update(['receipt_id' => $receipt_id]);
@@ -1331,6 +1420,8 @@ class ManualVehicleDeliveryController extends Controller
             'manualDeliveryPartsInvoice',
             'manualDeliveryReceipt',
             'status',
+            'outlet',
+            'vehicleDeliveryRequestUser',
         ])
             ->select([
                 'job_orders.*',
@@ -1340,7 +1431,7 @@ class ManualVehicleDeliveryController extends Controller
             ->find($job_order_id);
 
         $total_amount = $job_order->manualDeliveryLabourInvoice->amount + $job_order->manualDeliveryPartsInvoice->amount;
-
+        // dd($job_order->outlet,$job_order->vehicleDeliveryRequestUser);
         $job_order->total_amount = $total_amount;
         if ($job_order) {
             $user_details = MailConfiguration::where('config_id', 3011)->pluck('to_email')->first();
@@ -1354,15 +1445,22 @@ class ManualVehicleDeliveryController extends Controller
             if (!$user_details || count($cc_email) == 0) {
                 $cc_email = ['0' => 'parthiban@uitoux.in'];
             }
+
+            $outlet = $job_order->outlet->ax_name ? $job_order->outlet->ax_name : $job_order->outlet->name;
+
+            $subject = 'GIGO '.$outlet.' - '. $job_order->vehicle->currentOwner->customer->name.' vehicle need approval for delivery';
+
+            // dd($subject);
             if ($to_email) {
                 // $cc_email = [];
                 $approver_view_url = url('/') . '/#!/manual-vehicle-delivery/view/' . $job_order->id;
                 $arr['job_order'] = $job_order;
-                $arr['subject'] = 'GIGO – Need approval for Vehicle Delivery';
+                // $arr['subject'] = 'GIGO – Need approval for Vehicle Delivery';
+                $arr['subject'] = $subject;
                 $arr['to_email'] = $to_email;
                 $arr['cc_email'] = $cc_email;
                 $arr['approver_view_url'] = $approver_view_url;
-    
+
                 $MailInstance = new VehicleDeliveryRequestMail($arr);
                 $Mail = Mail::send($MailInstance);
             }

@@ -51,12 +51,12 @@
                                         <img class="img-responsive" src="./public/theme/img/content/edit.svg" alt="Edit" />
                                     </a> -->
                                 <span ng-if="job_order.vehicle.model.model_number">
-                                    | {{job_order.vehicle.model.model_name}} / {{job_order.vehicle.model.model_number}}
+                                    | {{job_order.vehicle.model.model_name}}
                                 </span>
-                                <!-- <span ng-if="job_order.driver_name">
-                                    | {{job_order.driver_name}}
-                                </span> -->
-                                | {{job_order.date}}, {{job_order.time}}
+                                <span>
+                                    | {{job_order.vehicle.current_owner.customer.name}}
+                                </span>
+                                <!-- | {{job_order.date}}, {{job_order.time}} -->
                             </span>
                         </div>
                     </div><!-- Page Tab Form Top Left -->
@@ -497,6 +497,63 @@
                                                 </div><!-- Column -->
                                             </div>
                                         </div>
+                                        <div class="col-md-12"
+                                            ng-if="$ctrl.vehicle_service_status == 1 && job_order.billing_type_id == 11521 ">
+                                            <h5 class="color-primary mb-10">
+                                                <b>
+                                                    Warranty Details
+                                                </b>
+                                            </h5>
+                                            <!-- <hr class="hr-15"> -->
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Warranty Date</label>
+                                                        <div class="input-group date" data-provide="datepicker"
+                                                            data-date-end-date="0d">
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Ex: 08-01-2021" ng-model="warranty_date"
+                                                                name="warranty_date" />
+                                                            <div class="input-group-addon">
+                                                                <img class="img-responsive"
+                                                                    src="./public/theme/img/content/calender-gray-icon.svg"
+                                                                    alt="Calendar Image" />
+                                                            </div>
+                                                        </div><!-- Input Group -->
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Warranty Number</label>
+                                                        <input type="text" name="warranty_number" maxlength="100"
+                                                            placeholder="Ex: 1000" class="form-control"
+                                                            id="warranty_number"
+                                                            value="{{job_order.warranty_detail.number}}"
+                                                            onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Labour Amount</label>
+                                                        <input type="text" name="warranty_labour_amount" maxlength="100"
+                                                            placeholder="Ex: 1000" class="form-control"
+                                                            id="warranty_labour_amount"
+                                                            value="{{job_order.warranty_detail.labour_amount}}"
+                                                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Parts Amount</label>
+                                                        <input type="text" name="warranty_parts_amount" maxlength="100"
+                                                            placeholder="Ex: 2000" class="form-control"
+                                                            id="warranty_parts_amount"
+                                                            value="{{job_order.warranty_detail.parts_amount}}"
+                                                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                            </div><!-- Row -->
+                                        </div><!-- Column -->
                                         <div class="col-md-12"
                                             ng-if="$ctrl.vehicle_service_status == 1 && (job_order.billing_type_id == 11520 || job_order.billing_type_id == 11523 )">
                                             <h5 class="color-primary mb-10">

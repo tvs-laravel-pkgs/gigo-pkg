@@ -52,12 +52,12 @@
                                         <img class="img-responsive" src="./public/theme/img/content/edit.svg" alt="Edit" />
                                     </a> -->
                                 <span ng-if="job_order.vehicle.model.model_number">
-                                    | {{job_order.vehicle.model.model_name}} / {{job_order.vehicle.model.model_number}}
+                                    | {{job_order.vehicle.model.model_name}}
                                 </span>
-                                <!-- <span ng-if="job_order.driver_name">
-                                    | {{job_order.driver_name}}
-                                </span> -->
-                                | {{job_order.date}}, {{job_order.time}}
+                                <span>
+                                    | {{job_order.vehicle.current_owner.customer.name}}
+                                </span>
+                                <!-- | {{job_order.date}}, {{job_order.time}} -->
                             </span>
                         </div>
                     </div><!-- Page Tab Form Top Left -->
@@ -352,7 +352,13 @@
                                                     <span class="view-col-label">
                                                         Address
                                                     </span>
-                                                    <span class="view-col-value">{{job_order.vehicle.current_owner.customer.address.address_line1}}, {{job_order.vehicle.current_owner.customer.address.address_line2}}, {{job_order.vehicle.current_owner.customer.address.city.name}}, {{job_order.vehicle.current_owner.customer.address.state.name}}, {{job_order.vehicle.current_owner.customer.address.pincode}}, {{job_order.vehicle.current_owner.customer.address.country.name}}.</span>
+                                                    <span
+                                                        class="view-col-value">{{job_order.vehicle.current_owner.customer.address.address_line1}},
+                                                        {{job_order.vehicle.current_owner.customer.address.address_line2}},
+                                                        {{job_order.vehicle.current_owner.customer.address.city.name}},
+                                                        {{job_order.vehicle.current_owner.customer.address.state.name}},
+                                                        {{job_order.vehicle.current_owner.customer.address.pincode}},
+                                                        {{job_order.vehicle.current_owner.customer.address.country.name}}.</span>
                                                 </li>
                                                 <li class="view-col-3">
                                                     <span class="view-col-label">
@@ -439,7 +445,8 @@
                                                         </b>
                                                     </span>
                                                 </li>
-                                                <li class="view-col-4" ng-if="job_order.billing_type_id == 11521 || job_order.billing_type_id == 11522">
+                                                <li class="view-col-4"
+                                                    ng-if="job_order.billing_type_id == 11521 || job_order.billing_type_id == 11522">
                                                     <span class="view-col-label">
                                                         Remarks
                                                     </span>
@@ -451,7 +458,7 @@
                                                 </li>
                                                 <li class="view-col-4" ng-if="job_order.inward_cancel_reason_id">
                                                     <span class="view-col-label">
-                                                       Inward Cancel Reason
+                                                        Inward Cancel Reason
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
@@ -461,7 +468,7 @@
                                                 </li>
                                                 <li class="view-col-4" ng-if="job_order.inward_cancel_reason_id">
                                                     <span class="view-col-label">
-                                                       Remarks
+                                                        Remarks
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
@@ -472,8 +479,56 @@
                                             </ul>
                                             <!-- <button class="btn btn-secondary-dark btn-md btn-square">Edit</button> -->
                                         </div><!-- Column -->
-                                        <div class="col-md-12"  ng-if="$ctrl.vehicle_service_status == 1 && (job_order.billing_type_id == 11520 || job_order.billing_type_id == 11523 )">
-                                            <h5 class="color-primary mb-10"><b>{{invoice_label_name}} Invoice Details</b></h5>
+                                        <div class="col-md-12"
+                                            ng-if="$ctrl.vehicle_service_status == 1 && job_order.billing_type_id == 11521">
+                                            <h5 class="color-primary mb-10"><b>Warranty Details</b></h5>
+                                            <ul class="view-row mb-no">
+                                                <li class="view-col-4">
+                                                    <span class="view-col-label">
+                                                        Warranty Date
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b>
+                                                            {{job_order.warranty_detail.warranty_date ? job_order.warranty_detail.warranty_date : '-'}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-4">
+                                                    <span class="view-col-label">
+                                                        Warranty Number
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b>
+                                                            {{job_order.warranty_detail.number ? job_order.warranty_detail.number : '-'}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-4">
+                                                    <span class="view-col-label">
+                                                        Labour Amount
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        <b>
+                                                            {{job_order.warranty_detail.labour_amount ? job_order.warranty_detail.labour_amount : '-'}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-4">
+                                                    <span class="view-col-label">
+                                                        Parts Amount
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        <b>
+                                                            {{job_order.warranty_detail.parts_amount ? job_order.warranty_detail.parts_amount :'-'}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                            </ul>
+                                        </div><!-- Column -->
+                                        <div class="col-md-12"
+                                            ng-if="$ctrl.vehicle_service_status == 1 && (job_order.billing_type_id == 11520 || job_order.billing_type_id == 11523 )">
+                                            <h5 class="color-primary mb-10"><b>{{invoice_label_name}} Invoice
+                                                    Details</b></h5>
                                             <ul class="view-row mb-no">
                                                 <li class="view-col-4">
                                                     <span class="view-col-label">
@@ -507,7 +562,7 @@
                                                 </li>
                                                 <li class="view-col-4">
                                                     <span class="view-col-label">
-                                                       Parts Invoice Number
+                                                        Parts Invoice Number
                                                     </span>
                                                     <span class="view-col-value">
                                                         <b>
@@ -528,7 +583,8 @@
                                             </ul>
                                             <!-- <button class="btn btn-secondary-dark btn-md btn-square">Edit</button> -->
                                         </div><!-- Column -->
-                                        <div class="col-md-12" ng-if="$ctrl.vehicle_service_status == 1  && job_order.billing_type_id == 11520">
+                                        <div class="col-md-12"
+                                            ng-if="$ctrl.vehicle_service_status == 1  && job_order.billing_type_id == 11520">
                                             <h5 class="color-primary mb-10"><b>Payment Status</b></h5>
                                             <ul class="view-row mb-no">
                                                 <li class="view-col-4">
@@ -595,10 +651,10 @@
                                                 </li>
                                             </ul>
                                         </div><!-- Column -->
-                                        <div class="col-md-12" ng-if="job_order.manual_delivery_receipt.length > 0">
+                                        <div class="col-md-12" ng-if="job_order.payment_detail.length > 0">
                                             <h5 class="color-primary mb-10"><b>Transaction Details</b></h5>
                                             <ul class="view-row mb-no"
-                                                ng-repeat="(index, transactions) in job_order.manual_delivery_receipt">
+                                                ng-repeat="(index, transactions) in job_order.payment_detail">
                                                 <li class="view-col-3">
                                                     <span class="view-col-label">
                                                         Payment Mode
@@ -611,27 +667,27 @@
                                                 </li>
                                                 <li class="view-col-3">
                                                     <span class="view-col-label">
-                                                        Receipt Number
+                                                        Transaction Number
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
-                                                            {{transactions.permanent_receipt_no}}
+                                                            {{transactions.transaction_number}}
                                                         </b>
                                                     </span>
                                                 </li>
                                                 <li class="view-col-3">
                                                     <span class="view-col-label">
-                                                        Receipt Date
+                                                        Transaction Date
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
-                                                            {{transactions.date}}
+                                                            {{transactions.transaction_date}}
                                                         </b>
                                                     </span>
                                                 </li>
                                                 <li class="view-col-3">
                                                     <span class="view-col-label">
-                                                        Receipt Amount
+                                                        Transaction Amount
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
@@ -754,7 +810,7 @@
                 <div class="modal-body">
                     <div class="modal-form">
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-3" ng-if="payment_mode_status == 'true'">
                                 <div class="form-group">
                                     <label>Mode of Payment<sup class="mandatory">*</sup></label>
                                     <md-select ng-model="$ctrl.payment_mode_id" placeholder="Select Mode"

@@ -145,8 +145,8 @@ class ManualVehicleDeliveryController extends Controller
         }
 
         $vehicle_inwards->groupBy('job_orders.id');
-        $vehicle_inwards->orderBy('job_orders.created_at', 'DESC');
-        $vehicle_inwards->orderBy('job_orders.status_id', 'DESC');
+        $vehicle_inwards->orderBy('gate_logs.gate_in_date', 'DESC');
+        // $vehicle_inwards->orderBy('job_orders.status_id', 'DESC');
 
         return Datatables::of($vehicle_inwards)
             ->rawColumns(['status', 'action'])
@@ -239,8 +239,9 @@ class ManualVehicleDeliveryController extends Controller
             ->join('states', 'states.id', 'outlets.state_id')
             ->join('regions', 'regions.state_id', 'states.id')
             ->whereNotNull('job_orders.status_id')
-            // ->whereDate('gate_logs.gate_in_date', '>=', $start_date)
-            // ->whereDate('gate_logs.gate_in_date', '<=', $end_date)
+            ->whereDate('gate_logs.gate_in_date', '>=', $start_date)
+            ->whereDate('gate_logs.gate_in_date', '<=', $end_date)
+            ->orderBy('gate_logs.gate_in_date', 'asc')
             ->groupBy('job_orders.id');
 
         if (!Entrust::can('view-all-outlet-manual-vehicle-delivery')) {
@@ -251,6 +252,10 @@ class ManualVehicleDeliveryController extends Controller
             } else {
                 $vehicle_inward = $vehicle_inward->where('job_orders.outlet_id', Auth::user()->working_outlet_id);
             }
+        }
+
+        if($request->status_id){
+            $vehicle_inward = $vehicle_inward->where('job_orders.status_id',$request->status_id);
         }
 
         $vehicle_inwards = $vehicle_inward->get();

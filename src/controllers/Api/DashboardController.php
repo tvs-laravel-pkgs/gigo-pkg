@@ -492,7 +492,9 @@ class DashboardController extends Controller {
 
 		//Dashbord data
 		$date = date('Y-m-d');
-		
+		// $user->date 
+		$user->current_date = date('l, d M Y');
+
 		//GateIn 
 		$gate_in = GateLog::whereBetween('gate_in_date', [$date . " 00:00:00", $date . " 23:59:59"])->where('outlet_id',$user->working_outlet_id)->count();
                    

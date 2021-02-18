@@ -31,27 +31,11 @@
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
             <div class="page-header-content-right">
-                <div class="page-header-content tab-block">
-                    <div class="page-header-content button-block">
-                        <div class="list-card-icon-wrap">
-                            <button ng-if="$ctrl.hasPermission('export-vehicle-delivery')" class="btn btn-primary my-tooltip" data-toggle="modal"
-                            data-target="#export-modal">
-                                Export
-                            </button>
-                            <div class="list-icon in" ng-click="listRedirect('table')">
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                            </div>
-                            <div class="card-icon" ng-click="listRedirect('card')">
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                            </div>
-                        </div><!-- List Card Wrap -->
-                    </div><!-- Page Header Content -->
+                <div class="page-header-content button-block">
+                    <button ng-if="$ctrl.hasPermission('export-vehicle-delivery')" class="btn btn-primary my-tooltip"
+                        data-toggle="modal" data-target="#export-modal">
+                        Export
+                    </button>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Right -->
         </div><!-- Page Header Inner -->
@@ -102,22 +86,26 @@
                                 <div class="form-group">
                                     <label>Date</label>
                                     <div class="input-group date">
-                                        <input class="form-control daterange align-left" placeholder="Select a Date Range" name="date" id="date_range">
+                                        <input class="form-control daterange align-left"
+                                            placeholder="Select a Date Range" name="date" id="date_range">
                                         <span class="input-group-addon">
-                                            <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                            <img class="img-responsive"
+                                                src="./public/theme/img/content/calender-gray-icon.svg"
+                                                alt="Calendar Image" />
                                         </span>
                                     </div><!-- Input Group -->
                                 </div><!-- Feild -->
                             </div><!-- Column -->
-                            <div class="col-md-6">
+                            <div class="col-md-6 ng-hide">
                                 <div class="form-group">
                                     <label>Status</label>
                                     <md-select ng-model="$ctrl.status_selected" md-on-close="clearSearchTerm()"
                                         ng-change="onSelectedStatus($ctrl.status_selected)"
                                         data-md-container-class="selectdemoSelectHeader" placeholder="Select Status">
                                         <md-select-header class="demo-select-header">
-                                            <input ng-model="searchTerm1" type="search" placeholder="Search for a Status"
-                                                class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                            <input ng-model="searchTerm1" type="search"
+                                                placeholder="Search for a Status" class="demo-header-searchbox md-text"
+                                                ng-keydown="$event.stopPropagation()">
                                         </md-select-header>
                                         <md-optgroup>
                                             <md-option ng-value="status.id"
@@ -165,9 +153,12 @@
                             <div class="form-group">
                                 <label>Date</label>
                                 <div class="input-group date">
-                                    <input class="form-control daterange align-left" placeholder="Select a Date Range" name="date" id="date_range">
+                                    <input class="form-control daterange align-left" placeholder="Select a Date Range"
+                                        name="date" id="date_range">
                                     <span class="input-group-addon">
-                                        <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                        <img class="img-responsive"
+                                            src="./public/theme/img/content/calender-gray-icon.svg"
+                                            alt="Calendar Image" />
                                     </span>
                                 </div><!-- Input Group -->
                             </div><!-- Feild -->

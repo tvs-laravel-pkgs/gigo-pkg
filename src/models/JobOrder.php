@@ -439,6 +439,18 @@ class JobOrder extends BaseModel {
 		return $this->belongsTo('App\Config', 'inward_cancel_reason_id');
 	}
 
+	public function warrantyDetail() {
+		return $this->hasOne('App\JobOrderWarrantyDetail', 'job_order_id');
+	}
+
+	public function paymentDetail() {
+		return $this->hasMany('App\JobOrderPaymentDetail', 'job_order_id')->orderBy('id','asc');
+	}
+
+	public function vehicleDeliveryRequestUser() {
+		return $this->belongsTo('App\User', 'vehicle_delivery_requester_id');
+	}
+
 	// Query Scopes --------------------------------------------------------------
 
 	public function scopeFilterSearch($query, $term) {

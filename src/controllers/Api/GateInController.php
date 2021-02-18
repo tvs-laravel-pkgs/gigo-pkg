@@ -253,7 +253,7 @@ class GateInController extends Controller {
 					$customer_form_filled = 0;
 					$vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
 				}
-				$vehicle->registration_number = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
+				$vehicle->registration_number = $request->registration_number ? str_replace([' ','-'], '', $request->registration_number) : NULL;
 				$vehicle->chassis_number = $request->chassis_number;
 				$vehicle->engine_number = $request->engine_number;
 				$vehicle->driver_name = $request->driver_name;
@@ -272,7 +272,7 @@ class GateInController extends Controller {
 
 				$vehicle->save();
 			} else {
-				$registration_number = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
+				$registration_number = $request->registration_number ? str_replace([' ','-'], '', $request->registration_number) : NULL;
 				//New
 				if ($registration_number) {
 					$vehicle = Vehicle::where([
@@ -688,7 +688,7 @@ class GateInController extends Controller {
 			if (!$vehicle->currentOwner) {
 				// dd($vehicle);
 				if($vehicle->registration_number){
-					$key = str_replace('-','',$vehicle->registration_number);
+					$key = str_replace([' ','-'],'',$vehicle->registration_number);
 				}else if($vehicle->chassis_number){
 					$key = $vehicle->chassis_number;
 				}else{
