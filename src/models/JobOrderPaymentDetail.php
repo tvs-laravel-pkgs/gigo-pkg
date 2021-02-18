@@ -19,6 +19,7 @@ class JobOrderPaymentDetail extends BaseModel
         return empty($value) ? '' : date('d-m-Y', strtotime($value));
     }
 
+    
     public function paymentMode()
     {
         return $this->belongsTo('App\PaymentMode', 'payment_mode_id');
