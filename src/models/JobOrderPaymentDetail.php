@@ -23,5 +23,4 @@ class JobOrderPaymentDetail extends BaseModel
     {
         return $this->belongsTo('App\PaymentMode', 'payment_mode_id');
     }
-
 }
