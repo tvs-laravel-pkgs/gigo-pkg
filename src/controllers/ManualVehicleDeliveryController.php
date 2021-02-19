@@ -88,10 +88,10 @@ class ManualVehicleDeliveryController extends Controller
                 'job_orders.vehicle_delivery_status_id',
                 DB::raw('IF(job_orders.vehicle_delivery_status_id IS NULL,"WIP",vehicle_delivery_statuses.name) as vehicle_status')
             )
-            ->where(function ($query) use ($start_date, $end_date) {
-                $query->whereDate('gate_logs.gate_in_date', '>=', $start_date)
-                    ->whereDate('gate_logs.gate_in_date', '<=', $end_date);
-            })
+            // ->where(function ($query) use ($start_date, $end_date) {
+            //     $query->whereDate('gate_logs.gate_in_date', '>=', $start_date)
+            //         ->whereDate('gate_logs.gate_in_date', '<=', $end_date);
+            // })
             ->where(function ($query) use ($request) {
                 if (!empty($request->reg_no)) {
                     $query->where('vehicles.registration_number', 'LIKE', '%' . $request->reg_no . '%');
@@ -130,6 +130,9 @@ class ManualVehicleDeliveryController extends Controller
             ->where('job_orders.company_id', Auth::user()->company_id)
         ;
 
+        if ($request->date_range) {
+            $vehicle_inwards->whereDate('gate_logs.gate_in_date', '>=', $start_date)->whereDate('gate_logs.gate_in_date', '<=', $end_date);
+        }
         if (!Entrust::can('view-all-outlet-manual-vehicle-delivery')) {
             if (Entrust::can('view-mapped-outlet-manual-vehicle-delivery')) {
                 $outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
