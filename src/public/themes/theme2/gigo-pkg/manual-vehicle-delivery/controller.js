@@ -52,7 +52,7 @@ app.component('manualVehicleDeliveryList', {
                 type: "GET",
                 dataType: "json",
                 data: function (d) {
-                    d.date_range = $("#date_range").val();
+                    d.date_range = $("#filter_date_range").val();
                     d.registration_type = $("#registration_type").val();
                     d.reg_no = $("#reg_no").val();
                     d.customer_id = $("#customer_id").val();
@@ -215,6 +215,57 @@ app.component('manualVehicleDeliveryList', {
         }
 
         /* DateRange Picker */
+        $('.filter_daterange').daterangepicker({
+            autoUpdateInput: false,
+            locale: {
+                cancelLabel: 'Clear',
+                format: "DD-MM-YYYY"
+            }
+        });
+
+        $('.align-left.filter_daterange').daterangepicker({
+            autoUpdateInput: false,
+            "opens": "left",
+            locale: {
+                cancelLabel: 'Clear',
+                format: "DD-MM-YYYY"
+            }
+        });
+
+        $('.filter_daterange').on('apply.daterangepicker', function (ev, picker) {
+            $(this).val(picker.startDate.format('DD-MM-YYYY') + ' to ' + picker.endDate.format('DD-MM-YYYY'));
+            //dataTables.fnFilter();
+        });
+
+        $('.filter_daterange').on('cancel.daterangepicker', function (ev, picker) {
+            $(this).val('');
+        });
+
+        $scope.reset_filter = function () {
+            $("#filter_date_range").val('');
+            $("#registration_type").val('');
+            $("#reg_no").val('');
+            $("#customer_id").val('');
+            $("#model_id").val('');
+            $("#membership").val('');
+            $("#gate_in_no").val('');
+            $("#status_id").val('');
+            dataTables.fnFilter();
+            $('#vehicle-inward-filter-modal').modal('hide');
+        }
+
+        //Change Status
+        $scope.changeStatus = function (id, vehicle_delivery_status_id) {
+            setTimeout(function () {
+                $scope.job_order_id = id;
+                $scope.vehicle_delivery_status_id = vehicle_delivery_status_id;
+
+                $('#vehicle_delivery_status_id').val(vehicle_delivery_status_id);
+                $('#job_order_id').val(id);
+            }, 100);
+        }
+
+        /* DateRange Picker */
         $('.daterange').daterangepicker({
             autoUpdateInput: false,
             locale: {
@@ -240,30 +291,6 @@ app.component('manualVehicleDeliveryList', {
         $('.daterange').on('cancel.daterangepicker', function (ev, picker) {
             $(this).val('');
         });
-
-        $scope.reset_filter = function () {
-            $("#date_range").val('');
-            $("#registration_type").val('');
-            $("#reg_no").val('');
-            $("#customer_id").val('');
-            $("#model_id").val('');
-            $("#membership").val('');
-            $("#gate_in_no").val('');
-            $("#status_id").val('');
-            dataTables.fnFilter();
-            $('#vehicle-inward-filter-modal').modal('hide');
-        }
-
-        //Change Status
-        $scope.changeStatus = function (id, vehicle_delivery_status_id) {
-            setTimeout(function () {
-                $scope.job_order_id = id;
-                $scope.vehicle_delivery_status_id = vehicle_delivery_status_id;
-
-                $('#vehicle_delivery_status_id').val(vehicle_delivery_status_id);
-                $('#job_order_id').val(id);
-            }, 100);
-        }
 
         $scope.vehicleStatusSave = function () {
             var split_form_id = '#vehicle_status_form';

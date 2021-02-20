@@ -133,6 +133,7 @@ class ManualVehicleDeliveryController extends Controller
         if ($request->date_range) {
             $vehicle_inwards->whereDate('gate_logs.gate_in_date', '>=', $start_date)->whereDate('gate_logs.gate_in_date', '<=', $end_date);
         }
+
         if (!Entrust::can('view-all-outlet-manual-vehicle-delivery')) {
             if (Entrust::can('view-mapped-outlet-manual-vehicle-delivery')) {
                 $outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
