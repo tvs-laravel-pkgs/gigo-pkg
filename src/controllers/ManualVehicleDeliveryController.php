@@ -212,8 +212,8 @@ class ManualVehicleDeliveryController extends Controller
 		ini_set('max_execution_time', 0);
 
         // dd($request->all());
-        if ($request->date_range) {
-            $date_range = explode(' to ', $request->date_range);
+        if ($request->date) {
+            $date_range = explode(' to ', $request->date);
             $start_date = date('Y-m-d', strtotime($date_range[0]));
             $start_date = $start_date . ' 00:00:00';
 
