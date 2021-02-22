@@ -282,7 +282,7 @@ class DashboardController extends Controller {
 		$dashboard_data['wc_data'] = $wc_data;
 
 		//Total Gate Out Vehicles
-		$gate_out_vehicles = GatePass::join('job_orders', 'job_orders.id', 'gate_passes.job_order_id')->whereIn('job_orders.outlet_id', $outlet_ids)->where('gate_passes.status_id', 8341)->whereDate('gate_passes.created_at', '>=', $start_date)->whereDate('gate_passes.created_at', '<=', $end_date)->where('gate_passes.type_id', 8280)->pluck('gate_passes.job_order_id')->toArray();
+		$gate_out_vehicles = GateLog::join('job_orders', 'job_orders.id', 'gate_logs.job_order_id')->whereDate('gate_logs.gate_out_date', '>=', $start_date)->whereDate('gate_logs.gate_out_date', '<=', $end_date)->whereIn('gate_logs.outlet_id', $outlet_ids)->where('gate_logs.status_id', 8124)->groupBy('job_orders.id')->pluck('job_orders.id')->toArray();
 
 		$total_gate_out_vehicles = count($gate_out_vehicles);
 
