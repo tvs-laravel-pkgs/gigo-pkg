@@ -268,6 +268,7 @@ app.component('manualVehicleDeliveryList', {
         /* DateRange Picker */
         $('.daterange').daterangepicker({
             autoUpdateInput: false,
+            "autoApply": true,
             locale: {
                 cancelLabel: 'Clear',
                 format: "DD-MM-YYYY"
