@@ -371,7 +371,7 @@ class GateLog extends Model
 			//CHECK VEHICLE PREVIOUS JOBCARD STATUS
 			$previous_job_order = JobOrder::where('vehicle_id', $vehicle->id)->orderBy('id', 'DESC')->first();
 			if ($previous_job_order) {
-				if ($previous_job_order->status_id != 8470 && $previous_job_order->status_id != 8476 && $previous_job_order->status_id != 8467 && $previous_job_order->status_id != 8468) {
+				if ($previous_job_order->status_id != 8470 && $previous_job_order->status_id != 8476 && $previous_job_order->status_id != 8467 && $previous_job_order->status_id != 8468 && $previous_job_order->status_id != '') {
 					$record_errors[] = 'Previous Job Order not completed on this Vehicle!';
             		$skip = true;
 				}
