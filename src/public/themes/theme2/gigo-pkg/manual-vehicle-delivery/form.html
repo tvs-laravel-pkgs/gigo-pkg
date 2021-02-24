@@ -668,10 +668,10 @@
                                                     <div class="form-group">
                                                         <label>Mode of Payment<sup class="mandatory">*</sup></label>
                                                         <md-select
-                                                            ng-model="job_order.manual_delivery_receipt[0].payment_mode_id"
+                                                            ng-model="job_order.payment_detail[0].payment_mode_id"
                                                             placeholder="Select Mode"
                                                             data-md-container-class="selectdemoSelectHeader"
-                                                            ng-change="getSelectedPaymentMode(job_order.manual_delivery_receipt[0].payment_mode_id)">
+                                                            ng-change="getSelectedPaymentMode(job_order.payment_detail[0].payment_mode_id)">
                                                             <md-select-header class="demo-select-header">
                                                                 <input ng-model="searchPaymentMode" type="search"
                                                                     placeholder="Search for a Payment Mode.."
@@ -686,7 +686,7 @@
                                                             </md-optgroup>
                                                         </md-select>
                                                         <input type="hidden" class="required" name="payment_mode_id"
-                                                            value="{{job_order.manual_delivery_receipt[0].payment_mode_id}}">
+                                                            value="{{job_order.payment_detail[0].payment_mode_id}}">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3" ng-if="$ctrl.vehicle_payment_status">
@@ -695,7 +695,7 @@
                                                                 class="mandatory">*</sup></label>
                                                         <input type="text" name="receipt_number" maxlength="100"
                                                             placeholder="Ex: INV20210101" class="form-control"
-                                                            value="{{job_order.manual_delivery_receipt[0].permanent_receipt_no}}">
+                                                            value="{{job_order.payment_detail[0].transaction_number}}">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3" ng-if="$ctrl.vehicle_payment_status">
@@ -705,7 +705,7 @@
                                                             data-date-end-date="0d">
                                                             <input type="text" class="form-control required"
                                                                 placeholder="Ex: 10-01-2021"
-                                                                ng-model="job_order.manual_delivery_receipt[0].date"
+                                                                ng-model="job_order.payment_detail[0].transaction_date"
                                                                 name="receipt_date" />
                                                             <div class="input-group-addon">
                                                                 <img class="img-responsive"
@@ -722,7 +722,7 @@
                                                         <input type="text" name="receipt_amount" maxlength="100"
                                                             class="form-control receipt_amount required"
                                                             placeholder="Ex: 3000"
-                                                            value="{{job_order.manual_delivery_receipt[0].amount}}"
+                                                            value="{{job_order.payment_detail[0].amount}}"
                                                             oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->

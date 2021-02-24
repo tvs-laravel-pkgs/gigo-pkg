@@ -399,7 +399,7 @@ app.component('manualVehicleDeliveryView', {
                         self.vehicle_payment_status = "No";
                     }
 
-                    self.payment_mode_id = $scope.job_order.manual_delivery_receipt[0] ? $scope.job_order.manual_delivery_receipt[0].payment_mode_id : '0';
+                    self.payment_mode_id = $scope.job_order.payment_detail[0] ? $scope.job_order.payment_detail[0].payment_mode_id : '0';
 
                     if (self.payment_mode_id == 1) {
                         $scope.label_name = 'Receipt';
