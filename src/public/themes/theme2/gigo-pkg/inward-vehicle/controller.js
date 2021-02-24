@@ -1051,7 +1051,7 @@ app.component('inwardVehicleCustomerDetail', {
                     'address_line1': {
                         required: true,
                         minlength: 3,
-                        maxlength: 32,
+                        // maxlength: 32,
                     },
                     'address_line2': {
                         minlength: 3,

@@ -2260,7 +2260,7 @@ class VehicleInwardController extends Controller {
 				'address_line1' => [
 					'required',
 					'min:3',
-					'max:32',
+					// 'max:32',
 					'string',
 				],
 				'address_line2' => [
