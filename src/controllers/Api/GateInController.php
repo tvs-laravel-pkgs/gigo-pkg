@@ -740,7 +740,7 @@ class GateInController extends Controller {
 							$vehicle_owner->created_at = Carbon::now();
 						}
 						$vehicle_owner->save();
-						$job_order->customer_id = $vehicle->currentOwner->customer_id;
+						$job_order->customer_id = $customer->id;
 						$job_order->save();
 					}
 				}
