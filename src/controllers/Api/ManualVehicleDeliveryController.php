@@ -931,10 +931,13 @@ class ManualVehicleDeliveryController extends Controller
                         $job_order->save();
 
                         //Delete previous receipt
-                        $remove_receipt = Receipt::where('receipt_of_id', 7622)->where('entity_id', $job_order->id)->forceDelete();
+                        // $remove_receipt = Receipt::where('receipt_of_id', 7622)->where('entity_id', $job_order->id)->forceDelete();
 
                         //Delete previous Invoice
                         $remove_invoice = GigoManualInvoice::where('invoiceable_type', 'App\JobOrder')->where('invoiceable_id', $job_order->id)->forceDelete();
+
+                        //Delete previous payment
+                        $remove_payment = JobOrderPaymentDetail::where('job_order_id', $job_order->id)->forceDelete();
 
                         //Save Labour Invoice Details
                         $invoice_detail = new GigoManualInvoice;
@@ -1156,10 +1159,14 @@ class ManualVehicleDeliveryController extends Controller
                         $gate_pass = $this->generateGatePass($job_order);
 
                         //Delete previous receipt
-                        $remove_receipt = Receipt::where('receipt_of_id', 7622)->where('entity_id', $job_order->id)->forceDelete();
+                        // $remove_receipt = Receipt::where('receipt_of_id', 7622)->where('entity_id', $job_order->id)->forceDelete();
 
                         //Delete previous Invoice
                         $remove_invoice = GigoManualInvoice::where('invoiceable_type', 'App\JobOrder')->where('invoiceable_id', $job_order->id)->forceDelete();
+
+                        //Delete previous payment
+                        $remove_payment = JobOrderPaymentDetail::where('job_order_id', $job_order->id)->forceDelete();
+
 
                         DB::commit();
                         $message = "Vehicle delivery request saved successfully!";
