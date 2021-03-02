@@ -734,7 +734,7 @@ class ManualVehicleDeliveryController extends Controller
                                             'success' => false,
                                             'error' => 'Validation Error',
                                             'errors' => [
-                                                'Receipt amount number has already been taken!',
+                                                'Receipt number has already been taken!',
                                             ],
                                         ]);
                                     }
