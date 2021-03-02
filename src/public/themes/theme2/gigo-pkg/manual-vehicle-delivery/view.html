@@ -445,6 +445,16 @@
                                                         </b>
                                                     </span>
                                                 </li>
+                                                <li class="view-col-4" ng-if="job_order.billing_type_id">
+                                                    <span class="view-col-label">
+                                                        JobCard Number
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b>
+                                                            {{job_order.job_card_number}}
+                                                        </b>
+                                                    </span>
+                                                </li>
                                                 <li class="view-col-4"
                                                     ng-if="job_order.billing_type_id == 11521 || job_order.billing_type_id == 11522">
                                                     <span class="view-col-label">

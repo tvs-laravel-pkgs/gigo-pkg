@@ -495,7 +495,17 @@
                                                             placeholder="Enter Remarks">{{job_order.inward_cancel_reason}}</textarea>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-6"
+                                                <div class="col-md-3" ng-if="$ctrl.vehicle_service_status">
+                                                    <div class="form-group">
+                                                        <label>Job Card Number<sup class="mandatory">*</sup></label>
+                                                        <input type="text" class="form-control required"
+                                                            placeholder="Ex:12345"
+                                                            ng-model="job_order.job_card_number"
+                                                            value="{{job_order.job_card_number}}"
+                                                            name="job_card_number" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3"
                                                     ng-if="(job_order.billing_type_id == 11521 || job_order.billing_type_id == 11522) && $ctrl.vehicle_service_status">
                                                     <div class="form-group">
                                                         <label>Remarks<sup class="mandatory">*</sup></label>

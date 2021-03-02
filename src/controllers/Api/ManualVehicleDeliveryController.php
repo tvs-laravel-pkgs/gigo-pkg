@@ -470,6 +470,9 @@ class ManualVehicleDeliveryController extends Controller
                             'vehicle_delivery_request_remarks' => [
                                 'required_if:vehicle_payment_status,==,0',
                             ],
+                            'job_card_number' => [
+                                'required',
+                            ],
                         ], $error_messages);
 
                         if ($validator->fails()) {
@@ -630,6 +633,7 @@ class ManualVehicleDeliveryController extends Controller
 
                         $job_order->vehicle_payment_status = $request->vehicle_payment_status;
                         $job_order->vehicle_delivery_requester_id = Auth::user()->id;
+                        $job_order->job_card_number = $request->job_card_number;
 
                         if ($request->vehicle_payment_status == 1) {
                             $job_order->vehicle_delivery_request_remarks = null;
@@ -857,6 +861,9 @@ class ManualVehicleDeliveryController extends Controller
                             'parts_amount' => [
                                 'required',
                             ],
+                            'job_card_number' => [
+                                'required',
+                            ],
                         ]);
 
                         if ($validator->fails()) {
@@ -918,6 +925,7 @@ class ManualVehicleDeliveryController extends Controller
                         $job_order->approved_date_time = null;
                         $job_order->warranty_reason = null;
                         $job_order->status_id = 8470;
+                        $job_order->job_card_number = $request->job_card_number;
                         $job_order->updated_by_id = Auth::user()->id;
                         $job_order->updated_at = Carbon::now();
                         $job_order->save();
@@ -1012,6 +1020,9 @@ class ManualVehicleDeliveryController extends Controller
                             'warranty_reason' => [
                                 'required',
                             ],
+                            'job_card_number' => [
+                                'required',
+                            ],
                         ]);
 
                         if ($validator->fails()) {
@@ -1094,6 +1105,7 @@ class ManualVehicleDeliveryController extends Controller
                         }
 
                         $job_order->billing_type_id = $request->billing_type_id;
+                        $job_order->job_card_number = $request->job_card_number;
                         $job_order->inward_cancel_reason_id = null;
                         $job_order->inward_cancel_reason = null;
                         $job_order->vehicle_payment_status = null;
