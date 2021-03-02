@@ -458,15 +458,15 @@ class ManualVehicleDeliveryController extends Controller
                             'parts_amount' => [
                                 'required',
                             ],
-                            'receipt_number' => [
-                                'required_if:vehicle_payment_status,==,1',
-                            ],
-                            'receipt_date' => [
-                                'required_if:vehicle_payment_status,==,1',
-                            ],
-                            'receipt_amount' => [
-                                'required_if:vehicle_payment_status,==,1',
-                            ],
+                            // 'receipt_number' => [
+                            //     'required_if:vehicle_payment_status,==,1',
+                            // ],
+                            // 'receipt_date' => [
+                            //     'required_if:vehicle_payment_status,==,1',
+                            // ],
+                            // 'receipt_amount' => [
+                            //     'required_if:vehicle_payment_status,==,1',
+                            // ],
                             'vehicle_delivery_request_remarks' => [
                                 'required_if:vehicle_payment_status,==,0',
                             ],
@@ -480,34 +480,34 @@ class ManualVehicleDeliveryController extends Controller
                             ]);
                         }
 
-                        if ($request->vehicle_payment_status == 1) {
-                            $validator = Validator::make($request->all(), [
-                                'receipt_number' => [
-                                    'required',
-                                    // 'unique:receipts,temporary_receipt_no,' . $request->job_order_id . ',entity_id,receipt_of_id,7622',
-                                    // 'unique:receipts,permanent_receipt_no,' . $request->job_order_id . ',entity_id,receipt_of_id,7622',
-                                    'unique:job_order_payment_details,transaction_number,' . $request->job_order_id . ',job_order_id',
-                                ],
-                            ]);
+                        // if ($request->vehicle_payment_status == 1) {
+                        //     // $validator = Validator::make($request->all(), [
+                        //     //     'receipt_number' => [
+                        //     //         'required',
+                        //     //         // 'unique:receipts,temporary_receipt_no,' . $request->job_order_id . ',entity_id,receipt_of_id,7622',
+                        //     //         // 'unique:receipts,permanent_receipt_no,' . $request->job_order_id . ',entity_id,receipt_of_id,7622',
+                        //     //         'unique:job_order_payment_details,transaction_number,' . $request->job_order_id . ',job_order_id',
+                        //     //     ],
+                        //     // ]);
 
-                            if ($validator->fails()) {
-                                return response()->json([
-                                    'success' => false,
-                                    'error' => 'Validation Error',
-                                    'errors' => $validator->errors()->all(),
-                                ]);
-                            }
+                        //     // if ($validator->fails()) {
+                        //     //     return response()->json([
+                        //     //         'success' => false,
+                        //     //         'error' => 'Validation Error',
+                        //     //         'errors' => $validator->errors()->all(),
+                        //     //     ]);
+                        //     // }
 
-                            if (strtotime($request->invoice_date) > strtotime($request->receipt_date)) {
-                                return response()->json([
-                                    'success' => false,
-                                    'error' => 'Validation Error',
-                                    'errors' => [
-                                        'Receipt Date should be greater than Invoice Date',
-                                    ],
-                                ]);
-                            }
-                        }
+                        //     // if (strtotime($request->invoice_date) > strtotime($request->receipt_date)) {
+                        //     //     return response()->json([
+                        //     //         'success' => false,
+                        //     //         'error' => 'Validation Error',
+                        //     //         'errors' => [
+                        //     //             'Receipt Date should be greater than Invoice Date',
+                        //     //         ],
+                        //     //     ]);
+                        //     // }
+                        // }
 
                         $job_order = JobOrder::with('gateLog')->find($request->job_order_id);
 
@@ -549,13 +549,41 @@ class ManualVehicleDeliveryController extends Controller
                         //Check Invoice,Receipt amount
                         $labour_amount = $request->labour_amount;
                         $parts_amount = $request->parts_amount;
-                        $receipt_amount = $request->receipt_amount ? $request->receipt_amount : 0;
+                        // $receipt_amount = $request->receipt_amount ? $request->receipt_amount : 0;
+                        $receipt_amount = 0;
                         $payment_status = 0;
                         $status_id = 8477;
+
+                        //Check Paid Amount 
+                        if($request->payment){
+                            foreach($request->payment as $payment){
+                                // if (strtotime($gate_in_date) > strtotime($payment['receipt_date'])) {
+                                //     return response()->json([
+                                //         'success' => false,
+                                //         'error' => 'Validation Error',
+                                //         'errors' => [
+                                //             'Receipt Date should be greater than Gate In Date',
+                                //         ],
+                                //     ]);
+                                // }
+                                if($payment['receipt_amount'] > 0){
+                                    $receipt_amount += $payment['receipt_amount'];
+                                }
+                            }
+                        }
+                        // dd($receipt_amount);
                         if ($receipt_amount) {
                             if ($receipt_amount == ($labour_amount + $parts_amount)) {
                                 $payment_status = 1;
                                 $status_id = 8468;
+                            } else if ($receipt_amount > ($labour_amount + $parts_amount)) { 
+                                return response()->json([
+                                    'success' => false,
+                                    'error' => 'Validation Error',
+                                    'errors' => [
+                                        'Paid Amount should be less than or equal to total bill amount',
+                                    ],
+                                ]);
                             } else {
                                 $payment_status = 0;
                                 $status_id = 8477;
@@ -623,7 +651,7 @@ class ManualVehicleDeliveryController extends Controller
                         $job_order->save();
 
                         //Delete previous receipt
-                        $remove_receipt = Receipt::where('receipt_of_id', 7622)->where('entity_id', $job_order->id)->forceDelete();
+                        // $remove_receipt = Receipt::where('receipt_of_id', 7622)->where('entity_id', $job_order->id)->forceDelete();
 
                         //Delete previous Invoice
                         $remove_invoice = GigoManualInvoice::where('invoiceable_type', 'App\JobOrder')->where('invoiceable_id', $job_order->id)->forceDelete();
@@ -631,26 +659,26 @@ class ManualVehicleDeliveryController extends Controller
                         $receipt_id = null;
                         if ($payment_status_id == 2) {
 
-                            $validator = Validator::make($request->all(), [
-                                'receipt_number' => [
-                                    'required',
-                                    // 'unique:receipts,temporary_receipt_no,' . $request->job_order_id . ',entity_id,receipt_of_id,7622',
-                                    // 'unique:receipts,permanent_receipt_no,' . $request->job_order_id . ',entity_id,receipt_of_id,7622',
-                                    'unique:job_order_payment_details,transaction_number,' . $request->job_order_id . ',job_order_id',
-                                ],
-                            ]);
+                            // $validator = Validator::make($request->all(), [
+                            //     'receipt_number' => [
+                            //         'required',
+                            //         // 'unique:receipts,temporary_receipt_no,' . $request->job_order_id . ',entity_id,receipt_of_id,7622',
+                            //         // 'unique:receipts,permanent_receipt_no,' . $request->job_order_id . ',entity_id,receipt_of_id,7622',
+                            //         'unique:job_order_payment_details,transaction_number,' . $request->job_order_id . ',job_order_id',
+                            //     ],
+                            // ]);
 
-                            if ($validator->fails()) {
-                                return response()->json([
-                                    'success' => false,
-                                    'error' => 'Validation Error',
-                                    'errors' => $validator->errors()->all(),
-                                ]);
-                            }
+                            // if ($validator->fails()) {
+                            //     return response()->json([
+                            //         'success' => false,
+                            //         'error' => 'Validation Error',
+                            //         'errors' => $validator->errors()->all(),
+                            //     ]);
+                            // }
 
                             $labour_amount = $request->labour_amount;
                             $parts_amount = $request->parts_amount;
-                            $receipt_amount = $request->receipt_amount;
+                            // $receipt_amount = $request->receipt_amount;
 
                             // if($receipt_amount != ($labour_amount + $parts_amount))
                             // {
@@ -688,20 +716,40 @@ class ManualVehicleDeliveryController extends Controller
                             // dd($payment);
                             $payment->entity_type_id = 8434;
                             $payment->entity_id = $job_order->id;
-                            $payment->received_amount = $request->receipt_amount;
+                            $payment->received_amount = $receipt_amount;
                             $payment->receipt_id = NULL;
                             $job_order->payment()->save($payment);
 
                             $remove_payment = JobOrderPaymentDetail::where('job_order_id', $job_order->id)->forceDelete();
 
-                            //save payment detail
-                            $payment = new JobOrderPaymentDetail;
-                            $payment->payment_mode_id =  $request->payment_mode_id;
-                            $payment->job_order_id = $job_order->id;
-                            $payment->transaction_number = $request->receipt_number;
-                            $payment->transaction_date = date('Y-m-d', strtotime($request->receipt_date));
-                            $payment->amount = $request->receipt_amount;
-                            $payment->save();
+                            //Check Paid Amount 
+                            if($request->payment){
+                                foreach($request->payment as $payment){
+
+                                    //Check Receipt Number alreay saved or not
+                                    $receipt_number = JobOrderPaymentDetail::where('transaction_number',$payment['receipt_number'])->first();
+
+                                    if($receipt_number){
+                                        return response()->json([
+                                            'success' => false,
+                                            'error' => 'Validation Error',
+                                            'errors' => [
+                                                'Receipt amount number has already been taken!',
+                                            ],
+                                        ]);
+                                    }
+
+                                     //save payment detail
+                                    $job_order_payment = new JobOrderPaymentDetail;
+                                    $job_order_payment->payment_mode_id =  $payment['payment_mode_id'];
+                                    $job_order_payment->job_order_id = $job_order->id;
+                                    $job_order_payment->transaction_number = $payment['receipt_number'];
+                                    $job_order_payment->transaction_date = date('Y-m-d', strtotime($payment['receipt_date']));
+                                    $job_order_payment->amount = $payment['receipt_amount'];
+                                    $job_order_payment->save();
+                                }
+                            }
+                           
                         }
 
                         //Save Labour Invoice Details

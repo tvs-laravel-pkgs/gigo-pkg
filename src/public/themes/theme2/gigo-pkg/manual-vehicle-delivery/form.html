@@ -351,7 +351,13 @@
                                                     <span class="view-col-label">
                                                         Address
                                                     </span>
-                                                    <span class="view-col-value">{{job_order.vehicle.current_owner.customer.address.address_line1}}, {{job_order.vehicle.current_owner.customer.address.address_line2}}, {{job_order.vehicle.current_owner.customer.address.city.name}}, {{job_order.vehicle.current_owner.customer.address.state.name}}, {{job_order.vehicle.current_owner.customer.address.pincode}}, {{job_order.vehicle.current_owner.customer.address.country.name}}.</span>
+                                                    <span
+                                                        class="view-col-value">{{job_order.vehicle.current_owner.customer.address.address_line1}},
+                                                        {{job_order.vehicle.current_owner.customer.address.address_line2}},
+                                                        {{job_order.vehicle.current_owner.customer.address.city.name}},
+                                                        {{job_order.vehicle.current_owner.customer.address.state.name}},
+                                                        {{job_order.vehicle.current_owner.customer.address.pincode}},
+                                                        {{job_order.vehicle.current_owner.customer.address.country.name}}.</span>
                                                 </li>
                                                 <li class="view-col-3">
                                                     <span class="view-col-label">
@@ -489,10 +495,13 @@
                                                             placeholder="Enter Remarks">{{job_order.inward_cancel_reason}}</textarea>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-6" ng-if="(job_order.billing_type_id == 11521 || job_order.billing_type_id == 11522) && $ctrl.vehicle_service_status">
+                                                <div class="col-md-6"
+                                                    ng-if="(job_order.billing_type_id == 11521 || job_order.billing_type_id == 11522) && $ctrl.vehicle_service_status">
                                                     <div class="form-group">
                                                         <label>Remarks<sup class="mandatory">*</sup></label>
-                                                        <textarea class="form-control required" name="warranty_reason" rows="4" placeholder="Enter Remarks">{{job_order.warranty_reason}}</textarea>
+                                                        <textarea class="form-control required" name="warranty_reason"
+                                                            rows="4"
+                                                            placeholder="Enter Remarks">{{job_order.warranty_reason}}</textarea>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                             </div>
@@ -666,66 +675,126 @@
                                                 </div><!-- Column -->
                                                 <div class="col-md-3" ng-if="$ctrl.vehicle_payment_status">
                                                     <div class="form-group">
-                                                        <label>Mode of Payment<sup class="mandatory">*</sup></label>
-                                                        <md-select
-                                                            ng-model="job_order.payment_detail[0].payment_mode_id"
-                                                            placeholder="Select Mode"
-                                                            data-md-container-class="selectdemoSelectHeader"
-                                                            ng-change="getSelectedPaymentMode(job_order.payment_detail[0].payment_mode_id)">
-                                                            <md-select-header class="demo-select-header">
-                                                                <input ng-model="searchPaymentMode" type="search"
-                                                                    placeholder="Search for a Payment Mode.."
-                                                                    class="demo-header-searchbox md-text"
-                                                                    ng-keydown="$event.stopPropagation()">
-                                                            </md-select-header>
-                                                            <md-optgroup>
-                                                                <md-option ng-value="type.id"
-                                                                    ng-repeat="type in extras.payment_modes | filter:searchPaymentMode">
-                                                                    {{type.name}}
-                                                                </md-option>
-                                                            </md-optgroup>
-                                                        </md-select>
-                                                        <input type="hidden" class="required" name="payment_mode_id"
-                                                            value="{{job_order.payment_detail[0].payment_mode_id}}">
+                                                        <label>
+                                                            Payment Type
+                                                        </label>
+                                                        <div class="common-radio-button type-4">
+                                                            <input type="radio" id="single" name="no_of_payment"
+                                                                ng-model="$ctrl.no_of_payment" ng-value="1"
+                                                                ng-click="vehiclePaymentType(1)">
+                                                            <label for="single">Single</label>
+                                                            <input type="radio" id="multiple" name="no_of_payment"
+                                                                ng-model="$ctrl.no_of_payment" ng-value="2"
+                                                                ng-click="vehiclePaymentType(2)">
+                                                            <label for="multiple">Multiple</label>
+                                                        </div>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-3" ng-if="$ctrl.vehicle_payment_status">
-                                                    <div class="form-group">
-                                                        <label>{{label_name}} Number<sup
-                                                                class="mandatory">*</sup></label>
-                                                        <input type="text" name="receipt_number" maxlength="100"
-                                                            placeholder="Ex: INV20210101" class="form-control"
-                                                            value="{{job_order.payment_detail[0].transaction_number}}">
-                                                    </div><!-- Feild -->
+                                                <div class="col-md-12">
+                                                    <div class="clear-fix"></div>
+                                                </div>
+                                                <div class="col-md-12" ng-if="$ctrl.vehicle_payment_status">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-dark-grey">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="text-center" style="width: 5%;">Action
+                                                                    </th>
+                                                                    <th style="width: 23%;">Mode of Payment</th>
+                                                                    <th style="width: 35%;">Receipt Number</th>
+                                                                    <th style="width: 22%;">Receipt Date</th>
+                                                                    <th style="width: 15%;">Receipt Amount</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr
+                                                                    ng-repeat="(index, payment_detail) in job_order.payment_detail">
+                                                                    <td>
+                                                                        <button type="button" class="btn btn-delete "
+                                                                            ng-click="$ctrl.removePayment(index,payment_detail.id)"
+                                                                            ng-class="{'disabled' : index == '0'}">
+                                                                            <img class="img-responsive"
+                                                                                src="./public/theme/img/table/cndn/delete.svg"
+                                                                                alt="Delete" />
+                                                                        </button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <md-select
+                                                                            ng-model="payment_detail.payment_mode_id"
+                                                                            placeholder="Select Mode"
+                                                                            data-md-container-class="selectdemoSelectHeader">
+                                                                            <md-select-header
+                                                                                class="demo-select-header">
+                                                                                <input ng-model="searchPaymentMode"
+                                                                                    type="search"
+                                                                                    placeholder="Search for a Payment Mode.."
+                                                                                    class="demo-header-searchbox md-text"
+                                                                                    ng-keydown="$event.stopPropagation()">
+                                                                            </md-select-header>
+                                                                            <md-optgroup>
+                                                                                <md-option ng-value="type.id"
+                                                                                    ng-repeat="type in extras.payment_modes | filter:searchPaymentMode">
+                                                                                    {{type.name}}
+                                                                                </md-option>
+                                                                            </md-optgroup>
+                                                                        </md-select>
+                                                                        <input type="hidden" class="required"
+                                                                            name="payment[{{index}}][payment_mode_id]"
+                                                                            value="{{payment_detail.payment_mode_id}}">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text"
+                                                                            name="payment[{{index}}][receipt_number]"
+                                                                            maxlength="100"
+                                                                            placeholder="Ex: INV20210101"
+                                                                            class="form-control required"
+                                                                            value="{{payment_detail.transaction_number}}">
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="input-group date"
+                                                                            data-provide="datepicker"
+                                                                            data-date-end-date="0d">
+                                                                            <input type="text"
+                                                                                class="form-control required"
+                                                                                placeholder="Ex:10-01-2021"
+                                                                                ng-model="payment_detail.transaction_date"
+                                                                                name="payment[{{index}}][receipt_date]" />
+                                                                            <div class="input-group-addon">
+                                                                                <img class="img-responsive"
+                                                                                    src="./public/theme/img/content/calender-gray-icon.svg"
+                                                                                    alt="Calendar Image" />
+                                                                            </div>
+                                                                        </div><!-- Input Group -->
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text"
+                                                                            name="payment[{{index}}][receipt_amount]"
+                                                                            maxlength="100"
+                                                                            class="form-control receipt_amount required"
+                                                                            placeholder="Ex: 3000"
+                                                                            value="{{payment_detail.amount}}"
+                                                                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                            <tfoot>
+                                                                <tr>
+                                                                    <td colspan="5" ng-if="$ctrl.no_of_payment == 2">
+                                                                        <button type="button"
+                                                                            class="btn btn-primary-light btn-square"
+                                                                            ng-click="$ctrl.addNewPayment()">+ Add More
+                                                                            Payment</button>
+                                                                    </td>
+                                                                </tr>
+                                                            </tfoot>
+                                                        </table>
+                                                    </div><!-- Table Responsive -->
+                                                    <input type="hidden" name="removal_payment_ids"
+                                                        class="removal_payment_ids" id="removal_payment_ids">
                                                 </div><!-- Column -->
-                                                <div class="col-md-3" ng-if="$ctrl.vehicle_payment_status">
-                                                    <div class="form-group">
-                                                        <label>{{label_name}} Date<sup class="mandatory">*</sup></label>
-                                                        <div class="input-group date" data-provide="datepicker"
-                                                            data-date-end-date="0d">
-                                                            <input type="text" class="form-control required"
-                                                                placeholder="Ex: 10-01-2021"
-                                                                ng-model="job_order.payment_detail[0].transaction_date"
-                                                                name="receipt_date" />
-                                                            <div class="input-group-addon">
-                                                                <img class="img-responsive"
-                                                                    src="./public/theme/img/content/calender-gray-icon.svg"
-                                                                    alt="Calendar Image" />
-                                                            </div>
-                                                        </div><!-- Input Group -->
-                                                    </div><!-- Feild -->
-                                                </div><!-- Column -->
-                                                <div class="col-md-3" ng-if="$ctrl.vehicle_payment_status">
-                                                    <div class="form-group">
-                                                        <label>{{label_name}} Amount<sup
-                                                                class="mandatory">*</sup></label>
-                                                        <input type="text" name="receipt_amount" maxlength="100"
-                                                            class="form-control receipt_amount required"
-                                                            placeholder="Ex: 3000"
-                                                            value="{{job_order.payment_detail[0].amount}}"
-                                                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
-                                                    </div><!-- Feild -->
-                                                </div><!-- Column -->
+                                                <div class="col-md-12">
+                                                    <div class="clear-fix"><br></div>
+                                                </div>
                                                 <div class="col-md-3"
                                                     ng-if="$ctrl.vehicle_payment_status && $ctrl.remarks_status == 1">
                                                     <div class="form-group">

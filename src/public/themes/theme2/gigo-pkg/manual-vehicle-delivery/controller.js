@@ -645,6 +645,15 @@ app.component('manualVehicleDeliveryForm', {
                         $scope.getSelectedBillingType($scope.job_order.billing_type_id);
                     }
 
+                    self.no_of_payment = 1;
+                    if ($scope.job_order.payment_detail) {
+                        if ($scope.job_order.payment_detail.length > 1) {
+                            self.no_of_payment = 2;
+                        } else if ($scope.job_order.payment_detail.length == 0) {
+                            $scope.job_order.payment_detail.push({});
+                        }
+                    }
+
                     /* Image Uploadify Funtion */
                     setTimeout(function () {
                         $('.image_uploadify').imageuploadify();
@@ -732,6 +741,32 @@ app.component('manualVehicleDeliveryForm', {
             });
         }
 
+        $scope.vehiclePaymentType = function (payment_type) {
+            if (payment_type == 1) {
+                // $scope.label_name = "Receipt";
+            } else {
+                // $scope.label_name = "Transaction";
+            }
+        }
+
+        // ADD NEW Payment
+        self.addNewPayment = function () {
+            $scope.job_order.payment_detail.push({});
+        }
+
+        self.payment_removal_id = [];
+        self.removePayment = function (index, payment_id) {
+            if (index != 0) {
+                if (payment_id) {
+                    self.payment_removal_id.push(payment_id);
+                    $('#removal_payment_ids').val(JSON.stringify(self.payment_removal_id));
+                }
+                $scope.job_order.payment_detail.splice(index, 1);
+            }
+
+        }
+
+
         $scope.getSelectedPaymentMode = function (payment_mode_id) {
             if (payment_mode_id == 1) {
                 $scope.label_name = "Receipt";
@@ -805,7 +840,7 @@ app.component('manualVehicleDeliveryForm', {
                 total_amount = parseFloat(labour_amount) + parseFloat(parts_amount);
                 total_amount = total_amount.toFixed(2);
 
-                $('.receipt_amount').val(total_amount);
+                // $('.receipt_amount').val(total_amount);
             }, 100);
         }
 
@@ -817,7 +852,8 @@ app.component('manualVehicleDeliveryForm', {
             setTimeout(function () {
                 var labour_amount = $('#labour_invoice_amount').val();
                 var parts_amount = $('#parts_invoice_amount').val();
-                var receipt_amount = $('.receipt_amount').val();
+                // var receipt_amount = $('.receipt_amount').val();
+                var total_paid_amount = 0;
 
                 var total_amount = 0;
 
@@ -832,13 +868,22 @@ app.component('manualVehicleDeliveryForm', {
                 total_amount = parseFloat(labour_amount) + parseFloat(parts_amount);
                 // total_amount = total_amount.toFixed(2);
                 console.log("Total Amount -- " + total_amount);
-                console.log("Bill Amount -- " + receipt_amount);
+                // console.log("Bill Amount -- " + receipt_amount);
 
-                if (receipt_amount >= total_amount) {
-                    $('.receipt_amount').val(total_amount);
+                $('.receipt_amount').each(function () {
+                    var receipt_amount = parseFloat($(this).closest('tr').find('.receipt_amount').val() || 0);
+                    console.log(receipt_amount);
+                    if (!$.isNumeric(receipt_amount)) {
+                        receipt_amount = 0;
+                    }
+                    total_paid_amount += receipt_amount;
+                });
+
+                if (total_paid_amount >= total_amount) {
+                    // $('.receipt_amount').val(total_amount);
                     self.remarks_status = 0;
-                } else if (total_amount > receipt_amount) {
-                    if (receipt_amount > 0) {
+                } else if (total_amount > total_paid_amount) {
+                    if (total_paid_amount > 0) {
                         self.remarks_status = 1;
                     } else {
                         self.remarks_status = 0;
