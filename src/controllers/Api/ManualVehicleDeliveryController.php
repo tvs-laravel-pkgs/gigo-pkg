@@ -828,7 +828,7 @@ class ManualVehicleDeliveryController extends Controller
 
                         //Send Mail for Serivice Head
                         if (!$payment_status) {
-                            $this->vehiceRequestMail($job_order->id);
+                            $this->vehiceRequestMail($job_order->id,$type = 1);
                         }
 
                     } elseif ($request->billing_type_id == 11523) {
@@ -1290,6 +1290,9 @@ class ManualVehicleDeliveryController extends Controller
 
                 DB::commit();
 
+                //Send Approved Mail for user
+                $this->vehiceRequestMail($job_order->id,$type = 2);
+
                 return response()->json([
                     'success' => true,
                     'message' => $message,
@@ -1477,7 +1480,7 @@ class ManualVehicleDeliveryController extends Controller
         }
     }
 
-    public function vehiceRequestMail($job_order_id)
+    public function vehiceRequestMail($job_order_id,$type)
     {
         $job_order = JobOrder::with([
             'vehicle',
@@ -1529,6 +1532,18 @@ class ManualVehicleDeliveryController extends Controller
 
             $subject = 'GIGO '.$outlet.' - '. $job_order->vehicle->currentOwner->customer->name.' vehicle need approval for delivery';
 
+            if($type == 2){
+                $to_email = [];
+                $user = User::where('id',$job_order->vehicle_delivery_requester_id)->first();
+                $cc_email = [];
+                if($user && $user->email){
+                    $to_email = ['0' => $user->email];
+                }
+                // $to_email = ['0' => 'parthiban@uitoux.in'];
+
+                $subject = 'GIGO '.$outlet.' - '. $job_order->vehicle->currentOwner->customer->name.' vehicle approved for delivery';
+            }
+            
             // dd($subject);
             if ($to_email) {
                 // $cc_email = [];
@@ -1538,6 +1553,7 @@ class ManualVehicleDeliveryController extends Controller
                 $arr['subject'] = $subject;
                 $arr['to_email'] = $to_email;
                 $arr['cc_email'] = $cc_email;
+                $arr['type'] = $type;
                 $arr['approver_view_url'] = $approver_view_url;
 
                 $MailInstance = new VehicleDeliveryRequestMail($arr);
