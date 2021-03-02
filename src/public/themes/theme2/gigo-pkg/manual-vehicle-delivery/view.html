@@ -869,7 +869,7 @@
                                     <label>{{label_name}} Amount<sup class="mandatory">*</sup></label>
                                     <input type="text" name="receipt_amount" maxlength="100"
                                         class="form-control receipt_amount" placeholder="Ex: 3000"
-                                        value="{{job_order.balance_amount}}"
+                                        value="{{job_order.balance_amount}}" readonly
                                         oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                 </div><!-- Feild -->
                             </div><!-- Column -->
