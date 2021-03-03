@@ -519,6 +519,14 @@ class WarrantyJobOrderRequest extends BaseModel {
 				];
 
 			}
+			if ($vehicle->exists) {
+				$vehicle->updated_by_id = Auth::id();
+				$vehicle->updated_at = Carbon::now();
+			} else {
+				$vehicle->created_by_id = Auth::id();
+				$vehicle->created_at = Carbon::now();
+			}
+
 			$registration_number = str_replace("-", "", $input['registration_number']);
 			$vehicle->chassis_number = $input['chassis_number'];
 			$vehicle->engine_number = $input['engine_number'];
@@ -536,7 +544,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 				$vehicle->sold_date = null;
 			}
 			$vehicle->registration_number = $registration_number;
-			$vehicle->created_by_id = Auth::id();
+			// $vehicle->created_by_id = Auth::id();
 			$vehicle->save();
 
 			$input['vehicle_id'] = $vehicle->id;
