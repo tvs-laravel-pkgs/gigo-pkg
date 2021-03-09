@@ -385,7 +385,7 @@ class MaterialGatePassController extends Controller {
 				]);
 			}
 
-			$message = 'OTP is ' . $otp . ' for Material Gate Pass. Please show this SMS to Our Security to verify your Material gate Pass';
+			$message = 'OTP is ' . $otp . ' for Material Gate Pass. Please show this SMS to Our Security to verify your material gate pass';
 
 			if ($gate_pass_detail->vendor_contact_no) {
 				$msg = sendSMSNotification($gate_pass_detail->vendor_contact_no, $message);

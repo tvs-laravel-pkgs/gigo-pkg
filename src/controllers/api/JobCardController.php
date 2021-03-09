@@ -2217,7 +2217,7 @@ class JobCardController extends Controller {
 
 			$short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
-			$message = 'Dear Customer,Kindly click below link to pay for TVS job order ' . $short_url . ' Vehicle Reg Number : ' . $vehicle_no;
+			$message = 'Dear Customer, Kindly click on this link to pay for the TVS job order ' . $short_url . ' Vehicle Reg Number : ' . $vehicle_no;
 
 			$msg = sendSMSNotification($customer_mobile, $message);
 
@@ -3928,7 +3928,7 @@ class JobCardController extends Controller {
 
 				$short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
-				$message = 'Dear Customer,Kindly click below link to approve for Revised TVS job order ' . $short_url . $number . ' : ' . $vehicle_no;
+				$message = 'Dear Customer, Kindly click on this link to approve for Revised TVS job order ' . $short_url . $number . ' : ' . $vehicle_no;
 
 				$msg = sendSMSNotification($customer_mobile, $message);
 

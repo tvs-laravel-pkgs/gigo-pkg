@@ -6490,13 +6490,13 @@ class VehicleInwardController extends Controller {
 			$customer_mobile = $job_order->contact_number;
 			if ($job_order->vehicle->registration_number) {
 				$vehicle_no = $job_order->vehicle->registration_number;
-				$number = ' Vehicle Reg Number';
+				$number = '. Vehicle Reg Number';
 			} elseif ($job_order->vehicle->chassis_number) {
 				$vehicle_no = $job_order->vehicle->chassis_number;
-				$number = ' Vehicle Chassis Number';
+				$number = '. Vehicle Chassis Number';
 			} else {
 				$vehicle_no = $job_order->vehicle->engine_number;
-				$number = ' Vehicle Engine Number';
+				$number = '. Vehicle Engine Number';
 			}
 
 			if (!$customer_mobile) {
@@ -6518,7 +6518,7 @@ class VehicleInwardController extends Controller {
 
 			$short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
-			$message = 'Dear Customer,Kindly click below link to approve for TVS job order ' . $short_url . $number . ' : ' . $vehicle_no;
+			$message = 'Dear Customer, Kindly click on this link to approve for TVS job order ' . $short_url . $number . ' : ' . $vehicle_no;
 
 			$msg = sendSMSNotification($customer_mobile, $message);
 
@@ -6768,7 +6768,7 @@ class VehicleInwardController extends Controller {
 
 				$short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
-				$message = 'Dear Customer,Kindly click below link to pay for TVS job order ' . $short_url . ' Vehicle Reg Number : ' . $job_order->vehicle->registration_number;
+				$message = 'Dear Customer, Kindly click on this link to pay for the TVS job order ' . $short_url . '. Vehicle Reg Number : ' . $job_order->vehicle->registration_number;
 
 				$msg = sendSMSNotification($mobile_number, $message);
 
