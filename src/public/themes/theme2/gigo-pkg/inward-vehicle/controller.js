@@ -847,7 +847,7 @@ app.component('inwardVehicleVehicleDetail', {
                     },
                     'chassis_number': {
                         required: true,
-                        minlength: 10,
+                        minlength: 8,
                         maxlength: 17,
                     },
                 },
@@ -861,7 +861,7 @@ app.component('inwardVehicleVehicleDetail', {
                         maxlength: 'Maximum 64 Numbers',
                     },
                     'chassis_number': {
-                        minlength: 'Minimum 10 Numbers',
+                        minlength: 'Minimum 8 Numbers',
                         maxlength: 'Maximum 64 Numbers',
                     }
                 },
