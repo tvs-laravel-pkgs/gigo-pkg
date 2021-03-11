@@ -659,6 +659,16 @@
                                                         </b>
                                                     </span>
                                                 </li>
+                                                <li class="view-col-4" ng-if="job_order.status_id == 8479">
+                                                    <span class="view-col-label">
+                                                        Vehicle Delivery Rejected Remarks
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b style="color:red">
+                                                            {{job_order.rejected_remarks}}
+                                                        </b>
+                                                    </span>
+                                                </li>
                                             </ul>
                                         </div><!-- Column -->
                                         <div class="col-md-12" ng-if="job_order.payment_detail.length > 0">
@@ -735,6 +745,12 @@
                                                         Approve
                                                     </button>
                                                     <button type="button"
+                                                        ng-if="job_order.status_id == 8477 && hasPerm('verify-manual-vehicle-delivery') "
+                                                        ng-click="showRejectForm(job_order)"
+                                                        class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                                        Reject
+                                                    </button>
+                                                    <button type="button"
                                                         ng-if="job_order.status_id == 8467 && !hasPerm('verify-manual-vehicle-delivery')"
                                                         ng-click="showPaymentForm(job_order)"
                                                         class="btn btn-secondary-dark btn-min-wdth btn-nxt">
@@ -759,13 +775,14 @@
         <form id="vehicle-delivery-approval-form" autocomplete="off">
             <input type="hidden" name="job_order_id" value="{{job_order.id}}">
             <input type="hidden" name="type_id" value="2">
+            <input type="hidden" name="status" value="Approve">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close ripple reject_close" data-dismiss="modal" aria-label="Close">
                         <i class="icon ion-md-close"></i>
                     </button>
                     <h5 class="modal-title">
-                        Approve
+                        Approve for Vehicle Delivery
                     </h5>
                 </div>
                 <div class="modal-body">
@@ -793,6 +810,54 @@
                             </button>
                             <button type="submit" class="submit btn btn-primary" ng-click="approveVehicleDelivery()">
                                 Approve
+                            </button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Modal Footer -->
+            </div><!-- Modal Content -->
+        </form>
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->
+<div class="modal fade filter" id="reject_modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <form id="vehicle-delivery-reject-form" autocomplete="off">
+            <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+            <input type="hidden" name="type_id" value="2">
+            <input type="hidden" name="status" value="Reject">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close ripple reject_close" data-dismiss="modal" aria-label="Close">
+                        <i class="icon ion-md-close"></i>
+                    </button>
+                    <h5 class="modal-title">
+                        Reject for Vehicle Delivery
+                    </h5>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-form">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>
+                                        Remarks<sup class="mandatory">*</sup>
+                                    </label>
+                                    <textarea class="form-control required" name="rejected_remarks"
+                                        ng-model="job_order.rejected_remarks"></textarea>
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                        </div><!-- Row -->
+                    </div><!-- Modal Form -->
+                </div><!-- Modal Body -->
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                        </div><!-- Column -->
+                        <div class="col-md-6 text-right">
+                            <button type="button" data-dismiss="modal" class="btn btn-secondary-dark">
+                                Cancel
+                            </button>
+                            <button type="reject_submit" class="submit btn btn-primary" ng-click="rejectVehicleDelivery()">
+                                Submit
                             </button>
                         </div><!-- Column -->
                     </div><!-- Row -->

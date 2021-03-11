@@ -1248,21 +1248,38 @@ class ManualVehicleDeliveryController extends Controller
                 ]);
 
             } else if ($request->type_id == 2) {
-                $error_messages = [
-                    'approved_remarks.required' => "Vehicle Delivery Approval Remarks is required",
-                ];
-                $validator = Validator::make($request->all(), [
-                    'job_order_id' => [
-                        'required',
-                        'integer',
-                        'exists:job_orders,id',
-                    ],
-                    'approved_remarks' => [
-                        'required',
-                    ],
-
-                ], $error_messages);
-
+                if($request->status == 'Reject'){
+                    $error_messages = [
+                        'rejected_remarks.required' => "Vehicle Delivery Reject Remarks is required",
+                    ];
+                    $validator = Validator::make($request->all(), [
+                        'job_order_id' => [
+                            'required',
+                            'integer',
+                            'exists:job_orders,id',
+                        ],
+                        'rejected_remarks' => [
+                            'required',
+                        ],
+    
+                    ], $error_messages);
+                }else{
+                    $error_messages = [
+                        'approved_remarks.required' => "Vehicle Delivery Approval Remarks is required",
+                    ];
+                    $validator = Validator::make($request->all(), [
+                        'job_order_id' => [
+                            'required',
+                            'integer',
+                            'exists:job_orders,id',
+                        ],
+                        'approved_remarks' => [
+                            'required',
+                        ],
+    
+                    ], $error_messages);
+                }
+                
                 if ($validator->fails()) {
                     return response()->json([
                         'success' => false,
@@ -1286,14 +1303,22 @@ class ManualVehicleDeliveryController extends Controller
                 DB::beginTransaction();
 
                 $job_order->approver_id = Auth::user()->id;
-                $job_order->approved_remarks = $request->approved_remarks;
-                $job_order->approved_date_time = Carbon::now();
-                $job_order->status_id = 8478;
+                
+                if($request->status == 'Reject'){
+                    $job_order->status_id = 8479;
+                    $job_order->rejected_remarks = $request->rejected_remarks;
+                    $message = "Manual Vehicle Delivery Rejected Successfully!";
+                }else{
+                    $job_order->status_id = 8478;
+                    $job_order->approved_remarks = $request->approved_remarks;
+                    $job_order->approved_date_time = Carbon::now();
+                    $message = "Manual Vehicle Delivery Approved Successfully!";
+                }
                 $job_order->save();
 
-                $gate_pass = $this->generateGatePass($job_order);
-
-                $message = "Manual Vehicle Delivery Approved Successfully!";
+                if($request->status == 'Approve'){
+                    $gate_pass = $this->generateGatePass($job_order);
+                }
 
                 DB::commit();
 
@@ -1546,11 +1571,12 @@ class ManualVehicleDeliveryController extends Controller
                 if($user && $user->email){
                     $to_email = ['0' => $user->email];
                 }
-                // $to_email = ['0' => 'parthiban@uitoux.in'];
-
-                $subject = 'GIGO '.$outlet.' - '. $job_order->vehicle->currentOwner->customer->name.' vehicle approved for delivery';
+                if($job_order->status_id == 8478){
+                    $subject = 'GIGO '.$outlet.' - '. $job_order->vehicle->currentOwner->customer->name.' vehicle approved for delivery';
+                }else{
+                    $subject = 'GIGO '.$outlet.' - '. $job_order->vehicle->currentOwner->customer->name.' vehicle rejected for delivery';
+                }
             }
-            
             // dd($subject);
             if ($to_email) {
                 // $cc_email = [];

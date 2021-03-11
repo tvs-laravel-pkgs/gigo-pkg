@@ -780,7 +780,7 @@
                                                                         <input type="text"
                                                                             name="payment[{{index}}][receipt_amount]"
                                                                             maxlength="100"
-                                                                            class="form-control receipt_amount required"
+                                                                            class="form-control receipt_amount required paid_amount_{{index}}"
                                                                             placeholder="Ex: 3000"
                                                                             value="{{payment_detail.amount}}"
                                                                             oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
