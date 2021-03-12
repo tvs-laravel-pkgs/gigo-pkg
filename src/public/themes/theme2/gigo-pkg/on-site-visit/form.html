@@ -360,9 +360,6 @@
                                                             <th>
                                                                 Split Order Type
                                                             </th>
-                                                            <th>
-                                                                Is Free Service
-                                                            </th>
                                                             <th class="text-right">
                                                                 Hours
                                                             </th>
@@ -387,12 +384,6 @@
                                                             <td>
                                                                 {{labour_details.split_order_type}}
                                                             </td>
-                                                            <td ng-if="labour_details.is_free_service == 1">
-                                                                <p class="text-success">Yes</p>
-                                                            </td>
-                                                            <td ng-if="labour_details.is_free_service != 1">
-                                                                No
-                                                            </td>
                                                             <td class="text-right">
                                                                 {{labour_details.qty}}
                                                             </td>
@@ -403,10 +394,10 @@
                                                                 {{labour_details.amount | number:2}}
                                                             </td>
                                                             <td class="wid-100" ng-class="labour_details.removal_reason_id == 10022 ? 'my-disable' : ''">
-                                                                <button type="button" ng-click="showLabourForm(index,labour_details)" ng-if="labour_details.is_fixed_schedule == 0" class="btn img-btn btn-delete">
+                                                                <button type="button" ng-click="showLabourForm(index,labour_details)" class="btn img-btn btn-delete">
                                                                     <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                                                 </button>
-                                                                <button class="btn img-btn btn-delete" ng-if="labour_details.is_fixed_schedule == 0">
+                                                                <button class="btn img-btn btn-delete">
                                                                     <img class="img-responsive radius-50" ng-click="removeScheduledLabour(index,labour_details.id,'labour')" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                                                 </button>
                                                             </td>
@@ -417,7 +408,7 @@
                                                                     Add Labour
                                                                 </button>
                                                             </td>
-                                                            <td colspan="6" class="text-right">
+                                                            <td colspan="5" class="text-right">
                                                                 <b>
                                                                     Total Labour
                                                                 </b>
@@ -469,9 +460,6 @@
                                                             <th>
                                                                 Split Order Type
                                                             </th>
-                                                            <th>
-                                                                Is Free Service
-                                                            </th>
                                                             <th class="text-right">
                                                                 Rate
                                                             </th>
@@ -499,12 +487,6 @@
                                                             <td>
                                                                 {{part_details.split_order_type}}
                                                             </td>
-                                                            <td ng-if="part_details.is_free_service == 1">
-                                                                <p class="text-success">Yes</p>
-                                                            </td>
-                                                            <td ng-if="part_details.is_free_service != 1">
-                                                                No
-                                                            </td>
                                                             <td class="text-right">
                                                                 {{part_details.rate | number:2}}
                                                             </td>
@@ -515,10 +497,10 @@
                                                                 {{part_details.amount | number:2}}
                                                             </td>
                                                             <td class="wid-100" ng-class="part_details.removal_reason_id == 10022 ? 'my-disable' : ''">
-                                                                <button type="button" ng-if="part_details.is_fixed_schedule == 0" ng-click="showPartForm(index,part_details)" class="btn img-btn btn-delete">
+                                                                <button type="button" ng-click="showPartForm(index,part_details)" class="btn img-btn btn-delete">
                                                                     <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                                                 </button>
-                                                                <button class="btn img-btn btn-delete" ng-if="part_details.is_fixed_schedule == 0">
+                                                                <button class="btn img-btn btn-delete">
                                                                     <img class="img-responsive radius-50" ng-click="removeScheduledPart(index,part_details.id,'parts')" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                                                 </button>
                                                             </td>
@@ -529,7 +511,7 @@
                                                                     Add Part
                                                                 </button>
                                                             </td>
-                                                            <td colspan="6" class="text-right">
+                                                            <td colspan="5" class="text-right">
                                                                 <b>
                                                                     Total Parts
                                                                 </b>

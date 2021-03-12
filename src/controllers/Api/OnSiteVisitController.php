@@ -11,11 +11,13 @@ use App\Employee;
 use App\FinancialYear;
 use App\GateLog;
 use App\GatePass;
+use App\Part;
 use App\GigoManualInvoice;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\WpoSoapController;
 use App\JobOrder;
 use App\OnSiteOrderPart;
+use App\SplitOrderType;
 use App\OnSiteOrderEstimate;
 use App\JobOrderWarrantyDetail;
 use App\JobOrderPaymentDetail;
@@ -25,6 +27,7 @@ use App\Outlet;
 use App\OnSiteOrderRepairOrder;
 use App\OnSiteOrder;
 use App\Payment;
+use App\RepairOrder;
 use App\PaymentMode;
 use App\PendingReason;
 use App\Receipt;
@@ -320,7 +323,7 @@ class OnSiteVisitController extends Controller
 		$result['labour_amount'] = $labour_amount;
 		$result['part_amount'] = $part_amount;
 		$result['total_amount'] = $total_amount;
-		// $result['labours'] = $labours;
+		$result['labours'] = $labours;
 
 		return $result;
 	}
@@ -379,7 +382,7 @@ class OnSiteVisitController extends Controller
     }
 
     public function saveLabourDetail(Request $request) {
-		dd($request->all());
+		// dd($request->all());
 		try {
 			$error_messages = [
 				'rot_id.unique' => 'Labour is already taken',
@@ -429,11 +432,11 @@ class OnSiteVisitController extends Controller
 
 			DB::beginTransaction();
 
-				$on_site_order->is_customer_approved = 0;
-				// $job_order->status_id = 8463;
-				$on_site_order->save();
+            $on_site_order->is_customer_approved = 0;
+            // $on_site_order->status_id = 8463;
+            $on_site_order->save();
 
-			$estimate_id = OnSiteOrderEstimate::where('on_site_order_id', $job_order->id)->where('status_id', 10071)->first();
+			$estimate_id = OnSiteOrderEstimate::where('on_site_order_id', $on_site_order->id)->where('status_id', 10071)->first();
 			if ($estimate_id) {
 				$estimate_order_id = $estimate_id->id;
 			} else {
@@ -470,14 +473,13 @@ class OnSiteVisitController extends Controller
 					]);
 				}
 
-				$estimate = new JobOrderEstimate;
+				$estimate = new OnSiteOrderEstimate;
 				$estimate->on_site_order_id = $on_site_order->id;
 				$estimate->number = $generateNumber['number'];
 				$estimate->status_id = 10071;
 				$estimate->created_by_id = Auth::user()->id;
 				$estimate->created_at = Carbon::now();
 				$estimate->save();
-
 				$estimate_order_id = $estimate->id;
 			}
 
@@ -507,7 +509,12 @@ class OnSiteVisitController extends Controller
 			$on_site_repair_order->qty = $repair_order->hours;
 			$on_site_repair_order->split_order_type_id = $request->split_order_type_id;
 			$on_site_repair_order->estimate_order_id = $estimate_order_id;
-			
+			if ($request->repair_order_description) {
+				$on_site_repair_order->amount = $request->repair_order_amount;
+			} else {
+				$on_site_repair_order->amount = $repair_order->amount;
+			}
+
 			if (in_array($request->split_order_type_id, $customer_paid_type)) {
 				$on_site_repair_order->status_id = 8180; //Customer Approval Pending
 				$on_site_repair_order->is_customer_approved = 0;
@@ -592,7 +599,7 @@ class OnSiteVisitController extends Controller
 			// $on_site_visit->status_id = 8463;
 			$on_site_order->save();
 
-			$estimate_id = OnSiteOrderEstimate::where('on_site_order_id', $job_order->id)->where('status_id', 10071)->first();
+			$estimate_id = OnSiteOrderEstimate::where('on_site_order_id', $on_site_order->id)->where('status_id', 10071)->first();
 			if ($estimate_id) {
 				$estimate_order_id = $estimate_id->id;
 			} else {
