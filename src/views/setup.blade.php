@@ -406,6 +406,13 @@
 </script>
 
 <script type='text/javascript'>
+	//On Site Visit
+    var on_site_visit_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/on-site-visit/list.html')}}';
+	var on_site_visit_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/on-site-visit/view.html')}}';
+	var on_site_visit_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/on-site-visit/form.html')}}';
+</script>
+
+<script type='text/javascript'>
 
 	var view_img = './public/theme/img/table/cndn/view.svg';
 	var gate_out_img = './public/theme/img/table/cndn/gateout.svg';

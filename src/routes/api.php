@@ -473,5 +473,11 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('/manual-vehicle-delivery/get-form-data', 'ManualVehicleDeliveryController@getFormData');
 		Route::post('/manual-vehicle-delivery/save', 'ManualVehicleDeliveryController@save');
 		Route::post('/manual-vehicle-delivery/update/vehicle-status', 'ManualVehicleDeliveryController@updateVehicleStatus');
+
+		//OnSite Vist
+		Route::post('/on-site-visit/get-form-data', 'OnSiteVisitController@getFormData');
+		Route::post('/on-site-visit/repair-order/save', 'OnSiteVisitController@saveLabourDetail');
+		Route::post('/on-site-visit/parts/save', 'OnSiteVisitController@savePartsDetail');
+
 	});
 });

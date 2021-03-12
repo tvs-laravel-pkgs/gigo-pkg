@@ -1311,3 +1311,20 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'View Vehicle',
     });
 }]);
+
+app.config(['$routeProvider', function($routeProvider) {
+    $routeProvider.
+    //On Site Viit
+    when('/on-site-visit/table-list', {
+        template: '<on-site-visit-list></on-site-visit-list>',
+        title: 'On Site Visit',
+    }).
+    when('/on-site-visit/form/:id?', {
+        template: '<on-site-visit-form></on-site-visit-form>',
+        title: 'On Site Visit Form',
+    }).
+    when('/on-site-visit/view/:id', {
+        template: '<on-site-visit-view></on-site-visit-view>',
+        title: 'On Site Visit View',
+    });
+}]);

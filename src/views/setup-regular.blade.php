@@ -1881,3 +1881,29 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 </script>
 <script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/manual-vehicle-delivery/controller.js')}}'></script>
 
+<!-- On Site Visit Detail -->
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
+		//On Site Visit
+		when('/on-site-visit/table-list', {
+			template: '<on-site-visit-list></on-site-visit-list>',
+			title: 'On Site Visit',
+		}).
+		when('/on-site-visit/form/:id?', {
+			template: '<on-site-visit-form></on-site-visit-form>',
+			title: 'On Site Visit Form',
+		}).
+		when('/on-site-visit/view/:id', {
+			template: '<on-site-visit-view></on-site-visit-view>',
+			title: 'On Site Visit View',
+		});
+	}]);
+
+	//On Site Visit
+    var on_site_visit_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/on-site-visit/list.html')}}';
+	var on_site_visit_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/on-site-visit/view.html')}}';
+	var on_site_visit_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/on-site-visit/form.html')}}';
+</script>
+<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/on-site-visit/controller.js')}}'></script>
+
