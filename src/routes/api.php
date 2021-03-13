@@ -478,6 +478,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('/on-site-visit/get-form-data', 'OnSiteVisitController@getFormData');
 		Route::post('/on-site-visit/repair-order/save', 'OnSiteVisitController@saveLabourDetail');
 		Route::post('/on-site-visit/parts/save', 'OnSiteVisitController@savePartsDetail');
+		Route::post('/on-site-visit/save', 'OnSiteVisitController@save');
 
 	});
 });

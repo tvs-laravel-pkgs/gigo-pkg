@@ -48,7 +48,7 @@ app.component('onSiteVisitList', {
             paging: true,
             stateSave: true,
             ajax: {
-                url: laravel_routes['getManualDeliveryVehicleList'],
+                url: laravel_routes['getOnSiteVisitList'],
                 type: "GET",
                 dataType: "json",
                 data: function (d) {
@@ -74,40 +74,20 @@ app.component('onSiteVisitList', {
                     searchable: false
                 },
                 {
-                    data: 'vehicle_status',
-                    name: 'vehicle_delivery_statuses.name'
-                },
-                {
                     data: 'outlet_code',
                     name: 'outlets.code'
-                },
-                // {
-                //     data: 'registration_type',
-                //     name: 'registration_type'
-                // },
-                {
-                    data: 'registration_number',
-                    name: 'vehicles.registration_number'
                 },
                 {
                     data: 'customer_name',
                     name: 'customers.name'
                 },
                 {
-                    data: 'model_number',
-                    name: 'models.model_number'
-                },
-                {
-                    data: 'amc_policies',
-                    name: 'amc_policies.name'
-                },
-                {
                     data: 'number',
-                    name: 'gate_logs.number'
+                    name: 'on_site_orders.number'
                 },
                 {
                     data: 'status',
-                    name: 'configs.name'
+                    name: 'on_site_order_statuses.name'
                 },
 
             ],
@@ -673,7 +653,7 @@ app.component('onSiteVisitForm', {
                     $scope.extras = res.extras;
 
                     $scope.customer = $scope.site_visit ? $scope.site_visit.customer : [];
-
+                    console.log($scope.customer);
                     $scope.part_details = res.part_details;
                     $scope.labour_details = res.labour_details;
                     $scope.total_amount = res.total_amount;
@@ -687,7 +667,8 @@ app.component('onSiteVisitForm', {
                     }, 1000);
 
                     $scope.outlet_id = $scope.site_visit ? $scope.site_visit.outlet_id : self.user.working_outlet_id;
-                    
+                    self.country = res.country;
+
                     $scope.$apply();
                 })
                 .fail(function (xhr) {
@@ -848,44 +829,41 @@ app.component('onSiteVisitForm', {
         }
 
         //Save Form Data 
-        $scope.saveVehicleDelivery = function () {
-            var form_id = '#vehicle_delivery_form';
+        $scope.saveOnSiteVisit = function () {
+            var form_id = '#on_site_form';
             var v = jQuery(form_id).validate({
                 ignore: '',
                 rules: {
-                    // 'invoice_number': {
+                    'customer_remarks': {
+                        required: true,
+                    },
+                    'planned_visit_date': {
+                        required: true,
+                    },
+                    'name': {
+                        required: true,
+                    },
+                    'code': {
+                        required: true,
+                    },
+                    'mobile_no': {
+                        required: true,
+                    },
+                    'address_line1': {
+                        required: true,
+                    },
+                    'country_id': {
+                        required: true,
+                    },
+                    'state_id': {
+                        required: true,
+                    },
+                    'city_id': {
+                        required: true,
+                    },
+                    // 'pincode': {
                     //     required: true,
                     // },
-                    'invoice_date': {
-                        required: true,
-                    },
-                    // 'invoice_amount': {
-                    //     required: true,
-                    // },
-                    'labour_invoice_number': {
-                        required: true,
-                    },
-                    'labour_amount': {
-                        required: true,
-                    },
-                    'parts_invoice_number': {
-                        required: true,
-                    },
-                    'parts_amount': {
-                        required: true,
-                    },
-                    'receipt_number': {
-                        required: true,
-                    },
-                    'receipt_date': {
-                        required: true,
-                    },
-                    'receipt_amount': {
-                        required: true,
-                    },
-                    'vehicle_delivery_request_remarks': {
-                        required: true,
-                    },
                 },
                 messages: {},
                 invalidHandler: function (event, validator) {
@@ -895,7 +873,7 @@ app.component('onSiteVisitForm', {
                     let formData = new FormData($(form_id)[0]);
                     $('.submit').button('loading');
                     $.ajax({
-                            url: base_url + '/api/manual-vehicle-delivery/save',
+                            url: base_url + '/api/on-site-visit/save',
                             method: "POST",
                             data: formData,
                             processData: false,

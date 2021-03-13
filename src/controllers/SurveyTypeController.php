@@ -1,7 +1,7 @@
 <?php
 
 namespace Abs\GigoPkg;
-use Abs\AttributePkg\Field;
+use Abs\AttributePkg\Models\Field;
 use Abs\SerialNumberPkg\SerialNumberGroup;
 use App\Config;
 use App\FinancialYear;

@@ -42,7 +42,7 @@ class OnSiteVisitController extends Controller
         return response()->json($this->data);
     }
 
-    public function getManualDeliveryVehicleList(Request $request)
+    public function getOnSiteVisitList(Request $request)
     {
         // dd($request->all());
         if ($request->date_range) {
@@ -57,120 +57,86 @@ class OnSiteVisitController extends Controller
             $end_date = date('Y-m-t 23:59:59');
         }
 
-        $vehicle_inwards = JobOrder::join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
-            ->leftJoin('vehicles', 'job_orders.vehicle_id', 'vehicles.id')
-            ->leftJoin('vehicle_owners', function ($join) {
-                $join->on('vehicle_owners.vehicle_id', 'job_orders.vehicle_id')
-                    ->whereRaw('vehicle_owners.from_date = (select MAX(vehicle_owners1.from_date) from vehicle_owners as vehicle_owners1 where vehicle_owners1.vehicle_id = job_orders.vehicle_id)');
-            })
-            ->leftJoin('customers', 'customers.id', 'vehicle_owners.customer_id')
-            ->leftJoin('models', 'models.id', 'vehicles.model_id')
-            ->leftJoin('amc_members', 'amc_members.vehicle_id', 'vehicles.id')
-            ->leftJoin('amc_policies', 'amc_policies.id', 'amc_members.policy_id')
-            ->leftJoin('vehicle_delivery_statuses', 'vehicle_delivery_statuses.id', 'job_orders.vehicle_delivery_status_id')
-            ->join('configs', 'configs.id', 'job_orders.status_id')
-            ->join('outlets', 'outlets.id', 'job_orders.outlet_id')
+        $vehicle_inwards = OnSiteOrder::join('customers', 'customers.id', 'on_site_orders.customer_id')
+            ->join('outlets', 'outlets.id', 'on_site_orders.outlet_id')
+            ->leftjoin('on_site_order_statuses', 'on_site_order_statuses.id', 'on_site_orders.status_id')
             ->select(
-                'job_orders.id',
-                DB::raw('IF(vehicles.is_registered = 1,"Registered Vehicle","Un-Registered Vehicle") as registration_type'),
-                'vehicles.registration_number',
-                DB::raw('COALESCE(models.model_number, "-") as model_number'),
-                'gate_logs.number',
-                'job_orders.status_id',
-                DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%d/%m/%Y, %h:%i %p") as date'),
-                'job_orders.driver_name',
-                'job_orders.driver_mobile_number as driver_mobile_number',
-                'job_orders.is_customer_agreed',
-                DB::raw('COALESCE(GROUP_CONCAT(amc_policies.name), "-") as amc_policies'),
-                'configs.name as status',
+                'on_site_orders.id',
+                'on_site_orders.number',
+                DB::raw('DATE_FORMAT(on_site_orders.planned_visit_date,"%d-%m-%Y") as date'),
                 'outlets.code as outlet_code',
-                DB::raw('COALESCE(customers.name, "-") as customer_name'),
-                'job_orders.vehicle_delivery_status_id',
-                DB::raw('IF(job_orders.vehicle_delivery_status_id IS NULL,"WIP",vehicle_delivery_statuses.name) as vehicle_status')
+                'customers.name as customer_name',
+                'on_site_order_statuses.name as status'
             )
             // ->where(function ($query) use ($start_date, $end_date) {
             //     $query->whereDate('gate_logs.gate_in_date', '>=', $start_date)
             //         ->whereDate('gate_logs.gate_in_date', '<=', $end_date);
             // })
-            ->where(function ($query) use ($request) {
-                if (!empty($request->reg_no)) {
-                    $query->where('vehicles.registration_number', 'LIKE', '%' . $request->reg_no . '%');
-                }
-            })
-            ->where(function ($query) use ($request) {
-                if (!empty($request->membership)) {
-                    $query->where('amc_policies.name', 'LIKE', '%' . $request->membership . '%');
-                }
-            })
-            ->where(function ($query) use ($request) {
-                if (!empty($request->gate_in_no)) {
-                    $query->where('gate_logs.number', 'LIKE', '%' . $request->gate_in_no . '%');
-                }
-            })
-            ->where(function ($query) use ($request) {
-                if ($request->registration_type == '1' || $request->registration_type == '0') {
-                    $query->where('vehicles.is_registered', $request->registration_type);
-                }
-            })
-            ->where(function ($query) use ($request) {
-                if (!empty($request->customer_id)) {
-                    $query->where('vehicle_owners.customer_id', $request->customer_id);
-                }
-            })
-            ->where(function ($query) use ($request) {
-                if (!empty($request->model_id)) {
-                    $query->where('vehicles.model_id', $request->model_id);
-                }
-            })
-            ->where(function ($query) use ($request) {
-                if (!empty($request->status_id)) {
-                    $query->where('job_orders.status_id', $request->status_id);
-                }
-            })
-            ->where('job_orders.company_id', Auth::user()->company_id)
+            // ->where(function ($query) use ($request) {
+            //     if (!empty($request->reg_no)) {
+            //         $query->where('vehicles.registration_number', 'LIKE', '%' . $request->reg_no . '%');
+            //     }
+            // })
+            // ->where(function ($query) use ($request) {
+            //     if (!empty($request->membership)) {
+            //         $query->where('amc_policies.name', 'LIKE', '%' . $request->membership . '%');
+            //     }
+            // })
+            // ->where(function ($query) use ($request) {
+            //     if (!empty($request->gate_in_no)) {
+            //         $query->where('gate_logs.number', 'LIKE', '%' . $request->gate_in_no . '%');
+            //     }
+            // })
+            // ->where(function ($query) use ($request) {
+            //     if ($request->registration_type == '1' || $request->registration_type == '0') {
+            //         $query->where('vehicles.is_registered', $request->registration_type);
+            //     }
+            // })
+            // ->where(function ($query) use ($request) {
+            //     if (!empty($request->customer_id)) {
+            //         $query->where('vehicle_owners.customer_id', $request->customer_id);
+            //     }
+            // })
+            // ->where(function ($query) use ($request) {
+            //     if (!empty($request->model_id)) {
+            //         $query->where('vehicles.model_id', $request->model_id);
+            //     }
+            // })
+            // ->where(function ($query) use ($request) {
+            //     if (!empty($request->status_id)) {
+            //         $query->where('job_orders.status_id', $request->status_id);
+            //     }
+            // })
+            ->where('on_site_orders.company_id', Auth::user()->company_id)
         ;
 
-        if ($request->date_range) {
-            $vehicle_inwards->whereDate('gate_logs.gate_in_date', '>=', $start_date)->whereDate('gate_logs.gate_in_date', '<=', $end_date);
-        }
+        // if ($request->date_range) {
+        //     $vehicle_inwards->whereDate('gate_logs.gate_in_date', '>=', $start_date)->whereDate('gate_logs.gate_in_date', '<=', $end_date);
+        // }
 
-        if (!Entrust::can('view-all-outlet-manual-vehicle-delivery')) {
-            if (Entrust::can('view-mapped-outlet-manual-vehicle-delivery')) {
-                $outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
-                array_push($outlet_ids, Auth::user()->employee->outlet_id);
-                $vehicle_inwards->whereIn('job_orders.outlet_id', $outlet_ids);
-            } else {
-                $vehicle_inwards->where('job_orders.outlet_id', Auth::user()->working_outlet_id);
-            }
-        }
+        // if (!Entrust::can('view-all-outlet-manual-vehicle-delivery')) {
+        //     if (Entrust::can('view-mapped-outlet-manual-vehicle-delivery')) {
+        //         $outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
+        //         array_push($outlet_ids, Auth::user()->employee->outlet_id);
+        //         $vehicle_inwards->whereIn('job_orders.outlet_id', $outlet_ids);
+        //     } else {
+        //         $vehicle_inwards->where('job_orders.outlet_id', Auth::user()->working_outlet_id);
+        //     }
+        // }
 
-        if (Entrust::can('verify-manual-vehicle-delivery')) {
-            $vehicle_inwards->whereIn('job_orders.status_id', [8477]);
-        }
+        // if (Entrust::can('verify-manual-vehicle-delivery')) {
+        //     $vehicle_inwards->whereIn('job_orders.status_id', [8477]);
+        // }
 
-        $vehicle_inwards->groupBy('job_orders.id');
-        $vehicle_inwards->orderBy('gate_logs.gate_in_date', 'DESC');
-        // $vehicle_inwards->orderBy('job_orders.status_id', 'DESC');
+        $vehicle_inwards->orderBy('on_site_orders.planned_visit_date', 'DESC');
 
         return Datatables::of($vehicle_inwards)
             ->rawColumns(['status', 'action'])
-            ->filterColumn('registration_type', function ($query, $keyword) {
-                $sql = 'IF(vehicles.is_registered = 1,"Registered Vehicle","Un-Registered Vehicle")  like ?';
-                $query->whereRaw($sql, ["%{$keyword}%"]);
-            })
-            ->editColumn('status', function ($vehicle_inward) {
-                $status = $vehicle_inward->status_id == '8460' || $vehicle_inward->status_id == '8469' || $vehicle_inward->status_id == '8477' || $vehicle_inward->status_id == '8479' ? 'green' : 'blue';
-                return '<span class="text-' . $status . '">' . $vehicle_inward->status . '</span>';
-            })
-            ->editColumn('vehicle_status', function ($vehicle_inward) {
-                $status = 'blue';
-                if ($vehicle_inward->vehicle_delivery_status_id == 3) {
-                    $status = 'green';
-                } elseif ($vehicle_inward->vehicle_delivery_status_id == 2) {
-                    $status = 'red';
-                }
-                return '<span class="text-' . $status . '">' . $vehicle_inward->vehicle_status . '</span>';
-            })
+            
+            // ->editColumn('status', function ($vehicle_inward) {
+            //     $status = $vehicle_inward->status_id == '8460' || $vehicle_inward->status_id == '8469' || $vehicle_inward->status_id == '8477' || $vehicle_inward->status_id == '8479' ? 'green' : 'blue';
+            //     return '<span class="text-' . $status . '">' . $vehicle_inward->status . '</span>';
+            // })
             ->addColumn('action', function ($vehicle_inward) {
                 $view_img = asset('public/themes/' . $this->data['theme'] . '/img/content/table/view.svg');
                 $edit_img = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
@@ -180,14 +146,16 @@ class OnSiteVisitController extends Controller
 
                 $output = '';
 
-                if ($vehicle_inward->vehicle_delivery_status_id != 3 && !Entrust::can('verify-manual-vehicle-delivery')) {
-                    $output .= '<a href="javascript:;" data-toggle="modal" data-target="#change_vehicle_status" onclick="angular.element(this).scope().changeStatus(' . $vehicle_inward->id . ',' . $vehicle_inward->vehicle_delivery_status_id . ')" title="Change Vehicle Status"><img src="' . $status_img . '" alt="Change Vehicle Status" class="img-responsive delete" onmouseover=this.src="' . $status_img_hover . '" onmouseout=this.src="' . $status_img . '"></a>
-					';
-                }
+                // if ($vehicle_inward->vehicle_delivery_status_id != 3 && !Entrust::can('verify-manual-vehicle-delivery')) {
+                //     $output .= '<a href="javascript:;" data-toggle="modal" data-target="#change_vehicle_status" onclick="angular.element(this).scope().changeStatus(' . $vehicle_inward->id . ',' . $vehicle_inward->vehicle_delivery_status_id . ')" title="Change Vehicle Status"><img src="' . $status_img . '" alt="Change Vehicle Status" class="img-responsive delete" onmouseover=this.src="' . $status_img_hover . '" onmouseout=this.src="' . $status_img . '"></a>
+				// 	';
+                // }
 
-                if ($vehicle_inward->status_id != 8478 && $vehicle_inward->status_id != 8477 && $vehicle_inward->status_id != 8467 && $vehicle_inward->status_id != 8468 && $vehicle_inward->status_id != 8470 && !Entrust::can('verify-manual-vehicle-delivery')) {
-                    $output .= '<a href="#!/manual-vehicle-delivery/form/' . $vehicle_inward->id . '" id = "" title="Form"><img src="' . $edit_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $edit_img . '" onmouseout=this.src="' . $edit_img . '"></a>';
-                }
+                // if ($vehicle_inward->status_id != 8478 && $vehicle_inward->status_id != 8477 && $vehicle_inward->status_id != 8467 && $vehicle_inward->status_id != 8468 && $vehicle_inward->status_id != 8470 && !Entrust::can('verify-manual-vehicle-delivery')) {
+                //     $output .= '<a href="#!/manual-vehicle-delivery/form/' . $vehicle_inward->id . '" id = "" title="Form"><img src="' . $edit_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $edit_img . '" onmouseout=this.src="' . $edit_img . '"></a>';
+                // }
+                $output .= '<a href="#!/on-site-visit/form/' . $vehicle_inward->id . '" id = "" title="Form"><img src="' . $edit_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $edit_img . '" onmouseout=this.src="' . $edit_img . '"></a>';
+
                 $output .= '<a href="#!/manual-vehicle-delivery/view/' . $vehicle_inward->id . '" id = "" title="View"><img src="' . $view_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $view_img . '" onmouseout=this.src="' . $view_img . '"></a>';
                 return $output;
             })

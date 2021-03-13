@@ -29,9 +29,9 @@
     </div><!-- Page Header -->
     <!-- Page Main Content -->
     <div class="page-main-content form-content type2">
-        <form id="vehicle_delivery_form" autocomplete="off">
-            <input type="hidden" name="job_order_id" value="{{job_order.id}}">
-            <input type="hidden" name="type_id" value="1">
+        <form id="on_site_form" autocomplete="off">
+            <input type="hidden" name="on_site_order_id" value="{{site_visit.id}}">
+            <input type="hidden" name="save_type_id" value="1">
             <div class="page-tab-form pb-70">
                 <div class="page-tab-form-top">
                     <div class="page-tab-form-top-left">
@@ -79,13 +79,13 @@
                                             Basic Info
                                         </a>
                                     </li>
-                                    <li>
+                                    <li class="ng-hide">
                                         <a data-target="#labour_details" data-toggle="tab" aria-expanded="true"
                                             class="filter">
                                             Labour Details
                                         </a>
                                     </li>
-                                    <li>
+                                    <li class="ng-hide">
                                         <a data-target="#parts_details" data-toggle="tab" aria-expanded="true"
                                             class="filter">
                                             Parts Details
@@ -110,7 +110,8 @@
                                             <div class="panel-group" id="accordion">
                                                 <div class="panel panel-default type-3">
                                                     <div class="panel-heading">
-                                                        <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse2">
+                                                        <a class="panel-title" data-toggle="collapse"
+                                                            data-parent="#accordion" data-target="#collapse2">
                                                             Customer Details
                                                             <span class="arrow"></span>
                                                         </a>
@@ -124,34 +125,53 @@
                                                                         <sup class="mandatory">*</sup>
                                                                     </label>
                                                                     <div class="common-radio-button type-4">
-                                                                        <input type="radio" id="customer_search_type_yes" name="customer_search_type" ng-model="$ctrl.customer_search_type" ng-value="true">
+                                                                        <input type="radio"
+                                                                            id="customer_search_type_yes"
+                                                                            name="customer_search_type"
+                                                                            ng-model="$ctrl.customer_search_type"
+                                                                            ng-value="true">
                                                                         <label for="customer_search_type_yes">
                                                                             Existing<span class="rd-focused"></span>
                                                                         </label>
-                                                                        <input type="radio" id="customer_search_type_no" name="customer_search_type" ng-model="$ctrl.customer_search_type" ng-value="false">
+                                                                        <input type="radio" id="customer_search_type_no"
+                                                                            name="customer_search_type"
+                                                                            ng-model="$ctrl.customer_search_type"
+                                                                            ng-value="false">
                                                                         <label for="customer_search_type_no">
                                                                             New<span class="rd-focused"></span>
                                                                         </label>
                                                                     </div>
                                                                 </div><!-- Feild -->
                                                             </div>
-                                                            <div class="col-md-3"  ng-if="$ctrl.customer_search_type == true ">
+                                                            <div class="col-md-3"
+                                                                ng-if="$ctrl.customer_search_type == true ">
                                                                 <div class="form-group">
                                                                     <label>
                                                                         Search customer
                                                                         <sup class="mandatory">*</sup>
                                                                     </label>
-                                                                    <md-autocomplete md-items="option in searchCustomer(customerSearchText)" md-selected-item="customerResult" md-search-text="customerSearchText" md-selected-item-change="customerChanged(customerResult)" md-item-text="option.code" md-min-length="3" placeholder="Customer Code / Name" md-input-id="customer_ac"  md-autofocus md-no-cache="true">
+                                                                    <md-autocomplete
+                                                                        md-items="option in searchCustomer(customerSearchText)"
+                                                                        md-selected-item="customerResult"
+                                                                        md-search-text="customerSearchText"
+                                                                        md-selected-item-change="customerChanged(customerResult)"
+                                                                        md-item-text="option.code" md-min-length="3"
+                                                                        placeholder="Customer Code / Name"
+                                                                        md-input-id="customer_ac" md-autofocus
+                                                                        md-no-cache="true">
                                                                         <md-item-template>
                                                                             <span>
                                                                                 {{option.name}} / {{option.code}}
                                                                             </span>
                                                                         </md-item-template>
                                                                         <md-not-found>
-                                                                            No Customer matching "{{$ctrl.customerSearchText}}" were found.
+                                                                            No Customer matching
+                                                                            "{{$ctrl.customerSearchText}}" were found.
                                                                         </md-not-found>
                                                                     </md-autocomplete>
-                                                                    <input type="hidden" class="form-control required" id="customer_id" name="customer_id" value="{{customer.id}}">
+                                                                    <input type="hidden" class="form-control required"
+                                                                        id="customer_id" name="customer_id"
+                                                                        value="{{customer.id}}">
                                                                 </div><!-- Feild -->
                                                             </div><!-- Column -->
                                                             <div class="col-md-3">
@@ -160,7 +180,9 @@
                                                                         Code
                                                                         <sup class="mandatory">*</sup>
                                                                     </label>
-                                                                    <input type="text" class="form-control required" placeholder="Enter Code" autocomplete="off" ng-model="customer.code" name="code" />
+                                                                    <input type="text" class="form-control required"
+                                                                        placeholder="Enter Code" autocomplete="off"
+                                                                        ng-model="customer.code" name="code" />
                                                                 </div><!-- Feild -->
                                                             </div><!-- Column -->
                                                             <div class="col-md-3">
@@ -169,7 +191,9 @@
                                                                         Name
                                                                         <sup class="mandatory">*</sup>
                                                                     </label>
-                                                                    <input type="text" class="form-control" placeholder="Enter Name" autocomplete="off" ng-model="customer.name" name="name" />
+                                                                    <input type="text" class="form-control required"
+                                                                        placeholder="Enter Name" autocomplete="off"
+                                                                        ng-model="customer.name" name="name" />
                                                                 </div><!-- Feild -->
                                                             </div><!-- Column -->
                                                             <div class="col-md-3">
@@ -178,7 +202,12 @@
                                                                         Mobile Number
                                                                         <sup class="mandatory">*</sup>
                                                                     </label>
-                                                                    <input type="text" class="form-control" minlength="10" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter Mobile No" autocomplete="off" maxlength="10" ng-model="customer.mobile_no" name="mobile_no" />
+                                                                    <input type="text" class="form-control"
+                                                                        minlength="10" maxlength="10"
+                                                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                                                        placeholder="Enter Mobile No" autocomplete="off"
+                                                                        maxlength="10" ng-model="customer.mobile_no"
+                                                                        name="mobile_no" />
                                                                 </div><!-- Feild -->
                                                             </div><!-- Column -->
                                                             <div class="col-md-3">
@@ -186,7 +215,10 @@
                                                                     <label>
                                                                         Email
                                                                     </label>
-                                                                    <input type="text" class="form-control" placeholder="Enter Email" autocomplete="off" ng-model="customer.email" name="email" />
+                                                                    <input type="text" class="form-control"
+                                                                        placeholder="Enter Email" autocomplete="off"
+                                                                        ng-model="customer.email"
+                                                                        name="email" />
                                                                 </div><!-- Feild -->
                                                             </div><!-- Column -->
                                                             <div class="col-md-3">
@@ -195,7 +227,10 @@
                                                                         Address Line 1
                                                                         <sup class="mandatory">*</sup>
                                                                     </label>
-                                                                    <input type="text" class="form-control" placeholder="Enter Address" autocomplete="off" ng-model="customer.address.address_line1" name="address_line1" />
+                                                                    <input type="text" class="form-control required"
+                                                                        placeholder="Enter Address" autocomplete="off"
+                                                                        ng-model="customer.address.address_line1"
+                                                                        name="address_line1" />
                                                                 </div><!-- Feild -->
                                                             </div><!-- Column -->
                                                             <div class="col-md-3">
@@ -203,7 +238,11 @@
                                                                     <label>
                                                                         Address Line 2
                                                                     </label>
-                                                                    <input type="text" class="form-control" placeholder="Enter Address" autocomplete="off" maxlength="64" ng-model="customer.address.address_line2" name="address_line2" />
+                                                                    <input type="text" class="form-control"
+                                                                        placeholder="Enter Address" autocomplete="off"
+                                                                        maxlength="64"
+                                                                        ng-model="customer.address.address_line2"
+                                                                        name="address_line2" />
                                                                 </div><!-- Feild -->
                                                             </div><!-- Column -->
                                                             <div class="col-md-3">
@@ -212,17 +251,27 @@
                                                                         Country
                                                                         <sup class="mandatory">*</sup>
                                                                     </label>
-                                                                    <md-select ng-model="$ctrl.country" placeholder="Select Country" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }" ng-change="countryChanged($ctrl.country.id)">
+                                                                    <md-select ng-model="$ctrl.country"
+                                                                        placeholder="Select Country"
+                                                                        data-md-container-class="selectdemoSelectHeader"
+                                                                        ng-model-options="{trackBy: '$value.id' }"
+                                                                        ng-change="countryChanged($ctrl.country.id)">
                                                                         <md-select-header class="demo-select-header">
-                                                                            <input ng-model="searchCountry" type="search" placeholder="Search for a country.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                                            <input ng-model="searchCountry"
+                                                                                type="search"
+                                                                                placeholder="Search for a country.."
+                                                                                class="demo-header-searchbox md-text"
+                                                                                ng-keydown="$event.stopPropagation()">
                                                                         </md-select-header>
                                                                         <md-optgroup>
-                                                                            <md-option ng-value="country" ng-repeat="country in extras.country_list | filter:searchCountry">
+                                                                            <md-option ng-value="country"
+                                                                                ng-repeat="country in extras.country_list | filter:searchCountry">
                                                                                 {{country.name}}
                                                                             </md-option>
                                                                         </md-optgroup>
                                                                     </md-select>
-                                                                    <input type="hidden" name="country_id" value="{{$ctrl.country.id}}">
+                                                                    <input type="hidden" name="country_id"
+                                                                        class="required" value="{{$ctrl.country.id}}">
                                                                 </div><!-- Feild -->
                                                             </div><!-- Column -->
                                                             <div class="col-md-3">
@@ -231,17 +280,25 @@
                                                                         State
                                                                         <sup class="mandatory">*</sup>
                                                                     </label>
-                                                                    <md-select ng-model="$ctrl.state" placeholder="Select State" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                                                    <md-select ng-model="$ctrl.state"
+                                                                        placeholder="Select State"
+                                                                        data-md-container-class="selectdemoSelectHeader"
+                                                                        ng-model-options="{trackBy: '$value.id' }">
                                                                         <md-select-header class="demo-select-header">
-                                                                            <input ng-model="searchState" type="search" placeholder="Search for a state.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                                            <input ng-model="searchState" type="search"
+                                                                                placeholder="Search for a state.."
+                                                                                class="demo-header-searchbox md-text"
+                                                                                ng-keydown="$event.stopPropagation()">
                                                                         </md-select-header>
                                                                         <md-optgroup>
-                                                                            <md-option ng-value="state" ng-repeat="state in extras.state_list | filter:searchState">
+                                                                            <md-option ng-value="state"
+                                                                                ng-repeat="state in extras.state_list | filter:searchState">
                                                                                 {{state.name}}
                                                                             </md-option>
                                                                         </md-optgroup>
                                                                     </md-select>
-                                                                    <input type="hidden" name="state_id" value="{{$ctrl.state.id}}">
+                                                                    <input type="hidden" name="state_id"
+                                                                        class="required" value="{{$ctrl.state.id}}">
                                                                 </div><!-- Feild -->
                                                             </div><!-- Column -->
                                                             <div class="col-md-3">
@@ -250,17 +307,25 @@
                                                                         City
                                                                         <sup class="mandatory">*</sup>
                                                                     </label>
-                                                                    <md-autocomplete md-items="option in $ctrl.searchCity($ctrl.citySearchText)" md-selected-item="customer.address.city" md-search-text="$ctrl.citySearchText" md-item-text="option.name" md-min-length="3" placeholder="City Name" md-autofocus>
+                                                                    <md-autocomplete
+                                                                        md-items="option in $ctrl.searchCity($ctrl.citySearchText)"
+                                                                        md-selected-item="customer.address.city"
+                                                                        md-search-text="$ctrl.citySearchText"
+                                                                        md-item-text="option.name" md-min-length="3"
+                                                                        placeholder="City Name" md-autofocus>
                                                                         <md-item-template>
                                                                             <span>
                                                                                 {{option.name}}
                                                                             </span>
                                                                         </md-item-template>
                                                                         <md-not-found>
-                                                                            No City matching "{{$ctrl.citySearchText}}" were found.
+                                                                            No City matching "{{$ctrl.citySearchText}}"
+                                                                            were found.
                                                                         </md-not-found>
                                                                     </md-autocomplete>
-                                                                    <input type="hidden" id="city_id" name="city_id" value="{{customer.address.city.id}}">
+                                                                    <input type="hidden" class="required" id="city_id"
+                                                                        name="city_id"
+                                                                        value="{{customer.address.city.id}}">
                                                                 </div><!-- Feild -->
                                                             </div><!-- Column -->
                                                             <div class="col-md-3">
@@ -269,7 +334,13 @@
                                                                         PIN Code
                                                                         <sup class="mandatory">*</sup>
                                                                     </label>
-                                                                    <input type="text" class="form-control" minlength="6" maxlength="6" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="6" placeholder="Enter PIN Code" autocomplete="off" ng-model="customer.address.pincode" name="pincode" />
+                                                                    <input type="text" class="form-control"
+                                                                        minlength="6" maxlength="6"
+                                                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                                                        maxlength="6" placeholder="Enter PIN Code"
+                                                                        autocomplete="off"
+                                                                        ng-model="customer.address.pincode"
+                                                                        name="pincode" />
                                                                 </div><!-- Feild -->
                                                             </div><!-- Column -->
                                                             <div class="col-md-3">
@@ -277,7 +348,11 @@
                                                                     <label>
                                                                         GST No
                                                                     </label>
-                                                                    <input type="text" class="form-control" minlength="15" maxlength="15" placeholder="Enter GST No" autocomplete="off" ng-model="customer.gst_number" name="gst_number" />
+                                                                    <input type="text" class="form-control"
+                                                                        minlength="15" maxlength="15"
+                                                                        placeholder="Enter GST No" autocomplete="off"
+                                                                        ng-model="customer.gst_number"
+                                                                        name="gst_number" />
                                                                 </div><!-- Feild -->
                                                             </div><!-- Column -->
                                                             <div class="col-md-3">
@@ -286,7 +361,10 @@
                                                                         PAN
                                                                         <!-- No -->
                                                                     </label>
-                                                                    <input type="text" class="form-control" placeholder="Enter PAN" autocomplete="off" ng-model="customer.pan_number" minlength="10" maxlength="10" name="pan_number" />
+                                                                    <input type="text" class="form-control"
+                                                                        placeholder="Enter PAN" autocomplete="off"
+                                                                        ng-model="customer.pan_number" minlength="10"
+                                                                        maxlength="10" name="pan_number" />
                                                                 </div><!-- Feild -->
                                                             </div><!-- Column -->
                                                         </div>
@@ -296,7 +374,8 @@
                                             <div class="panel-group" id="accordion">
                                                 <div class="panel panel-default type-3">
                                                     <div class="panel-heading">
-                                                        <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse3">
+                                                        <a class="panel-title" data-toggle="collapse"
+                                                            data-parent="#accordion" data-target="#collapse3">
                                                             Visit Details
                                                             <span class="arrow"></span>
                                                         </a>
@@ -305,7 +384,8 @@
                                                         <div class="panel-body">
                                                             <div class="col-md-6">
                                                                 <div class="form-group">
-                                                                    <label>Customer Remarks<sup class="mandatory">*</sup></label>
+                                                                    <label>Customer Remarks<sup
+                                                                            class="mandatory">*</sup></label>
                                                                     <textarea class="form-control required"
                                                                         name="customer_remarks" rows="4"
                                                                         placeholder="Enter Remarks">{{site_visit.customer_remarks}}</textarea>
@@ -320,10 +400,18 @@
                                                                                 *
                                                                             </sup>
                                                                         </label>
-                                                                        <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
-                                                                            <input type="text" class="form-control required" placeholder="Select Date" ng-model="site_visit.planned_visit_date" name="planned_visit_date" />
+                                                                        <div class="input-group date"
+                                                                            data-provide="datepicker"
+                                                                            data-date-start-date="0d">
+                                                                            <input type="text"
+                                                                                class="form-control required"
+                                                                                placeholder="Select Date"
+                                                                                ng-model="site_visit.planned_visit_date"
+                                                                                name="planned_visit_date" />
                                                                             <div class="input-group-addon">
-                                                                                <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                                                                <img class="img-responsive"
+                                                                                    src="./public/theme/img/content/calender-gray-icon.svg"
+                                                                                    alt="Calendar Image" />
                                                                             </div>
                                                                         </div><!-- Input Group -->
                                                                     </div><!-- Feild -->
@@ -334,6 +422,14 @@
                                                 </div>
                                             </div>
                                         </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <button type="submit" class="btn btn-red btn-min-wdth submit"
+                                                        ng-click="saveOnSiteVisit()">Save</button>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
                                     </div><!-- Row -->
                                 </div><!-- Tab Pane Wrap -->
                             </div><!-- Tabe Pane -->
@@ -374,7 +470,11 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr class="ptb-12" ng-repeat="(index, labour_details) in labour_details" id="tr_{{index}}" ng-class="labour_details.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="labour_details.removal_reason_id != '10021'">
+                                                        <tr class="ptb-12"
+                                                            ng-repeat="(index, labour_details) in labour_details"
+                                                            id="tr_{{index}}"
+                                                            ng-class="labour_details.removal_reason_id == 10022 ? 'strikethrough' : ''"
+                                                            ng-if="labour_details.removal_reason_id != '10021'">
                                                             <td>{{labour_details.code ? labour_details.code : ''}}
                                                             </td>
                                                             <td>{{labour_details.name ? labour_details.name : ''}}</td>
@@ -393,18 +493,29 @@
                                                             <td class="wid-180 white-space text-right">
                                                                 {{labour_details.amount | number:2}}
                                                             </td>
-                                                            <td class="wid-100" ng-class="labour_details.removal_reason_id == 10022 ? 'my-disable' : ''">
-                                                                <button type="button" ng-click="showLabourForm(index,labour_details)" class="btn img-btn btn-delete">
-                                                                    <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
+                                                            <td class="wid-100"
+                                                                ng-class="labour_details.removal_reason_id == 10022 ? 'my-disable' : ''">
+                                                                <button type="button"
+                                                                    ng-click="showLabourForm(index,labour_details)"
+                                                                    class="btn img-btn btn-delete">
+                                                                    <img class="img-responsive radius-50"
+                                                                        src="./public/theme/img/table/cndn/edit-blue.svg"
+                                                                        alt="Edit" />
                                                                 </button>
                                                                 <button class="btn img-btn btn-delete">
-                                                                    <img class="img-responsive radius-50" ng-click="removeScheduledLabour(index,labour_details.id,'labour')" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                                                                    <img class="img-responsive radius-50"
+                                                                        ng-click="removeScheduledLabour(index,labour_details.id,'labour')"
+                                                                        src="./public/theme/img/content/delete-active.svg"
+                                                                        alt="Delete" />
                                                                 </button>
                                                             </td>
                                                         </tr>
                                                         <tr>
                                                             <td>
-                                                                <button ng-if="job_order.is_customer_approved != '1'" type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showLabourForm(false)">
+                                                                <button ng-if="job_order.is_customer_approved != '1'"
+                                                                    type="button"
+                                                                    class="btn btn-md type2 btn-green btn-square"
+                                                                    ng-click="showLabourForm(false)">
                                                                     Add Labour
                                                                 </button>
                                                             </td>
@@ -414,7 +525,9 @@
                                                                 </b>
                                                             </td>
                                                             <td class="wid-180 white-space  text-right">
-                                                                <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
+                                                                <img class="img-responsive img-inline"
+                                                                    src="./public/theme/img/table/cndn/table-rupee.svg"
+                                                                    alt="Rupee" />
                                                                 <b id="total_amount_labour">
                                                                     {{labour_amount | number:2}}
                                                                 </b>
@@ -474,7 +587,11 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr class="ptb-12" ng-repeat="(index, part_details) in part_details" id="tp_{{index}}" ng-class="part_details.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="part_details.removal_reason_id != '10021'">
+                                                        <tr class="ptb-12"
+                                                            ng-repeat="(index, part_details) in part_details"
+                                                            id="tp_{{index}}"
+                                                            ng-class="part_details.removal_reason_id == 10022 ? 'strikethrough' : ''"
+                                                            ng-if="part_details.removal_reason_id != '10021'">
                                                             <td>
                                                                 {{part_details.code}}
                                                             </td>
@@ -496,18 +613,29 @@
                                                             <td class="wid-180 white-space text-right">
                                                                 {{part_details.amount | number:2}}
                                                             </td>
-                                                            <td class="wid-100" ng-class="part_details.removal_reason_id == 10022 ? 'my-disable' : ''">
-                                                                <button type="button" ng-click="showPartForm(index,part_details)" class="btn img-btn btn-delete">
-                                                                    <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
+                                                            <td class="wid-100"
+                                                                ng-class="part_details.removal_reason_id == 10022 ? 'my-disable' : ''">
+                                                                <button type="button"
+                                                                    ng-click="showPartForm(index,part_details)"
+                                                                    class="btn img-btn btn-delete">
+                                                                    <img class="img-responsive radius-50"
+                                                                        src="./public/theme/img/table/cndn/edit-blue.svg"
+                                                                        alt="Edit" />
                                                                 </button>
                                                                 <button class="btn img-btn btn-delete">
-                                                                    <img class="img-responsive radius-50" ng-click="removeScheduledPart(index,part_details.id,'parts')" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                                                                    <img class="img-responsive radius-50"
+                                                                        ng-click="removeScheduledPart(index,part_details.id,'parts')"
+                                                                        src="./public/theme/img/content/delete-active.svg"
+                                                                        alt="Delete" />
                                                                 </button>
                                                             </td>
                                                         </tr>
                                                         <tr>
                                                             <td>
-                                                                <button ng-if="job_order.is_customer_approved != '1'" type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showPartForm(false)">
+                                                                <button ng-if="job_order.is_customer_approved != '1'"
+                                                                    type="button"
+                                                                    class="btn btn-md type2 btn-green btn-square"
+                                                                    ng-click="showPartForm(false)">
                                                                     Add Part
                                                                 </button>
                                                             </td>
@@ -517,7 +645,9 @@
                                                                 </b>
                                                             </td>
                                                             <td class="wid-180 white-space text-right">
-                                                                <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
+                                                                <img class="img-responsive img-inline"
+                                                                    src="./public/theme/img/table/cndn/table-rupee.svg"
+                                                                    alt="Rupee" />
                                                                 <b id="total_amount_part">
                                                                     {{parts_rate | number:2}}
                                                                 </b>
@@ -554,7 +684,8 @@
             <input type="hidden" name="on_site_repair_order_id" value="{{on_site_repair_order_id}}">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i
+                            class="icon ion-md-close"></i></button>
                     <h5 class="modal-title" id="myModalLabel">
                         {{modal_action}} Labour
                     </h5>
@@ -568,7 +699,13 @@
                                         ROT Code
                                         <span class="mandatory">*</span>
                                     </label>
-                                    <md-autocomplete md-selected-item="on_site_order_ro.repair_order" md-search-text="repairOrderSearchKey" md-items="repair_order in searchRepairOrders(repairOrderSearchKey)" md-item-text="repair_order.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. ABS100" md-selected-item-change="repairOrderSelected(on_site_order_ro.repair_order)" md-input-id="repairOrderAutoCompleteId">
+                                    <md-autocomplete md-selected-item="on_site_order_ro.repair_order"
+                                        md-search-text="repairOrderSearchKey"
+                                        md-items="repair_order in searchRepairOrders(repairOrderSearchKey)"
+                                        md-item-text="repair_order.code" md-min-length="3" md-escape-options="clear"
+                                        placeholder="Ex. ABS100"
+                                        md-selected-item-change="repairOrderSelected(on_site_order_ro.repair_order)"
+                                        md-input-id="repairOrderAutoCompleteId">
                                         <md-item-template>
                                             <span>
                                                 {{repair_order.code}} / {{repair_order.name}}
@@ -578,7 +715,8 @@
                                             No records matching "{{repairOrderSearchKey}}" were found.
                                         </md-not-found>
                                     </md-autocomplete>
-                                    <input type="hidden" class="required" name="rot_id" value="{{on_site_order_ro.repair_order.id}}">
+                                    <input type="hidden" class="required" name="rot_id"
+                                        value="{{on_site_order_ro.repair_order.id}}">
                                 </div><!-- Field -->
                             </div><!-- Column -->
                             <div class="col-md-6">
@@ -587,17 +725,23 @@
                                         Split Order Type
                                         <span class="mandatory">*</span>
                                     </label>
-                                    <md-select ng-model="on_site_order_ro.split_order_type" placeholder="Select Split Order Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                    <md-select ng-model="on_site_order_ro.split_order_type"
+                                        placeholder="Select Split Order Type"
+                                        data-md-container-class="selectdemoSelectHeader"
+                                        ng-model-options="{trackBy: '$value.id' }">
                                         <md-select-header class="demo-select-header">
-                                            <input ng-model="searchSplitOrderTypeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                            <input ng-model="searchSplitOrderTypeKey" type="search"
+                                                placeholder="Search.." class="demo-header-searchbox md-text">
                                         </md-select-header>
                                         <md-optgroup>
-                                            <md-option ng-value="split_order_type" ng-repeat="split_order_type in options.split_order_types | filter:searchSplitOrderTypeKey">
+                                            <md-option ng-value="split_order_type"
+                                                ng-repeat="split_order_type in options.split_order_types | filter:searchSplitOrderTypeKey">
                                                 {{split_order_type.name}} / {{split_order_type.code}}
                                             </md-option>
                                         </md-optgroup>
                                     </md-select>
-                                    <input type="hidden" class="required" name="split_order_type_id" value="{{on_site_order_ro.split_order_type.id}}">
+                                    <input type="hidden" class="required" name="split_order_type_id"
+                                        value="{{on_site_order_ro.split_order_type.id}}">
                                 </div><!-- Field -->
                             </div><!-- Column -->
                         </div><!-- Row -->
@@ -605,16 +749,21 @@
                             <ul class="view-row mb-no pad-tb-none">
                                 <li class="view-col-4">
                                     <span class="view-col-label">ROT Description</span>
-                                    <span class="view-data-list-value" ng-if="on_site_order_ro.repair_order.is_editable == 0">{{on_site_order_ro.repair_order.name}}</span>
-                                    <input class="form-control" ng-if="on_site_order_ro.repair_order.is_editable == 1" ng-model="on_site_order_ro.repair_order.name" type="text" name="repair_order_description" value="{{on_site_order_ro.repair_order.name}}">
+                                    <span class="view-data-list-value"
+                                        ng-if="on_site_order_ro.repair_order.is_editable == 0">{{on_site_order_ro.repair_order.name}}</span>
+                                    <input class="form-control" ng-if="on_site_order_ro.repair_order.is_editable == 1"
+                                        ng-model="on_site_order_ro.repair_order.name" type="text"
+                                        name="repair_order_description" value="{{on_site_order_ro.repair_order.name}}">
                                 </li>
                                 <li class="view-col-4">
                                     <span class="view-col-label">Category</span>
-                                    <span class="view-data-list-value">{{on_site_order_ro.repair_order.category.name}}</span>
+                                    <span
+                                        class="view-data-list-value">{{on_site_order_ro.repair_order.category.name}}</span>
                                 </li>
                                 <li class="view-col-4">
                                     <span class="view-col-label">Skill Level</span>
-                                    <span class="view-data-list-value">{{on_site_order_ro.repair_order.skill_level.short_name}}</span>
+                                    <span
+                                        class="view-data-list-value">{{on_site_order_ro.repair_order.skill_level.short_name}}</span>
                                 </li>
                                 <li class="view-col-4">
                                     <span class="view-col-label">Hours</span>
@@ -622,8 +771,13 @@
                                 </li>
                                 <li class="view-col-4">
                                     <span class="view-col-label">Amount</span>
-                                    <span class="view-data-list-value" ng-if="on_site_order_ro.repair_order.is_editable == 0">{{on_site_order_ro.repair_order.amount | currency}}</span>
-                                    <input class="form-control required" ng-if="on_site_order_ro.repair_order.is_editable == 1" ng-model="on_site_order_ro.repair_order.amount" type="text" name="repair_order_amount" value="{{on_site_order_ro.repair_order.amount}}" onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="7">
+                                    <span class="view-data-list-value"
+                                        ng-if="on_site_order_ro.repair_order.is_editable == 0">{{on_site_order_ro.repair_order.amount | currency}}</span>
+                                    <input class="form-control required"
+                                        ng-if="on_site_order_ro.repair_order.is_editable == 1"
+                                        ng-model="on_site_order_ro.repair_order.amount" type="text"
+                                        name="repair_order_amount" value="{{on_site_order_ro.repair_order.amount}}"
+                                        onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="7">
                                 </li>
                             </ul>
                         </div><!-- View Data -->
@@ -634,10 +788,12 @@
                         <div class="col-md-6">
                         </div><!-- Column -->
                         <div class="col-md-6 text-right">
-                            <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                            <button type="button" data-dismiss="modal"
+                                class="btn btn-primary btn-bordered cancel_modal_btn">
                                 Cancel
                             </button>
-                            <button type="submit" ng-click="saveLabour()" class="btn btn-bordered save_labour">Submit</button>
+                            <button type="submit" ng-click="saveLabour()"
+                                class="btn btn-bordered save_labour">Submit</button>
                         </div><!-- Column -->
                     </div><!-- Row -->
                 </div><!-- Modal Footer -->
@@ -652,7 +808,8 @@
             <input type="hidden" name="on_site_part_id" value="{{job_order_part_id}}">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i
+                            class="icon ion-md-close"></i></button>
                     <h5 class="modal-title" id="myModalLabel">
                         {{modal_action}} Part
                     </h5>
@@ -666,7 +823,10 @@
                                         Part Code
                                         <span class="mandatory">*</span>
                                     </label>
-                                    <md-autocomplete md-selected-item="on_site_part.part" md-search-text="partSearchKey" md-items="part in searchParts(partSearchKey)" md-item-text="part.code" md-min-length="4" md-escape-options="clear" placeholder="Ex. F0831610(L)" md-selected-item-change="partSelected(part)">
+                                    <md-autocomplete md-selected-item="on_site_part.part" md-search-text="partSearchKey"
+                                        md-items="part in searchParts(partSearchKey)" md-item-text="part.code"
+                                        md-min-length="4" md-escape-options="clear" placeholder="Ex. F0831610(L)"
+                                        md-selected-item-change="partSelected(part)">
                                         <md-item-template>
                                             <span>
                                                 {{part.code}} / {{part.name}}
@@ -682,7 +842,10 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Available Quantity</label>
-                                    <input type="text" ng-model="available_quantity" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Available Quantity" autocomplete="off" readonly />
+                                    <input type="text" ng-model="available_quantity"
+                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                        class="form-control" placeholder="Available Quantity" autocomplete="off"
+                                        readonly />
                                 </div><!-- Feild -->
                             </div>
                             <div class="col-md-4">
@@ -691,23 +854,31 @@
                                         Split Order Type
                                         <span class="mandatory">*</span>
                                     </label>
-                                    <md-select ng-model="on_site_part.split_order_type" placeholder="Split Order Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                    <md-select ng-model="on_site_part.split_order_type" placeholder="Split Order Type"
+                                        data-md-container-class="selectdemoSelectHeader"
+                                        ng-model-options="{trackBy: '$value.id' }">
                                         <md-select-header class="demo-select-header">
-                                            <input ng-model="searchSplitOrderTypeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                            <input ng-model="searchSplitOrderTypeKey" type="search"
+                                                placeholder="Search.." class="demo-header-searchbox md-text">
                                         </md-select-header>
                                         <md-optgroup>
-                                            <md-option ng-value="split_order_type" ng-repeat="split_order_type in options.split_order_types | filter:searchSplitOrderTypeKey">
+                                            <md-option ng-value="split_order_type"
+                                                ng-repeat="split_order_type in options.split_order_types | filter:searchSplitOrderTypeKey">
                                                 {{split_order_type.name}} / {{split_order_type.code}}
                                             </md-option>
                                         </md-optgroup>
                                     </md-select>
-                                    <input type="hidden" name="split_order_type_id" value="{{on_site_part.split_order_type.id}}">
+                                    <input type="hidden" name="split_order_type_id"
+                                        value="{{on_site_part.split_order_type.id}}">
                                 </div><!-- Field -->
                             </div><!-- Column -->
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Quantity <sup class="mandatory">*</sup></label>
-                                    <input type="text" name="qty" ng-model="on_site_part.part.qty" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" ng-keyup="calculatePartAmount()" class="form-control" placeholder="Enter Quantity" autocomplete="off" />
+                                    <input type="text" name="qty" ng-model="on_site_part.part.qty"
+                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                        ng-keyup="calculatePartAmount()" class="form-control"
+                                        placeholder="Enter Quantity" autocomplete="off" />
                                 </div><!-- Feild -->
                             </div>
                         </div><!-- Row -->
@@ -720,9 +891,13 @@
                                 <li class="view-col-4">
                                     <span class="view-col-label">MRP</span>
                                     <!-- <span class="view-data-list-value">{{on_site_part.part.mrp | currency}}</span> -->
-                                    <input class="form-control" ng-if="mrp_change == 1" ng-model="on_site_part.part.mrp" type="text" name="mrp" value="{{on_site_part.part.mrp}}" ng-keyup="calculatePartAmount()" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                    <input class="form-control" ng-if="mrp_change == 1" ng-model="on_site_part.part.mrp"
+                                        type="text" name="mrp" value="{{on_site_part.part.mrp}}"
+                                        ng-keyup="calculatePartAmount()"
+                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                     <span ng-if="mrp_change != 1" class="view-data-list-value">
-                                        <input class="form-control" ng-if="mrp_change != 1" type="hidden" name="mrp" value="{{on_site_part.part.mrp}}">
+                                        <input class="form-control" ng-if="mrp_change != 1" type="hidden" name="mrp"
+                                            value="{{on_site_part.part.mrp}}">
                                         {{on_site_part.part.mrp | currency}}</span>
                                 </li>
                                 <li class="view-col-4">
@@ -731,7 +906,8 @@
                                 </li>
                                 <li class="view-col-4">
                                     <span class="view-col-label">Amount</span>
-                                    <span class="view-data-list-value">{{on_site_part.part.total_amount | currency}}</span>
+                                    <span
+                                        class="view-data-list-value">{{on_site_part.part.total_amount | currency}}</span>
                                 </li>
                             </ul>
                         </div><!-- View Data -->
@@ -742,10 +918,12 @@
                         <div class="col-md-6">
                         </div><!-- Column -->
                         <div class="col-md-6 text-right">
-                            <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                            <button type="button" data-dismiss="modal"
+                                class="btn btn-primary btn-bordered cancel_modal_btn">
                                 Cancel
                             </button>
-                            <button type="submit" ng-click="savePart()" class="btn btn-bordered save_part">Submit</button>
+                            <button type="submit" ng-click="savePart()"
+                                class="btn btn-bordered save_part">Submit</button>
                         </div><!-- Column -->
                     </div><!-- Row -->
                 </div><!-- Modal Footer -->
