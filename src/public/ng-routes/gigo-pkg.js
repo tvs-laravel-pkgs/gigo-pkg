@@ -1326,5 +1326,9 @@ app.config(['$routeProvider', function($routeProvider) {
     when('/on-site-visit/view/:id', {
         template: '<on-site-visit-view></on-site-visit-view>',
         title: 'On Site Visit View',
+    }).
+    when('/on-site-visit/issue-bulk-part/form/:id', {
+        template: '<on-site-visit-issue-bulk-part></on-site-visit-issue-bulk-part>',
+        title: 'On Site Visit Issue Parts',
     });
 }]);

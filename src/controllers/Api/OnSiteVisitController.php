@@ -8,19 +8,18 @@ use App\Country;
 use App\Customer;
 use App\Employee;
 use App\FinancialYear;
-use App\GateLog;
-use App\GatePass;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\WpoSoapController;
 use App\JobOrder;
-use App\MailConfiguration;
-use App\Mail\VehicleDeliveryRequestMail;
 use App\OnSiteOrder;
 use App\OnSiteOrderEstimate;
+use App\OnSiteOrderIssuedPart;
 use App\OnSiteOrderPart;
 use App\OnSiteOrderRepairOrder;
+use App\OnSiteOrderReturnedPart;
 use App\Outlet;
 use App\Part;
+use App\PartStock;
 use App\RepairOrder;
 use App\SplitOrderType;
 use App\User;
@@ -29,7 +28,6 @@ use Carbon\Carbon;
 use DB;
 use Entrust;
 use Illuminate\Http\Request;
-use Mail;
 use Validator;
 
 class OnSiteVisitController extends Controller
@@ -344,7 +342,10 @@ class OnSiteVisitController extends Controller
 
             $result = $this->getLabourPartsData($params);
         } else {
-            $result['site_visit'] = new OnSiteOrder;
+            $site_visit = new OnSiteOrder;
+            // $previous_number = OnSiteOrder::where('outlet_id',Auth::user()->working_outlet_id)->orderBy('id','desc')->first();
+            // $site_visit->number =
+            $result['site_visit'] = $site_visit;
             $result['part_details'] = [];
             $result['labour_details'] = [];
             $result['total_amount'] = 0;
@@ -635,7 +636,7 @@ class OnSiteVisitController extends Controller
                     ]);
                 }
 
-                $estimate = new JobOrderEstimate;
+                $estimate = new OnSiteOrderEstimate;
                 $estimate->on_site_order_id = $on_site_order->id;
                 $estimate->number = $generateNumber['number'];
                 $estimate->status_id = 10071;
@@ -717,72 +718,6 @@ class OnSiteVisitController extends Controller
         }
     }
 
-    public function updateVehicleStatus(Request $request)
-    {
-        // dd($request->all());
-        $validator = Validator::make($request->all(), [
-            'job_order_id' => [
-                'required',
-                'integer',
-                'exists:job_orders,id',
-            ],
-            'vehicle_delivery_status_id' => [
-                'required',
-                'integer',
-                'exists:vehicle_delivery_statuses,id',
-            ],
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Validation Error',
-                'errors' => $validator->errors()->all(),
-            ]);
-        }
-
-        $job_order = JobOrder::with('gateLog')->find($request->job_order_id);
-
-        if (!$job_order) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Validation Error',
-                'errors' => [
-                    'Job Order Not Found!',
-                ],
-            ]);
-        }
-
-        if (!$job_order->gateLog) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Validation Error',
-                'errors' => [
-                    'Gate Log Not Found!',
-                ],
-            ]);
-        }
-
-        DB::beginTransaction();
-
-        if ($job_order->gateLog->status_id == 8124) {
-            $job_order->vehicle_delivery_status_id = 3;
-        } else {
-            $job_order->vehicle_delivery_status_id = $request->vehicle_delivery_status_id;
-        }
-
-        $job_order->updated_by_id = Auth::user()->id;
-        $job_order->updated_at = Carbon::now();
-        $job_order->save();
-
-        DB::commit();
-        $message = "Vehicle Status Updated successfully!";
-
-        return response()->json([
-            'success' => true,
-            'message' => $message,
-        ]);
-    }
     public function save(Request $request)
     {
         // dd($request->all());
@@ -813,7 +748,7 @@ class OnSiteVisitController extends Controller
 
             DB::beginTransaction();
 
-            if($request->on_site_order_id){
+            if ($request->on_site_order_id) {
                 $site_visit = OnSiteOrder::find($request->on_site_order_id);
                 if (!$site_visit) {
                     return response()->json([
@@ -825,8 +760,8 @@ class OnSiteVisitController extends Controller
                     ]);
                 }
                 $site_visit->updated_by_id = Auth::id();
-				$site_visit->updated_at = Carbon::now();
-            }else{
+                $site_visit->updated_at = Carbon::now();
+            } else {
                 $site_visit = new OnSiteOrder;
                 $site_visit->company_id = Auth::user()->company_id;
                 $site_visit->outlet_id = Auth::user()->working_outlet_id;
@@ -868,12 +803,13 @@ class OnSiteVisitController extends Controller
                 // dd($generateNumber);
                 $site_visit->number = $generateNumber['number'];
                 $site_visit->created_by_id = Auth::id();
-				$site_visit->created_at = Carbon::now();
+                $site_visit->created_at = Carbon::now();
+                $site_visit->status_id = 1;
             }
 
             //save customer
             $customer = Customer::saveCustomer($request->all());
-			$customer->saveAddress($request->all());
+            $customer->saveAddress($request->all());
 
             $site_visit->customer_id = $customer->id;
             $site_visit->planned_visit_date = date('Y-m-d', strtotime($request->planned_visit_date));
@@ -881,7 +817,7 @@ class OnSiteVisitController extends Controller
 
             $site_visit->save();
 
-            $message = "Manual Vehicle Delivery Rejected Successfully!";
+            $message = "On Site Visit Saved Successfully!";
 
             DB::commit();
 
@@ -903,149 +839,388 @@ class OnSiteVisitController extends Controller
         }
     }
 
-    public function vehiceRequestMail($job_order_id, $type)
+    //BULK ISSUE PART FORM DATA
+    public function getBulkIssuePartFormData(Request $request)
     {
-        $job_order = JobOrder::with([
-            'vehicle',
-            'vehicle.model',
-            'vehicle.currentOwner.customer',
-            'vehicle.currentOwner.customer.address',
-            'vehicle.currentOwner.customer.address.country',
-            'vehicle.currentOwner.customer.address.state',
-            'vehicle.currentOwner.customer.address.city',
-            'vehicle.currentOwner.ownershipType',
-            'outlet',
-            'gateLog',
-            'gateLog.createdBy',
-            'gateLog.driverAttachment',
-            'gateLog.kmAttachment',
-            'gateLog.vehicleAttachment',
-            'gateLog.chassisAttachment',
-            'manualDeliveryLabourInvoice',
-            'manualDeliveryPartsInvoice',
-            'manualDeliveryReceipt',
-            'status',
-            'outlet',
-            'vehicleDeliveryRequestUser',
-        ])
-            ->select([
-                'job_orders.*',
-                DB::raw('DATE_FORMAT(job_orders.created_at,"%d-%m-%Y") as date'),
-                DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
-            ])
-            ->find($job_order_id);
+        // dd($request->all());
+        try {
+            $site_visit = OnSiteOrder::with([
+                'company',
+                'outlet',
+                'onSiteVisitUser',
+                'customer',
+                'customer.address',
+                'customer.address.country',
+                'customer.address.state',
+                'customer.address.city',
+                'outlet',
+                'status',
+                'onSiteOrderRepairOrders',
+                'onSiteOrderParts',
+            ])->find($request->id);
 
-        $total_amount = $job_order->manualDeliveryLabourInvoice->amount + $job_order->manualDeliveryPartsInvoice->amount;
-        // dd($job_order->outlet,$job_order->vehicleDeliveryRequestUser);
-        $job_order->total_amount = $total_amount;
-        if ($job_order) {
-            $user_details = MailConfiguration::where('config_id', 3011)->pluck('to_email')->first();
-            $to_email = explode(',', $user_details);
-            if (!$user_details || count($to_email) == 0) {
-                $to_email = ['0' => 'parthiban@uitoux.in'];
+            if (!$site_visit) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => [
+                        'On Site Visit Not Found!',
+                    ],
+                ]);
             }
 
-            $user_details = MailConfiguration::where('config_id', 3011)->pluck('cc_email')->first();
-            $cc_email = explode(',', $user_details);
-            if (!$user_details || count($cc_email) == 0) {
-                $cc_email = ['0' => 'parthiban@uitoux.in'];
-            }
+            $on_site_order_parts = Part::join('on_site_order_parts', 'on_site_order_parts.part_id', 'parts.id')->where('on_site_order_parts.on_site_order_id', $request->id)->whereNull('on_site_order_parts.removal_reason_id')
+            // ->where('on_site_order_parts.is_customer_approved', 1)
+                ->select('on_site_order_parts.id as on_site_order_part_id', 'on_site_order_parts.qty', 'parts.code', 'parts.name', 'parts.id')->get();
 
-            $outlet = $job_order->outlet->ax_name ? $job_order->outlet->ax_name : $job_order->outlet->name;
+            $parts_data = array();
 
-            $subject = 'GIGO ' . $outlet . ' - ' . $job_order->vehicle->currentOwner->customer->name . ' vehicle need approval for delivery';
+            // dd($on_site_order_parts);
+            if ($on_site_order_parts) {
+                foreach ($on_site_order_parts as $key => $parts) {
+                    // dump($parts->code, $parts->id);
 
-            if ($type == 2) {
-                $to_email = [];
-                $user = User::where('id', $job_order->vehicle_delivery_requester_id)->first();
-                $cc_email = [];
-                if ($user && $user->email) {
-                    $to_email = ['0' => $user->email];
+                    //Issued Qty
+                    $issued_qty = OnSiteOrderIssuedPart::where('on_site_order_part_id', $parts->on_site_order_part_id)->sum('issued_qty');
+
+                    //Returned Qty
+                    $returned_qty = OnSiteOrderReturnedPart::where('on_site_order_part_id', $parts->on_site_order_part_id)->sum('returned_qty');
+
+                    //Available Qty
+                    $avail_qty = PartStock::where('part_id', $parts->id)->where('outlet_id', $site_visit->outlet_id)->pluck('stock')->first();
+
+                    $total_remain_qty = ($parts->qty + $returned_qty) - $issued_qty;
+                    $total_issued_qty = $issued_qty - $returned_qty;
+
+                    // dump($avail_qty, $total_remain_qty);
+                    // if ($avail_qty && $avail_qty > 0 && $total_remain_qty > 0) {
+                    if ($total_remain_qty > 0) {
+                        $parts_data[$key]['part_id'] = $parts->id;
+                        $parts_data[$key]['code'] = $parts->code;
+                        $parts_data[$key]['name'] = $parts->name;
+                        $parts_data[$key]['on_site_order_part_id'] = $parts->on_site_order_part_id;
+                        $parts_data[$key]['total_avail_qty'] = $avail_qty;
+                        $parts_data[$key]['total_request_qty'] = $parts->qty;
+                        $parts_data[$key]['total_issued_qty'] = $total_issued_qty;
+                        $parts_data[$key]['total_remaining_qty'] = $total_remain_qty;
+                    }
                 }
-                if ($job_order->status_id == 8478) {
-                    $subject = 'GIGO ' . $outlet . ' - ' . $job_order->vehicle->currentOwner->customer->name . ' vehicle approved for delivery';
-                } else {
-                    $subject = 'GIGO ' . $outlet . ' - ' . $job_order->vehicle->currentOwner->customer->name . ' vehicle rejected for delivery';
-                }
             }
 
-            $to_email = [];
-            $to_email = ['0' => 'parthiban@uitoux.in'];
+            $responseArr = array(
+                'success' => true,
+                'site_visit' => $site_visit,
+                'on_site_order_parts' => $parts_data,
+                'mechanic_id' => $site_visit->on_site_visit_user_id,
+                // 'issue_modes' => $issue_modes,
+            );
 
-            // dd($subject);
-            if ($to_email) {
-                // $cc_email = [];
-                $approver_view_url = url('/') . '/#!/manual-vehicle-delivery/view/' . $job_order->id;
-                $arr['job_order'] = $job_order;
-                // $arr['subject'] = 'GIGO – Need approval for Vehicle Delivery';
-                $arr['subject'] = $subject;
-                $arr['to_email'] = $to_email;
-                $arr['cc_email'] = $cc_email;
-                $arr['type'] = $type;
-                $arr['approver_view_url'] = $approver_view_url;
-
-                $MailInstance = new VehicleDeliveryRequestMail($arr);
-                $Mail = Mail::send($MailInstance);
-            }
+            return response()->json($responseArr);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Server Error',
+                'errors' => [
+                    'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+                ],
+            ]);
         }
     }
 
-    public function generateGatePass($job_order)
+    //SAVE ISSUED PART
+    public function saveIssuedPart(Request $request)
     {
-        // dd($job_order);
-        $gate_log = GateLog::where('job_order_id', $job_order->id)->orderBy('id', 'DESC')->first();
-        // dd($gate_log);
-        if ($gate_log) {
+        // dd($request->all());
+        try {
+            if ($request->part_type == 3) {
+                $validator = Validator::make($request->all(), [
+                    'on_site_order_id' => [
+                        'required',
+                        'exists:on_site_orders,id',
+                    ],
 
-            if (date('m') > 3) {
-                $year = date('Y') + 1;
-            } else {
-                $year = date('Y');
-            }
-            //GET FINANCIAL YEAR ID
-            $financial_year = FinancialYear::where('from', $year)
-                ->where('company_id', $gate_log->company_id)
-                ->first();
+                ]);
 
-            $branch = Outlet::where('id', $gate_log->outlet_id)->first();
-
-            if ($branch && $financial_year) {
-
-                //GENERATE GatePASS
-                $generateNumber = SerialNumberGroup::generateNumber(29, $financial_year->id, $branch->state_id, $branch->id);
-
-                if ($generateNumber['success']) {
-                    $gate_pass = GatePass::firstOrNew(['job_order_id' => $job_order->id, 'type_id' => 8280]); //VEHICLE GATE PASS
-
-                    if ($gate_pass->exists) {
-                        $gate_pass->updated_at = Carbon::now();
-                        $gate_pass->updated_by_id = Auth::user()->id;
-                    } else {
-                        $gate_log->status_id = 8123; //GATE OUT PENDING
-                        $gate_pass->status_id = 8340; //GATE OUT PENDING
-                        $gate_pass->created_at = Carbon::now();
-                        $gate_pass->created_by_id = Auth::user()->id;
-                    }
-
-                    $gate_pass->gate_pass_of_id = 11280;
-                    $gate_pass->entity_id = $job_order->id;
-
-                    $gate_pass->company_id = $gate_log->company_id;
-                    $gate_pass->number = $generateNumber['number'];
-                    $gate_pass->save();
-
-                    $gate_log->gate_pass_id = $gate_pass->id;
-                    $gate_log->updated_by_id = Auth::user()->id;
-                    $gate_log->updated_at = Carbon::now();
-                    $gate_log->save();
+                if ($validator->fails()) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => $validator->errors()->all(),
+                    ]);
                 }
 
-                //Generate GatePass PDF
-                $generate_estimate_gatepass_pdf = JobOrder::generateEstimateGatePassPDF($job_order->id, $type = 'GateIn');
-                // $generate_covering_pdf = JobOrder::generateCoveringLetterPDF($job_order->id);
-            }
-        }
+                DB::beginTransaction();
 
-        return true;
+                if ($request->issued_part) {
+                    foreach ($request->issued_part as $key => $issued_part) {
+                        if (isset($issued_part['qty'])) {
+                            $on_site_order_isssued_part = new OnSiteOrderIssuedPart;
+                            $on_site_order_isssued_part->on_site_order_part_id = $issued_part['on_site_order_part_id'];
+
+                            $on_site_order_isssued_part->issued_qty = $issued_part['qty'];
+                            $on_site_order_isssued_part->issued_mode_id = 8480;
+                            $on_site_order_isssued_part->issued_to_id = $request->issued_to_id;
+                            $on_site_order_isssued_part->created_by_id = Auth::user()->id;
+                            $on_site_order_isssued_part->created_at = Carbon::now();
+                            $on_site_order_isssued_part->save();
+
+                            $on_site_order_part = OnSiteOrderPart::find($issued_part['on_site_order_part_id']);
+                            $on_site_order_part->status_id = 8202; //Issued
+                            $on_site_order_part->save();
+                        }
+                    }
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => ['Parts not found!'],
+                    ]);
+                }
+
+                DB::commit();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Part Issued Successfully!!',
+                ]);
+            }
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Server Error',
+                'errors' => [
+                    'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+                ],
+            ]);
+        }
+    }
+
+    //PART DATA
+    public function returnParts(Request $request)
+    {
+        // dd($request->all());
+        try {
+            if ($request->type_id == 2) {
+                $validator = Validator::make($request->all(), [
+                    'on_site_order_id' => [
+                        'required',
+                        'exists:on_site_orders,id',
+                    ],
+                    'on_site_order_part_id' => [
+                        'required',
+                        'exists:on_site_order_parts,id',
+                    ],
+
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => $validator->errors()->all(),
+                    ]);
+                }
+
+                $site_visit = OnSiteOrder::find($request->on_site_order_id);
+
+                if (!$site_visit) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => [
+                            'On Site Visit Not Found!',
+                        ],
+                    ]);
+                }
+
+                if ($request->returned_qty) {
+                    DB::beginTransaction();
+
+                    //Total Qty
+                    $parts = OnSiteOrderPart::where('id', $request->on_site_order_part_id)->first();
+                    $total_qty = $parts->qty;
+
+                    //Issued Qty
+                    $issued_qty = OnSiteOrderIssuedPart::where('on_site_order_part_id', $parts->id)->sum('issued_qty');
+
+                    //Returned Qty
+                    $returned_qty = OnSiteOrderReturnedPart::where('on_site_order_part_id', $parts->id)->sum('returned_qty');
+
+                    $total_remain_qty = ($issued_qty + $returned_qty);
+
+                    if ($total_remain_qty >= $request->returned_qty) {
+                        $returned_part = new OnSiteOrderReturnedPart;
+                        $returned_part->on_site_order_part_id = $parts->id;
+                        $returned_part->returned_qty = $request->returned_qty;
+                        $returned_part->returned_to_id = $site_visit->on_site_visit_user_id;
+                        $returned_part->remarks = $request->remarks;
+                        $returned_part->created_by_id = Auth::user()->id;
+                        $returned_part->created_at = Carbon::now();
+                        $returned_part->save();
+                    } else {
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'Validation Error',
+                            'errors' => [
+                                'Invalid Returned Qty!',
+                            ],
+                        ]);
+                    }
+
+                    DB::commit();
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => [
+                            'Invalid Returned Qty!',
+                        ],
+                    ]);
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Part Returned Successfully!!',
+                ]);
+            }
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Server Error',
+                'errors' => [
+                    'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+                ],
+            ]);
+        }
+    }
+    //PART DATA
+    public function getPartsData(Request $request)
+    {
+        // dd($request->all());
+        try {
+            $site_visit = OnSiteOrder::find($request->id);
+
+            if (!$site_visit) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => [
+                        'On Site Visit Not Found!',
+                    ],
+                ]);
+            }
+
+            $on_site_order_parts = OnSiteOrderPart::join('parts', 'on_site_order_parts.part_id', 'parts.id')->where('on_site_order_parts.on_site_order_id', $request->id)->whereNull('on_site_order_parts.removal_reason_id')->select('parts.name', 'parts.code', 'on_site_order_parts.id as on_site_order_part_id')->get();
+
+            $part_logs = array();
+            $issued_parts = 0;
+
+            if ($on_site_order_parts) {
+
+                $parts_issue_logs = OnSiteOrderIssuedPart::join('on_site_order_parts', 'on_site_order_parts.id', 'on_site_order_issued_parts.on_site_order_part_id')
+                    ->join('parts', 'on_site_order_parts.part_id', 'parts.id')
+                    ->join('configs', 'on_site_order_issued_parts.issued_mode_id', 'configs.id')
+                    ->join('users', 'on_site_order_issued_parts.issued_to_id', 'users.id')
+                    ->where('on_site_order_parts.on_site_order_id', $request->id)
+                    ->select(DB::raw('"Part Issued" as transaction_type'),
+                        'parts.name',
+                        'parts.code',
+                        'on_site_order_issued_parts.issued_qty as qty',
+                        DB::raw('"-" as remarks'),
+                        DB::raw('DATE_FORMAT(on_site_order_issued_parts.created_at,"%d/%m/%Y") as date'),
+                        'configs.name as issue_mode',
+                        'users.name as mechanic',
+                        'on_site_order_issued_parts.id as on_site_order_issued_part_id',
+                        'users.id as employee_id',
+                        'on_site_order_parts.id as job_order_part_issue_return_id',
+                        'parts.id as part_id')
+                // ->get()
+                ;
+
+                $issued_parts = $parts_issue_logs->get()->count();
+
+                $parts_return_logs = OnSiteOrderReturnedPart::join('on_site_order_parts', 'on_site_order_parts.id', 'on_site_order_returned_parts.on_site_order_part_id')
+                    ->join('parts', 'on_site_order_parts.part_id', 'parts.id')
+                    ->join('users', 'on_site_order_returned_parts.returned_to_id', 'users.id')
+                    ->select(
+                        DB::raw('"Part Returned" as transaction_type'),
+                        'parts.name',
+                        'parts.code',
+                        'on_site_order_returned_parts.returned_qty as qty',
+                        'on_site_order_returned_parts.remarks',
+                        DB::raw('DATE_FORMAT(on_site_order_returned_parts.created_at,"%d/%m/%Y") as date'),
+                        DB::raw('"-" as issue_mode'),
+                        'users.name as mechanic',
+                        'on_site_order_returned_parts.id as on_site_order_issued_part_id',
+                        'users.id as employee_id',
+                        'on_site_order_returned_parts.id as job_order_part_issue_return_id',
+                        'parts.id as part_id'
+
+                    )->union($parts_issue_logs)->orderBy('date', 'DESC')->get();
+
+                $part_logs = $parts_return_logs;
+            }
+
+            return response()->json([
+                'success' => true,
+                'part_logs' => $part_logs,
+                // 'issued_parts' => $issued_parts,
+                'on_site_order_parts' => $on_site_order_parts,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Server Error',
+                'errors' => [
+                    'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+                ],
+            ]);
+        }
+    }
+
+    public function sendRequestPartsIntent(Request $request)
+    {
+        // dd($request->all());
+        try {
+            $site_visit = OnSiteOrder::find($request->id);
+
+            if (!$site_visit) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => [
+                        'Site Visit Not Found!',
+                    ],
+                ]);
+            }
+
+            DB::beginTransaction();
+
+            if ($request->type_id == 1) {
+                $site_visit->status_id = 4;
+            } elseif ($request->type_id == 2) {
+                $site_visit->status_id = 5;
+            } else {
+                $site_visit->status_id = 8;
+            }
+
+            $site_visit->updated_by_id = Auth::user()->id;
+            $site_visit->updated_at = Carbon::now();
+            $site_visit->save();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'On Site Visit Updated Successfully!!',
+            ]);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Server Network Down!',
+                'errors' => ['Exception Error' => $e->getMessage()],
+            ]);
+        }
     }
 }

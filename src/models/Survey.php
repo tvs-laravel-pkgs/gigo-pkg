@@ -29,7 +29,7 @@ class Survey extends BaseModel {
 	}
 
 	public function surveyAnswer() {
-		return $this->belongsToMany('Abs\AttributePkg\Field', 'survey_answers', 'survey_id', 'survey_type_field_id')->withPivot(['answer']);
+		return $this->belongsToMany('Abs\AttributePkg\Models\Field', 'survey_answers', 'survey_id', 'survey_type_field_id')->withPivot(['answer']);
 	}
 
 	public function getCreatedAtAttribute($value) {

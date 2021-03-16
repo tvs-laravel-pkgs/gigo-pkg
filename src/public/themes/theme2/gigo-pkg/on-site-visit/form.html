@@ -18,7 +18,7 @@
                 <div class="page-header-content title-block">
                     <h1 class="title"><b>Add On Site Visit</b></h1>
                     <p class="subtitle">
-                        <a href="#!/manual-vehicle-delivery/table-list">
+                        <a href="#!/on-site-visit/table-list">
                             On Site Visit
                         </a> /
                         Add
@@ -45,24 +45,17 @@
                         <div class="page-tab-form-top-left-info">
                             <span class="page-tab-form-top-left-info-content">
                                 <b>
-                                    {{job_order.vehicle.registration_number}}
+                                    {{site_visit.number}} |   
                                 </b>
-                                <!-- <a class="page-tab-form-top-left-info-link" data-toggle="modal" data-target="#search_vehicle_modal" style="margin-left: 0;">
-                                        <img class="img-responsive" src="./public/theme/img/content/edit.svg" alt="Edit" />
-                                    </a> -->
-                                <span ng-if="job_order.vehicle.model.model_number">
-                                    | {{job_order.vehicle.model.model_name}}
-                                </span>
                                 <span>
-                                    | {{job_order.vehicle.current_owner.customer.name}}
+                                    {{customer.code}} |  {{customer.name}}
                                 </span>
-                                <!-- | {{job_order.date}}, {{job_order.time}} -->
                             </span>
                         </div>
                     </div><!-- Page Tab Form Top Left -->
                     <div class="page-tab-form-top-right">
                         <div class="page-tab-form-top-right-info">
-                            Status : {{job_order.status.name}}
+                            Status : {{site_visit.status.name}}
                         </div>
                     </div><!-- Page Tab Form Top Right -->
                 </div><!-- Page Tab Form Top -->

@@ -327,7 +327,7 @@ app.component('onSiteVisitList', {
 
 app.component('onSiteVisitView', {
     templateUrl: on_site_visit_view_template_url,
-    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect, $window) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect, $window, RepairOrderSvc, SplitOrderTypeSvc, PartSvc, $q) {
         //for md-select search
         $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
@@ -347,288 +347,6 @@ app.component('onSiteVisitView', {
 
         $scope.job_order_id = $routeParams.job_order_id;
         $scope.label_name = "Receipt";
-
-        //FETCH DATA
-        $scope.fetchData = function () {
-            $.ajax({
-                    url: base_url + '/api/manual-vehicle-delivery/get-form-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.id,
-                    },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
-                .done(function (res) {
-                    if (!res.success) {
-                        showErrorNoty(res);
-                        return;
-                    }
-                    $scope.job_order = res.job_order;
-
-                    $scope.extras = res.extras;
-
-                    if ($scope.job_order.vehicle_payment_status && $scope.job_order.vehicle_payment_status == 1) {
-                        if ($scope.job_order.balance_amount > 0) {
-                            self.vehicle_payment_status = "Partially Paid";
-                        } else {
-                            self.vehicle_payment_status = "Yes";
-                        }
-                    } else {
-                        self.vehicle_payment_status = "No";
-                    }
-
-                    self.payment_mode_id = $scope.job_order.payment_detail[0] ? $scope.job_order.payment_detail[0].payment_mode_id : '0';
-
-                    if (self.payment_mode_id == 1) {
-                        $scope.label_name = 'Receipt';
-                    } else {
-                        $scope.label_name = 'Transaction';
-                    }
-
-                    if ($scope.job_order.pending_reason_id == 2 || $scope.job_order.pending_reason_id == 3 || $scope.job_order.pending_reason_id == 4 || $scope.job_order.pending_reason_id == 5) {
-                        $scope.payment_mode_status = 'false';
-                        $scope.label_name = 'Transaction';
-                    } else {
-                        $scope.payment_mode_status = 'true';
-                    }
-
-                    self.vehicle_service_status = 1;
-                    if ($scope.job_order.inward_cancel_reason) {
-                        self.vehicle_service_status = 0;
-                    }
-
-                    if ($scope.job_order.billing_type_id == 11523) {
-                        $scope.invoice_label_name = "DSP";
-                    } else {
-                        $scope.invoice_label_name = "";
-                    }
-
-                    $scope.$apply();
-                })
-                .fail(function (xhr) {
-                    custom_noty('error', 'Something went wrong at server');
-                });
-        }
-        $scope.fetchData();
-
-        $scope.showApprovalForm = function (job_order) {
-            $('#approve_modal').modal('show');
-        }
-
-        $scope.showPaymentForm = function (job_order) {
-            $('#payment_modal').modal('show');
-        }
-
-        //Save Form Data 
-        $scope.approveVehicleDelivery = function () {
-            var form_id = '#vehicle-delivery-approval-form';
-            var v = jQuery(form_id).validate({
-                ignore: '',
-                rules: {
-                    'job_order_id': {
-                        required: true,
-                    },
-                    'approved_remarks': {
-                        required: true,
-                    },
-                },
-                messages: {},
-                invalidHandler: function (event, validator) {
-                    custom_noty('error', 'You have errors, Please check all fields');
-                },
-                submitHandler: function (form) {
-                    let formData = new FormData($(form_id)[0]);
-                    $('.submit').button('loading');
-                    $.ajax({
-                            url: base_url + '/api/manual-vehicle-delivery/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
-                        .done(function (res) {
-                            $('.submit').button('reset');
-
-                            if (!res.success) {
-                                showErrorNoty(res);
-                                return;
-                            }
-                            $('#approve_modal').modal('hide');
-                            $('body').removeClass('modal-open');
-                            $('.modal-backdrop').remove();
-                            custom_noty('success', res.message);
-                            $location.path('/manual-vehicle-delivery/table-list');
-
-                            $scope.$apply();
-                        })
-                        .fail(function (xhr) {
-                            $('.submit').button('reset');
-                            custom_noty('error', 'Something went wrong at server');
-                        });
-                }
-            });
-        }
-
-        $scope.showRejectForm = function (job_order) {
-            $('#reject_modal').modal('show');
-        }
-
-        //Save Form Data 
-        $scope.rejectVehicleDelivery = function () {
-            var form_id = '#vehicle-delivery-reject-form';
-            var v = jQuery(form_id).validate({
-                ignore: '',
-                rules: {
-                    'job_order_id': {
-                        required: true,
-                    },
-                    'remarks': {
-                        required: true,
-                    },
-                },
-                messages: {},
-                invalidHandler: function (event, validator) {
-                    custom_noty('error', 'You have errors, Please check all fields');
-                },
-                submitHandler: function (form) {
-                    let formData = new FormData($(form_id)[0]);
-                    $('.reject_submit').button('loading');
-                    $.ajax({
-                            url: base_url + '/api/manual-vehicle-delivery/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
-                        .done(function (res) {
-                            $('.reject_submit').button('reset');
-
-                            if (!res.success) {
-                                showErrorNoty(res);
-                                return;
-                            }
-                            $('#reject_modal').modal('hide');
-                            $('body').removeClass('modal-open');
-                            $('.modal-backdrop').remove();
-                            custom_noty('success', res.message);
-                            $location.path('/manual-vehicle-delivery/table-list');
-
-                            $scope.$apply();
-                        })
-                        .fail(function (xhr) {
-                            $('.reject_submit').button('reset');
-                            custom_noty('error', 'Something went wrong at server');
-                        });
-                }
-            });
-        }
-
-        //Save Payment Data 
-        $scope.saveVehiclePaymentData = function () {
-            var form_id = '#vehicle-delivery-payment-form';
-            var v = jQuery(form_id).validate({
-                ignore: '',
-                rules: {
-                    'job_order_id': {
-                        required: true,
-                    },
-                    'receipt_number': {
-                        required: true,
-                    },
-                    'receipt_date': {
-                        required: true,
-                    },
-                    'receipt_amount': {
-                        required: true,
-                    },
-                },
-                messages: {},
-                invalidHandler: function (event, validator) {
-                    custom_noty('error', 'You have errors, Please check all fields');
-                },
-                submitHandler: function (form) {
-                    let formData = new FormData($(form_id)[0]);
-                    $('.submit').button('loading');
-                    $.ajax({
-                            url: base_url + '/api/manual-vehicle-delivery/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
-                        .done(function (res) {
-                            $('.submit').button('reset');
-
-                            if (!res.success) {
-                                showErrorNoty(res);
-                                return;
-                            }
-                            $('#payment_modal').modal('hide');
-                            $('body').removeClass('modal-open');
-                            $('.modal-backdrop').remove();
-                            custom_noty('success', res.message);
-                            // $location.path('/manual-vehicle-delivery/table-list');
-                            $window.location.reload();
-                            $scope.$apply();
-                        })
-                        .fail(function (xhr) {
-                            $('.submit').button('reset');
-                            custom_noty('error', 'Something went wrong at server');
-                        });
-                }
-            });
-        }
-
-        $scope.getSelectedPaymentMode = function (payment_mode_id) {
-            if (payment_mode_id == 1) {
-                $scope.label_name = "Receipt";
-            } else {
-                $scope.label_name = "Transaction";
-            }
-        }
-
-        /* Image Uploadify Funtion */
-        $('.image_uploadify').imageuploadify();
-
-        //Scrollable Tabs
-        setTimeout(function () {
-            scrollableTabs();
-        }, 1000);
-
-        /* Modal Md Select Hide */
-        $('.modal').bind('click', function (event) {
-            if ($('.md-select-menu-container').hasClass('md-active')) {
-                $mdSelect.hide();
-            }
-        });
-    }
-});
-
-app.component('onSiteVisitForm', {
-    templateUrl: on_site_visit_form_template_url,
-    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect, CustomerSvc, RepairOrderSvc, SplitOrderTypeSvc, PartSvc, $q) {
-        //for md-select search
-        $element.find('input').on('keydown', function (ev) {
-            ev.stopPropagation();
-        });
-        var self = this;
-        self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('add-manual-vehicle-delivery') && !self.hasPermission('edit-manual-vehicle-delivery')) {
-            window.location = "#!/page-permission-denied";
-            return false;
-        }
-
-        self.angular_routes = angular_routes;
-
-        HelperService.isLoggedIn();
-        self.user = $scope.user = HelperService.getLoggedUser();
-        console.log(self.user);
-        $scope.job_order_id = $routeParams.job_order_id;
-        $scope.label_name = "Receipt";
-        $scope.attachment_count = 1;
-        self.customer_search_type = true;
 
         //FETCH DATA
         $scope.fetchData = function () {
@@ -669,13 +387,45 @@ app.component('onSiteVisitForm', {
                     $scope.outlet_id = $scope.site_visit ? $scope.site_visit.outlet_id : self.user.working_outlet_id;
                     self.country = res.country;
 
+                    console.log($scope.site_visit);
                     $scope.$apply();
+
+                    $scope.fetchPartsData();
                 })
                 .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
         $scope.fetchData();
+
+        //FETCH PARTS DATA
+        $scope.fetchPartsData = function () {
+            $.ajax({
+                    url: base_url + '/api/on-site-visit/get-parts-data',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.id,
+                    },
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function (res) {
+                    console.log(res)
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+
+                    $scope.part_logs = res.part_logs;
+                    $scope.on_site_order_parts = res.on_site_order_parts;
+                    
+                    $scope.$apply();
+                })
+                .fail(function (xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
 
         $scope.searchRepairOrders = function (query) {
             return new Promise(function (resolve, reject) {
@@ -689,7 +439,7 @@ app.component('onSiteVisitForm', {
                     });
             });
         }
-        
+
         $scope.showLabourForm = function (labour_index, labour = null) {
             $scope.on_site_order_ro = [];
             $scope.on_site_repair_order_id = '';
@@ -747,157 +497,6 @@ app.component('onSiteVisitForm', {
             }, 2000);
         };
         $scope.init();
-
-        $scope.searchCustomer = function (query) {
-            return new Promise(function (resolve, reject) {
-                CustomerSvc.options({
-                        filter: {
-                            search: query
-                        }
-                    })
-                    .then(function (response) {
-                        resolve(response.data.options);
-                    });
-            });
-        }
-
-        $scope.customerChanged = function (customer) {
-            $scope.customer = {};
-            CustomerSvc.read(customer.id)
-                .then(function (response) {
-                    console.log(response);
-                    $scope.customer = response.data.customer;
-                    $country_id = response.data.customer.primary_address ? response.data.customer.primary_address.country_id : '1';
-                    if (typeof response.data.customer.primary_address != null && typeof response.data.customer.primary_address != 'string') {
-                        $scope.customer.address = response.data.customer.primary_address;
-                    }
-                    $scope.countryChanged();
-                });
-        }
-
-        $scope.countryChanged = function (country_id) {
-            $.ajax({
-                    url: base_url + '/api/state/get-drop-down-List',
-                    method: "POST",
-                    data: {
-                        country_id: country_id,
-                    },
-                })
-                .done(function (res) {
-                    if (!res.success) {
-                        showErrorNoty(res);
-                        return;
-                    }
-                    $scope.extras.state_list = res.state_list;
-                    console.log($scope.extras.state_list);
-                    //ADD NEW OWNER TYPE
-                    // if ($scope.type_id == 2) {
-                    //     self.state = $scope.job_order.state;
-                    // } else {
-                    // if (!$scope.customer) {
-                    // self.state = $scope.job_order.state;
-                    // } else {
-                    self.state = $scope.customer.address.state;
-                    // }
-                    // }
-
-                    $scope.$apply();
-                })
-                .fail(function (xhr) {
-                    custom_noty('error', 'Something went wrong at server');
-                });
-        }
-
-        //GET CITY LIST
-        self.searchCity = function (query) {
-            if (query) {
-                return new Promise(function (resolve, reject) {
-                    $http
-                        .post(
-                            laravel_routes['getCitySearchList'], {
-                                key: query,
-                            }
-                        )
-                        .then(function (response) {
-                            resolve(response.data);
-                        });
-                    //reject(response);
-                });
-            } else {
-                return [];
-            }
-        }
-
-        //Save Form Data 
-        $scope.saveOnSiteVisit = function () {
-            var form_id = '#on_site_form';
-            var v = jQuery(form_id).validate({
-                ignore: '',
-                rules: {
-                    'customer_remarks': {
-                        required: true,
-                    },
-                    'planned_visit_date': {
-                        required: true,
-                    },
-                    'name': {
-                        required: true,
-                    },
-                    'code': {
-                        required: true,
-                    },
-                    'mobile_no': {
-                        required: true,
-                    },
-                    'address_line1': {
-                        required: true,
-                    },
-                    'country_id': {
-                        required: true,
-                    },
-                    'state_id': {
-                        required: true,
-                    },
-                    'city_id': {
-                        required: true,
-                    },
-                    // 'pincode': {
-                    //     required: true,
-                    // },
-                },
-                messages: {},
-                invalidHandler: function (event, validator) {
-                    custom_noty('error', 'You have errors, Please check all fields');
-                },
-                submitHandler: function (form) {
-                    let formData = new FormData($(form_id)[0]);
-                    $('.submit').button('loading');
-                    $.ajax({
-                            url: base_url + '/api/on-site-visit/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
-                        .done(function (res) {
-                            $('.submit').button('reset');
-
-                            if (!res.success) {
-                                showErrorNoty(res);
-                                return;
-                            }
-                            custom_noty('success', res.message);
-                            $location.path('/manual-vehicle-delivery/table-list');
-
-                            $scope.$apply();
-                        })
-                        .fail(function (xhr) {
-                            $('.submit').button('reset');
-                            custom_noty('error', 'Something went wrong at server');
-                        });
-                }
-            });
-        }
 
         //Save Labour
         $scope.saveLabour = function () {
@@ -985,7 +584,7 @@ app.component('onSiteVisitForm', {
                     if (part.id == $scope.part_id) {
                         $scope.on_site_part.part.mrp = $scope.part_mrp;
                     }
-                    
+
                     $scope.on_site_part.part.total_amount = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
                     $scope.available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
                     $scope.on_site_part.part.qty = $qty;
@@ -1087,6 +686,747 @@ app.component('onSiteVisitForm', {
                             $('body').removeClass('modal-open');
                             $('.modal-backdrop').remove();
                             $scope.fetchData();
+                        })
+                        .fail(function (xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+        $scope.sendConfirm = function (type_id) {
+            $('.send_confirm').button('loading');
+            $.ajax({
+                    url: base_url + '/api/on-site-visit/request/parts',
+                    method: "POST",
+                    data: {
+                        id: $scope.site_visit.id,
+                        type_id: type_id,
+                    },
+                })
+                .done(function (res) {
+                    $('.send_confirm').button('reset');
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    custom_noty('success', res.message);
+                    $("#confirmation_modal").modal('hide');
+                    $("#billing_confirmation_modal").modal('hide');
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+                    $scope.fetchData();
+                })
+                .fail(function (xhr) {
+                    $('.send_confirm').button('reset');
+                });
+
+        }
+
+        //Save Labour
+        $scope.saveReturnedForm = function () {
+            var form_id = '#return-part-form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'rot_id': {
+                        required: true,
+                    },
+                    'split_order_type_id': {
+                        required: true,
+                    },
+                },
+                submitHandler: function (form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.returned_button').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/on-site-visit/return/parts',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function (res) {
+                            if (!res.success) {
+                                $('.returned_button').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            $('.returned_button').button('reset');
+                            custom_noty('success', res.message);
+                            $('#part_return_modal').modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                            $scope.fetchData();
+                        })
+                        .fail(function (xhr) {
+                            $('.returned_button').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+        /* Image Uploadify Funtion */
+        $('.image_uploadify').imageuploadify();
+
+        //Scrollable Tabs
+        setTimeout(function () {
+            scrollableTabs();
+        }, 1000);
+
+        /* Modal Md Select Hide */
+        $('.modal').bind('click', function (event) {
+            if ($('.md-select-menu-container').hasClass('md-active')) {
+                $mdSelect.hide();
+            }
+        });
+    }
+});
+
+app.component('onSiteVisitForm', {
+    templateUrl: on_site_visit_form_template_url,
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect, CustomerSvc, RepairOrderSvc, SplitOrderTypeSvc, PartSvc, $q) {
+        //for md-select search
+        $element.find('input').on('keydown', function (ev) {
+            ev.stopPropagation();
+        });
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        if (!self.hasPermission('add-manual-vehicle-delivery') && !self.hasPermission('edit-manual-vehicle-delivery')) {
+            window.location = "#!/page-permission-denied";
+            return false;
+        }
+
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+        console.log(self.user);
+        $scope.job_order_id = $routeParams.job_order_id;
+        $scope.label_name = "Receipt";
+        $scope.attachment_count = 1;
+        self.customer_search_type = true;
+
+        //FETCH DATA
+        $scope.fetchData = function () {
+            $.ajax({
+                    url: base_url + '/api/on-site-visit/get-form-data',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.id,
+                    },
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function (res) {
+                    console.log(res)
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+
+                    $scope.site_visit = res.site_visit;
+                    $scope.extras = res.extras;
+
+                    $scope.customer = $scope.site_visit ? $scope.site_visit.customer : [];
+                    console.log($scope.customer);
+                    $scope.part_details = res.part_details;
+                    $scope.labour_details = res.labour_details;
+                    $scope.total_amount = res.total_amount;
+                    $scope.labour_amount = res.labour_amount;
+                    $scope.parts_rate = res.parts_rate;
+                    $scope.labours = res.labours;
+
+                    /* Image Uploadify Funtion */
+                    setTimeout(function () {
+                        $('.image_uploadify').imageuploadify();
+                    }, 1000);
+
+                    $scope.outlet_id = $scope.site_visit ? $scope.site_visit.outlet_id : self.user.working_outlet_id;
+                    self.country = res.country;
+
+                    $scope.$apply();
+                })
+                .fail(function (xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        $scope.searchCustomer = function (query) {
+            return new Promise(function (resolve, reject) {
+                CustomerSvc.options({
+                        filter: {
+                            search: query
+                        }
+                    })
+                    .then(function (response) {
+                        resolve(response.data.options);
+                    });
+            });
+        }
+
+        $scope.customerChanged = function (customer) {
+            $scope.customer = {};
+            CustomerSvc.read(customer.id)
+                .then(function (response) {
+                    console.log(response);
+                    $scope.customer = response.data.customer;
+                    $country_id = response.data.customer.primary_address ? response.data.customer.primary_address.country_id : '1';
+                    if (typeof response.data.customer.primary_address != null && typeof response.data.customer.primary_address != 'string') {
+                        $scope.customer.address = response.data.customer.primary_address;
+                    }
+                    $scope.countryChanged();
+                });
+        }
+
+        $scope.countryChanged = function (country_id) {
+            $.ajax({
+                    url: base_url + '/api/state/get-drop-down-List',
+                    method: "POST",
+                    data: {
+                        country_id: country_id,
+                    },
+                })
+                .done(function (res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.extras.state_list = res.state_list;
+                    console.log($scope.extras.state_list);
+                    //ADD NEW OWNER TYPE
+                    // if ($scope.type_id == 2) {
+                    //     self.state = $scope.job_order.state;
+                    // } else {
+                    // if (!$scope.customer) {
+                    // self.state = $scope.job_order.state;
+                    // } else {
+                    self.state = $scope.customer ? $scope.customer.address.state : [];
+                    // }
+                    // }
+
+                    $scope.$apply();
+                })
+                .fail(function (xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+
+        //GET CITY LIST
+        self.searchCity = function (query) {
+            if (query) {
+                return new Promise(function (resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getCitySearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function (response) {
+                            resolve(response.data);
+                        });
+                    //reject(response);
+                });
+            } else {
+                return [];
+            }
+        }
+
+        $scope.searchRepairOrders = function (query) {
+            return new Promise(function (resolve, reject) {
+                RepairOrderSvc.options({
+                        filter: {
+                            search: query
+                        }
+                    })
+                    .then(function (response) {
+                        resolve(response.data.options);
+                    });
+            });
+        }
+
+        $scope.showLabourForm = function (labour_index, labour = null) {
+            $scope.on_site_order_ro = [];
+            $scope.on_site_repair_order_id = '';
+            if (labour_index === false) {
+                // $scope.labour_details = {};
+            } else {
+                if (labour.split_order_type_id != null) {
+                    $scope.on_site_repair_order_id = labour.id;
+                    if (labour.split_order_type_id == undefined) {
+                        $split_id = labour.pivot.split_order_type_id;
+                    } else {
+                        $split_id = labour.split_order_type_id;
+                    }
+                    SplitOrderTypeSvc.read($split_id)
+                        .then(function (response) {
+                            $scope.on_site_order_ro.split_order_type = response.data.split_order_type;
+                        });
+                }
+                if (labour.category == undefined) {
+                    RepairOrderSvc.read(labour.labour_id)
+                        .then(function (response) {
+                            $scope.on_site_order_ro.repair_order = response.data.repair_order;
+
+                            if (labour.repair_order.is_editable == 1) {
+                                $scope.on_site_order_ro.repair_order.amount = labour.amount;
+                            }
+
+                        });
+                }
+                $scope.on_site_order_ro.repair_order = labour;
+            }
+
+            $scope.labour_index = labour_index;
+            $scope.labour_modal_action = labour_index === false ? 'Add' : 'Edit';
+            $('#labour_form_modal').modal('show');
+        }
+
+        $scope.init = function () {
+            $rootScope.loading = true;
+            let promises = {
+                split_order_type_options: SplitOrderTypeSvc.options(),
+            };
+
+            $scope.options = {};
+            $q.all(promises)
+                .then(function (responses) {
+                    $scope.options.split_order_types = responses.split_order_type_options.data.options;
+                    $rootScope.loading = false;
+
+                });
+
+            setTimeout(function () {
+                // $scope.calculateLabourTotal();
+                // $scope.calculatePartTotal();
+            }, 2000);
+        };
+        $scope.init();
+
+        //Save Form Data 
+        $scope.saveOnSiteVisit = function () {
+            var form_id = '#on_site_form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'customer_remarks': {
+                        required: true,
+                    },
+                    'planned_visit_date': {
+                        required: true,
+                    },
+                    'name': {
+                        required: true,
+                    },
+                    'code': {
+                        required: true,
+                    },
+                    'mobile_no': {
+                        required: true,
+                    },
+                    'address_line1': {
+                        required: true,
+                    },
+                    'country_id': {
+                        required: true,
+                    },
+                    'state_id': {
+                        required: true,
+                    },
+                    'city_id': {
+                        required: true,
+                    },
+                    // 'pincode': {
+                    //     required: true,
+                    // },
+                },
+                messages: {},
+                invalidHandler: function (event, validator) {
+                    custom_noty('error', 'You have errors, Please check all fields');
+                },
+                submitHandler: function (form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/on-site-visit/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function (res) {
+                            $('.submit').button('reset');
+
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            $location.path('/on-site-visit/table-list');
+
+                            $scope.$apply();
+                        })
+                        .fail(function (xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+        //Save Labour
+        $scope.saveLabour = function () {
+            var form_id = '#labour_form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'rot_id': {
+                        required: true,
+                    },
+                    'split_order_type_id': {
+                        required: true,
+                    },
+                },
+                submitHandler: function (form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.save_labour').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/on-site-visit/repair-order/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function (res) {
+                            if (!res.success) {
+                                $('.save_labour').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            $('.save_labour').button('reset');
+                            custom_noty('success', res.message);
+                            $('#labour_form_modal').modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                            $scope.fetchData();
+                        })
+                        .fail(function (xhr) {
+                            $('.save_labour').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+        $scope.searchParts = function (query) {
+            return new Promise(function (resolve, reject) {
+                PartSvc.options({
+                        filter: {
+                            search: query
+                        }
+                    })
+                    .then(function (response) {
+                        resolve(response.data.options);
+                    });
+            });
+        }
+
+        $scope.partSelected = function (part) {
+            $qty = 1;
+            if (!part) {
+                return;
+            } else {
+                if (part.qty) {
+                    $qty = part.qty;
+                }
+            }
+            PartSvc.getFormData({
+                    outletId: $scope.outlet_id,
+                    partId: part.id
+                })
+                .then(function (response) {
+                    console.log(response);
+
+                    $local_purchase_part = '(L)';
+                    $part_code = response.data.part.code;
+
+                    if ($part_code.indexOf($local_purchase_part) != -1) {
+                        $scope.on_site_part.part.mrp = 0;
+                        $scope.mrp_change = 1;
+                    } else {
+                        $scope.on_site_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
+                        $scope.mrp_change = 0;
+                    }
+
+                    if (part.id == $scope.part_id) {
+                        $scope.on_site_part.part.mrp = $scope.part_mrp;
+                    }
+
+                    $scope.on_site_part.part.total_amount = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
+                    $scope.available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
+                    $scope.on_site_part.part.qty = $qty;
+                    // $scope.calculatePartAmount();
+                }).catch(function (error) {
+                    console.log(error);
+                });
+
+        }
+
+        $scope.showPartForm = function (part_index, part = null) {
+            // console.log(part);
+            $scope.part_mrp = 0;
+            $scope.part_id = '';
+            self.part_customer_voice_id = '';
+            self.repair_order_ids = [];
+            // $scope.job_order.repair_order = [];
+            $scope.on_site_part = [];
+            $scope.on_site_part_id = '';
+            if (part_index === false) {
+                // $scope.part_details = {};
+            } else {
+                self.part_customer_voice_id = part.customer_voice_id;
+                $scope.part_mrp = part.rate;
+                $scope.part_id = part.part_id;
+                $scope.on_site_part_id = part.id;
+
+                angular.forEach(part.repair_order, function (rep_order, key) {
+                    self.repair_order_ids.push(rep_order.id)
+                });
+
+                $scope.repair_orders = part.repair_order;
+                if (part.split_order_type_id != null) {
+                    if (part.split_order_type_id == undefined) {
+                        $split_id = part.pivot.split_order_type_id;
+                    } else {
+                        $split_id = part.split_order_type_id;
+                    }
+                    SplitOrderTypeSvc.read($split_id)
+                        .then(function (response) {
+                            $scope.on_site_part.split_order_type = response.data.split_order_type;
+                        });
+                }
+                if (part.uom == undefined) {
+                    PartSvc.getFormData({
+                            outletId: $scope.outlet_id,
+                            partId: part.part_id
+                        })
+                        .then(function (response) {
+                            $scope.on_site_part.part = response.data.part;
+                            $scope.on_site_part.part.qty = part.qty;
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
+                }
+                $scope.on_site_part.part = part;
+            }
+
+            $scope.part_index = part_index;
+            $scope.part_modal_action = part_index === false ? 'Add' : 'Edit';
+            $('#part_form_modal').modal('show');
+        }
+
+        $scope.savePart = function () {
+            var form_id = '#part_form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'part_id': {
+                        required: true,
+                    },
+                    'qty': {
+                        required: true,
+                        number: true,
+                    },
+                    'split_order_type_id': {
+                        required: true,
+                    },
+                },
+                submitHandler: function (form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.save_part').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/on-site-visit/parts/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function (res) {
+                            if (!res.success) {
+                                $('.save_part').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            $('.save_part').button('reset');
+                            custom_noty('success', res.message);
+                            $('#part_form_modal').modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                            $scope.fetchData();
+                        })
+                        .fail(function (xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+        setTimeout(function () {
+            /* Image Uploadify Funtion */
+            //Scrollable Tabs
+            scrollableTabs();
+        }, 1000);
+
+        /* Modal Md Select Hide */
+        $('.modal').bind('click', function (event) {
+            if ($('.md-select-menu-container').hasClass('md-active')) {
+                $mdSelect.hide();
+            }
+        });
+    }
+});
+
+app.component('onSiteVisitIssueBulkPart', {
+    templateUrl: on_site_visit_part_bulk_issue_form_template_url,
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
+        //for md-select search
+        $element.find('input').on('keydown', function (ev) {
+            ev.stopPropagation();
+        });
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        // if (!self.hasPermission('add-manual-vehicle-delivery') && !self.hasPermission('edit-manual-vehicle-delivery')) {
+        //     window.location = "#!/page-permission-denied";
+        //     return false;
+        // }
+
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+        console.log(self.user);
+
+        //FETCH DATA
+        $scope.fetchData = function () {
+            $.ajax({
+                    url: base_url + '/api/on-site-visit/get-bulk-form-data',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.id,
+                    },
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function (res) {
+                    console.log(res)
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+
+                    $scope.site_visit = res.site_visit;
+
+                    $scope.on_site_order_parts = res.on_site_order_parts;
+                    $scope.mechanic_id = res.mechanic_id;
+
+                    /* Image Uploadify Funtion */
+                    setTimeout(function () {
+                        $('.image_uploadify').imageuploadify();
+                    }, 1000);
+
+                    $scope.$apply();
+                })
+                .fail(function (xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        $(document).on('click', '.select_all_parts', function () {
+            if (event.target.checked == true) {
+                $('.partcheckbox').prop('checked', true);
+                $.each($('.partcheckbox:checked'), function () {
+                    $scope.checkCheckbox($(this).val());
+                    $('.parts_details_table tbody tr #in_' + $(this).val()).removeClass('ng-hide');
+                    $('.parts_details_table tbody tr #checked_' + $(this).val()).val('1');
+                    $('.parts_details_table tbody tr #in_' + $(this).val()).addClass('error');
+                    $('.parts_details_table tbody tr #in_' + $(this).val()).addClass('required');
+                });
+            } else {
+                $('.partcheckbox').prop('checked', false);
+                $.each($('.partcheckbox'), function () {
+                    $('.parts_details_table tbody tr #in_' + $(this).val()).addClass('ng-hide');
+                    $('.parts_details_table tbody tr #in_' + $(this).val() + '-error').remove();
+                    $('.parts_details_table tbody tr #in_' + $(this).val()).removeClass('error');
+                    $('.parts_details_table tbody tr #in_' + $(this).val()).removeClass('required');
+                    $('.parts_details_table tbody tr #in_' + $(this).val()).closest('.form-group').find('label.error').remove();
+                    $('.parts_details_table tbody tr #in_' + $(this).val()).val('');
+                    $('.parts_details_table tbody tr #checked_' + $(this).val()).val('0');
+                });
+            }
+        });
+
+
+        $scope.checkCheckbox = function (id) {
+            checkval = $('#check' + id).is(":checked");
+            if (checkval == true) {
+                $("#in_" + id).removeClass('ng-hide');
+                $("#in_" + id).addClass('required');
+                $("#in_" + id).addClass('error');
+            } else {
+                $("#in_" + id).addClass('ng-hide');
+                $("#in_" + id).val(" ");
+                $("#in_" + id).removeClass('required');
+                $("#in_" + id).removeClass('error');
+                $("#in_" + id).closest('.form-group').find('label.error').remove();
+                $("#in_" + id).val('');
+                $('#in_' + id + '-error').remove();
+            }
+        }
+
+        $scope.saveIssueForm = function () {
+            var form = '#issue_bulk_part_form';
+            var v = jQuery(form).validate({
+                ignore: '',
+                rules: {
+                    'on_site_order_id': {
+                        required: true,
+                    },
+                },
+                messages: {
+
+                },
+                invalidHandler: function (event, validator) {
+                    custom_noty('error', 'You have errors, Kindly fix');
+                },
+                submitHandler: function (form) {
+                    let formData = new FormData($(form)[0]);
+                    $('.submit').button('loading');
+
+                    $.ajax({
+                            url: base_url + '/api/on-site-visit/bulk-form-data/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function (res) {
+                            $('.submit').button('reset');
+                            if (!res.success) {
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            $location.path('/on-site-visit/view/' + $scope.site_visit.id);
+
+                            $scope.$apply();
                         })
                         .fail(function (xhr) {
                             $('.submit').button('reset');

@@ -479,6 +479,11 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('/on-site-visit/repair-order/save', 'OnSiteVisitController@saveLabourDetail');
 		Route::post('/on-site-visit/parts/save', 'OnSiteVisitController@savePartsDetail');
 		Route::post('/on-site-visit/save', 'OnSiteVisitController@save');
+		Route::post('on-site-visit/get-bulk-form-data', 'OnSiteVisitController@getBulkIssuePartFormData');
+		Route::post('on-site-visit/bulk-form-data/save', 'OnSiteVisitController@saveIssuedPart');
+		Route::post('on-site-visit/get-parts-data', 'OnSiteVisitController@getPartsData');
+		Route::post('on-site-visit/request/parts', 'OnSiteVisitController@sendRequestPartsIntent');
+		Route::post('on-site-visit/return/parts', 'OnSiteVisitController@returnParts');
 
 	});
 });

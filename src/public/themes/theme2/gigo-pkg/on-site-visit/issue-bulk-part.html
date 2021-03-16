@@ -1,0 +1,100 @@
+<!-- Content Wrap -->
+<style>
+    /* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+</style>
+<div class="content-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href=".#!/on-site-visit/view/{{site_visit.id}}" type="button" class="btn-back btn-img">
+                        <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
+                    </a>
+                </div>
+                <div class="page-header-content title-block">
+                    <h1 class="title">{{$ctrl.action}} Issued Part</h1>
+                    <p class="subtitle">On Site Visit / {{$ctrl.action}} Issued Part</p>
+                </div>
+            </div>
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content">
+        <form id="issue_bulk_part_form" autocomplete="off">
+            <input type="hidden" name="on_site_order_id" value="{{site_visit.id}}">
+            <input type="hidden" name="part_type" value="3">
+            <input type="hidden" name="issued_to_id" value="{{mechanic_id}}">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="page-form pb-60">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <h5 class="color-primary mb-10"><b>Parts Details</b></h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-dark-grey parts_details_table" id="parts_details_table">
+                                            <thead>
+                                                <tr>
+                                                    <td class="table-checkbox">
+                                                        <div class="separate-checkbox">
+                                                            <input id="select_all_parts" type="checkbox" class="select_all_parts">
+                                                            <label for="select_all_parts" class="header-checkbox-label"></label>
+                                                        </div><!-- Check Box -->
+                                                    </td>
+                                                    <th>Part Code</th>
+                                                    <th>Part Name</th>
+                                                    <th>Available Qty</th>
+                                                    <th>Request Qty</th>
+                                                    <th>Total Issued Qty</th>
+                                                    <th>Issued Qty</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="(index,parts) in on_site_order_parts">
+                                                    <td class="table-checkbox">
+                                                        <input type="checkbox" id="check{{index}}" ng-click="checkCheckbox(index)" ng-checked="parts.checked" class="partcheckbox" value="{{index}}" />
+                                                        <label for="check{{index}}"></label>
+                                                    </td>
+                                                    <td>{{parts.code}}</td>
+                                                    <td>{{parts.name}}</td>
+                                                    <td>{{parts.total_avail_qty}}</td>
+                                                    <td>{{parts.total_request_qty}}</td>
+                                                    <td>{{parts.total_issued_qty}}</td>
+                                                    <!-- <td>{{parts.total_remaining_qty}}</td> -->
+                                                    <td><input type="number" step="0.01" min="1" max="{{parts.total_remaining_qty}}" class="form-control" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" name="issued_part[{{index}}][qty]" ng-show="parts.checked" id="in_{{index}}">
+                                                        <input type="hidden" name="issued_part[{{index}}][on_site_order_part_id]" value="{{parts.on_site_order_part_id}}">
+                                                        <input type="hidden" name="issued_part[{{index}}][part_id]" value="{{parts.part_id}}">
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div><!-- Table Responsive -->
+                                </div><!-- Column -->
+                            </div>
+                        </div><!-- Row -->
+                    </div><!-- Page Form -->
+                </div><!-- Column -->
+            </div><!-- Row -->
+            <br />
+            <div class="page-form-footer">
+                <div class="row">
+                    <div class="col-md-12">
+                        <a href=".#!/on-site-visit/view/{{site_visit.id}}" class="btn btn-bordered btn-grey">Cancel</a>
+                        <button type="submit" class="btn btn-secondary-dark submit" ng-click="saveIssueForm()">Submit</button>
+                    </div>
+                </div>
+            </div><!-- Page Form Footer -->
+        </form>
+    </div><!-- Container -->
+</div><!-- Content Wrap -->
