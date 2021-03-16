@@ -768,6 +768,47 @@ app.component('onSiteVisitView', {
             });
         }
 
+        $scope.removeLog = function(index, log) {
+            console.log(log);
+            $('#delete_log').modal('show');
+            $('#log_id').val(log.job_order_part_issue_return_id);
+            $('#log_type').val(log.transaction_type);
+        }
+
+        $scope.deleteConfirm = function() {
+            $id = $('#log_id').val();
+            $type = $('#log_type').val();
+
+            let formData = new FormData();
+            formData.append('id', $id);
+            formData.append('type', $type);
+            $.ajax({
+                    url: base_url + '/api/on-site-visit/delete/issue-return/parts',
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        $rootScope.loading = false;
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $('#delete_log').modal('hide');
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+                    $scope.fetchData();
+                    custom_noty('success', res.message);
+                })
+                .fail(function(xhr) {
+                    $rootScope.loading = false;
+                    $scope.button_action(id, 2);
+                    custom_noty('error', 'Something went wrong at server');
+                });
+
+        }
+        
         /* Image Uploadify Funtion */
         $('.image_uploadify').imageuploadify();
 

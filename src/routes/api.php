@@ -484,6 +484,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('on-site-visit/get-parts-data', 'OnSiteVisitController@getPartsData');
 		Route::post('on-site-visit/request/parts', 'OnSiteVisitController@sendRequestPartsIntent');
 		Route::post('on-site-visit/return/parts', 'OnSiteVisitController@returnParts');
+		Route::post('on-site-visit/delete/issue-return/parts', 'OnSiteVisitController@deleteIssueReturnParts');
 
 	});
 });

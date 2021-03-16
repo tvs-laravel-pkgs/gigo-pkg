@@ -535,11 +535,8 @@
                                                                 {{log.remarks}}
                                                             </td>
                                                             <td>
-                                                                <button ng-if="job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227 && job_order.job_card.status_id != 8228 && job_order.job_card.status_id != 8231" type="button" class="btn img-btn btn-delete" ng-click="removeLog(index,log)">
+                                                                <button type="button" class="btn img-btn btn-delete" ng-click="removeLog(index,log)">
                                                                     <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
-                                                                </button>
-                                                                <button ng-if="log.transaction_type == 'Part Returned' && job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227 && job_order.job_card.status_id != 8228 && job_order.job_card.status_id != 8231" type="button" class="btn img-btn btn-delete" ng-click="showReturnPartForm(index,log)">
-                                                                    <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -864,6 +861,24 @@
                 <input type="hidden" name="job_order_id" value="{{job_order.id}}">
                 <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">No</button>
                 <button class="btn btn-success send_confirm" ng-click="sendConfirm(2)">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade alert-modal failure" id="delete_log" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Confirmation?</h4>
+            </div>
+            <div class="modal-body">
+                <h5>Delete</h5>
+                <p>You can’t retrive the data again, Are you sure you want to delete? </p>
+                <input type="hidden" name="delete_labour_details" class="delete_labour_details" value="">
+                <input type="hidden" name="log_type" id="log_type" value="">
+                <input type="hidden" name="log_id" id="log_id" value="">
+                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">Cancel</button>
+                <button class="btn btn-rose" ng-click="deleteConfirm()" type="button">Yes</button>
             </div>
         </div>
     </div>

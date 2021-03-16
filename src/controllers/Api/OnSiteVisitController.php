@@ -995,6 +995,68 @@ class OnSiteVisitController extends Controller
         }
     }
 
+    //DELETE ISSUE/RETURN PART DATA
+    public function deleteIssueReturnParts(Request $request)
+    {
+        // dd($request->all());
+        try {
+
+            if ($request->type == 'Part Returned') {
+                $validator = Validator::make($request->all(), [
+                    'id' => [
+                        'required',
+                        'exists:on_site_order_returned_parts,id',
+                    ],
+
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => $validator->errors()->all(),
+                    ]);
+                }
+
+                $returned_part = OnSiteOrderReturnedPart::where('id', $request->id)->forceDelete();
+                
+            } else {
+                $validator = Validator::make($request->all(), [
+                    'id' => [
+                        'required',
+                        'exists:on_site_order_issued_parts,id',
+                    ],
+
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => $validator->errors()->all(),
+                    ]);
+                }
+
+                $issued_part = OnSiteOrderIssuedPart::where('id', $request->id)->forceDelete();
+
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Part Deleted Successfully Successfully!!',
+            ]);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Server Network Down!',
+                'errors' => ['Exception Error' => $e->getMessage()],
+            ]);
+        }
+    }
+
     //PART DATA
     public function returnParts(Request $request)
     {
@@ -1130,9 +1192,8 @@ class OnSiteVisitController extends Controller
                         DB::raw('DATE_FORMAT(on_site_order_issued_parts.created_at,"%d/%m/%Y") as date'),
                         'configs.name as issue_mode',
                         'users.name as mechanic',
-                        'on_site_order_issued_parts.id as on_site_order_issued_part_id',
                         'users.id as employee_id',
-                        'on_site_order_parts.id as job_order_part_issue_return_id',
+                        'on_site_order_issued_parts.id as job_order_part_issue_return_id',
                         'parts.id as part_id')
                 // ->get()
                 ;
@@ -1151,7 +1212,6 @@ class OnSiteVisitController extends Controller
                         DB::raw('DATE_FORMAT(on_site_order_returned_parts.created_at,"%d/%m/%Y") as date'),
                         DB::raw('"-" as issue_mode'),
                         'users.name as mechanic',
-                        'on_site_order_returned_parts.id as on_site_order_issued_part_id',
                         'users.id as employee_id',
                         'on_site_order_returned_parts.id as job_order_part_issue_return_id',
                         'parts.id as part_id'
