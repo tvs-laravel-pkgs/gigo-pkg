@@ -1307,6 +1307,7 @@ class OnSiteVisitController extends Controller
             // dd($site_visit);
             //Get Travel Time Log
             if (count($site_visit->onSiteOrderTravelLogs) > 0 ) {
+                $duration = array();
                 foreach ($site_visit->onSiteOrderTravelLogs as $on_site_travel_log) {
                     if ($on_site_travel_log['end_date_time']) {
                         $time1 = strtotime($on_site_travel_log['start_date_time']);
@@ -1343,6 +1344,7 @@ class OnSiteVisitController extends Controller
 
             //Get Work Time Log
             if (count($site_visit->onSiteOrderWorkLogs) > 0 ) {
+                $work_duration = array();
                 foreach ($site_visit->onSiteOrderWorkLogs as $on_site_work_log) {
                     if ($on_site_work_log['end_date_time']) {
                         $time1 = strtotime($on_site_work_log['start_date_time']);
@@ -1377,13 +1379,43 @@ class OnSiteVisitController extends Controller
                 $total_work_hours = '-';
             }
 
+            $travel_start_button_status = 'true';
+            $travel_end_button_status = 'false';
+
+            $work_start_button_status = 'false';
+            $work_end_button_status = 'false';
+            
+            //Travel Log Start Button Status
+            $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id',1)->whereNull('end_date_time')->first();
+            if($travel_log){
+                $travel_start_button_status = 'false';
+                $travel_end_button_status = 'true';
+
+                $work_start_button_status = 'true';
+                $work_end_button_status = 'false';
+            }
+
+            $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id',2)->whereNull('end_date_time')->first();
+            if($travel_log){
+                $travel_start_button_status = 'false';
+                $travel_end_button_status = 'false';
+
+                $work_start_button_status = 'false';
+                $work_end_button_status = 'true';
+            }
+            
             return response()->json([
                 'success' => true,
                 'travel_logs' => $site_visit->onSiteOrderTravelLogs,
                 'work_logs' => $site_visit->onSiteOrderWorkLogs,
                 'total_travel_hours' => $total_travel_hours,
                 'total_work_hours' => $total_work_hours,
+                'travel_start_button_status' => $travel_start_button_status,
+                'travel_end_button_status' => $travel_end_button_status,
+                'work_start_button_status' => $work_start_button_status,
+                'work_end_button_status' => $work_end_button_status,
             ]);
+
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -1393,26 +1425,6 @@ class OnSiteVisitController extends Controller
                 ],
             ]);
         }
-    }
-
-    public function sum_mechanic_duration($times = array())
-    {
-        dd($times);
-        $seconds = 0;
-        foreach ($times as $time) {
-            if ($time && $time != '-') {
-                list($hour, $minute, $second) = explode(':', $time);
-                $seconds += $hour * 3600;
-                $seconds += $minute * 60;
-                $seconds += $second;
-            }
-        }
-        $hours = floor($seconds / 3600);
-        $seconds -= $hours * 3600;
-        $minutes = floor($seconds / 60);
-        $seconds -= $minutes * 60;
-
-        return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
     }
 
     public function saveTimeLog(Request $request)
@@ -1436,7 +1448,7 @@ class OnSiteVisitController extends Controller
             if ($request->work_log_type == 'travel_log') {
                 if ($request->type_id == 1) {
                     //Check Previous entry closed or not
-                    $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->whereNull('end_date_time')->first();
+                    $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id',1)->whereNull('end_date_time')->first();
                     if ($travel_log) {
                         return response()->json([
                             'success' => false,
@@ -1455,7 +1467,7 @@ class OnSiteVisitController extends Controller
                     $travel_log->save();
                     $message = 'Travel Log Added Successfully!';
                 } else {
-                    $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->whereNull('end_date_time')->first();
+                    $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id',1)->whereNull('end_date_time')->first();
                     if (!$travel_log) {
                         return response()->json([
                             'success' => false,
@@ -1470,6 +1482,44 @@ class OnSiteVisitController extends Controller
                     $travel_log->updated_at = Carbon::now();
                     $travel_log->save();
                     $message = 'Travel Log Updated Successfully!';
+                }
+            }else{
+                if ($request->type_id == 1) {
+                    //Check Previous entry closed or not
+                    $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id',2)->whereNull('end_date_time')->first();
+                    if ($travel_log) {
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'Validation Error',
+                            'errors' => [
+                                'Previous Work Log not closed!',
+                            ],
+                        ]);
+                    }
+                    $travel_log = new OnSiteOrderTimeLog;
+                    $travel_log->on_site_order_id = $site_visit->id;
+                    $travel_log->work_log_type_id = 2;
+                    $travel_log->start_date_time = Carbon::now();
+                    $travel_log->created_by_id = Auth::user()->id;
+                    $travel_log->created_at = Carbon::now();
+                    $travel_log->save();
+                    $message = 'Work Log Added Successfully!';
+                } else {
+                    $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id',2)->whereNull('end_date_time')->first();
+                    if (!$travel_log) {
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'Validation Error',
+                            'errors' => [
+                                'Previous Work Log not found!',
+                            ],
+                        ]);
+                    }
+                    $travel_log->end_date_time = Carbon::now();
+                    $travel_log->updated_by_id = Auth::user()->id;
+                    $travel_log->updated_at = Carbon::now();
+                    $travel_log->save();
+                    $message = 'Work Log Updated Successfully!';
                 }
             }
 

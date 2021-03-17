@@ -421,7 +421,7 @@ app.component('onSiteVisitView', {
 
                     $scope.part_logs = res.part_logs;
                     $scope.on_site_order_parts = res.on_site_order_parts;
-                    
+
                     $scope.$apply();
                 })
                 .fail(function (xhr) {
@@ -452,7 +452,12 @@ app.component('onSiteVisitView', {
                     $scope.work_logs = res.work_logs;
                     $scope.total_travel_hours = res.total_travel_hours;
                     $scope.total_work_hours = res.total_work_hours;
-                    
+
+                    $scope.travel_start_button_status = res.travel_start_button_status;
+                    $scope.travel_end_button_status = res.travel_end_button_status;
+                    $scope.work_start_button_status = res.work_start_button_status;
+                    $scope.work_end_button_status = res.work_end_button_status;
+
                     $scope.$apply();
                 })
                 .fail(function (xhr) {
@@ -801,14 +806,14 @@ app.component('onSiteVisitView', {
             });
         }
 
-        $scope.removeLog = function(index, log) {
+        $scope.removeLog = function (index, log) {
             console.log(log);
             $('#delete_log').modal('show');
             $('#log_id').val(log.job_order_part_issue_return_id);
             $('#log_type').val(log.transaction_type);
         }
 
-        $scope.deleteConfirm = function() {
+        $scope.deleteConfirm = function () {
             $id = $('#log_id').val();
             $type = $('#log_type').val();
 
@@ -822,7 +827,7 @@ app.component('onSiteVisitView', {
                     processData: false,
                     contentType: false,
                 })
-                .done(function(res) {
+                .done(function (res) {
                     if (!res.success) {
                         $rootScope.loading = false;
                         showErrorNoty(res);
@@ -834,7 +839,7 @@ app.component('onSiteVisitView', {
                     $scope.fetchData();
                     custom_noty('success', res.message);
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     $rootScope.loading = false;
                     $scope.button_action(id, 2);
                     custom_noty('error', 'Something went wrong at server');
@@ -843,10 +848,18 @@ app.component('onSiteVisitView', {
         }
 
         //Save Worklog
-        $scope.saveWorkLog = function (id,work_log_type) {
-            if(work_log_type == 'travel_log'){
-                if(id == 1){
+        $scope.saveWorkLog = function (id, work_log_type) {
+            if (work_log_type == 'travel_log') {
+                if (id == 1) {
                     $('.start_travel').button('loading');
+                }else{
+                    $('.end_travel').button('loading');
+                }
+            }else{
+                if (id == 1) {
+                    $('.start_work').button('loading');
+                }else{
+                    $('.end_end').button('loading');
                 }
             }
             $.ajax({
@@ -859,9 +872,17 @@ app.component('onSiteVisitView', {
                     },
                 })
                 .done(function (res) {
-                    if(work_log_type == 'travel_log'){
-                        if(id == 1){
+                    if (work_log_type == 'travel_log') {
+                        if (id == 1) {
                             $('.start_travel').button('reset');
+                        }else{
+                            $('.end_travel').button('reset');
+                        }
+                    }else{
+                        if (id == 1) {
+                            $('.start_work').button('reset');
+                        }else{
+                            $('.end_end').button('reset');
                         }
                     }
 
@@ -877,15 +898,23 @@ app.component('onSiteVisitView', {
                     $scope.fetchData();
                 })
                 .fail(function (xhr) {
-                    if(work_log_type == 'travel_log'){
-                        if(id == 1){
+                    if (work_log_type == 'travel_log') {
+                        if (id == 1) {
                             $('.start_travel').button('reset');
+                        }else{
+                            $('.end_travel').button('reset');
+                        }
+                    }else{
+                        if (id == 1) {
+                            $('.start_work').button('reset');
+                        }else{
+                            $('.end_end').button('reset');
                         }
                     }
                 });
 
         }
-        
+
         /* Image Uploadify Funtion */
         $('.image_uploadify').imageuploadify();
 
