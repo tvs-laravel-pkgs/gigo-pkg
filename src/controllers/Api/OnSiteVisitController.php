@@ -1344,7 +1344,7 @@ class OnSiteVisitController extends Controller
             //Get Work Time Log
             if (count($site_visit->onSiteOrderWorkLogs) > 0 ) {
                 foreach ($site_visit->onSiteOrderWorkLogs as $on_site_work_log) {
-                    if ($on_site_travel_log['end_date_time']) {
+                    if ($on_site_work_log['end_date_time']) {
                         $time1 = strtotime($on_site_work_log['start_date_time']);
                         $time2 = strtotime($on_site_work_log['end_date_time']);
                         if ($time2 < $time1) {
@@ -1352,7 +1352,7 @@ class OnSiteVisitController extends Controller
                         }
 
                         $total_duration = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
-                        $duration[] = $total_duration;
+                        $work_duration[] = $total_duration;
 
                         $format_change = explode(':', $total_duration);
                         $hour = $format_change[0];
@@ -1363,15 +1363,15 @@ class OnSiteVisitController extends Controller
                         $on_site_work_log->total_duration = $total_duration_in_hrs;
                     }
                 }
-
-                $total_duration = sum_mechanic_duration($duration);
+                // dd($work_duration);
+                $total_duration = sum_mechanic_duration($work_duration);
                 $format_change = explode(':', $total_duration);
 
                 $hour = $format_change[0];
                 $minutes = $format_change[1];
 
                 $total_work_hours = $hour . ' hrs ' . $minutes .' min';
-                unset($duration);
+                unset($work_duration);
 
             } else {
                 $total_work_hours = '-';
