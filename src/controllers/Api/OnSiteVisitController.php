@@ -16,6 +16,7 @@ use App\OnSiteOrder;
 use App\OnSiteOrderEstimate;
 use App\OnSiteOrderIssuedPart;
 use App\OnSiteOrderPart;
+use App\ShortUrl;
 use App\OnSiteOrderRepairOrder;
 use App\OnSiteOrderReturnedPart;
 use App\OnSiteOrderTimeLog;
@@ -1345,15 +1346,24 @@ class OnSiteVisitController extends Controller
             if ($request->type_id == 1) {
                 $site_visit->status_id = 4;
             } elseif ($request->type_id == 2) {
-                $site_visit->status_id = 5;
+                // $site_visit->status_id = 5;
+                $site_visit->status_id = 6;
+                $otp_no = mt_rand(111111, 999999);
+                $site_visit->otp_no = $otp_no;
+                //Generate PDF
+                // $generate_on_site_estimate_pdf = OnSiteOrder::generateEstimatePDF($site_visit->id);
+
+                $url = url('/') . '/on-site-visit/estimate/customer/view/' . $site_visit->id . '/' . $otp_no;
+			    $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
+                // dd($short_url);
             } else {
-                $site_visit->status_id = 8;
+                // $site_visit->status_id = 8;
             }
 
             $site_visit->updated_by_id = Auth::user()->id;
             $site_visit->updated_at = Carbon::now();
             $site_visit->save();
-
+            // dd();
             DB::commit();
 
             return response()->json([
