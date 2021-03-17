@@ -60,4 +60,12 @@ class OnSiteOrder extends BaseModel {
 	public function onSiteOrderParts() {
 		return $this->hasMany('App\OnSiteOrderPart', 'on_site_order_id');
 	}
+
+	public function onSiteOrderTravelLogs() {
+		return $this->hasMany('App\OnSiteOrderTimeLog', 'on_site_order_id')->where('work_log_type_id', 1);
+	}
+
+	public function onSiteOrderWorkLogs() {
+		return $this->hasMany('App\OnSiteOrderTimeLog', 'on_site_order_id')->where('work_log_type_id', 2);
+	}
 }

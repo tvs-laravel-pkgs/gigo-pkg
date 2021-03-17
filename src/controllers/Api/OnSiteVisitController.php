@@ -17,6 +17,7 @@ use App\OnSiteOrderIssuedPart;
 use App\OnSiteOrderPart;
 use App\OnSiteOrderRepairOrder;
 use App\OnSiteOrderReturnedPart;
+use App\OnSiteOrderTimeLog;
 use App\Outlet;
 use App\Part;
 use App\PartStock;
@@ -1019,7 +1020,7 @@ class OnSiteVisitController extends Controller
                 }
 
                 $returned_part = OnSiteOrderReturnedPart::where('id', $request->id)->forceDelete();
-                
+
             } else {
                 $validator = Validator::make($request->all(), [
                     'id' => [
@@ -1273,6 +1274,210 @@ class OnSiteVisitController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'On Site Visit Updated Successfully!!',
+            ]);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Server Network Down!',
+                'errors' => ['Exception Error' => $e->getMessage()],
+            ]);
+        }
+    }
+
+    public function getTimeLog(Request $request)
+    {
+        // dd($request->all());
+        try {
+            $site_visit = OnSiteOrder::with([
+                'onSiteOrderTravelLogs',
+                'onSiteOrderWorkLogs',
+            ])->find($request->id);
+
+            if (!$site_visit) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => [
+                        'On Site Visit Not Found!',
+                    ],
+                ]);
+            }
+
+            // dd($site_visit);
+            //Get Travel Time Log
+            if (count($site_visit->onSiteOrderTravelLogs) > 0 ) {
+                foreach ($site_visit->onSiteOrderTravelLogs as $on_site_travel_log) {
+                    if ($on_site_travel_log['end_date_time']) {
+                        $time1 = strtotime($on_site_travel_log['start_date_time']);
+                        $time2 = strtotime($on_site_travel_log['end_date_time']);
+                        if ($time2 < $time1) {
+                            $time2 += 86400;
+                        }
+
+                        $total_duration = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
+                        $duration[] = $total_duration;
+
+                        $format_change = explode(':', $total_duration);
+                        $hour = $format_change[0];
+                        $minutes = $format_change[1];
+
+                        $total_duration_in_hrs = $hour . ' hrs ' . $minutes .' min';
+                        
+                        $on_site_travel_log->total_duration = $total_duration_in_hrs;
+                    }
+                }
+
+                $total_duration = sum_mechanic_duration($duration);
+                $format_change = explode(':', $total_duration);
+
+                $hour = $format_change[0];
+                $minutes = $format_change[1];
+
+                $total_travel_hours = $hour . ' hrs ' . $minutes .' min';
+                unset($duration);
+
+            } else {
+                $total_travel_hours = '-';
+            }
+
+            //Get Work Time Log
+            if (count($site_visit->onSiteOrderWorkLogs) > 0 ) {
+                foreach ($site_visit->onSiteOrderWorkLogs as $on_site_work_log) {
+                    if ($on_site_travel_log['end_date_time']) {
+                        $time1 = strtotime($on_site_work_log['start_date_time']);
+                        $time2 = strtotime($on_site_work_log['end_date_time']);
+                        if ($time2 < $time1) {
+                            $time2 += 86400;
+                        }
+
+                        $total_duration = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
+                        $duration[] = $total_duration;
+
+                        $format_change = explode(':', $total_duration);
+                        $hour = $format_change[0];
+                        $minutes = $format_change[1];
+
+                        $total_duration_in_hrs = $hour . ' hrs ' . $minutes .' min';
+                        
+                        $on_site_work_log->total_duration = $total_duration_in_hrs;
+                    }
+                }
+
+                $total_duration = sum_mechanic_duration($duration);
+                $format_change = explode(':', $total_duration);
+
+                $hour = $format_change[0];
+                $minutes = $format_change[1];
+
+                $total_work_hours = $hour . ' hrs ' . $minutes .' min';
+                unset($duration);
+
+            } else {
+                $total_work_hours = '-';
+            }
+
+            return response()->json([
+                'success' => true,
+                'travel_logs' => $site_visit->onSiteOrderTravelLogs,
+                'work_logs' => $site_visit->onSiteOrderWorkLogs,
+                'total_travel_hours' => $total_travel_hours,
+                'total_work_hours' => $total_work_hours,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Server Error',
+                'errors' => [
+                    'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+                ],
+            ]);
+        }
+    }
+
+    public function sum_mechanic_duration($times = array())
+    {
+        dd($times);
+        $seconds = 0;
+        foreach ($times as $time) {
+            if ($time && $time != '-') {
+                list($hour, $minute, $second) = explode(':', $time);
+                $seconds += $hour * 3600;
+                $seconds += $minute * 60;
+                $seconds += $second;
+            }
+        }
+        $hours = floor($seconds / 3600);
+        $seconds -= $hours * 3600;
+        $minutes = floor($seconds / 60);
+        $seconds -= $minutes * 60;
+
+        return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+    }
+
+    public function saveTimeLog(Request $request)
+    {
+        // dd($request->all());
+        try {
+            $site_visit = OnSiteOrder::find($request->on_site_order_id);
+
+            if (!$site_visit) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => [
+                        'Site Visit Not Found!',
+                    ],
+                ]);
+            }
+
+            DB::beginTransaction();
+
+            if ($request->work_log_type == 'travel_log') {
+                if ($request->type_id == 1) {
+                    //Check Previous entry closed or not
+                    $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->whereNull('end_date_time')->first();
+                    if ($travel_log) {
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'Validation Error',
+                            'errors' => [
+                                'Previous Travel Log not closed!',
+                            ],
+                        ]);
+                    }
+                    $travel_log = new OnSiteOrderTimeLog;
+                    $travel_log->on_site_order_id = $site_visit->id;
+                    $travel_log->work_log_type_id = 1;
+                    $travel_log->start_date_time = Carbon::now();
+                    $travel_log->created_by_id = Auth::user()->id;
+                    $travel_log->created_at = Carbon::now();
+                    $travel_log->save();
+                    $message = 'Travel Log Added Successfully!';
+                } else {
+                    $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->whereNull('end_date_time')->first();
+                    if (!$travel_log) {
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'Validation Error',
+                            'errors' => [
+                                'Previous Travel Log not found!',
+                            ],
+                        ]);
+                    }
+                    $travel_log->end_date_time = Carbon::now();
+                    $travel_log->updated_by_id = Auth::user()->id;
+                    $travel_log->updated_at = Carbon::now();
+                    $travel_log->save();
+                    $message = 'Travel Log Updated Successfully!';
+                }
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => $message,
             ]);
 
         } catch (Exception $e) {

@@ -10,18 +10,18 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/manual-vehicle-delivery/table-list" type="button" class="btn-back btn-img">
+                    <a href="#!/on-site-visit/table-list" type="button" class="btn-back btn-img">
                         <img class="img-responsive my-tooltip" src="./public/theme/img/content/previous.svg" alt="Back"
                             ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left" />
                     </a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>Add On Site Visit</b></h1>
+                    <h1 class="title"><b>View On Site Visit</b></h1>
                     <p class="subtitle">
-                        <a href="#!/manual-vehicle-delivery/table-list">
+                        <a href="#!/on-site-visit/table-list">
                             On Site Visit
                         </a> /
-                        Add
+                        View
                     </p>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
@@ -45,10 +45,10 @@
                         <div class="page-tab-form-top-left-info">
                             <span class="page-tab-form-top-left-info-content">
                                 <b>
-                                    {{site_visit.number}} |   
+                                    {{site_visit.number}} |
                                 </b>
                                 <span>
-                                    {{customer.code}} |  {{customer.name}}
+                                    {{customer.code}} | {{customer.name}}
                                 </span>
                             </span>
                         </div>
@@ -72,16 +72,22 @@
                                             Basic Info
                                         </a>
                                     </li>
-                                    <li>
+                                    <li ng-if="site_visit.status_id != 1">
                                         <a data-target="#labour_details" data-toggle="tab" aria-expanded="true"
                                             class="filter">
                                             Labour Details
                                         </a>
                                     </li>
-                                    <li>
+                                    <li ng-if="site_visit.status_id != 1">
                                         <a data-target="#parts_details" data-toggle="tab" aria-expanded="true"
                                             class="filter">
                                             Parts Details
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a data-target="#time_log_details" data-toggle="tab" aria-expanded="true"
+                                            class="filter">
+                                            Time Log
                                         </a>
                                     </li>
                                 </ul>
@@ -196,7 +202,7 @@
                                                     <div class="panel-heading">
                                                         <a class="panel-title" data-toggle="collapse"
                                                             data-parent="#accordion" data-target="#collapse3">
-                                                            Visit Details
+                                                            Visit Basic Information
                                                             <span class="arrow"></span>
                                                         </a>
                                                     </div>
@@ -445,11 +451,16 @@
                                                                     ng-click="showPartForm(false)">
                                                                     Add Part
                                                                 </button>
-                                                                <a ng-if="part_details.length > 0 " href=".#!/on-site-visit/issue-bulk-part/form/{{site_visit.id}}" class="btn btn-md type2 btn-green btn-square">
+                                                                <a ng-if="part_details.length > 0 "
+                                                                    href=".#!/on-site-visit/issue-bulk-part/form/{{site_visit.id}}"
+                                                                    class="btn btn-md type2 btn-green btn-square">
                                                                     Issue Parts
                                                                 </a>
-                                                                
-                                                                <button ng-if="part_logs.length > 0" type="button" class="btn btn-md type2 btn-green btn-square" data-toggle="modal" data-target="#part_return_modal">
+
+                                                                <button ng-if="part_logs.length > 0" type="button"
+                                                                    class="btn btn-md type2 btn-green btn-square"
+                                                                    data-toggle="modal"
+                                                                    data-target="#part_return_modal">
                                                                     Return Part
                                                                 </button>
                                                             </td>
@@ -535,8 +546,11 @@
                                                                 {{log.remarks}}
                                                             </td>
                                                             <td>
-                                                                <button type="button" class="btn img-btn btn-delete" ng-click="removeLog(index,log)">
-                                                                    <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                                                                <button type="button" class="btn img-btn btn-delete"
+                                                                    ng-click="removeLog(index,log)">
+                                                                    <img class="img-responsive radius-50"
+                                                                        src="./public/theme/img/content/delete-active.svg"
+                                                                        alt="Delete" />
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -548,17 +562,23 @@
                                                 <div class="mb-20"></div><!-- Spacing -->
                                                 <div class="col-md-12" ng-if="job_order.job_card.status_id == 8227">
                                                     <div class="text-center pt-40">
-                                                        <a class="btn btn-red part_request" data-toggle="modal" data-target="#billing_confirmation_modal">Ready for Billing</a>
+                                                        <a class="btn btn-red part_request" data-toggle="modal"
+                                                            data-target="#billing_confirmation_modal">Ready for
+                                                            Billing</a>
                                                     </div>
                                                 </div>
                                             </div><!-- Table Responsive -->
                                             <div class="mb-20"></div><!-- Spacing -->
                                             <hr>
                                             <!-- ng-if="site_visit.status_id == 2 && labours.length > 0" -->
-                                            <div class="col-md-12" >
+                                            <div class="col-md-12">
                                                 <div class="text-center pt-40">
-                                                    <a class="btn btn-red part_request" data-toggle="modal" data-target="#confirmation_modal">Send to Module Store to Add Parts</a>
-                                                    <a class="btn btn-red part_request" data-toggle="modal" data-target="#estimate_confirmation_modal">Ready for Estimate</a>
+                                                    <a class="btn btn-red part_request" data-toggle="modal"
+                                                        data-target="#confirmation_modal">Send to Module Store to Add
+                                                        Parts</a>
+                                                    <a class="btn btn-red part_request" data-toggle="modal"
+                                                        data-target="#estimate_confirmation_modal">Ready for
+                                                        Estimate</a>
                                                 </div>
                                                 <div class="mb-20"></div><!-- Spacing -->
                                             </div>
@@ -571,6 +591,104 @@
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                            <div class="tab-pane fade" id="time_log_details" data-animation="fadeInUp"
+                                data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-12" style="padding-left: 0px;">
+                                            <div class="col-md-6">
+                                                <h6 class="mt-30"><b>Travel Log</b>
+                                                    <button type="button" ng-click="saveWorkLog(1,'travel_log')" class="btn btn-primary start_travel">Start</button>
+                                                    <button type="button" ng-click="saveWorkLog(2,'travel_log')" class="btn btn-primary">End</button>
+                                                </h6>
+                                                <div class="panel-group" id="accordion">
+                                                    <div class="panel panel-default type-5">
+                                                        <div class="panel-heading">
+                                                            <a class="panel-title in" data-toggle="collapse"
+                                                                data-parent="#accordion" data-target="#collapse1">
+                                                                Total Duration - {{total_travel_hours}}
+                                                                <span class="arrow"></span>
+                                                            </a>
+                                                        </div>
+                                                        <div id="collapse1" class="panel-collapse collapse in">
+                                                            <div class="panel-body">
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <div class="table-responsive">
+                                                                            <table class="table table-form type-3">
+                                                                                <thead>
+                                                                                    <th>Start Time</th>
+                                                                                    <th>End Time</th>
+                                                                                    <th>Duration</th>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    <tr ng-repeat="travel_log in travel_logs">
+                                                                                        <td>{{travel_log.start_date_time}}</td>
+                                                                                        <td>{{travel_log.end_date_time}}</td>
+                                                                                        <td>{{travel_log.total_duration}}</td>
+                                                                                    </tr>
+                                                                                    <tr ng-if="travel_logs.length ==0">
+                                                                                        <td colspan="3" class="text-center">
+                                                                                            No Travel Log Found!
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div><!-- Table Responsive -->
+                                                                    </div><!-- Column -->
+                                                                </div><!-- Row -->
+                                                            </div><!-- Panel Body -->
+                                                        </div><!-- Panel Collapse -->
+                                                    </div><!-- Panel -->
+                                                </div><!-- Panel Group -->
+                                            </div>
+                                            <div class="col-md-6">
+                                                <h6 class="mt-30"><b>Work Log</b></h6>
+                                                <div class="panel-group" id="accordion">
+                                                    <div class="panel panel-default type-5">
+                                                        <div class="panel-heading">
+                                                            <a class="panel-title in" data-toggle="collapse"
+                                                                data-parent="#accordion" data-target="#collapse2">
+                                                                Total Duration - {{total_work_hours}}
+                                                                <span class="arrow"></span>
+                                                            </a>
+                                                        </div>
+                                                        <div id="collapse2" class="panel-collapse collapse in">
+                                                            <div class="panel-body">
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <div class="table-responsive">
+                                                                            <table class="table table-form type-3">
+                                                                                <thead>
+                                                                                    <th>Start Time</th>
+                                                                                    <th>End Time</th>
+                                                                                    <th>Duration</th>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    <tr ng-repeat="work_log in work_logs">
+                                                                                        <td>{{work_log.start_date_time}}</td>
+                                                                                        <td>{{work_log.end_date_time}}</td>
+                                                                                        <td>{{work_log.total_duration}}</td>
+                                                                                    </tr>
+                                                                                    <tr ng-if="work_logs.length ==0">
+                                                                                        <td colspan="3" class="text-center">
+                                                                                            No Work Log Found!
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div><!-- Table Responsive -->
+                                                                    </div><!-- Column -->
+                                                                </div><!-- Row -->
+                                                            </div><!-- Panel Body -->
+                                                        </div><!-- Panel Collapse -->
+                                                    </div><!-- Panel -->
+                                                </div><!-- Panel Group -->
+                                            </div>
+                                        </div><!-- Column -->
                                     </div><!-- Row -->
                                 </div><!-- Tab Pane Wrap -->
                             </div><!-- Tabe Pane -->
@@ -850,7 +968,8 @@
         </div>
     </div>
 </div>
-<div class="modal fade alert-modal failure" id="estimate_confirmation_modal" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade alert-modal failure" id="estimate_confirmation_modal" role="dialog"
+    aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -898,7 +1017,8 @@
                 <div class="modal-form">
                     <form id="return-part-form" autocomplete="off">
                         <input type="hidden" name="on_site_order_id" value="{{site_visit.id}}">
-                        <input type="hidden" name="job_order_returned_part_id" value="{{$ctrl.job_order_returned_part_id}}">
+                        <input type="hidden" name="job_order_returned_part_id"
+                            value="{{$ctrl.job_order_returned_part_id}}">
                         <input type="hidden" name="type_id" value="2">
                         <div class="row">
                             <div class="col-md-6">
@@ -906,38 +1026,47 @@
                                     <label>
                                         Part <sup class="mandatory">*</sup>
                                     </label>
-                                    <md-select ng-model="return_part.on_site_order_part_id" placeholder="Select Part" data-md-container-class="selectdemoSelectHeader">
+                                    <md-select ng-model="return_part.on_site_order_part_id" placeholder="Select Part"
+                                        data-md-container-class="selectdemoSelectHeader">
                                         <md-select-header class="demo-select-header">
-                                            <input ng-model="searchreturnPartKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                            <input ng-model="searchreturnPartKey" type="search" placeholder="Search.."
+                                                class="demo-header-searchbox md-text">
                                         </md-select-header>
                                         <md-optgroup>
-                                            <md-option ng-value="return_part.on_site_order_part_id" ng-repeat="return_part in on_site_order_parts | filter:searchreturnPartKey">
+                                            <md-option ng-value="return_part.on_site_order_part_id"
+                                                ng-repeat="return_part in on_site_order_parts | filter:searchreturnPartKey">
                                                 {{return_part.name}} / {{return_part.code}}
                                             </md-option>
                                         </md-optgroup>
                                     </md-select>
-                                    <input type="hidden" name="on_site_order_part_id" value="{{return_part.on_site_order_part_id}}" class="required">
+                                    <input type="hidden" name="on_site_order_part_id"
+                                        value="{{return_part.on_site_order_part_id}}" class="required">
                                 </div><!-- Field -->
                             </div><!-- Column -->
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Quantity <sup class="mandatory">*</sup></label>
-                                    <input type="text" name="returned_qty" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control required" placeholder="Enter Quantity" autocomplete="off" />
+                                    <input type="text" name="returned_qty"
+                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                        class="form-control required" placeholder="Enter Quantity" autocomplete="off" />
                                 </div><!-- Feild -->
                             </div><!-- Column -->
                             <div class="col-md-8">
                                 <div class="form-group">
                                     <label>Remarks <sup class="mandatory">*</sup></label>
-                                    <textarea class="form-control required" rows="5" id="remarks" name="remarks"></textarea>
+                                    <textarea class="form-control required" rows="5" id="remarks"
+                                        name="remarks"></textarea>
                                 </div><!-- Feild -->
                             </div><!-- Column -->
                         </div>
                         <div class="row">
                             <div class="col-md-12 text-right mb-15">
-                                <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                                <button type="button" data-dismiss="modal"
+                                    class="btn btn-primary btn-bordered cancel_modal_btn">
                                     Cancel
                                 </button>
-                                <button type="submit" class="btn btn-bordered returned_button" ng-click="saveReturnedForm()">Submit</button>
+                                <button type="submit" class="btn btn-bordered returned_button"
+                                    ng-click="saveReturnedForm()">Submit</button>
                             </div><!-- Column -->
                         </div><!-- Row -->
                     </form>

@@ -391,6 +391,8 @@ app.component('onSiteVisitView', {
                     $scope.$apply();
 
                     $scope.fetchPartsData();
+                    $scope.fetchTimeLogData();
+
                 })
                 .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
@@ -419,6 +421,37 @@ app.component('onSiteVisitView', {
 
                     $scope.part_logs = res.part_logs;
                     $scope.on_site_order_parts = res.on_site_order_parts;
+                    
+                    $scope.$apply();
+                })
+                .fail(function (xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+
+        //FETCH PARTS DATA
+        $scope.fetchTimeLogData = function () {
+            $.ajax({
+                    url: base_url + '/api/on-site-visit/get/time-log',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.id,
+                    },
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function (res) {
+                    console.log(res)
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+
+                    $scope.travel_logs = res.travel_logs;
+                    $scope.work_logs = res.work_logs;
+                    $scope.total_travel_hours = res.total_travel_hours;
+                    $scope.total_work_hours = res.total_work_hours;
                     
                     $scope.$apply();
                 })
@@ -805,6 +838,50 @@ app.component('onSiteVisitView', {
                     $rootScope.loading = false;
                     $scope.button_action(id, 2);
                     custom_noty('error', 'Something went wrong at server');
+                });
+
+        }
+
+        //Save Worklog
+        $scope.saveWorkLog = function (id,work_log_type) {
+            if(work_log_type == 'travel_log'){
+                if(id == 1){
+                    $('.start_travel').button('loading');
+                }
+            }
+            $.ajax({
+                    url: base_url + '/api/on-site-visit/save/time-log',
+                    method: "POST",
+                    data: {
+                        on_site_order_id: $scope.site_visit.id,
+                        type_id: id,
+                        work_log_type: work_log_type,
+                    },
+                })
+                .done(function (res) {
+                    if(work_log_type == 'travel_log'){
+                        if(id == 1){
+                            $('.start_travel').button('reset');
+                        }
+                    }
+
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    custom_noty('success', res.message);
+                    $("#confirmation_modal").modal('hide');
+                    $("#billing_confirmation_modal").modal('hide');
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+                    $scope.fetchData();
+                })
+                .fail(function (xhr) {
+                    if(work_log_type == 'travel_log'){
+                        if(id == 1){
+                            $('.start_travel').button('reset');
+                        }
+                    }
                 });
 
         }
