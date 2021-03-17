@@ -3,6 +3,7 @@
 namespace Abs\GigoPkg\Api;
 
 use Abs\SerialNumberPkg\SerialNumberGroup;
+use App\Attachment;
 use App\Config;
 use App\Country;
 use App\Customer;
@@ -29,6 +30,7 @@ use Carbon\Carbon;
 use DB;
 use Entrust;
 use Illuminate\Http\Request;
+use Storage;
 use Validator;
 
 class OnSiteVisitController extends Controller
@@ -824,8 +826,6 @@ class OnSiteVisitController extends Controller
                 DB::commit();
 
             } else {
-        dd($request->all());
-
                 $validator = Validator::make($request->all(), [
                     'se_remarks' => [
                         'required',
@@ -866,7 +866,41 @@ class OnSiteVisitController extends Controller
                 $site_visit->updated_at = Carbon::now();
                 $site_visit->save();
 
-                $message = "On Site Visit Saved Successfully!";
+                //REMOVE ATTACHMENTS
+                if (isset($request->attachment_removal_ids)) {
+                    $attachment_removal_ids = json_decode($request->attachment_removal_ids);
+                    if (!empty($attachment_removal_ids)) {
+                        Attachment::whereIn('id', $attachment_removal_ids)->forceDelete();
+                    }
+                }
+
+                //Save Attachments
+                $attachement_path = storage_path('app/public/gigo/on-site/');
+                Storage::makeDirectory($attachement_path, 0777);
+                // dd($request->all());
+                if (isset($request->photos)) {
+                    foreach ($request->photos as $key => $photo) {
+
+                        $value = rand(1, 100);
+                        $image = $photo;
+                        $file_name_with_extension = $image->getClientOriginalName();
+                        $file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
+                        $extension = $image->getClientOriginalExtension();
+
+                        $name = $site_visit->id . '_' . $file_name . '_' . rand(10, 1000) . '.' . $extension;
+
+                        $photo->move($attachement_path, $name);
+                        $attachement = new Attachment;
+                        $attachement->attachment_of_id = 9124;
+                        $attachement->attachment_type_id = 244;
+                        $attachement->entity_id = $site_visit->id;
+                        $attachement->name = $name;
+                        $attachement->path = isset($request->attachment_descriptions[$key]) ? $request->attachment_descriptions[$key] : null;
+                        $attachement->save();
+                    }
+                }
+
+                $message = "On Site Visit Updated Successfully!";
 
                 DB::commit();
 

@@ -277,20 +277,10 @@
                                                                         </h5>
                                                                         <hr class="hr-15"><!-- Separater -->
                                                                         <div class="row">
-                                                                            <div class="col-md-12"
-                                                                                ng-if="site_visit.photos.length > 0">
-                                                                                <!-- <h5 class="color-primary mb-10">
-                                                                                <b>Attachments</b>
-                                                                            </h5>
-                                                                            <hr class="hr-15"> -->
-                                                                                <!-- Separater -->
-                                                                                <div class="row ng-hide">
-                                                                                    <div class="col-xs-6 col-md-3"
-                                                                                        ng-repeat="(key, photo) in site_visit.photos">
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="row">
-                                                                                    <div class="col-xs-6 col-md-3"
+                                                                            <div class="col-md-12">
+                                                                                <div class="row"
+                                                                                    ng-if="site_visit.photos.length > 0">
+                                                                                    <div class="col-md-4"
                                                                                         ng-repeat="(key, photo) in site_visit.photos">
                                                                                         <div style="position: relative">
                                                                                             <span
@@ -305,19 +295,13 @@
                                                                                                 <img
                                                                                                     ng-src="./storage/app/public/gigo/on-site/{{photo.name}}" />
                                                                                             </a>
-                                                                                            <a ng-if="photo.name.substr(photo.name.length - 3)!='jpg'  && photo.name.substr(photo.name.length - 3)!='jpeg' && photo.name.substr(photo.name.length - 3)!='png' && photo.name.substr(photo.name.length - 3)!='bmp'"
-                                                                                                href="./storage/app/public/gigo/on-site/{{photo.name}}"
-                                                                                                target="_blank"
-                                                                                                class="thumbnail">
-                                                                                                {{photo.name}}
-                                                                                            </a>
                                                                                             <p>{{photo.path}}</p>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div><!-- Column -->
-                                                                            <!-- </div> -->
-                                                                            <!-- <div class="row"> -->
+                                                                        </div>
+                                                                        <div class="row">
                                                                             <div class="col-md-4"
                                                                                 ng-repeat="(key,value) in site_visit.photos1">
                                                                                 <div class="form-group">
