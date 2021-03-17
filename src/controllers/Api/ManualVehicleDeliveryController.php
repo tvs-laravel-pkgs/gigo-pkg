@@ -1058,6 +1058,16 @@ class ManualVehicleDeliveryController extends Controller
                             ]);
                         }
 
+                        if (!$job_order->customer_id) {
+                            return response()->json([
+                                'success' => false,
+                                'error' => 'Validation Error',
+                                'errors' => [
+                                    'Customer Not Found!',
+                                ],
+                            ]);
+                        }
+
                         DB::beginTransaction();
 
                         if ($request->warranty_number) {
@@ -1204,6 +1214,16 @@ class ManualVehicleDeliveryController extends Controller
                             'error' => 'Validation Error',
                             'errors' => [
                                 'Job Order Not Found!',
+                            ],
+                        ]);
+                    }
+
+                    if (!$job_order->customer_id) {
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'Validation Error',
+                            'errors' => [
+                                'Customer Not Found!',
                             ],
                         ]);
                     }
