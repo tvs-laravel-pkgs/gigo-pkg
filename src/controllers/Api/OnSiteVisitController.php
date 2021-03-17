@@ -1240,6 +1240,7 @@ class OnSiteVisitController extends Controller
             ]);
         }
     }
+
     //PART DATA
     public function getPartsData(Request $request)
     {
@@ -1531,6 +1532,16 @@ class OnSiteVisitController extends Controller
 
             if ($request->work_log_type == 'travel_log') {
                 if ($request->type_id == 1) {
+
+                    //Check alreay save or not not means site visit status update
+                    $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id', 1)->first();
+                    if(!$travel_log){
+                        $site_visit->status_id = 2;
+                        $site_visit->updated_by_id = Auth::user()->id;
+                        $site_visit->updated_at = Carbon::now();
+                        $site_visit->save();
+                    }
+
                     //Check Previous entry closed or not
                     $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id', 1)->whereNull('end_date_time')->first();
                     if ($travel_log) {
