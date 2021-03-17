@@ -369,6 +369,7 @@ app.component('onSiteVisitView', {
 
                     $scope.site_visit = res.site_visit;
                     $scope.extras = res.extras;
+                    $scope.site_visit.photos1 = [];
 
                     $scope.customer = $scope.site_visit ? $scope.site_visit.customer : [];
                     console.log($scope.customer);
@@ -388,6 +389,33 @@ app.component('onSiteVisitView', {
                     self.country = res.country;
 
                     console.log($scope.site_visit);
+
+                    $scope.bfiConfig = {
+                        theme: 'fas',
+                        overwriteInitial: true,
+                        // minFileCount: 1,
+                        maxFileSize: 12000, //2048,
+                        // required: true,
+                        showUpload: false,
+                        browseOnZoneClick: true,
+                        removeFromPreviewOnError: true,
+                        initialPreviewShowDelete: true,
+                        deleteUrl: '',
+                        showCaption: false,
+                        showCancel: false,
+                        showBrowse: false,
+                        showRemove: false,
+                        // maxFilesNum: 10,
+                        // initialPreview: [
+                        //     "<img src='/images/desert.jpg' class='file-preview-image' alt='Desert' title='Desert'>",
+                        //     "<img src='/images/jellyfish.jpg' class='file-preview-image' alt='Jelly Fish' title='Jelly Fish'>",
+                        // ],
+                        // allowedFileTypes: ['image', 'video'],
+                        slugCallback: function(filename) {
+                            return filename.replace('(', '_').replace(']', '_');
+                        }
+                    };
+
                     $scope.$apply();
 
                     $scope.fetchPartsData();
@@ -429,7 +457,7 @@ app.component('onSiteVisitView', {
                 });
         }
 
-        //FETCH PARTS DATA
+        //FETCH TIME LOG DATA
         $scope.fetchTimeLogData = function () {
             $.ajax({
                     url: base_url + '/api/on-site-visit/get/time-log',
@@ -463,6 +491,24 @@ app.component('onSiteVisitView', {
                 .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
+        }
+
+        $scope.addPhoto = function() {
+            $scope.site_visit.photos1.push($scope.site_visit.photos1.length + 1);
+            // $(".addPhotoBtn").hide();
+        }
+        $scope.removeUploader = function(key) {
+            $scope.site_visit.photos1.splice(key, 1);
+            // $(".addPhotoBtn").show();
+        }
+
+        self.attachment_removal_id = [];
+        $scope.remove_attachment = function(attachment_id, index) {
+            if (attachment_id) {
+                self.attachment_removal_id.push(attachment_id);
+                $('#attachment_removal_ids').val(JSON.stringify(self.attachment_removal_id));
+            }
+                $scope.site_visit.photos.splice(index, 1);
         }
 
         $scope.searchRepairOrders = function (query) {
@@ -913,6 +959,53 @@ app.component('onSiteVisitView', {
                     }
                 });
 
+        }
+
+        //Save Form Data 
+        $scope.saveOnSiteVisit = function () {
+            var form_id = '#on_site_form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'se_remarks': {
+                        required: true,
+                    },
+                    'parts_requirements': {
+                        required: true,
+                    },
+                },
+                messages: {},
+                invalidHandler: function (event, validator) {
+                    custom_noty('error', 'You have errors, Please check all fields');
+                },
+                submitHandler: function (form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/on-site-visit/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function (res) {
+                            $('.submit').button('reset');
+
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            $location.path('/on-site-visit/table-list');
+
+                            $scope.$apply();
+                        })
+                        .fail(function (xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
         }
 
         /* Image Uploadify Funtion */

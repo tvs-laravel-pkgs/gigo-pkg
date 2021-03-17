@@ -228,6 +228,7 @@ class OnSiteVisitController extends Controller
             'status',
             'onSiteOrderRepairOrders',
             'onSiteOrderParts',
+            'photos',
         ])->where('id', $params['on_site_order_id'])->first();
 
         $customer_paid_type = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
@@ -723,33 +724,131 @@ class OnSiteVisitController extends Controller
     {
         // dd($request->all());
         try {
+            if ($request->save_type_id == 1) {
+                $error_messages = [
+                    'customer_remarks.required' => "Customer Remarks is required",
+                ];
+                $validator = Validator::make($request->all(), [
+                    'customer_remarks' => [
+                        'required',
+                    ],
+                    'planned_visit_date' => [
+                        'required',
+                    ],
+                    'code' => [
+                        'required',
+                    ],
+                ], $error_messages);
 
-            $error_messages = [
-                'customer_remarks.required' => "Customer Remarks is required",
-            ];
-            $validator = Validator::make($request->all(), [
-                'customer_remarks' => [
-                    'required',
-                ],
-                'planned_visit_date' => [
-                    'required',
-                ],
-                'code' => [
-                    'required',
-                ],
-            ], $error_messages);
+                if ($validator->fails()) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => $validator->errors()->all(),
+                    ]);
+                }
 
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Validation Error',
-                    'errors' => $validator->errors()->all(),
+                DB::beginTransaction();
+
+                if ($request->on_site_order_id) {
+                    $site_visit = OnSiteOrder::find($request->on_site_order_id);
+                    if (!$site_visit) {
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'Validation Error',
+                            'errors' => [
+                                'Site Visit Detail Not Found!',
+                            ],
+                        ]);
+                    }
+                    $site_visit->updated_by_id = Auth::id();
+                    $site_visit->updated_at = Carbon::now();
+                } else {
+                    $site_visit = new OnSiteOrder;
+                    $site_visit->company_id = Auth::user()->company_id;
+                    $site_visit->outlet_id = Auth::user()->working_outlet_id;
+                    $site_visit->on_site_visit_user_id = Auth::user()->id;
+
+                    if (date('m') > 3) {
+                        $year = date('Y') + 1;
+                    } else {
+                        $year = date('Y');
+                    }
+                    //GET FINANCIAL YEAR ID
+                    $financial_year = FinancialYear::where('from', $year)
+                        ->where('company_id', Auth::user()->company_id)
+                        ->first();
+                    if (!$financial_year) {
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'Validation Error',
+                            'errors' => [
+                                'Fiancial Year Not Found',
+                            ],
+                        ]);
+                    }
+                    //GET BRANCH/OUTLET
+                    $branch = Outlet::where('id', Auth::user()->working_outlet_id)->first();
+
+                    //GENERATE GATE IN VEHICLE NUMBER
+                    $generateNumber = SerialNumberGroup::generateNumber(152, $financial_year->id, $branch->state_id, $branch->id);
+                    if (!$generateNumber['success']) {
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'Validation Error',
+                            'errors' => [
+                                'No Site Visit number found for FY : ' . $financial_year->year . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
+                            ],
+                        ]);
+                    }
+
+                    // dd($generateNumber);
+                    $site_visit->number = $generateNumber['number'];
+                    $site_visit->created_by_id = Auth::id();
+                    $site_visit->created_at = Carbon::now();
+                    $site_visit->status_id = 1;
+                }
+
+                //save customer
+                $customer = Customer::saveCustomer($request->all());
+                $customer->saveAddress($request->all());
+
+                $site_visit->customer_id = $customer->id;
+                $site_visit->planned_visit_date = date('Y-m-d', strtotime($request->planned_visit_date));
+                $site_visit->customer_remarks = $request->customer_remarks;
+
+                $site_visit->save();
+
+                $message = "On Site Visit Saved Successfully!";
+
+                DB::commit();
+
+            } else {
+        dd($request->all());
+
+                $validator = Validator::make($request->all(), [
+                    'se_remarks' => [
+                        'required',
+                    ],
+                    'parts_requirements' => [
+                        'required',
+                    ],
+                    'on_site_order_id' => [
+                        'required',
+                        'exists:on_site_orders,id',
+                    ],
                 ]);
-            }
 
-            DB::beginTransaction();
+                if ($validator->fails()) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => $validator->errors()->all(),
+                    ]);
+                }
 
-            if ($request->on_site_order_id) {
+                DB::beginTransaction();
+
                 $site_visit = OnSiteOrder::find($request->on_site_order_id);
                 if (!$site_visit) {
                     return response()->json([
@@ -760,67 +859,18 @@ class OnSiteVisitController extends Controller
                         ],
                     ]);
                 }
+
+                $site_visit->se_remarks = $request->se_remarks;
+                $site_visit->parts_requirements = $request->parts_requirements;
                 $site_visit->updated_by_id = Auth::id();
                 $site_visit->updated_at = Carbon::now();
-            } else {
-                $site_visit = new OnSiteOrder;
-                $site_visit->company_id = Auth::user()->company_id;
-                $site_visit->outlet_id = Auth::user()->working_outlet_id;
-                $site_visit->on_site_visit_user_id = Auth::user()->id;
+                $site_visit->save();
 
-                if (date('m') > 3) {
-                    $year = date('Y') + 1;
-                } else {
-                    $year = date('Y');
-                }
-                //GET FINANCIAL YEAR ID
-                $financial_year = FinancialYear::where('from', $year)
-                    ->where('company_id', Auth::user()->company_id)
-                    ->first();
-                if (!$financial_year) {
-                    return response()->json([
-                        'success' => false,
-                        'error' => 'Validation Error',
-                        'errors' => [
-                            'Fiancial Year Not Found',
-                        ],
-                    ]);
-                }
-                //GET BRANCH/OUTLET
-                $branch = Outlet::where('id', Auth::user()->working_outlet_id)->first();
+                $message = "On Site Visit Saved Successfully!";
 
-                //GENERATE GATE IN VEHICLE NUMBER
-                $generateNumber = SerialNumberGroup::generateNumber(152, $financial_year->id, $branch->state_id, $branch->id);
-                if (!$generateNumber['success']) {
-                    return response()->json([
-                        'success' => false,
-                        'error' => 'Validation Error',
-                        'errors' => [
-                            'No Site Visit number found for FY : ' . $financial_year->year . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
-                        ],
-                    ]);
-                }
+                DB::commit();
 
-                // dd($generateNumber);
-                $site_visit->number = $generateNumber['number'];
-                $site_visit->created_by_id = Auth::id();
-                $site_visit->created_at = Carbon::now();
-                $site_visit->status_id = 1;
             }
-
-            //save customer
-            $customer = Customer::saveCustomer($request->all());
-            $customer->saveAddress($request->all());
-
-            $site_visit->customer_id = $customer->id;
-            $site_visit->planned_visit_date = date('Y-m-d', strtotime($request->planned_visit_date));
-            $site_visit->customer_remarks = $request->customer_remarks;
-
-            $site_visit->save();
-
-            $message = "On Site Visit Saved Successfully!";
-
-            DB::commit();
 
             //Send Approved Mail for user
             // $this->vehiceRequestMail($job_order->id, $type = 2);
@@ -1306,7 +1356,7 @@ class OnSiteVisitController extends Controller
 
             // dd($site_visit);
             //Get Travel Time Log
-            if (count($site_visit->onSiteOrderTravelLogs) > 0 ) {
+            if (count($site_visit->onSiteOrderTravelLogs) > 0) {
                 $duration = array();
                 foreach ($site_visit->onSiteOrderTravelLogs as $on_site_travel_log) {
                     if ($on_site_travel_log['end_date_time']) {
@@ -1323,8 +1373,8 @@ class OnSiteVisitController extends Controller
                         $hour = $format_change[0];
                         $minutes = $format_change[1];
 
-                        $total_duration_in_hrs = $hour . ' hrs ' . $minutes .' min';
-                        
+                        $total_duration_in_hrs = $hour . ' hrs ' . $minutes . ' min';
+
                         $on_site_travel_log->total_duration = $total_duration_in_hrs;
                     }
                 }
@@ -1335,7 +1385,7 @@ class OnSiteVisitController extends Controller
                 $hour = $format_change[0];
                 $minutes = $format_change[1];
 
-                $total_travel_hours = $hour . ' hrs ' . $minutes .' min';
+                $total_travel_hours = $hour . ' hrs ' . $minutes . ' min';
                 unset($duration);
 
             } else {
@@ -1343,7 +1393,7 @@ class OnSiteVisitController extends Controller
             }
 
             //Get Work Time Log
-            if (count($site_visit->onSiteOrderWorkLogs) > 0 ) {
+            if (count($site_visit->onSiteOrderWorkLogs) > 0) {
                 $work_duration = array();
                 foreach ($site_visit->onSiteOrderWorkLogs as $on_site_work_log) {
                     if ($on_site_work_log['end_date_time']) {
@@ -1360,8 +1410,8 @@ class OnSiteVisitController extends Controller
                         $hour = $format_change[0];
                         $minutes = $format_change[1];
 
-                        $total_duration_in_hrs = $hour . ' hrs ' . $minutes .' min';
-                        
+                        $total_duration_in_hrs = $hour . ' hrs ' . $minutes . ' min';
+
                         $on_site_work_log->total_duration = $total_duration_in_hrs;
                     }
                 }
@@ -1372,7 +1422,7 @@ class OnSiteVisitController extends Controller
                 $hour = $format_change[0];
                 $minutes = $format_change[1];
 
-                $total_work_hours = $hour . ' hrs ' . $minutes .' min';
+                $total_work_hours = $hour . ' hrs ' . $minutes . ' min';
                 unset($work_duration);
 
             } else {
@@ -1384,10 +1434,10 @@ class OnSiteVisitController extends Controller
 
             $work_start_button_status = 'false';
             $work_end_button_status = 'false';
-            
+
             //Travel Log Start Button Status
-            $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id',1)->whereNull('end_date_time')->first();
-            if($travel_log){
+            $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id', 1)->whereNull('end_date_time')->first();
+            if ($travel_log) {
                 $travel_start_button_status = 'false';
                 $travel_end_button_status = 'true';
 
@@ -1395,15 +1445,15 @@ class OnSiteVisitController extends Controller
                 $work_end_button_status = 'false';
             }
 
-            $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id',2)->whereNull('end_date_time')->first();
-            if($travel_log){
+            $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id', 2)->whereNull('end_date_time')->first();
+            if ($travel_log) {
                 $travel_start_button_status = 'false';
                 $travel_end_button_status = 'false';
 
                 $work_start_button_status = 'false';
                 $work_end_button_status = 'true';
             }
-            
+
             return response()->json([
                 'success' => true,
                 'travel_logs' => $site_visit->onSiteOrderTravelLogs,
@@ -1448,7 +1498,7 @@ class OnSiteVisitController extends Controller
             if ($request->work_log_type == 'travel_log') {
                 if ($request->type_id == 1) {
                     //Check Previous entry closed or not
-                    $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id',1)->whereNull('end_date_time')->first();
+                    $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id', 1)->whereNull('end_date_time')->first();
                     if ($travel_log) {
                         return response()->json([
                             'success' => false,
@@ -1467,7 +1517,7 @@ class OnSiteVisitController extends Controller
                     $travel_log->save();
                     $message = 'Travel Log Added Successfully!';
                 } else {
-                    $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id',1)->whereNull('end_date_time')->first();
+                    $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id', 1)->whereNull('end_date_time')->first();
                     if (!$travel_log) {
                         return response()->json([
                             'success' => false,
@@ -1483,10 +1533,10 @@ class OnSiteVisitController extends Controller
                     $travel_log->save();
                     $message = 'Travel Log Updated Successfully!';
                 }
-            }else{
+            } else {
                 if ($request->type_id == 1) {
                     //Check Previous entry closed or not
-                    $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id',2)->whereNull('end_date_time')->first();
+                    $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id', 2)->whereNull('end_date_time')->first();
                     if ($travel_log) {
                         return response()->json([
                             'success' => false,
@@ -1505,7 +1555,7 @@ class OnSiteVisitController extends Controller
                     $travel_log->save();
                     $message = 'Work Log Added Successfully!';
                 } else {
-                    $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id',2)->whereNull('end_date_time')->first();
+                    $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id', 2)->whereNull('end_date_time')->first();
                     if (!$travel_log) {
                         return response()->json([
                             'success' => false,

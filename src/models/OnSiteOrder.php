@@ -68,4 +68,8 @@ class OnSiteOrder extends BaseModel {
 	public function onSiteOrderWorkLogs() {
 		return $this->hasMany('App\OnSiteOrderTimeLog', 'on_site_order_id')->where('work_log_type_id', 2);
 	}
+
+	public function photos() {
+		return $this->hasMany('App\Attachment', 'entity_id')->where('attachment_of_id', 9124);
+	}
 }

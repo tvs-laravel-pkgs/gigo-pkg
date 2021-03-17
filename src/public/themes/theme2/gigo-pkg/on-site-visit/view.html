@@ -98,153 +98,299 @@
                         <div class="tab-content">
                             <div class="tab-pane fade in active" id="basic_details" data-animation="fadeInUp"
                                 data-animation-delay="300">
-                                <div class="tab-pane-wrap">
-                                    <div class="row">
-                                        <div class="col-md-12" style="padding-left: 0px;">
-                                            <h5 class="color-primary mb-10">
-                                                <b>
-                                                    Basic Information
-                                                </b>
-                                            </h5>
-                                            <div class="panel-group" id="accordion">
-                                                <div class="panel panel-default type-3">
-                                                    <div class="panel-heading">
-                                                        <a class="panel-title" data-toggle="collapse"
-                                                            data-parent="#accordion" data-target="#collapse2">
-                                                            Customer Details
-                                                            <span class="arrow"></span>
-                                                        </a>
+                                <form id="on_site_form" autocomplete="off">
+                                    <input type="hidden" name="on_site_order_id" value="{{site_visit.id}}">
+                                    <input type="hidden" name="save_type_id" value="2">
+                                    <div class="tab-pane-wrap">
+                                        <div class="row">
+                                            <div class="col-md-12" style="padding-left: 0px;">
+                                                <h5 class="color-primary mb-10">
+                                                    <b>
+                                                        Basic Information
+                                                    </b>
+                                                </h5>
+                                                <div class="panel-group" id="accordion">
+                                                    <div class="panel panel-default type-3">
+                                                        <div class="panel-heading">
+                                                            <a class="panel-title" data-toggle="collapse"
+                                                                data-parent="#accordion" data-target="#collapse2">
+                                                                Customer Details
+                                                                <span class="arrow"></span>
+                                                            </a>
+                                                        </div>
+                                                        <div id="collapse2" class="panel-collapse collapse in">
+                                                            <div class="panel-body">
+                                                                <div class="col-md-12">
+                                                                    <ul class="view-row mb-no">
+                                                                        <li class="view-col-3">
+                                                                            <span class="view-col-label">
+                                                                                Code
+                                                                            </span>
+                                                                            <span class="view-data-list-value">
+                                                                                <b>
+                                                                                    {{site_visit.customer.code}}
+                                                                                </b>
+                                                                            </span>
+                                                                        </li>
+                                                                        <li class="view-col-3">
+                                                                            <span class="view-col-label">
+                                                                                Name
+                                                                            </span>
+                                                                            <span class="view-data-list-value">
+                                                                                <b>
+                                                                                    {{site_visit.customer.name}}
+                                                                                </b>
+                                                                            </span>
+                                                                        </li>
+                                                                        <li class="view-col-3">
+                                                                            <span class="view-col-label">
+                                                                                Mobile No
+                                                                            </span>
+                                                                            <span class="view-col-value">
+                                                                                <b>
+                                                                                    {{site_visit.customer.mobile_no}}
+                                                                                </b>
+                                                                            </span>
+                                                                        </li>
+                                                                        <li class="view-col-3">
+                                                                            <span class="view-col-label">
+                                                                                Email
+                                                                            </span>
+                                                                            <span class="view-col-value">
+                                                                                <b>
+                                                                                    {{site_visit.customer.email}}
+                                                                                </b>
+                                                                            </span>
+                                                                        </li>
+                                                                        <li class="view-col-3 ptb-2">
+                                                                            <span class="view-col-label">
+                                                                                Address
+                                                                            </span>
+                                                                            <span
+                                                                                class="view-col-value">{{site_visit.customer.address.address_line1}},
+                                                                                {{site_visit.customer.address.address_line2}},
+                                                                                {{site_visit.customer.address.city.name}},
+                                                                                {{site_visit.customer.address.state.name}},
+                                                                                {{site_visit.customer.address.pincode}},
+                                                                                {{site_visit.customer.address.country.name}}.</span>
+                                                                        </li>
+                                                                        <li class="view-col-3">
+                                                                            <span class="view-col-label">
+                                                                                GST No
+                                                                            </span>
+                                                                            <span class="view-col-value">
+                                                                                {{site_visit.customer.gst_number}}
+                                                                            </span>
+                                                                        </li>
+                                                                        <li class="view-col-3">
+                                                                            <span class="view-col-label">
+                                                                                PAN
+                                                                                <!-- No -->
+                                                                            </span>
+                                                                            <span class="view-data-list-value">
+                                                                                <b>
+                                                                                    {{site_visit.customer.pan_number}}
+                                                                                </b>
+                                                                            </span>
+                                                                        </li>
+                                                                    </ul>
+                                                                    <!-- <button class="btn btn-secondary-dark btn-md btn-square">Edit</button> -->
+                                                                </div><!-- Column -->
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div id="collapse2" class="panel-collapse collapse in">
-                                                        <div class="panel-body">
-                                                            <div class="col-md-12">
+                                                </div>
+                                                <div class="panel-group" id="accordion">
+                                                    <div class="panel panel-default type-3">
+                                                        <div class="panel-heading">
+                                                            <a class="panel-title" data-toggle="collapse"
+                                                                data-parent="#accordion" data-target="#collapse3">
+                                                                Visit Information
+                                                                <span class="arrow"></span>
+                                                            </a>
+                                                        </div>
+                                                        <div id="collapse3" class="panel-collapse collapse">
+                                                            <div class="panel-body">
                                                                 <ul class="view-row mb-no">
-                                                                    <li class="view-col-3">
+                                                                    <li class="view-col-4">
                                                                         <span class="view-col-label">
-                                                                            Code
+                                                                            Customer Remarks
                                                                         </span>
                                                                         <span class="view-data-list-value">
                                                                             <b>
-                                                                                {{site_visit.customer.code}}
+                                                                                {{site_visit.customer_remarks}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
-                                                                    <li class="view-col-3">
+                                                                    <li class="view-col-4">
                                                                         <span class="view-col-label">
-                                                                            Name
+                                                                            Planned Visit Date
                                                                         </span>
                                                                         <span class="view-data-list-value">
                                                                             <b>
-                                                                                {{site_visit.customer.name}}
-                                                                            </b>
-                                                                        </span>
-                                                                    </li>
-                                                                    <li class="view-col-3">
-                                                                        <span class="view-col-label">
-                                                                            Mobile No
-                                                                        </span>
-                                                                        <span class="view-col-value">
-                                                                            <b>
-                                                                                {{site_visit.customer.mobile_no}}
-                                                                            </b>
-                                                                        </span>
-                                                                    </li>
-                                                                    <li class="view-col-3">
-                                                                        <span class="view-col-label">
-                                                                            Email
-                                                                        </span>
-                                                                        <span class="view-col-value">
-                                                                            <b>
-                                                                                {{site_visit.customer.email}}
-                                                                            </b>
-                                                                        </span>
-                                                                    </li>
-                                                                    <li class="view-col-3 ptb-2">
-                                                                        <span class="view-col-label">
-                                                                            Address
-                                                                        </span>
-                                                                        <span
-                                                                            class="view-col-value">{{site_visit.customer.address.address_line1}},
-                                                                            {{site_visit.customer.address.address_line2}},
-                                                                            {{site_visit.customer.address.city.name}},
-                                                                            {{site_visit.customer.address.state.name}},
-                                                                            {{site_visit.customer.address.pincode}},
-                                                                            {{site_visit.customer.address.country.name}}.</span>
-                                                                    </li>
-                                                                    <li class="view-col-3">
-                                                                        <span class="view-col-label">
-                                                                            GST No
-                                                                        </span>
-                                                                        <span class="view-col-value">
-                                                                            {{site_visit.customer.gst_number}}
-                                                                        </span>
-                                                                    </li>
-                                                                    <li class="view-col-3">
-                                                                        <span class="view-col-label">
-                                                                            PAN
-                                                                            <!-- No -->
-                                                                        </span>
-                                                                        <span class="view-data-list-value">
-                                                                            <b>
-                                                                                {{site_visit.customer.pan_number}}
+                                                                                {{site_visit.planned_visit_date}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
                                                                 </ul>
-                                                                <!-- <button class="btn btn-secondary-dark btn-md btn-square">Edit</button> -->
-                                                            </div><!-- Column -->
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="panel-group" id="accordion">
-                                                <div class="panel panel-default type-3">
-                                                    <div class="panel-heading">
-                                                        <a class="panel-title" data-toggle="collapse"
-                                                            data-parent="#accordion" data-target="#collapse3">
-                                                            Visit Basic Information
-                                                            <span class="arrow"></span>
-                                                        </a>
-                                                    </div>
-                                                    <div id="collapse3" class="panel-collapse collapse">
-                                                        <div class="panel-body">
-                                                            <ul class="view-row mb-no">
-                                                                <li class="view-col-4">
-                                                                    <span class="view-col-label">
-                                                                        Customer Remarks
-                                                                    </span>
-                                                                    <span class="view-data-list-value">
-                                                                        <b>
-                                                                            {{site_visit.customer_remarks}}
-                                                                        </b>
-                                                                    </span>
-                                                                </li>
-                                                                <li class="view-col-4">
-                                                                    <span class="view-col-label">
-                                                                        Planned Visit Date
-                                                                    </span>
-                                                                    <span class="view-data-list-value">
-                                                                        <b>
-                                                                            {{site_visit.planned_visit_date}}
-                                                                        </b>
-                                                                    </span>
-                                                                </li>
-                                                            </ul>
+                                                <div class="panel-group" id="accordion">
+                                                    <div class="panel panel-default type-3">
+                                                        <div class="panel-heading">
+                                                            <a class="panel-title" data-toggle="collapse"
+                                                                data-parent="#accordion" data-target="#collapse2">
+                                                                Visit Details
+                                                                <span class="arrow"></span>
+                                                            </a>
+                                                        </div>
+                                                        <div id="collapse2" class="panel-collapse collapse in">
+                                                            <div class="panel-body">
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label>Issue Remarks<sup
+                                                                                        class="mandatory">*</sup></label>
+                                                                                <textarea class="form-control required"
+                                                                                    name="se_remarks" rows="4"
+                                                                                    placeholder="Enter Remarks">{{site_visit.se_remarks}}</textarea>
+                                                                            </div><!-- Feild -->
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label>Parts Requirements<sup
+                                                                                        class="mandatory">*</sup></label>
+                                                                                <textarea class="form-control required"
+                                                                                    name="parts_requirements" rows="4"
+                                                                                    placeholder="Enter Remarks">{{site_visit.parts_requirements}}</textarea>
+                                                                            </div><!-- Feild -->
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-12">
+                                                                        <h5 class="color-primary mb-10">
+                                                                            <b>
+                                                                                Attachments
+                                                                            </b>
+                                                                        </h5>
+                                                                        <hr class="hr-15"><!-- Separater -->
+                                                                        <div class="row">
+                                                                            <div class="col-md-12"
+                                                                                ng-if="site_visit.photos.length > 0">
+                                                                                <!-- <h5 class="color-primary mb-10">
+                                                                                <b>Attachments</b>
+                                                                            </h5>
+                                                                            <hr class="hr-15"> -->
+                                                                                <!-- Separater -->
+                                                                                <div class="row ng-hide">
+                                                                                    <div class="col-xs-6 col-md-3"
+                                                                                        ng-repeat="(key, photo) in site_visit.photos">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row">
+                                                                                    <div class="col-xs-6 col-md-3"
+                                                                                        ng-repeat="(key, photo) in site_visit.photos">
+                                                                                        <div style="position: relative">
+                                                                                            <span
+                                                                                                style="position: absolute; top: 4px; right: 5px"
+                                                                                                ng-click="remove_attachment(photo.id,key,1)">
+                                                                                                <img src="./public/theme/img/content/icons/delete.svg"
+                                                                                                    style="width: 25px;" /></span>
+                                                                                            <a ng-if="photo.name.substr(photo.name.length - 3)=='jpg'  || photo.name.substr(photo.name.length - 3)=='jpeg' || photo.name.substr(photo.name.length - 3)=='png' || photo.name.substr(photo.name.length - 3)=='bmp'"
+                                                                                                href="./storage/app/public/gigo/on-site/{{photo.name}}"
+                                                                                                target="_blank"
+                                                                                                class="thumbnail">
+                                                                                                <img
+                                                                                                    ng-src="./storage/app/public/gigo/on-site/{{photo.name}}" />
+                                                                                            </a>
+                                                                                            <a ng-if="photo.name.substr(photo.name.length - 3)!='jpg'  && photo.name.substr(photo.name.length - 3)!='jpeg' && photo.name.substr(photo.name.length - 3)!='png' && photo.name.substr(photo.name.length - 3)!='bmp'"
+                                                                                                href="./storage/app/public/gigo/on-site/{{photo.name}}"
+                                                                                                target="_blank"
+                                                                                                class="thumbnail">
+                                                                                                {{photo.name}}
+                                                                                            </a>
+                                                                                            <p>{{photo.path}}</p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div><!-- Column -->
+                                                                            <!-- </div> -->
+                                                                            <!-- <div class="row"> -->
+                                                                            <div class="col-md-4"
+                                                                                ng-repeat="(key,value) in site_visit.photos1">
+                                                                                <div class="form-group">
+                                                                                    <div
+                                                                                        class="grey-box-attachment-wrap">
+                                                                                        <div
+                                                                                            class="grey-box-attachment-feild">
+                                                                                            <div class="file-loading">
+                                                                                                <input accept="image/*"
+                                                                                                    class="attachments"
+                                                                                                    type="file"
+                                                                                                    name="photos[]"
+                                                                                                    angular-bfi="bfiConfig"
+                                                                                                    watch-options="true">
+                                                                                            </div><!-- File Loading -->
+                                                                                        </div>
+                                                                                        <!-- Grey Box Attachment Feild -->
+                                                                                        <div
+                                                                                            class="grey-box-attachment-feild">
+                                                                                            <div class="feild-btn-wrap">
+                                                                                                <div class="feild-wrap">
+                                                                                                    <input
+                                                                                                        maxlength="255"
+                                                                                                        type="text"
+                                                                                                        name="attachment_descriptions[]"
+                                                                                                        class="form-control"
+                                                                                                        placeholder="Enter Description" />
+                                                                                                </div>
+                                                                                                <div class="btn-wrap">
+                                                                                                    <button
+                                                                                                        type="button"
+                                                                                                        class="btn-img">
+                                                                                                        <img ng-click="removeUploader(key)"
+                                                                                                            class="img-responsive"
+                                                                                                            src="./public/theme/img/content/delete-active.svg"
+                                                                                                            alt="Delete" />
+                                                                                                    </button>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <!-- Grey Box Attachment Feild -->
+                                                                                    </div>
+                                                                                    <!-- Grey Box Attachment Wrap -->
+                                                                                </div><!-- Feild -->
+                                                                            </div><!-- Column -->
+                                                                            <div class="col-md-4">
+                                                                                <button type="button"
+                                                                                    class="addPhotoBtn btn btn-md type2 btn-green btn-square"
+                                                                                    ng-click="addPhoto()">
+                                                                                    Add Photo
+                                                                                </button>
+                                                                            </div>
+                                                                        </div><!-- Row -->
+                                                                    </div><!-- Column -->
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div><!-- Column -->
-                                        <div class="tab-pane-footer">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <button type="submit" class="btn btn-red btn-min-wdth submit"
-                                                        ng-click="saveOnSiteVisit()">Save</button>
+                                            </div><!-- Column -->
+                                            <div class="tab-pane-footer">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <input type="hidden" name="attachment_removal_ids"
+                                                            id="attachment_removal_ids" value="">
+                                                        <button type="submit" class="btn btn-red btn-min-wdth submit"
+                                                            ng-click="saveOnSiteVisit()">Save</button>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div><!-- Tab Footer -->
-                                    </div><!-- Row -->
-                                </div><!-- Tab Pane Wrap -->
+                                            </div><!-- Tab Footer -->
+                                        </div><!-- Row -->
+                                    </div><!-- Tab Pane Wrap -->
+                                </form>
                             </div><!-- Tabe Pane -->
                             <div class="tab-pane fade" id="labour_details" data-animation="fadeInUp"
                                 data-animation-delay="300">
@@ -601,12 +747,18 @@
                                         <div class="col-md-12" style="padding-left: 0px;">
                                             <div class="col-md-6">
                                                 <h6 class="mb-20"><b>Travel Log</b>
-                                                    <button type="button" ng-if="travel_start_button_status == 'true'" ng-click="saveWorkLog(1,'travel_log')" class="btn btn-start start_travel float-right">
-                                                        <img class="img-responsive" src="./public/theme/img/start-timer.svg" />
+                                                    <button type="button" ng-if="travel_start_button_status == 'true'"
+                                                        ng-click="saveWorkLog(1,'travel_log')"
+                                                        class="btn btn-start start_travel float-right">
+                                                        <img class="img-responsive"
+                                                            src="./public/theme/img/start-timer.svg" />
                                                         <span class="btn-start-text">Start</span>
                                                     </button>
-                                                    <button type="button" ng-if="travel_end_button_status == 'true'"  ng-click="saveWorkLog(2,'travel_log')" class="btn btn-stop float-right end_travel_travel">
-                                                        <img class="img-responsive" src="./public/theme/img/stop-timer.svg" />
+                                                    <button type="button" ng-if="travel_end_button_status == 'true'"
+                                                        ng-click="saveWorkLog(2,'travel_log')"
+                                                        class="btn btn-stop float-right end_travel_travel">
+                                                        <img class="img-responsive"
+                                                            src="./public/theme/img/stop-timer.svg" />
                                                         <span class="btn-stop-text">Stop</span>
                                                     </button>
                                                 </h6>
@@ -631,13 +783,18 @@
                                                                                     <th>Duration</th>
                                                                                 </thead>
                                                                                 <tbody>
-                                                                                    <tr ng-repeat="travel_log in travel_logs">
-                                                                                        <td>{{travel_log.start_date_time}}</td>
-                                                                                        <td>{{travel_log.end_date_time}}</td>
-                                                                                        <td>{{travel_log.total_duration}}</td>
+                                                                                    <tr
+                                                                                        ng-repeat="travel_log in travel_logs">
+                                                                                        <td>{{travel_log.start_date_time}}
+                                                                                        </td>
+                                                                                        <td>{{travel_log.end_date_time}}
+                                                                                        </td>
+                                                                                        <td>{{travel_log.total_duration}}
+                                                                                        </td>
                                                                                     </tr>
                                                                                     <tr ng-if="travel_logs.length ==0">
-                                                                                        <td colspan="3" class="text-center">
+                                                                                        <td colspan="3"
+                                                                                            class="text-center">
                                                                                             No Travel Log Found!
                                                                                         </td>
                                                                                     </tr>
@@ -653,12 +810,18 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <h6 class="mb-20"><b>Work Log</b>
-                                                    <button type="button" ng-if="work_start_button_status == 'true'"  ng-click="saveWorkLog(1,'work_log')" class="btn btn-start float-right start_work">
-                                                        <img class="img-responsive" src="./public/theme/img/start-timer.svg" />
+                                                    <button type="button" ng-if="work_start_button_status == 'true'"
+                                                        ng-click="saveWorkLog(1,'work_log')"
+                                                        class="btn btn-start float-right start_work">
+                                                        <img class="img-responsive"
+                                                            src="./public/theme/img/start-timer.svg" />
                                                         <span class="btn-start-text">Start</span>
                                                     </button>
-                                                    <button type="button" ng-if="work_end_button_status == 'true'"  ng-click="saveWorkLog(2,'work_log')" class="btn btn-stop float-right end_work">
-                                                        <img class="img-responsive" src="./public/theme/img/stop-timer.svg" />
+                                                    <button type="button" ng-if="work_end_button_status == 'true'"
+                                                        ng-click="saveWorkLog(2,'work_log')"
+                                                        class="btn btn-stop float-right end_work">
+                                                        <img class="img-responsive"
+                                                            src="./public/theme/img/stop-timer.svg" />
                                                         <span class="btn-stop-text">Stop</span>
                                                     </button>
                                                 </h6>
@@ -683,13 +846,18 @@
                                                                                     <th>Duration</th>
                                                                                 </thead>
                                                                                 <tbody>
-                                                                                    <tr ng-repeat="work_log in work_logs">
-                                                                                        <td>{{work_log.start_date_time}}</td>
-                                                                                        <td>{{work_log.end_date_time}}</td>
-                                                                                        <td>{{work_log.total_duration}}</td>
+                                                                                    <tr
+                                                                                        ng-repeat="work_log in work_logs">
+                                                                                        <td>{{work_log.start_date_time}}
+                                                                                        </td>
+                                                                                        <td>{{work_log.end_date_time}}
+                                                                                        </td>
+                                                                                        <td>{{work_log.total_duration}}
+                                                                                        </td>
                                                                                     </tr>
                                                                                     <tr ng-if="work_logs.length ==0">
-                                                                                        <td colspan="3" class="text-center">
+                                                                                        <td colspan="3"
+                                                                                            class="text-center">
                                                                                             No Work Log Found!
                                                                                         </td>
                                                                                     </tr>
