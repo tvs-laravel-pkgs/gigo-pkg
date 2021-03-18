@@ -16,7 +16,6 @@ use App\OnSiteOrder;
 use App\OnSiteOrderEstimate;
 use App\OnSiteOrderIssuedPart;
 use App\OnSiteOrderPart;
-use App\ShortUrl;
 use App\OnSiteOrderRepairOrder;
 use App\OnSiteOrderReturnedPart;
 use App\OnSiteOrderTimeLog;
@@ -24,6 +23,7 @@ use App\Outlet;
 use App\Part;
 use App\PartStock;
 use App\RepairOrder;
+use App\ShortUrl;
 use App\SplitOrderType;
 use App\User;
 use Auth;
@@ -271,7 +271,7 @@ class OnSiteVisitController extends Controller
                 if (in_array($value->split_order_type_id, $customer_paid_type) || !$value->split_order_type_id) {
                     if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
                         $labour_amount += $value->amount;
-                        if($value->is_customer_approved == 0){
+                        if ($value->is_customer_approved == 0) {
                             $not_approved_labour_parts_count++;
                         }
                     } else {
@@ -310,7 +310,7 @@ class OnSiteVisitController extends Controller
                 if (in_array($value->split_order_type_id, $customer_paid_type) || !$value->split_order_type_id) {
                     if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
                         $part_amount += $value->amount;
-                        if($value->is_customer_approved == 0){
+                        if ($value->is_customer_approved == 0) {
                             $not_approved_labour_parts_count++;
                         }
                     } else {
@@ -872,7 +872,7 @@ class OnSiteVisitController extends Controller
                     ]);
                 }
 
-                if(!$site_visit->actual_visit_date){
+                if (!$site_visit->actual_visit_date) {
                     $site_visit->actual_visit_date = date('Y-m-d');
                 }
 
@@ -921,7 +921,7 @@ class OnSiteVisitController extends Controller
 
                 DB::commit();
 
-            }else{
+            } else {
                 $validator = Validator::make($request->all(), [
                     'job_card_number' => [
                         'required',
@@ -1412,11 +1412,11 @@ class OnSiteVisitController extends Controller
                 // $generate_on_site_estimate_pdf = OnSiteOrder::generateEstimatePDF($site_visit->id);
 
                 $url = url('/') . '/on-site-visit/estimate/customer/view/' . $site_visit->id . '/' . $otp_no;
-			    $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
+                $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
                 $message = 'Dear Customer, Kindly click on this link to approve for TVS job order ' . $short_url;
 
-                if(!$site_visit->customer){
+                if (!$site_visit->customer) {
                     return response()->json([
                         'success' => false,
                         'error' => 'Validation Error',
@@ -1425,7 +1425,7 @@ class OnSiteVisitController extends Controller
                 }
 
                 $customer_mobile = $site_visit->customer->mobile_no;
-			
+
                 if (!$customer_mobile) {
                     return response()->json([
                         'success' => false,
@@ -1434,7 +1434,7 @@ class OnSiteVisitController extends Controller
                     ]);
                 }
 
-			    $msg = sendSMSNotification($customer_mobile, $message);
+                $msg = sendSMSNotification($customer_mobile, $message);
 
                 //Update OnSiteOrder Estimate
                 $on_site_order_estimate = OnSiteOrderEstimate::where('on_site_order_id', $site_visit->id)->orderBy('id', 'DESC')->first();
@@ -1444,6 +1444,14 @@ class OnSiteVisitController extends Controller
                 $on_site_order_estimate->save();
             } elseif ($request->type_id == 4) {
                 $site_visit->status_id = 10;
+
+                $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id', 1)->whereNull('end_date_time')->first();
+                if ($travel_log) {
+                    $travel_log->end_date_time = Carbon::now();
+                    $travel_log->updated_by_id = Auth::user()->id;
+                    $travel_log->updated_at = Carbon::now();
+                    $travel_log->save();
+                }
             } else {
                 // $site_visit->status_id = 8;
             }
@@ -1633,7 +1641,7 @@ class OnSiteVisitController extends Controller
 
                     //Check alreay save or not not means site visit status update
                     $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id', 1)->first();
-                    if(!$travel_log){
+                    if (!$travel_log) {
                         $site_visit->status_id = 11;
                         $site_visit->updated_by_id = Auth::user()->id;
                         $site_visit->updated_at = Carbon::now();
@@ -1681,7 +1689,7 @@ class OnSiteVisitController extends Controller
 
                     //Check alreay save or not not means site visit status update
                     $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id', 2)->first();
-                    if(!$travel_log){
+                    if (!$travel_log) {
                         $site_visit->status_id = 14;
                         $site_visit->updated_by_id = Auth::user()->id;
                         $site_visit->updated_at = Carbon::now();
@@ -1706,7 +1714,7 @@ class OnSiteVisitController extends Controller
                     $travel_log->created_by_id = Auth::user()->id;
                     $travel_log->created_at = Carbon::now();
                     $travel_log->save();
-                    $message = 'Work Log Added Successfully!';
+                    $message = 'Work Started Successfully!';
                 } else {
                     $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id', 2)->whereNull('end_date_time')->first();
                     if (!$travel_log) {
@@ -1722,7 +1730,7 @@ class OnSiteVisitController extends Controller
                     $travel_log->updated_by_id = Auth::user()->id;
                     $travel_log->updated_at = Carbon::now();
                     $travel_log->save();
-                    $message = 'Work Log Updated Successfully!';
+                    $message = 'Work Stopped Successfully!';
                 }
             }
 

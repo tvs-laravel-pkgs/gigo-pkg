@@ -381,11 +381,6 @@ app.component('onSiteVisitView', {
                     $scope.labours = res.labours;
                     $scope.not_approved_labour_parts_count = res.not_approved_labour_parts_count;
 
-                    /* Image Uploadify Funtion */
-                    setTimeout(function () {
-                        $('.image_uploadify').imageuploadify();
-                    }, 1000);
-
                     $scope.outlet_id = $scope.site_visit ? $scope.site_visit.outlet_id : self.user.working_outlet_id;
                     self.country = res.country;
 
@@ -412,10 +407,15 @@ app.component('onSiteVisitView', {
                         //     "<img src='/images/jellyfish.jpg' class='file-preview-image' alt='Jelly Fish' title='Jelly Fish'>",
                         // ],
                         // allowedFileTypes: ['image', 'video'],
-                        slugCallback: function(filename) {
+                        slugCallback: function (filename) {
                             return filename.replace('(', '_').replace(']', '_');
                         }
                     };
+
+                    /* Image Uploadify Funtion */
+                    setTimeout(function () {
+                        $('.image_uploadify').imageuploadify();
+                    }, 1000);
 
                     $scope.$apply();
 
@@ -487,6 +487,27 @@ app.component('onSiteVisitView', {
                     $scope.work_start_button_status = res.work_start_button_status;
                     $scope.work_end_button_status = res.work_end_button_status;
 
+                    $('.save_labour').button('reset');
+                    $('.save_part').button('reset');
+                    $('.returned_button').button('reset');
+                    $('.send_confirm').button('reset');
+                    $('.returned_button').button('reset');
+                    $('.delete_lbr_parts').button('reset');
+                    $('.work_log_action').button('reset');
+                    $('.submit').button('reset');
+                    $('#labour_form_modal').modal('hide');
+                    $('#part_form_modal').modal('hide');
+                    $("#confirmation_modal").modal('hide');
+                    $("#billing_confirmation_modal").modal('hide');
+                    $("#estimate_confirmation_modal").modal('hide');
+                    $("#work_complete_confirmation_modal").modal('hide');
+                    $("#send_customer_modal").modal('hide');
+                    $('#part_return_modal').modal('hide');
+                    $('#delete_log').modal('hide');
+                    $("#confirm_work_log").modal('hide');
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+
                     $scope.$apply();
                 })
                 .fail(function (xhr) {
@@ -494,22 +515,22 @@ app.component('onSiteVisitView', {
                 });
         }
 
-        $scope.addPhoto = function() {
+        $scope.addPhoto = function () {
             $scope.site_visit.photos1.push($scope.site_visit.photos1.length + 1);
             // $(".addPhotoBtn").hide();
         }
-        $scope.removeUploader = function(key) {
+        $scope.removeUploader = function (key) {
             $scope.site_visit.photos1.splice(key, 1);
             // $(".addPhotoBtn").show();
         }
 
         self.attachment_removal_id = [];
-        $scope.remove_attachment = function(attachment_id, index) {
+        $scope.remove_attachment = function (attachment_id, index) {
             if (attachment_id) {
                 self.attachment_removal_id.push(attachment_id);
                 $('#attachment_removal_ids').val(JSON.stringify(self.attachment_removal_id));
             }
-                $scope.site_visit.photos.splice(index, 1);
+            $scope.site_visit.photos.splice(index, 1);
         }
 
         $scope.searchRepairOrders = function (query) {
@@ -612,11 +633,7 @@ app.component('onSiteVisitView', {
                                 showErrorNoty(res);
                                 return;
                             }
-                            $('.save_labour').button('reset');
                             custom_noty('success', res.message);
-                            $('#labour_form_modal').modal('hide');
-                            $('body').removeClass('modal-open');
-                            $('.modal-backdrop').remove();
                             $scope.fetchData();
                         })
                         .fail(function (xhr) {
@@ -765,11 +782,7 @@ app.component('onSiteVisitView', {
                                 showErrorNoty(res);
                                 return;
                             }
-                            $('.save_part').button('reset');
                             custom_noty('success', res.message);
-                            $('#part_form_modal').modal('hide');
-                            $('body').removeClass('modal-open');
-                            $('.modal-backdrop').remove();
                             $scope.fetchData();
                         })
                         .fail(function (xhr) {
@@ -791,16 +804,12 @@ app.component('onSiteVisitView', {
                     },
                 })
                 .done(function (res) {
-                    $('.send_confirm').button('reset');
                     if (!res.success) {
+                        $('.send_confirm').button('reset');
                         showErrorNoty(res);
                         return;
                     }
                     custom_noty('success', res.message);
-                    $("#confirmation_modal").modal('hide');
-                    $("#billing_confirmation_modal").modal('hide');
-                    $('body').removeClass('modal-open');
-                    $('.modal-backdrop').remove();
                     $scope.fetchData();
                 })
                 .fail(function (xhr) {
@@ -838,11 +847,7 @@ app.component('onSiteVisitView', {
                                 showErrorNoty(res);
                                 return;
                             }
-                            $('.returned_button').button('reset');
                             custom_noty('success', res.message);
-                            $('#part_return_modal').modal('hide');
-                            $('body').removeClass('modal-open');
-                            $('.modal-backdrop').remove();
                             $scope.fetchData();
                         })
                         .fail(function (xhr) {
@@ -867,6 +872,7 @@ app.component('onSiteVisitView', {
             let formData = new FormData();
             formData.append('id', $id);
             formData.append('type', $type);
+            $('.delete_lbr_parts').button('loading');
             $.ajax({
                     url: base_url + '/api/on-site-visit/delete/issue-return/parts',
                     method: "POST",
@@ -877,89 +883,91 @@ app.component('onSiteVisitView', {
                 .done(function (res) {
                     if (!res.success) {
                         $rootScope.loading = false;
+                        $('.delete_lbr_parts').button('reset');
                         showErrorNoty(res);
                         return;
                     }
-                    $('#delete_log').modal('hide');
-                    $('body').removeClass('modal-open');
-                    $('.modal-backdrop').remove();
-                    $scope.fetchData();
                     custom_noty('success', res.message);
+                    $scope.fetchData();
                 })
                 .fail(function (xhr) {
+                    $('.delete_lbr_parts').button('reset');
                     $rootScope.loading = false;
-                    $scope.button_action(id, 2);
                     custom_noty('error', 'Something went wrong at server');
                 });
 
         }
 
-        //Save Worklog
         $scope.saveWorkLog = function (id, work_log_type) {
+            console.log(id, work_log_type);
+            $('#confirm_work_log').modal('show');
+            $('#work_log_id').val(id);
+            $('#work_log_type').val(work_log_type);
             if (work_log_type == 'travel_log') {
                 if (id == 1) {
-                    $('.start_travel').button('loading');
-                }else{
-                    $('.end_travel').button('loading');
+                    $scope.log_action = 'start';
+                    $scope.log_action_type = 'travel';
+                    $scope.modal_type = 'success';
+                } else {
+                    $scope.log_action = 'stop';
+                    $scope.log_action_type = 'travel';
+                    $scope.modal_type = 'failure';
                 }
-            }else{
+            } else {
                 if (id == 1) {
-                    $('.start_work').button('loading');
-                }else{
-                    $('.end_end').button('loading');
+                    $scope.log_action = 'start';
+                    $scope.log_action_type = 'work';
+                    $scope.modal_type = 'success';
+                } else {
+                    $scope.log_action = 'stop';
+                    $scope.log_action_type = 'work';
+                    $scope.modal_type = 'failure';
                 }
             }
-            $.ajax({
-                    url: base_url + '/api/on-site-visit/save/time-log',
-                    method: "POST",
-                    data: {
-                        on_site_order_id: $scope.site_visit.id,
-                        type_id: id,
-                        work_log_type: work_log_type,
-                    },
-                })
-                .done(function (res) {
-                    if (work_log_type == 'travel_log') {
-                        if (id == 1) {
-                            $('.start_travel').button('reset');
-                        }else{
-                            $('.end_travel').button('reset');
-                        }
-                    }else{
-                        if (id == 1) {
-                            $('.start_work').button('reset');
-                        }else{
-                            $('.end_end').button('reset');
-                        }
-                    }
+        }
 
-                    if (!res.success) {
-                        showErrorNoty(res);
-                        return;
-                    }
-                    custom_noty('success', res.message);
-                    $("#confirmation_modal").modal('hide');
-                    $("#billing_confirmation_modal").modal('hide');
-                    $('body').removeClass('modal-open');
-                    $('.modal-backdrop').remove();
-                    $scope.fetchData();
-                })
-                .fail(function (xhr) {
-                    if (work_log_type == 'travel_log') {
-                        if (id == 1) {
-                            $('.start_travel').button('reset');
-                        }else{
-                            $('.end_travel').button('reset');
-                        }
-                    }else{
-                        if (id == 1) {
-                            $('.start_work').button('reset');
-                        }else{
-                            $('.end_end').button('reset');
-                        }
-                    }
-                });
+        //Save Worklog
+        $scope.saveWorkLogConfirm = function () {
+            // if (work_log_type == 'travel_log') {
+            //     if (id == 1) {
+            //         $('.start_travel').button('loading');
+            //     }else{
+            //         $('.end_travel').button('loading');
+            //     }
+            // }else{
+            //     if (id == 1) {
+            //         $('.start_work').button('loading');
+            //     }else{
+            //         $('.end_end').button('loading');
+            //     }
+            // }
+            var id = $('#work_log_id').val();
+            var work_log_type = $('#work_log_type').val();
 
+            if (id && work_log_type) {
+                $('.work_log_action').button('loading');
+                $.ajax({
+                        url: base_url + '/api/on-site-visit/save/time-log',
+                        method: "POST",
+                        data: {
+                            on_site_order_id: $scope.site_visit.id,
+                            type_id: id,
+                            work_log_type: work_log_type,
+                        },
+                    })
+                    .done(function (res) {
+                        if (!res.success) {
+                            $('.work_log_action').button('reset');
+                            showErrorNoty(res);
+                            return;
+                        }
+                        custom_noty('success', res.message);
+                        $scope.fetchData();
+                    })
+                    .fail(function (xhr) {
+                        $('.work_log_action').button('reset');
+                    });
+            }
         }
 
         //Save Form Data 
@@ -990,9 +998,8 @@ app.component('onSiteVisitView', {
                             contentType: false,
                         })
                         .done(function (res) {
-                            $('.submit').button('reset');
-
                             if (!res.success) {
+                                $('.submit').button('reset');
                                 showErrorNoty(res);
                                 return;
                             }

@@ -163,11 +163,11 @@
                                                                             Address
                                                                         </span>
                                                                         <span
-                                                                            class="view-col-value">{{site_visit.customer.address.address_line1}},
-                                                                            {{site_visit.customer.address.address_line2}},
-                                                                            {{site_visit.customer.address.city.name}},
-                                                                            {{site_visit.customer.address.state.name}},
-                                                                            {{site_visit.customer.address.pincode}},
+                                                                            class="view-col-value">{{site_visit.customer.address.address_line1}}, 
+                                                                            {{site_visit.customer.address.address_line2}}, 
+                                                                            {{site_visit.customer.address.city.name}}, 
+                                                                            {{site_visit.customer.address.state.name}}, 
+                                                                            {{site_visit.customer.address.pincode}}, 
                                                                             {{site_visit.customer.address.country.name}}.</span>
                                                                     </li>
                                                                     <li class="view-col-3">
@@ -827,12 +827,12 @@
                                                     <div class="panel panel-default type-5">
                                                         <div class="panel-heading">
                                                             <a class="panel-title in" data-toggle="collapse"
-                                                                data-parent="#accordion" data-target="#collapse1">
+                                                                data-parent="#accordion" data-target="#collapse6">
                                                                 Total Duration : {{total_travel_hours}}
                                                                 <span class="arrow"></span>
                                                             </a>
                                                         </div>
-                                                        <div id="collapse1" class="panel-collapse collapse in">
+                                                        <div id="collapse6" class="panel-collapse collapse in">
                                                             <div class="panel-body">
                                                                 <div class="row">
                                                                     <div class="col-md-12">
@@ -890,12 +890,12 @@
                                                     <div class="panel panel-default type-5">
                                                         <div class="panel-heading">
                                                             <a class="panel-title in" data-toggle="collapse"
-                                                                data-parent="#accordion" data-target="#collapse2">
+                                                                data-parent="#accordion" data-target="#collapse7">
                                                                 Total Duration : {{total_work_hours}}
                                                                 <span class="arrow"></span>
                                                             </a>
                                                         </div>
-                                                        <div id="collapse2" class="panel-collapse collapse in">
+                                                        <div id="collapse7" class="panel-collapse collapse in">
                                                             <div class="panel-body">
                                                                 <div class="row">
                                                                     <div class="col-md-12">
@@ -1258,6 +1258,22 @@
         </div>
     </div>
 </div>
+<div class="modal fade alert-modal {{modal_type}}" id="confirm_work_log" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Confirmation?</h4>
+            </div>
+            <div class="modal-body">
+                <p>Are You Sure? Do you {{log_action}} {{log_action_type}}?</p>
+                <input type="hidden" name="work_log_id" id="work_log_id" value="">
+                <input type="hidden" name="work_log_type" id="work_log_type" value="">
+                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">Cancel</button>
+                <button class="btn btn-rose work_log_action" ng-click="saveWorkLogConfirm()" type="button">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="modal fade alert-modal failure" id="delete_log" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -1271,7 +1287,7 @@
                 <input type="hidden" name="log_type" id="log_type" value="">
                 <input type="hidden" name="log_id" id="log_id" value="">
                 <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">Cancel</button>
-                <button class="btn btn-rose" ng-click="deleteConfirm()" type="button">Yes</button>
+                <button class="btn btn-rose delete_lbr_parts" ng-click="deleteConfirm()" type="button">Yes</button>
             </div>
         </div>
     </div>
