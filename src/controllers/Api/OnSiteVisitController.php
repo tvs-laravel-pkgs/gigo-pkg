@@ -736,7 +736,7 @@ class OnSiteVisitController extends Controller
 
     public function save(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         try {
             if ($request->save_type_id == 1) {
                 $error_messages = [
@@ -959,7 +959,7 @@ class OnSiteVisitController extends Controller
                 $site_visit->updated_at = Carbon::now();
                 $site_visit->save();
 
-                $message = "Job Card Saved Successfully!";
+                $message = "Job Card Number Saved Successfully!";
 
                 DB::commit();
             }
