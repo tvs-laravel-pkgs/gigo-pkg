@@ -511,8 +511,16 @@ class OnSiteVisitController extends Controller
 
             if (!empty($request->on_site_repair_order_id)) {
                 $on_site_repair_order = OnSiteOrderRepairOrder::find($request->on_site_repair_order_id);
-                $on_site_repair_order->updated_by_id = Auth::user()->id;
-                $on_site_repair_order->updated_at = Carbon::now();
+                if ($on_site_repair_order) {
+                    $on_site_repair_order->updated_by_id = Auth::user()->id;
+                    $on_site_repair_order->updated_at = Carbon::now();
+                    $on_site_repair_order->removal_reason_id = null;
+                    $on_site_repair_order->removal_reason = null;
+                } else {
+                    $on_site_repair_order = new OnSiteOrderRepairOrder;
+                    $on_site_repair_order->created_by_id = Auth::user()->id;
+                    $on_site_repair_order->created_at = Carbon::now();
+                }
             } else {
                 $on_site_repair_order = new OnSiteOrderRepairOrder;
                 $on_site_repair_order->created_by_id = Auth::user()->id;
@@ -680,8 +688,16 @@ class OnSiteVisitController extends Controller
 
             if (!empty($request->on_site_part_id)) {
                 $on_site_part = OnSiteOrderPart::find($request->on_site_part_id);
-                $on_site_part->updated_by_id = Auth::user()->id;
-                $on_site_part->updated_at = Carbon::now();
+                if ($on_site_part) {
+                    $on_site_part->updated_by_id = Auth::user()->id;
+                    $on_site_part->updated_at = Carbon::now();
+                    $on_site_part->removal_reason_id = null;
+                    $on_site_part->removal_reason = null;
+                } else {
+                    $on_site_part = new OnSiteOrderPart;
+                    $on_site_part->created_by_id = Auth::user()->id;
+                    $on_site_part->created_at = Carbon::now();
+                }
             } else {
                 //Check Request parts are already requested or not.
                 $on_site_part = OnSiteOrderPart::where('on_site_order_id', $request->on_site_order_id)->where('part_id', $request->part_id)->where('status_id', 8200)->where('is_customer_approved', 0)->whereNull('removal_reason_id')->first();
@@ -1754,6 +1770,96 @@ class OnSiteVisitController extends Controller
                 'success' => false,
                 'error' => 'Server Network Down!',
                 'errors' => ['Exception Error' => $e->getMessage()],
+            ]);
+        }
+    }
+
+    public function deleteLabourParts(Request $request)
+    {
+        // dd($request->all());
+        try {
+            DB::beginTransaction();
+            if ($request->payable_type == 'labour') {
+                $validator = Validator::make($request->all(), [
+                    'labour_parts_id' => [
+                        'required',
+                        'integer',
+                        'exists:on_site_order_repair_orders,id',
+                    ],
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => $validator->errors()->all(),
+                    ]);
+                }
+
+                if ($request->removal_reason_id == 10022) {
+                    $on_site_order_repair_order = OnSiteOrderRepairOrder::find($request->labour_parts_id);
+                    if ($on_site_order_repair_order) {
+                        $on_site_order_repair_order->removal_reason_id = $request->removal_reason_id;
+                        $on_site_order_repair_order->removal_reason = $request->removal_reason;
+                        $on_site_order_repair_order->updated_by_id = Auth::user()->id;
+                        $on_site_order_repair_order->updated_at = Carbon::now();
+                        $on_site_order_repair_order->save();
+                    }
+                } else {
+                    $on_site_order_repair_order = OnSiteOrderRepairOrder::where('id', $request->labour_parts_id)->forceDelete();
+                }
+
+            } else {
+                $validator = Validator::make($request->all(), [
+                    'labour_parts_id' => [
+                        'required',
+                        'integer',
+                        'exists:on_site_order_parts,id',
+                    ],
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => $validator->errors()->all(),
+                    ]);
+                }
+
+                if ($request->removal_reason_id == 10022) {
+                    $on_site_order_parts = OnSiteOrderPart::find($request->labour_parts_id);
+                    if ($on_site_order_parts) {
+                        $on_site_order_parts->removal_reason_id = $request->removal_reason_id;
+                        $on_site_order_parts->removal_reason = $request->removal_reason;
+                        $on_site_order_parts->updated_by_id = Auth::user()->id;
+                        $on_site_order_parts->updated_at = Carbon::now();
+                        $on_site_order_parts->save();
+                    }
+                } else {
+                    $on_site_order_parts = OnSiteOrderPart::where('id', $request->labour_parts_id)->forceDelete();
+                }
+            }
+
+            DB::commit();
+            if ($request->payable_type == 'labour') {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Labour Deleted Successfully',
+                ]);
+            } else {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Part Deleted Successfully',
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Server Error!',
+                'errors' => [
+                    'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+                ],
             ]);
         }
     }

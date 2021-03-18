@@ -517,7 +517,7 @@
                                                                 <button ng-if="site_visit.status_id != 6 && site_visit.status_id != 10 && !$ctrl.hasPermission('parts-view-site-visit')"
                                                                     class="btn img-btn btn-delete">
                                                                     <img class="img-responsive radius-50"
-                                                                        ng-click="removeScheduledLabour(index,labour_details.id,'labour')"
+                                                                        ng-click="removeLabour(index,labour_details.id,'labour')"
                                                                         src="./public/theme/img/content/delete-active.svg"
                                                                         alt="Delete" />
                                                                 </button>
@@ -639,7 +639,7 @@
                                                                 <button ng-if="site_visit.status_id != 6 && site_visit.status_id != 10"
                                                                     class="btn img-btn btn-delete">
                                                                     <img class="img-responsive radius-50"
-                                                                        ng-click="removeScheduledPart(index,part_details.id,'parts')"
+                                                                        ng-click="removePart(index,part_details.id,'parts')"
                                                                         src="./public/theme/img/content/delete-active.svg"
                                                                         alt="Delete" />
                                                                 </button>
@@ -1365,4 +1365,58 @@
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal -->
+<div class="modal filter fade" id="delete_labour_parts" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm finance-view-modal" role="document">
+        <form id="labour_parts_remove">
+            <input type="hidden" name="labour_parts_id" id="labour_parts_id" value="">
+            <input type="hidden" name="payable_type" id="payable_type" value="">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                    <h4 class="modal-title">Delete Request</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>
+                                                Delete Reason
+                                                <sup class="mandatory">*</sup></label>
+                                            <div class="common-radio-button type-4">
+                                                <input type="radio" id="worngly_entered" name="removal_reason_id" ng-model="delete_reason" ng-value="10021" value="10021" ng-checked="delete_reason">
+                                                <label for="worngly_entered">
+                                                    Added By Mistake
+                                                </label>
+                                                <input type="radio" ng-model="delete_reason" id="customer_delete" name="removal_reason_id" ng-value="10022" value="10022">
+                                                <label for="customer_delete">
+                                                    Customer Denied
+                                                </label>
+                                            </div>
+                                            <div id="errorDeleteReasonRequired"></div>
+                                        </div><!-- Feild -->
+                                    </div><!-- Column -->
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-12" ng-if="delete_reason == '10022'">
+                                <div class="form-group">
+                                    <label>Remarks <sup class="mandatory">*</sup></label>
+                                    <textarea class="form-control" rows="5" id="removal_reason" name="removal_reason"></textarea>
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                        </div><!-- Row -->
+                    </div><!-- Container -->
+                </div><!-- Modal Body -->
+                <div class="modal-footer">
+                    <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">
+                        Cancel
+                    </button>
+                    <button class="btn btn-red part_labour_delete" ng-click="saveLabourPartDeleteForm()">Submit</button>
+                </div><!-- Modal Footer -->
+            </div><!-- Modal Content -->
+        </form>
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content
 <script src="./public/theme/js/imageuploadify-mgatepass.min.js"></script>

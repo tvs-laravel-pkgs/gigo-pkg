@@ -486,6 +486,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('on-site-visit/return/parts', 'OnSiteVisitController@returnParts');
 		Route::post('on-site-visit/get/time-log', 'OnSiteVisitController@getTimeLog');
 		Route::post('on-site-visit/save/time-log', 'OnSiteVisitController@saveTimeLog');
+		Route::post('on-site-visit/labour-parts/delete', 'OnSiteVisitController@deleteLabourParts');
 
 	});
 });

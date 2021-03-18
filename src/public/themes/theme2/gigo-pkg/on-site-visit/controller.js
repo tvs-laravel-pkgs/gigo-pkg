@@ -412,11 +412,6 @@ app.component('onSiteVisitView', {
                         }
                     };
 
-                    /* Image Uploadify Funtion */
-                    setTimeout(function () {
-                        $('.image_uploadify').imageuploadify();
-                    }, 1000);
-
                     $scope.$apply();
 
                     $scope.fetchPartsData();
@@ -494,6 +489,7 @@ app.component('onSiteVisitView', {
                     $('.returned_button').button('reset');
                     $('.delete_lbr_parts').button('reset');
                     $('.work_log_action').button('reset');
+                    $('.part_labour_delete').button('reset');
                     $('.submit').button('reset');
                     $('#labour_form_modal').modal('hide');
                     $('#part_form_modal').modal('hide');
@@ -505,6 +501,7 @@ app.component('onSiteVisitView', {
                     $('#part_return_modal').modal('hide');
                     $('#delete_log').modal('hide');
                     $("#confirm_work_log").modal('hide');
+                    $('#delete_labour_parts').modal('hide');
                     $('body').removeClass('modal-open');
                     $('.modal-backdrop').remove();
 
@@ -1013,9 +1010,88 @@ app.component('onSiteVisitView', {
                 }
             });
         }
+        
+        $scope.removePart = function (index, id, type) {
+            console.log(index, id, type);
+            if (id == undefined) {
+                $scope.part_details.splice(index, 1);
+            } else {
+                $scope.delete_reason = 10021;
+                $('#removal_reason').val('');
+                $scope.customer_delete = false;
+                $scope.laboutPartsDelete(index, id, type);
+            }
+        }
 
-        /* Image Uploadify Funtion */
-        $('.image_uploadify').imageuploadify();
+        $scope.removeLabour = function (index, id, type) {
+            console.log(index, id, type);
+            if (id == undefined) {
+                $scope.labour_details.splice(index, 1);
+            }else{
+                $scope.delete_reason = 10021;
+                $('#removal_reason').val('');
+                //HIDE REASON TEXTAREA 
+                $scope.customer_delete = false;
+                $scope.laboutPartsDelete(index, id, type);
+            }
+        }
+
+        $scope.laboutPartsDelete = function (index, id, type) {
+            $('#delete_labour_parts').modal('show');
+            $('#labour_parts_id').val(id);
+            $('#payable_type').val(type);
+
+            $scope.saveLabourPartDeleteForm = function () {
+                var delete_form_id = '#labour_parts_remove';
+                $('.part_labour_delete').button('loading');
+                var v = jQuery(delete_form_id).validate({
+                    ignore: '',
+                    rules: {
+                        'removal_reason_id': {
+                            required: true,
+                        },
+                        'removal_reason': {
+                            required: true,
+                        },
+                    },
+                    errorPlacement: function (error, element) {
+                        if (element.attr("name") == "removal_reason_id") {
+                            error.appendTo('#errorDeleteReasonRequired');
+                            return;
+                        } else {
+                            error.insertAfter(element);
+                        }
+                    },
+                    submitHandler: function (form) {
+                        let formData = new FormData($(delete_form_id)[0]);
+                        $rootScope.loading = true;
+                        $.ajax({
+                                url: base_url + '/api/on-site-visit/labour-parts/delete',
+                                method: "POST",
+                                data: formData,
+                                processData: false,
+                                contentType: false,
+                            })
+                            .done(function (res) {
+                                if (!res.success) {
+                                    $rootScope.loading = false;
+                                    $('.part_labour_delete').button('reset');
+                                    showErrorNoty(res);
+                                    return;
+                                }
+                                $scope.fetchData();
+                                custom_noty('success', res.message);
+                            })
+                            .fail(function (xhr) {
+                                $rootScope.loading = false;
+                                $('.part_labour_delete').button('reset');
+                                custom_noty('error', 'Something went wrong at server');
+                            });
+                    }
+                });
+
+            }
+        }
 
         //Scrollable Tabs
         setTimeout(function () {
