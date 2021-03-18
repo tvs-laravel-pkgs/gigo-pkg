@@ -2196,6 +2196,30 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'view-site-visit',
 				'display_name' => 'View',
 			],
+			[
+				'display_order' => 4,
+				'parent' => 'gigo-site-visit',
+				'name' => 'parts-view-site-visit',
+				'display_name' => 'Parts View',
+			],
+			[
+				'display_order' => 5,
+				'parent' => 'gigo-site-visit',
+				'name' => 'view-all-site-visit',
+				'display_name' => 'View All Outlet',
+			],
+			[
+				'display_order' => 6,
+				'parent' => 'gigo-site-visit',
+				'name' => 'view-mapped-site-visit',
+				'display_name' => 'View Mapped Outlet',
+			],
+			[
+				'display_order' => 7,
+				'parent' => 'gigo-site-visit',
+				'name' => 'view-own-site-visit',
+				'display_name' => 'View Own Outlet',
+			],
 		];
 		Permission::createFromArrays($permissions);
 	}

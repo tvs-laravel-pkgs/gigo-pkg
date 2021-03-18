@@ -32,7 +32,7 @@
             </div><!-- Page Header Content Left -->
             <div class="page-header-content-right">
                 <div class="page-header-content button-block">
-                    <a href="#!/on-site-visit/form" class="btn btn-primary my-tooltip" ng-shortcut="'meta+shift+n'" ng-shortcut-click data-title="ctrl+shift+n">
+                    <a ng-if="$ctrl.hasPermission('add-site-visit')" href="#!/on-site-visit/form" class="btn btn-primary my-tooltip" ng-shortcut="'meta+shift+n'" ng-shortcut-click data-title="ctrl+shift+n">
                         Add New
                     </a>
                 </div><!-- Page Header Content -->

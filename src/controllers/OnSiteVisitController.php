@@ -63,6 +63,7 @@ class OnSiteVisitController extends Controller
             ->select(
                 'on_site_orders.id',
                 'on_site_orders.number',
+                'on_site_orders.status_id',
                 DB::raw('DATE_FORMAT(on_site_orders.planned_visit_date,"%d-%m-%Y") as date'),
                 'outlets.code as outlet_code',
                 'customers.name as customer_name',
@@ -114,29 +115,30 @@ class OnSiteVisitController extends Controller
         //     $vehicle_inwards->whereDate('gate_logs.gate_in_date', '>=', $start_date)->whereDate('gate_logs.gate_in_date', '<=', $end_date);
         // }
 
-        // if (!Entrust::can('view-all-outlet-manual-vehicle-delivery')) {
-        //     if (Entrust::can('view-mapped-outlet-manual-vehicle-delivery')) {
-        //         $outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
-        //         array_push($outlet_ids, Auth::user()->employee->outlet_id);
-        //         $vehicle_inwards->whereIn('job_orders.outlet_id', $outlet_ids);
-        //     } else {
-        //         $vehicle_inwards->where('job_orders.outlet_id', Auth::user()->working_outlet_id);
-        //     }
-        // }
+        if (!Entrust::can('view-all-site-visit')) {
+            if (Entrust::can('view-mapped-site-visit')) {
+                $outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
+                array_push($outlet_ids, Auth::user()->employee->outlet_id);
+                $vehicle_inwards->whereIn('on_site_orders.outlet_id', $outlet_ids);
+            } else {
+                $vehicle_inwards->where('on_site_orders.outlet_id', Auth::user()->working_outlet_id);
+            }
+        }
 
-        // if (Entrust::can('verify-manual-vehicle-delivery')) {
-        //     $vehicle_inwards->whereIn('job_orders.status_id', [8477]);
-        // }
+        if (Entrust::can('parts-view-site-visit')) {
+            $vehicle_inwards->whereIn('on_site_orders.status_id', [4]);
+        }
 
         $vehicle_inwards->orderBy('on_site_orders.planned_visit_date', 'DESC');
 
         return Datatables::of($vehicle_inwards)
             ->rawColumns(['status', 'action'])
             
-            // ->editColumn('status', function ($vehicle_inward) {
-            //     $status = $vehicle_inward->status_id == '8460' || $vehicle_inward->status_id == '8469' || $vehicle_inward->status_id == '8477' || $vehicle_inward->status_id == '8479' ? 'green' : 'blue';
-            //     return '<span class="text-' . $status . '">' . $vehicle_inward->status . '</span>';
-            // })
+            ->editColumn('status', function ($vehicle_inward) {
+                $status = $vehicle_inward->status_id == '8460' || $vehicle_inward->status_id == '8469' || $vehicle_inward->status_id == '8477' || $vehicle_inward->status_id == '8479' ? 'green' : 'blue';
+                return '<span class="text-' . $status . '">' . $vehicle_inward->status . '</span>';
+            })
+
             ->addColumn('action', function ($vehicle_inward) {
                 $view_img = asset('public/themes/' . $this->data['theme'] . '/img/content/table/view.svg');
                 $edit_img = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
@@ -145,16 +147,10 @@ class OnSiteVisitController extends Controller
                 $status_img_hover = asset('public/theme/img/table/add-hover.svg');
 
                 $output = '';
-
-                // if ($vehicle_inward->vehicle_delivery_status_id != 3 && !Entrust::can('verify-manual-vehicle-delivery')) {
-                //     $output .= '<a href="javascript:;" data-toggle="modal" data-target="#change_vehicle_status" onclick="angular.element(this).scope().changeStatus(' . $vehicle_inward->id . ',' . $vehicle_inward->vehicle_delivery_status_id . ')" title="Change Vehicle Status"><img src="' . $status_img . '" alt="Change Vehicle Status" class="img-responsive delete" onmouseover=this.src="' . $status_img_hover . '" onmouseout=this.src="' . $status_img . '"></a>
-				// 	';
-                // }
-
-                // if ($vehicle_inward->status_id != 8478 && $vehicle_inward->status_id != 8477 && $vehicle_inward->status_id != 8467 && $vehicle_inward->status_id != 8468 && $vehicle_inward->status_id != 8470 && !Entrust::can('verify-manual-vehicle-delivery')) {
-                //     $output .= '<a href="#!/manual-vehicle-delivery/form/' . $vehicle_inward->id . '" id = "" title="Form"><img src="' . $edit_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $edit_img . '" onmouseout=this.src="' . $edit_img . '"></a>';
-                // }
-                $output .= '<a href="#!/on-site-visit/form/' . $vehicle_inward->id . '" id = "" title="Form"><img src="' . $edit_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $edit_img . '" onmouseout=this.src="' . $edit_img . '"></a>';
+                // dd($vehicle_inward->status_id,Entrust::can('edit-site-visit'));
+                if ($vehicle_inward->status_id == 1 && Entrust::can('edit-site-visit')){
+                    $output .= '<a href="#!/on-site-visit/form/' . $vehicle_inward->id . '" id = "" title="Form"><img src="' . $edit_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $edit_img . '" onmouseout=this.src="' . $edit_img . '"></a>';
+                }
 
                 $output .= '<a href="#!/on-site-visit/view/' . $vehicle_inward->id . '" id = "" title="View"><img src="' . $view_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $view_img . '" onmouseout=this.src="' . $view_img . '"></a>';
                 return $output;

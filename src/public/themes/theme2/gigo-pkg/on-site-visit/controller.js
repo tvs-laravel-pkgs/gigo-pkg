@@ -379,6 +379,7 @@ app.component('onSiteVisitView', {
                     $scope.labour_amount = res.labour_amount;
                     $scope.parts_rate = res.parts_rate;
                     $scope.labours = res.labours;
+                    $scope.not_approved_labour_parts_count = res.not_approved_labour_parts_count;
 
                     /* Image Uploadify Funtion */
                     setTimeout(function () {
@@ -996,9 +997,7 @@ app.component('onSiteVisitView', {
                                 return;
                             }
                             custom_noty('success', res.message);
-                            $location.path('/on-site-visit/table-list');
-
-                            $scope.$apply();
+                            $scope.fetchData();
                         })
                         .fail(function (xhr) {
                             $('.submit').button('reset');

@@ -242,6 +242,8 @@ class OnSiteVisitController extends Controller
         $labour_details = array();
         $labours = array();
 
+        $not_approved_labour_parts_count = 0;
+
         if ($site_visit->onSiteOrderRepairOrders) {
             foreach ($site_visit->onSiteOrderRepairOrders as $key => $value) {
                 $labour_details[$key]['id'] = $value->id;
@@ -269,6 +271,9 @@ class OnSiteVisitController extends Controller
                 if (in_array($value->split_order_type_id, $customer_paid_type) || !$value->split_order_type_id) {
                     if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
                         $labour_amount += $value->amount;
+                        if($value->is_customer_approved == 0){
+                            $not_approved_labour_parts_count++;
+                        }
                     } else {
                         $labour_details[$key]['amount'] = 0;
                     }
@@ -305,6 +310,9 @@ class OnSiteVisitController extends Controller
                 if (in_array($value->split_order_type_id, $customer_paid_type) || !$value->split_order_type_id) {
                     if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
                         $part_amount += $value->amount;
+                        if($value->is_customer_approved == 0){
+                            $not_approved_labour_parts_count++;
+                        }
                     } else {
                         $part_details[$key]['amount'] = 0;
                     }
@@ -323,6 +331,7 @@ class OnSiteVisitController extends Controller
         $result['part_amount'] = $part_amount;
         $result['total_amount'] = $total_amount;
         $result['labours'] = $labours;
+        $result['not_approved_labour_parts_count'] = $not_approved_labour_parts_count;
 
         return $result;
     }
@@ -357,6 +366,7 @@ class OnSiteVisitController extends Controller
             $result['labour_amount'] = 0;
             $result['part_amount'] = 0;
             $result['labours'] = [];
+            $result['not_approved_labour_parts_count'] = 0;
         }
 
         $this->data['success'] = true;
@@ -379,6 +389,7 @@ class OnSiteVisitController extends Controller
             'labour_amount' => $result['labour_amount'],
             'parts_rate' => $result['part_amount'],
             'labours' => $result['labours'],
+            'not_approved_labour_parts_count' => $result['not_approved_labour_parts_count'],
             'extras' => $extras,
             'country' => Country::find(1),
         ]);
@@ -725,7 +736,7 @@ class OnSiteVisitController extends Controller
 
     public function save(Request $request)
     {
-        // dd($request->all());
+        dd($request->all());
         try {
             if ($request->save_type_id == 1) {
                 $error_messages = [
@@ -826,7 +837,7 @@ class OnSiteVisitController extends Controller
 
                 DB::commit();
 
-            } else {
+            } elseif ($request->save_type_id == 2) {
                 $validator = Validator::make($request->all(), [
                     'se_remarks' => [
                         'required',
@@ -861,8 +872,13 @@ class OnSiteVisitController extends Controller
                     ]);
                 }
 
+                if(!$site_visit->actual_visit_date){
+                    $site_visit->actual_visit_date = date('Y-m-d');
+                }
+
                 $site_visit->se_remarks = $request->se_remarks;
                 $site_visit->parts_requirements = $request->parts_requirements;
+                $site_visit->status_id = 2;
                 $site_visit->updated_by_id = Auth::id();
                 $site_visit->updated_at = Carbon::now();
                 $site_visit->save();
@@ -905,6 +921,47 @@ class OnSiteVisitController extends Controller
 
                 DB::commit();
 
+            }else{
+                $validator = Validator::make($request->all(), [
+                    'job_card_number' => [
+                        'required',
+                    ],
+                    'on_site_order_id' => [
+                        'required',
+                        'exists:on_site_orders,id',
+                    ],
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => $validator->errors()->all(),
+                    ]);
+                }
+
+                DB::beginTransaction();
+
+                $site_visit = OnSiteOrder::find($request->on_site_order_id);
+                if (!$site_visit) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => [
+                            'Site Visit Detail Not Found!',
+                        ],
+                    ]);
+                }
+
+                $site_visit->job_card_number = $request->job_card_number;
+                $site_visit->status_id = 13;
+                $site_visit->updated_by_id = Auth::id();
+                $site_visit->updated_at = Carbon::now();
+                $site_visit->save();
+
+                $message = "Job Card Saved Successfully!";
+
+                DB::commit();
             }
 
             //Send Approved Mail for user
@@ -1329,7 +1386,7 @@ class OnSiteVisitController extends Controller
     {
         // dd($request->all());
         try {
-            $site_visit = OnSiteOrder::find($request->id);
+            $site_visit = OnSiteOrder::with(['customer'])->find($request->id);
 
             if (!$site_visit) {
                 return response()->json([
@@ -1346,7 +1403,8 @@ class OnSiteVisitController extends Controller
             if ($request->type_id == 1) {
                 $site_visit->status_id = 4;
             } elseif ($request->type_id == 2) {
-                // $site_visit->status_id = 5;
+                $site_visit->status_id = 5;
+            } elseif ($request->type_id == 3) {
                 $site_visit->status_id = 6;
                 $otp_no = mt_rand(111111, 999999);
                 $site_visit->otp_no = $otp_no;
@@ -1355,7 +1413,37 @@ class OnSiteVisitController extends Controller
 
                 $url = url('/') . '/on-site-visit/estimate/customer/view/' . $site_visit->id . '/' . $otp_no;
 			    $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
-                // dd($short_url);
+
+                $message = 'Dear Customer, Kindly click on this link to approve for TVS job order ' . $short_url;
+
+                if(!$site_visit->customer){
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => ['Customer Not Found!'],
+                    ]);
+                }
+
+                $customer_mobile = $site_visit->customer->mobile_no;
+			
+                if (!$customer_mobile) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => ['Customer Mobile Number Not Found!'],
+                    ]);
+                }
+
+			    $msg = sendSMSNotification($customer_mobile, $message);
+
+                //Update OnSiteOrder Estimate
+                $on_site_order_estimate = OnSiteOrderEstimate::where('on_site_order_id', $site_visit->id)->orderBy('id', 'DESC')->first();
+                $on_site_order_estimate->status_id = 10071;
+                $on_site_order_estimate->updated_by_id = Auth::user()->id;
+                $on_site_order_estimate->updated_at = Carbon::now();
+                $on_site_order_estimate->save();
+            } elseif ($request->type_id == 4) {
+                $site_visit->status_id = 10;
             } else {
                 // $site_visit->status_id = 8;
             }
@@ -1363,7 +1451,7 @@ class OnSiteVisitController extends Controller
             $site_visit->updated_by_id = Auth::user()->id;
             $site_visit->updated_at = Carbon::now();
             $site_visit->save();
-            // dd();
+
             DB::commit();
 
             return response()->json([
@@ -1546,7 +1634,7 @@ class OnSiteVisitController extends Controller
                     //Check alreay save or not not means site visit status update
                     $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id', 1)->first();
                     if(!$travel_log){
-                        $site_visit->status_id = 2;
+                        $site_visit->status_id = 11;
                         $site_visit->updated_by_id = Auth::user()->id;
                         $site_visit->updated_at = Carbon::now();
                         $site_visit->save();
@@ -1590,6 +1678,16 @@ class OnSiteVisitController extends Controller
                 }
             } else {
                 if ($request->type_id == 1) {
+
+                    //Check alreay save or not not means site visit status update
+                    $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id', 2)->first();
+                    if(!$travel_log){
+                        $site_visit->status_id = 14;
+                        $site_visit->updated_by_id = Auth::user()->id;
+                        $site_visit->updated_at = Carbon::now();
+                        $site_visit->save();
+                    }
+
                     //Check Previous entry closed or not
                     $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id', 2)->whereNull('end_date_time')->first();
                     if ($travel_log) {
