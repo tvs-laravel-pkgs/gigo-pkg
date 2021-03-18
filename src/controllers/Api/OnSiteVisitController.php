@@ -1402,8 +1402,10 @@ class OnSiteVisitController extends Controller
 
             if ($request->type_id == 1) {
                 $site_visit->status_id = 4;
+                $message = 'On Site Visit Updated Successfully!';
             } elseif ($request->type_id == 2) {
                 $site_visit->status_id = 5;
+                $message = 'On Site Visit Updated Successfully!';
             } elseif ($request->type_id == 3) {
                 $site_visit->status_id = 6;
                 $otp_no = mt_rand(111111, 999999);
@@ -1442,18 +1444,24 @@ class OnSiteVisitController extends Controller
                 $on_site_order_estimate->updated_by_id = Auth::user()->id;
                 $on_site_order_estimate->updated_at = Carbon::now();
                 $on_site_order_estimate->save();
+
+                $message = 'Estimation sent to customer successfully!';
+
             } elseif ($request->type_id == 4) {
                 $site_visit->status_id = 10;
 
-                $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id', 1)->whereNull('end_date_time')->first();
+                $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id', 2)->whereNull('end_date_time')->first();
                 if ($travel_log) {
                     $travel_log->end_date_time = Carbon::now();
                     $travel_log->updated_by_id = Auth::user()->id;
                     $travel_log->updated_at = Carbon::now();
                     $travel_log->save();
                 }
+
+                $message = 'On Site Visit Completed Successfully!';
             } else {
                 // $site_visit->status_id = 8;
+                $message = 'On Site Visit Updated Successfully!';
             }
 
             $site_visit->updated_by_id = Auth::user()->id;
@@ -1464,7 +1472,7 @@ class OnSiteVisitController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'On Site Visit Updated Successfully!!',
+                'message' => $message,
             ]);
 
         } catch (Exception $e) {
