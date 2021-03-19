@@ -490,6 +490,8 @@ app.component('onSiteVisitView', {
                     $('.delete_lbr_parts').button('reset');
                     $('.work_log_action').button('reset');
                     $('.part_labour_delete').button('reset');
+                    $('.send_otp_confirm').button('reset');
+                    $('.submit_otp_confirm').button('reset');
                     $('.submit').button('reset');
                     $('#labour_form_modal').modal('hide');
                     $('#part_form_modal').modal('hide');
@@ -497,6 +499,9 @@ app.component('onSiteVisitView', {
                     $("#billing_confirmation_modal").modal('hide');
                     $("#estimate_confirmation_modal").modal('hide');
                     $("#work_complete_confirmation_modal").modal('hide');
+                    $('#send_otp_customer_modal').modal('hide');
+                    $('#otp').modal('hide');
+                    $('#otp_no').val('');
                     $("#send_customer_modal").modal('hide');
                     $('#part_return_modal').modal('hide');
                     $('#delete_log').modal('hide');
@@ -812,9 +817,96 @@ app.component('onSiteVisitView', {
                 .fail(function (xhr) {
                     $('.send_confirm').button('reset');
                 });
-
         }
 
+        $scope.sendOTPConfirm = function () {
+            $('.send_otp_confirm').button('loading');
+            $('.resend_otp').button('loading');
+
+            $.ajax({
+                    url: base_url + '/api/on-site-visit/request/otp',
+                    method: "POST",
+                    data: {
+                        id: $scope.site_visit.id,
+                    },
+                })
+                .done(function (res) {
+                    $('.resend_otp').button('reset');
+                    if (!res.success) {
+                        $('.send_otp_confirm').button('reset');
+                        showErrorNoty(res);
+                        return;
+                    }
+                    custom_noty('success', res.message);
+                    $('#send_otp_customer_modal').modal('hide');
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+                    $('#otp').modal('show');
+                    $('.send_otp_confirm').button('reset');
+                    $('.resend_otp').button('reset');
+                })
+                .fail(function (xhr) {
+                    $('.send_otp_confirm').button('reset');
+                });
+        }
+
+        //SAVE OTP
+        $scope.saveOTP = function (id) {
+            var form_id = '#approve_behalf_customer_confirm';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'otp_no': {
+                        required: true,
+                        number: true,
+                        minlength: 6,
+                        maxlength: 6,
+                    },
+                },
+                messages: {
+                    'otp_no': {
+                        required: 'OTP is required',
+                        number: 'OTP Must be a number',
+                        minlength: 'OTP Minimum 6 Characters',
+                        maxlength: 'OTP Maximum 6 Characters',
+                    },
+                },
+                submitHandler: function (form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.submit_otp_confirm').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/on-site-visit/verify/otp',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                        })
+                        .done(function (res) {
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                $('.submit_otp_confirm').button('reset');
+                                $('#otp_no').val('');
+                                $('#otp_no').focus();
+                                return;
+                            }
+                            console.log(res);
+                            custom_noty('success', res.message);
+                            
+                            $scope.fetchData();
+                        })
+                        .fail(function (xhr) {
+                            console.log(xhr);
+                            $('#otp_no').val('');
+                            $('.submit_confirm').button('reset');
+                            showServerErrorNoty();
+                        });
+                }
+            });
+        }
+        
         //Save Labour
         $scope.saveReturnedForm = function () {
             var form_id = '#return-part-form';
