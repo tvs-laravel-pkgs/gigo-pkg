@@ -628,10 +628,16 @@
                                                     <div class="form-group">
                                                         <label>Labour Amount<sup class="mandatory">*</sup></label>
                                                         <input type="text" name="labour_amount" maxlength="100"
-                                                            placeholder="Ex: 1000" class="form-control amount"
+                                                            placeholder="Ex: 1000" class="form-control amount
+                                                            labour_invoice_amount"
                                                             id="labour_invoice_amount"
                                                             value="{{job_order.manual_delivery_labour_invoice.amount}}"
                                                             oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                                            <span class="error labour_discount_amount"
+                                                                ng-if="job_order.labour_discount_amount > 0"></span>
+                                                            <input type="hidden" class="labour_discount_class"
+                                                                value="{{job_order.labour_discount_amount}}"
+                                                                name="labour_discount_amount">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -648,10 +654,16 @@
                                                     <div class="form-group">
                                                         <label>Parts Amount<sup class="mandatory">*</sup></label>
                                                         <input type="text" name="parts_amount" maxlength="100"
-                                                            placeholder="Ex: 2000" class="form-control amount"
+                                                            placeholder="Ex: 2000" class="form-control amount
+                                                            parts_invoice_amount"
                                                             id="parts_invoice_amount"
                                                             value="{{job_order.manual_delivery_parts_invoice.amount}}"
                                                             oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                                            <span class="error part_discount_amount"
+                                                                ng-if="job_order.part_discount_amount > 0"></span>
+                                                                <input type="hidden" class="part_discount_class"
+                                                                    value="{{job_order.part_discount_amount}}"
+                                                                    name="part_discount_amount">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                             </div><!-- Row -->

@@ -297,8 +297,24 @@ class ManualVehicleDeliveryController extends Controller
             }
         }
 
+        $customer_paid_labour_amount = 0;
+        if($labour_amount > 0 && $job_order->labour_discount_amount > 0){
+            $customer_paid_labour_amount = $labour_amount - $job_order->labour_discount_amount;
+            $customer_paid_labour_amount = number_format((float) $customer_paid_labour_amount, 2, '.', '');
+        }
+
+        $customer_paid_parts_amount = 0;
+        if ($parts_amount > 0 && $job_order->part_discount_amount > 0) {
+            $customer_paid_parts_amount = $parts_amount - $job_order->part_discount_amount;
+            $customer_paid_parts_amount = number_format((float) $customer_paid_parts_amount, 2, '.', '');
+        }
+
+
         $balance_amount = ($labour_amount + $parts_amount) - $paid_amount;
         $job_order->balance_amount = $balance_amount;
+        $job_order->customer_paid_labour_amount = $customer_paid_labour_amount;
+        $job_order->customer_paid_parts_amount = $customer_paid_parts_amount;
+
 
         $this->data['success'] = true;
         $this->data['job_order'] = $job_order;
@@ -634,6 +650,9 @@ class ManualVehicleDeliveryController extends Controller
                         $job_order->vehicle_payment_status = $request->vehicle_payment_status;
                         $job_order->vehicle_delivery_requester_id = Auth::user()->id;
                         $job_order->job_card_number = $request->job_card_number;
+                        $job_order->labour_discount_amount = $request->labour_discount_amount;
+                        $job_order->part_discount_amount = $request->part_discount_amount;
+
 
                         if ($request->vehicle_payment_status == 1) {
                             $job_order->vehicle_delivery_request_remarks = null;
@@ -926,6 +945,9 @@ class ManualVehicleDeliveryController extends Controller
                         $job_order->warranty_reason = null;
                         $job_order->status_id = 8470;
                         $job_order->job_card_number = $request->job_card_number;
+                        $job_order->labour_discount_amount = null;
+                        $job_order->part_discount_amount = null;
+
                         $job_order->updated_by_id = Auth::user()->id;
                         $job_order->updated_at = Carbon::now();
                         $job_order->save();
@@ -1132,6 +1154,8 @@ class ManualVehicleDeliveryController extends Controller
                         $job_order->approved_date_time = null;
                         $job_order->warranty_reason = $request->warranty_reason;
                         $job_order->status_id = 8470;
+                        $job_order->labour_discount_amount = null;
+                        $job_order->part_discount_amount = null;
                         $job_order->updated_by_id = Auth::user()->id;
                         $job_order->updated_at = Carbon::now();
                         $job_order->save();

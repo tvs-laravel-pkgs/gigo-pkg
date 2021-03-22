@@ -714,6 +714,27 @@ app.component('manualVehicleDeliveryForm', {
                     }, 1000);
 
                     $scope.$apply();
+
+                    if ($scope.job_order.labour_discount_amount && $scope.job_order.labour_discount_amount > 0) {
+                        $('.labour_discount_class').val($scope.job_order.labour_discount_amount);
+                        var customer_paid_labour_amount = $scope.job_order.manual_delivery_labour_invoice.amount - $scope.job_order.labour_discount_amount;
+                        $('.labour_discount_amount').html('Customer to be paid - ₹ ' + customer_paid_labour_amount);
+                        $('.labour_discount_amount').show();
+                    } else {
+                        $('.labour_discount_amount').hide();
+                        $('.labour_discount_class').val('');
+                    }
+
+                    if ($scope.job_order.part_discount_amount && $scope.job_order.part_discount_amount > 0) {
+                        $('.part_discount_class').val($scope.job_order.part_discount_amount);
+                        var customer_paid_part_amount = $scope.job_order.manual_delivery_parts_invoice.amount - $scope.job_order.part_discount_amount;
+                        $('.part_discount_amount').html('Customer to be paid - ₹ ' + customer_paid_part_amount);
+                        $('.part_discount_amount').show();
+                    } else {
+                        $('.part_discount_amount').hide();
+                        $('.part_discount_class').val('');
+                    }
+
                 })
                 .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
@@ -817,7 +838,6 @@ app.component('manualVehicleDeliveryForm', {
                 }
                 $scope.job_order.payment_detail.splice(index, 1);
             }
-
         }
 
 
@@ -889,6 +909,46 @@ app.component('manualVehicleDeliveryForm', {
 
                 if (!parts_amount || isNaN(parts_amount)) {
                     parts_amount = 0;
+                }
+
+                //Labour discount
+                if (labour_amount && $scope.job_order.amc_member && $scope.job_order.amc_member.amc_policy.labour_discount_percentage) {
+                    labour_discount_value = (labour_amount * $scope.job_order.amc_member.amc_policy.labour_discount_percentage) / 100;
+                    console.log('-----------labour--------------');
+                    console.log(labour_discount_value);
+
+                    //labour amount after discount
+                    labour_amount = labour_amount - labour_discount_value;
+
+                    console.log(labour_amount);
+                    $('.labour_discount_class').val(labour_discount_value);
+                    $scope.job_order.labour_discount_amount = labour_amount;
+                    $('.labour_discount_amount').show();
+                    $('.labour_discount_amount').html('Customer to be paid - ₹ ' + labour_amount);
+                } else {
+                    $('.labour_discount_class').val('');
+                    $scope.job_order.labour_discount_amount = 0;
+                    $('.labour_discount_amount').hide();
+                }
+
+                //Parts discount
+                if (parts_amount && $scope.job_order.amc_member && $scope.job_order.amc_member.amc_policy.part_discount_percentage) {
+                    part_discount_value = (parts_amount * $scope.job_order.amc_member.amc_policy.part_discount_percentage) / 100;
+                    console.log('-----------part--------------');
+                    console.log(part_discount_value);
+
+                    //part amount after discount
+                    parts_amount = parts_amount - part_discount_value;
+
+                    console.log(parts_amount);
+                    $('.part_discount_class').val(part_discount_value);
+                    $scope.job_order.labour_discount_amount = parts_amount;
+                    $('.part_discount_amount').show();
+                    $('.part_discount_amount').html('Customer to be paid - ₹ ' + parts_amount);
+                } else {
+                    $('.part_discount_class').val('');
+                    $scope.job_order.labour_discount_amount = 0;
+                    $('.part_discount_amount').hide();
                 }
 
                 total_amount = parseFloat(labour_amount) + parseFloat(parts_amount);

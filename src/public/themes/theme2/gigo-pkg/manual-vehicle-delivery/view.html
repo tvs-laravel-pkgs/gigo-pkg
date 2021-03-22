@@ -561,12 +561,20 @@
                                                     </span>
                                                 </li>
                                                 <li class="view-col-4">
-                                                    <span class="view-col-label">
-                                                        Labour Invoice Amount
-                                                    </span>
                                                     <span class="view-col-value">
-                                                        <b>
+                                                        Labour Invoice Amount - <b>
                                                             {{job_order.manual_delivery_labour_invoice.amount}}
+                                                        </b>
+                                                    </span>
+                                                    <span class="view-col-label" style="color:red"
+                                                        ng-if="job_order.labour_discount_amount > 0">
+                                                        Labour Discount Amount - {{job_order.labour_discount_amount}}
+                                                    </span>
+                                                    <span class="view-col-value"
+                                                        ng-if="job_order.labour_discount_amount > 0">
+                                                        Customer to be paid -
+                                                        <b>
+                                                            {{job_order.customer_paid_labour_amount}}
                                                         </b>
                                                     </span>
                                                 </li>
@@ -581,6 +589,24 @@
                                                     </span>
                                                 </li>
                                                 <li class="view-col-4">
+                                                    <span class="view-col-value">
+                                                        Parts Invoice Amount - <b>
+                                                            {{job_order.manual_delivery_parts_invoice.amount}}
+                                                        </b>
+                                                    </span>
+                                                    <span class="view-col-label" style="color:red"
+                                                        ng-if="job_order.part_discount_amount > 0">
+                                                        Parts Discount Amount - {{job_order.part_discount_amount}}
+                                                    </span>
+                                                    <span class="view-col-value"
+                                                        ng-if="job_order.part_discount_amount > 0">
+                                                        Customer to be paid -
+                                                        <b>
+                                                        {{job_order.customer_paid_parts_amount}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <!-- <li class="view-col-4">
                                                     <span class="view-col-label">
                                                         Parts Invoice Amount
                                                     </span>
@@ -589,7 +615,7 @@
                                                             {{job_order.manual_delivery_parts_invoice.amount}}
                                                         </b>
                                                     </span>
-                                                </li>
+                                                </li> -->
                                             </ul>
                                             <!-- <button class="btn btn-secondary-dark btn-md btn-square">Edit</button> -->
                                         </div><!-- Column -->
@@ -856,7 +882,8 @@
                             <button type="button" data-dismiss="modal" class="btn btn-secondary-dark">
                                 Cancel
                             </button>
-                            <button type="submit" class="reject_submit btn btn-primary" ng-click="rejectVehicleDelivery()">
+                            <button type="submit" class="reject_submit btn btn-primary"
+                                ng-click="rejectVehicleDelivery()">
                                 Submit
                             </button>
                         </div><!-- Column -->
