@@ -942,12 +942,12 @@ app.component('manualVehicleDeliveryForm', {
 
                     console.log(parts_amount);
                     $('.part_discount_class').val(part_discount_value);
-                    $scope.job_order.labour_discount_amount = parts_amount;
+                    $scope.job_order.part_discount_amount = parts_amount;
                     $('.part_discount_amount').show();
                     $('.part_discount_amount').html('Customer to be paid - ₹ ' + parts_amount);
                 } else {
                     $('.part_discount_class').val('');
-                    $scope.job_order.labour_discount_amount = 0;
+                    $scope.job_order.part_discount_amount = 0;
                     $('.part_discount_amount').hide();
                 }
 
@@ -955,6 +955,8 @@ app.component('manualVehicleDeliveryForm', {
                 total_amount = total_amount.toFixed(2);
 
                 $('.paid_amount_0').val(total_amount);
+
+                $scope.$apply();
             }, 100);
         }
 
