@@ -1047,8 +1047,48 @@ app.component('manualVehicleDeliveryForm', {
             $scope.job_order.transcation_attachment.splice(index, 1);
         }
 
+        $(document).on('click', '.select_all_works', function () {
+            if (event.target.checked == true) {
+                $('.workcheckbox').prop('checked', true);
+                $.each($('.workcheckbox:checked'), function () {
+                    $scope.checkCheckbox($(this).val());
+                    $('.work_details_table tbody tr #in_' + $(this).val()).removeClass('ng-hide');
+                    $('.work_details_table tbody tr #checked_' + $(this).val()).val('1');
+                    $('.work_details_table tbody tr #in_' + $(this).val()).addClass('error');
+                    $('.work_details_table tbody tr #in_' + $(this).val()).addClass('required');
+                });
+            } else {
+                $('.workcheckbox').prop('checked', false);
+                $.each($('.workcheckbox'), function () {
+                    $('.work_details_table tbody tr #in_' + $(this).val()).addClass('ng-hide');
+                    $('.work_details_table tbody tr #in_' + $(this).val() + '-error').remove();
+                    $('.work_details_table tbody tr #in_' + $(this).val()).removeClass('error');
+                    $('.work_details_table tbody tr #in_' + $(this).val()).removeClass('required');
+                    $('.work_details_table tbody tr #in_' + $(this).val()).closest('.form-group').find('label.error').remove();
+                    $('.work_details_table tbody tr #in_' + $(this).val()).val('');
+                    $('.work_details_table tbody tr #checked_' + $(this).val()).val('0');
+                });
+            }
+        });
+
+        $scope.checkCheckbox = function (id) {
+            checkval = $('#check' + id).is(":checked");
+            if (checkval == true) {
+                $("#in_" + id).removeClass('ng-hide');
+                $("#in_" + id).addClass('required');
+                $("#in_" + id).addClass('error');
+            } else {
+                $("#in_" + id).addClass('ng-hide');
+                $("#in_" + id).val(" ");
+                $("#in_" + id).removeClass('required');
+                $("#in_" + id).removeClass('error');
+                $("#in_" + id).closest('.form-group').find('label.error').remove();
+                $("#in_" + id).val('');
+                $('#in_' + id + '-error').remove();
+            }
+        }
+
         setTimeout(function () {
-            /* Image Uploadify Funtion */
             //Scrollable Tabs
             scrollableTabs();
         }, 1000);

@@ -10,6 +10,7 @@ use App\Company;
 use App\Config;
 use App\JobOrderEstimate;
 use App\SplitOrderType;
+use App\AggregateWork;
 use Auth;
 use DB;
 use File;
@@ -451,6 +452,11 @@ class JobOrder extends BaseModel {
 		return $this->belongsTo('App\User', 'vehicle_delivery_requester_id');
 	}
 
+	public function aggregateWork() {
+		return $this->belongsToMany('App\AggregateWork', 'job_order_aggregate_works', 'job_order_id', 'aggregate_work_id')->withPivot(['amount']);
+	}
+
+
 	// Query Scopes --------------------------------------------------------------
 
 	public function scopeFilterSearch($query, $term) {
@@ -465,6 +471,45 @@ class JobOrder extends BaseModel {
 
 	public function scopeFilterTypeIn($query, $typeIds) {
 		$query->whereIn('type_id', $typeIds);
+	}
+
+	public static function getAggregateWorkList($job_order_id = NULL,$amc_policy_id = NULL) {
+		// dd($job_order_id);
+		
+		$job_order = JobOrder::with(['aggregateWork'])->find($job_order_id);
+
+		$list = AggregateWork::select('aggregate_works.id','aggregate_works.name')->join('amc_aggregate_works','amc_aggregate_works.aggregate_work_id','aggregate_works.id')->join('amc_policies','amc_policies.id','amc_aggregate_works.amc_policy_id')->where('amc_aggregate_works.amc_policy_id',$amc_policy_id)->get()->keyBy('id');
+
+		if ($job_order && count($job_order->aggregateWork) > 0) {
+			$job_order_aggregate_works = DB::table('job_order_aggregate_works')->where('job_order_id', $job_order_id)->orderBy('aggregate_work_id')->get();
+			if (count($job_order_aggregate_works) > 0) {
+				foreach ($job_order_aggregate_works as $value) {
+					if (isset($list[$value->aggregate_work_id])) {
+						$list[$value->aggregate_work_id]->checked = true;
+						if (isset($value->aggregate_work_id)) {
+							$list[$value->aggregate_work_id]->amount = $value->amount;
+						}
+					}
+				}
+				$aggregate_processed = 1;
+			}else{
+				$aggregate_processed = 0;
+			}
+		}else{
+			$aggregate_processed = 0;
+		}
+		// dd($list);
+
+		if (count($list) == 0) {
+			$list = null;
+		}
+
+		$result['aggregate_works'] = $list;
+  
+		//This is used to View page for show or hide aggregate works
+		$result['aggregate_processed'] = $aggregate_processed;
+		
+		return $result;
 	}
 
 	// Operations --------------------------------------------------------------

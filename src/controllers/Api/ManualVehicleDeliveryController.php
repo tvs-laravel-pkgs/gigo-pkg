@@ -240,6 +240,7 @@ class ManualVehicleDeliveryController extends Controller
             'pendingReason',
             'amcMember',
             'amcMember.amcPolicy',
+            'amcMember.amcPolicy.amcAggregateWork',
             'transcationAttachment',
             'billingType',
             'inwardCancelReasonType',
@@ -315,7 +316,19 @@ class ManualVehicleDeliveryController extends Controller
         $job_order->customer_paid_labour_amount = $customer_paid_labour_amount;
         $job_order->customer_paid_parts_amount = $customer_paid_parts_amount;
 
+        $aggregate_work = [];
+        $aggregate_processed = 0;
+        if($job_order && $job_order->amcMember){
+            $aggregate_works =  $job_order->getAggregateWorkList($job_order->id,$job_order->amcMember->amcPolicy->id);
+            $aggregate_work = $aggregate_works['aggregate_works'];
 
+            //This is used to View page for show or hide aggregate works
+            $aggregate_processed = $aggregate_works['aggregate_processed'];
+        }
+
+        $job_order->aggregate_works = $aggregate_work;
+        $job_order->aggregate_processed = $aggregate_processed;
+        
         $this->data['success'] = true;
         $this->data['job_order'] = $job_order;
         $this->data['invoice_date'] = $invoice_date;
@@ -673,6 +686,22 @@ class ManualVehicleDeliveryController extends Controller
                         $job_order->updated_at = Carbon::now();
                         $job_order->save();
 
+                        $job_order->aggregateWork()->sync([]);
+
+                        //Save Aggregate Work
+                        if ($request->aggregate_work) {
+                            foreach ($request->aggregate_work as $key => $aggregate_work) {
+                                if (isset($aggregate_work['amount'])) {
+                                    $job_order->aggregateWork()->attach(
+                                            $aggregate_work['aggregate_work_id'],
+                                            [
+                                                'amount' => $aggregate_work['amount'],
+                                            ]
+                                        );
+                                }
+                            }
+                        }
+
                         //Delete previous receipt
                         // $remove_receipt = Receipt::where('receipt_of_id', 7622)->where('entity_id', $job_order->id)->forceDelete();
 
@@ -952,6 +981,8 @@ class ManualVehicleDeliveryController extends Controller
                         $job_order->updated_at = Carbon::now();
                         $job_order->save();
 
+                        $job_order->aggregateWork()->sync([]);
+
                         //Delete previous receipt
                         // $remove_receipt = Receipt::where('receipt_of_id', 7622)->where('entity_id', $job_order->id)->forceDelete();
 
@@ -1160,6 +1191,8 @@ class ManualVehicleDeliveryController extends Controller
                         $job_order->updated_at = Carbon::now();
                         $job_order->save();
 
+                        $job_order->aggregateWork()->sync([]);
+
                         //CREATE DIRECTORY TO STORAGE PATH
                         $attachment_path = storage_path('app/public/gigo/job_order/attachments/');
                         Storage::makeDirectory($attachment_path, 0777);
@@ -1273,6 +1306,8 @@ class ManualVehicleDeliveryController extends Controller
                     $job_order->updated_by_id = Auth::user()->id;
                     $job_order->updated_at = Carbon::now();
                     $job_order->save();
+
+                    $job_order->aggregateWork()->sync([]);
 
                     $gate_pass = $this->generateGatePass($job_order);
 

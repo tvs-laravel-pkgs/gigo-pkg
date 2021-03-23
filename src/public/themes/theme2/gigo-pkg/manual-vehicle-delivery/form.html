@@ -499,8 +499,7 @@
                                                     <div class="form-group">
                                                         <label>Job Card Number<sup class="mandatory">*</sup></label>
                                                         <input type="text" class="form-control required"
-                                                            placeholder="Ex:12345"
-                                                            ng-model="job_order.job_card_number"
+                                                            placeholder="Ex:12345" ng-model="job_order.job_card_number"
                                                             value="{{job_order.job_card_number}}"
                                                             name="job_card_number" />
                                                     </div><!-- Feild -->
@@ -629,15 +628,14 @@
                                                         <label>Labour Amount<sup class="mandatory">*</sup></label>
                                                         <input type="text" name="labour_amount" maxlength="100"
                                                             placeholder="Ex: 1000" class="form-control amount
-                                                            labour_invoice_amount"
-                                                            id="labour_invoice_amount"
+                                                            labour_invoice_amount" id="labour_invoice_amount"
                                                             value="{{job_order.manual_delivery_labour_invoice.amount}}"
                                                             oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
-                                                            <span class="error labour_discount_amount"
-                                                                ng-if="job_order.labour_discount_amount > 0"></span>
-                                                            <input type="hidden" class="labour_discount_class"
-                                                                value="{{job_order.labour_discount_amount}}"
-                                                                name="labour_discount_amount">
+                                                        <span class="error labour_discount_amount"
+                                                            ng-if="job_order.labour_discount_amount > 0"></span>
+                                                        <input type="hidden" class="labour_discount_class"
+                                                            value="{{job_order.labour_discount_amount}}"
+                                                            name="labour_discount_amount">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -655,17 +653,74 @@
                                                         <label>Parts Amount<sup class="mandatory">*</sup></label>
                                                         <input type="text" name="parts_amount" maxlength="100"
                                                             placeholder="Ex: 2000" class="form-control amount
-                                                            parts_invoice_amount"
-                                                            id="parts_invoice_amount"
+                                                            parts_invoice_amount" id="parts_invoice_amount"
                                                             value="{{job_order.manual_delivery_parts_invoice.amount}}"
                                                             oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
-                                                            <span class="error part_discount_amount"
-                                                                ng-if="job_order.part_discount_amount > 0"></span>
-                                                                <input type="hidden" class="part_discount_class"
-                                                                    value="{{job_order.part_discount_amount}}"
-                                                                    name="part_discount_amount">
+                                                        <span class="error part_discount_amount"
+                                                            ng-if="job_order.part_discount_amount > 0"></span>
+                                                        <input type="hidden" class="part_discount_class"
+                                                            value="{{job_order.part_discount_amount}}"
+                                                            name="part_discount_amount">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
+                                            </div><!-- Row -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-12"
+                                            ng-if="$ctrl.vehicle_service_status == 1 && (job_order.billing_type_id == 11520)">
+                                            <h5 class="color-primary mb-10">
+                                                <b>
+                                                    Aggregate Work Details
+                                                </b>
+                                            </h5>
+                                            <!-- <hr class="hr-15"> -->
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-dark-grey work_details_table"
+                                                            id="work_details_table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <td class="table-checkbox">
+                                                                        <div class="separate-checkbox">
+                                                                            <input id="select_all_works" type="checkbox"
+                                                                                class="select_all_works">
+                                                                            <label for="select_all_works"
+                                                                                class="header-checkbox-label"></label>
+                                                                        </div><!-- Check Box -->
+                                                                    </td>
+                                                                    <th>Aggregate Work</th>
+                                                                    <th>Amount</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr
+                                                                    ng-repeat="(index,aggregate_work) in job_order.aggregate_works">
+                                                                    <td class="table-checkbox">
+                                                                        <input type="checkbox" id="check{{index}}"
+                                                                            ng-click="checkCheckbox(index)"
+                                                                            ng-checked="aggregate_work.checked"
+                                                                            class="workcheckbox" value="{{index}}" />
+                                                                        <label for="check{{index}}"></label>
+                                                                    </td>
+                                                                    <td>{{aggregate_work.name}}</td>
+                                                                    <td><input type="text" class="form-control"
+                                                                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                                                            name="aggregate_work[{{index}}][amount]"
+                                                                            ng-show="aggregate_work.checked"
+                                                                            id="in_{{index}}"
+                                                                            value="{{aggregate_work.amount}}">
+                                                                        <input type="hidden"
+                                                                            name="aggregate_work[{{index}}][aggregate_work_id]"
+                                                                            value="{{aggregate_work.id}}">
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div><!-- Table Responsive -->
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="clear-fix"><br></div>
+                                                </div>
                                             </div><!-- Row -->
                                         </div><!-- Column -->
                                         <div class="col-md-12"
@@ -814,7 +869,7 @@
                                                     <input type="hidden" name="removal_payment_ids"
                                                         class="removal_payment_ids" id="removal_payment_ids">
                                                 </div><!-- Column -->
-                                                <div class="col-md-12">
+                                                <div class="col-md-12" ng-if="$ctrl.vehicle_payment_status">
                                                     <div class="clear-fix"><br></div>
                                                 </div>
                                                 <div class="col-md-3"

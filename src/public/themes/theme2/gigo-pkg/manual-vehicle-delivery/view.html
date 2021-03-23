@@ -620,6 +620,42 @@
                                             <!-- <button class="btn btn-secondary-dark btn-md btn-square">Edit</button> -->
                                         </div><!-- Column -->
                                         <div class="col-md-12"
+                                            ng-if="job_order.aggregate_processed == 1">
+                                            <h5 class="color-primary mb-10">
+                                                <b>
+                                                    Aggregate Work Details
+                                                </b>
+                                            </h5>
+                                            <!-- <hr class="hr-15"> -->
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-dark-grey work_details_table"
+                                                            id="work_details_table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Aggregate Work</th>
+                                                                    <th>Amount</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr
+                                                                    ng-repeat="(index,aggregate_work) in
+                                                                    job_order.aggregate_works"
+                                                                    ng-if="aggregate_work.amount">
+                                                                    <td>{{aggregate_work.name}}</td>
+                                                                    <td>₹ {{aggregate_work.amount}}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div><!-- Table Responsive -->
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="clear-fix"><br></div>
+                                                </div>
+                                            </div><!-- Row -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-12"
                                             ng-if="$ctrl.vehicle_service_status == 1  && job_order.billing_type_id == 11520">
                                             <h5 class="color-primary mb-10"><b>Payment Status</b></h5>
                                             <ul class="view-row mb-no">
