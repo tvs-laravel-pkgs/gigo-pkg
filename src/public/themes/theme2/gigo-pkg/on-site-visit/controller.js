@@ -21,7 +21,7 @@ app.component('onSiteVisitList', {
 
         // table_scroll = $('.page-main-content.list-page-content').height() - 37;
         $('.page-main-content.list-page-content').css("overflow-y", "auto");
-        var dataTable = $('#delivery_vehicles_list').DataTable({
+        var dataTable = $('#on_site_visit_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {
                 // "search": "",
@@ -64,31 +64,39 @@ app.component('onSiteVisitList', {
             },
 
             columns: [{
-                    data: 'action',
-                    class: 'action',
-                    name: 'action',
-                    searchable: false
-                },
-                {
-                    data: 'date',
-                    searchable: false
-                },
-                {
-                    data: 'outlet_code',
-                    name: 'outlets.code'
-                },
-                {
-                    data: 'customer_name',
-                    name: 'customers.name'
-                },
-                {
-                    data: 'number',
-                    name: 'on_site_orders.number'
-                },
-                {
-                    data: 'status',
-                    name: 'on_site_order_statuses.name'
-                },
+                data: 'action',
+                class: 'action',
+                name: 'action',
+                searchable: false
+            },
+            {
+                data: 'date',
+                searchable: false
+            },
+            {
+                data: 'outlet_code',
+                name: 'outlets.code'
+            },
+            {
+                data: 'customer_name',
+                name: 'customers.name'
+            },
+            {
+                data: 'number',
+                name: 'on_site_orders.number'
+            },
+            {
+                data: 'se_name',
+                name: 'users.name'
+            },
+            {
+                data: 'se_mobile',
+                name: 'users.contact_number'
+            },
+            {
+                data: 'status',
+                name: 'on_site_order_statuses.name'
+            },
 
             ],
             "infoCallback": function (settings, start, end, max, total, pre) {
@@ -103,13 +111,13 @@ app.component('onSiteVisitList', {
 
         $scope.clear_search = function () {
             self.search_key = '';
-            $('#delivery_vehicles_list').DataTable().search('').draw();
+            $('#on_site_visit_list').DataTable().search('').draw();
         }
         $('.refresh_table').on("click", function () {
-            $('#delivery_vehicles_list').DataTable().ajax.reload();
+            $('#on_site_visit_list').DataTable().ajax.reload();
         });
 
-        var dataTables = $('#delivery_vehicles_list').dataTable();
+        var dataTables = $('#on_site_visit_list').dataTable();
         $scope.searchInwardVehicle = function () {
             dataTables.fnFilter(self.search_key);
         }
@@ -131,8 +139,8 @@ app.component('onSiteVisitList', {
                     $http
                         .post(
                             laravel_routes['getManualDeliveryVehicleFilter'], {
-                                key: query,
-                            }
+                            key: query,
+                        }
                         )
                         .then(function (response) {
                             resolve(response.data);
@@ -150,8 +158,8 @@ app.component('onSiteVisitList', {
                     $http
                         .post(
                             laravel_routes['getVehicleModelSearchList'], {
-                                key: query,
-                            }
+                            key: query,
+                        }
                         )
                         .then(function (response) {
                             resolve(response.data);
@@ -289,15 +297,15 @@ app.component('onSiteVisitList', {
                     let formData = new FormData($(split_form_id)[0]);
                     $('.submit').button('loading');
                     $.ajax({
-                            url: base_url + '/api/manual-vehicle-delivery/update/vehicle-status',
-                            method: "POST",
-                            data: formData,
-                            beforeSend: function (xhr) {
-                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                            },
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/manual-vehicle-delivery/update/vehicle-status',
+                        method: "POST",
+                        data: formData,
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             $('.submit').button('reset');
                             if (!res.success) {
@@ -351,15 +359,15 @@ app.component('onSiteVisitView', {
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
-                    url: base_url + '/api/on-site-visit/get-form-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.id,
-                    },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
+                url: base_url + '/api/on-site-visit/get-form-data',
+                method: "POST",
+                data: {
+                    id: $routeParams.id,
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
                 .done(function (res) {
                     console.log(res)
                     if (!res.success) {
@@ -427,15 +435,15 @@ app.component('onSiteVisitView', {
         //FETCH PARTS DATA
         $scope.fetchPartsData = function () {
             $.ajax({
-                    url: base_url + '/api/on-site-visit/get-parts-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.id,
-                    },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
+                url: base_url + '/api/on-site-visit/get-parts-data',
+                method: "POST",
+                data: {
+                    id: $routeParams.id,
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
                 .done(function (res) {
                     console.log(res)
                     if (!res.success) {
@@ -456,15 +464,15 @@ app.component('onSiteVisitView', {
         //FETCH TIME LOG DATA
         $scope.fetchTimeLogData = function () {
             $.ajax({
-                    url: base_url + '/api/on-site-visit/get/time-log',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.id,
-                    },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
+                url: base_url + '/api/on-site-visit/get/time-log',
+                method: "POST",
+                data: {
+                    id: $routeParams.id,
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
                 .done(function (res) {
                     console.log(res)
                     if (!res.success) {
@@ -493,6 +501,8 @@ app.component('onSiteVisitView', {
                     $('.send_otp_confirm').button('reset');
                     $('.submit_otp_confirm').button('reset');
                     $('.submit').button('reset');
+                    $('.start_labour_part').button('reset');
+                    $('#confirm_start_labour_part_modal').modal('hide');
                     $('#labour_form_modal').modal('hide');
                     $('#part_form_modal').modal('hide');
                     $("#confirmation_modal").modal('hide');
@@ -538,10 +548,10 @@ app.component('onSiteVisitView', {
         $scope.searchRepairOrders = function (query) {
             return new Promise(function (resolve, reject) {
                 RepairOrderSvc.options({
-                        filter: {
-                            search: query
-                        }
-                    })
+                    filter: {
+                        search: query
+                    }
+                })
                     .then(function (response) {
                         resolve(response.data.options);
                     });
@@ -571,9 +581,9 @@ app.component('onSiteVisitView', {
                         .then(function (response) {
                             $scope.on_site_order_ro.repair_order = response.data.repair_order;
 
-                            if (labour.repair_order.is_editable == 1) {
-                                $scope.on_site_order_ro.repair_order.amount = labour.amount;
-                            }
+                            // if (labour.repair_order.is_editable == 1) {
+                            $scope.on_site_order_ro.repair_order.amount = labour.amount;
+                            // }
 
                         });
                 }
@@ -623,12 +633,12 @@ app.component('onSiteVisitView', {
                     let formData = new FormData($(form_id)[0]);
                     $('.save_labour').button('loading');
                     $.ajax({
-                            url: base_url + '/api/on-site-visit/repair-order/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/on-site-visit/repair-order/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             if (!res.success) {
                                 $('.save_labour').button('reset');
@@ -649,15 +659,16 @@ app.component('onSiteVisitView', {
         $scope.searchParts = function (query) {
             return new Promise(function (resolve, reject) {
                 PartSvc.options({
-                        filter: {
-                            search: query
-                        }
-                    })
+                    filter: {
+                        search: query
+                    }
+                })
                     .then(function (response) {
                         resolve(response.data.options);
                     });
             });
         }
+
         $scope.partSelected = function (part) {
             $qty = 1;
             if (!part) {
@@ -668,9 +679,9 @@ app.component('onSiteVisitView', {
                 }
             }
             PartSvc.getFormData({
-                    outletId: $scope.outlet_id,
-                    partId: part.id
-                })
+                outletId: $scope.outlet_id,
+                partId: part.id
+            })
                 .then(function (response) {
                     console.log(response);
 
@@ -697,6 +708,10 @@ app.component('onSiteVisitView', {
                     console.log(error);
                 });
 
+        }
+
+        $scope.calculatePartAmount = function () {
+            $scope.on_site_part.part.total_amount = $scope.on_site_part.part.qty * $scope.on_site_part.part.mrp;
         }
 
         $scope.showPartForm = function (part_index, part = null) {
@@ -734,9 +749,9 @@ app.component('onSiteVisitView', {
                 }
                 if (part.uom == undefined) {
                     PartSvc.getFormData({
-                            outletId: $scope.outlet_id,
-                            partId: part.part_id
-                        })
+                        outletId: $scope.outlet_id,
+                        partId: part.part_id
+                    })
                         .then(function (response) {
                             $scope.on_site_part.part = response.data.part;
                             $scope.on_site_part.part.qty = part.qty;
@@ -772,12 +787,12 @@ app.component('onSiteVisitView', {
                     let formData = new FormData($(form_id)[0]);
                     $('.save_part').button('loading');
                     $.ajax({
-                            url: base_url + '/api/on-site-visit/parts/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/on-site-visit/parts/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             if (!res.success) {
                                 $('.save_part').button('reset');
@@ -795,16 +810,58 @@ app.component('onSiteVisitView', {
             });
         }
 
+        $scope.startLabour = function (index, labour, type) {
+            console.log(index, labour, type);
+            $scope.confirmLabourPart(index, labour, type);
+        }
+
+        $scope.issuePart = function (index, part, type) {
+            console.log(index, part, type);
+            $scope.confirmLabourPart(index, part, type);
+        }
+
+        $scope.confirmLabourPart = function (index, value, type) {
+            $scope.labour_part_name = value.code + ' / ' + value.name;
+            $scope.labour_part_type = type;
+            $('#labour_parts_id').val(value.id);
+            $('#confirm_start_labour_part_modal').modal('show');
+            $('#labour_part_type').val(type);
+
+            $scope.saveLabourPart = function () {
+                $('.start_labour_part').button('loading');
+                $.ajax({
+                    url: base_url + '/api/on-site-visit/labour-part/process',
+                    method: "POST",
+                    data: {
+                        id: value.id,
+                        type: type,
+                    },
+                })
+                    .done(function (res) {
+                        if (!res.success) {
+                            $('.start_labour_part').button('reset');
+                            showErrorNoty(res);
+                            return;
+                        }
+                        custom_noty('success', res.message);
+                        $scope.fetchData();
+                    })
+                    .fail(function (xhr) {
+                        $('.start_labour_part').button('reset');
+                    });
+            }
+        }
+
         $scope.sendConfirm = function (type_id) {
             $('.send_confirm').button('loading');
             $.ajax({
-                    url: base_url + '/api/on-site-visit/request/parts',
-                    method: "POST",
-                    data: {
-                        id: $scope.site_visit.id,
-                        type_id: type_id,
-                    },
-                })
+                url: base_url + '/api/on-site-visit/request/parts',
+                method: "POST",
+                data: {
+                    id: $scope.site_visit.id,
+                    type_id: type_id,
+                },
+            })
                 .done(function (res) {
                     if (!res.success) {
                         $('.send_confirm').button('reset');
@@ -824,12 +881,12 @@ app.component('onSiteVisitView', {
             $('.resend_otp').button('loading');
 
             $.ajax({
-                    url: base_url + '/api/on-site-visit/request/otp',
-                    method: "POST",
-                    data: {
-                        id: $scope.site_visit.id,
-                    },
-                })
+                url: base_url + '/api/on-site-visit/request/otp',
+                method: "POST",
+                data: {
+                    id: $scope.site_visit.id,
+                },
+            })
                 .done(function (res) {
                     $('.resend_otp').button('reset');
                     if (!res.success) {
@@ -875,15 +932,15 @@ app.component('onSiteVisitView', {
                     let formData = new FormData($(form_id)[0]);
                     $('.submit_otp_confirm').button('loading');
                     $.ajax({
-                            url: base_url + '/api/on-site-visit/verify/otp',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                            beforeSend: function (xhr) {
-                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                            },
-                        })
+                        url: base_url + '/api/on-site-visit/verify/otp',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                    })
                         .done(function (res) {
                             if (!res.success) {
                                 showErrorNoty(res);
@@ -894,7 +951,7 @@ app.component('onSiteVisitView', {
                             }
                             console.log(res);
                             custom_noty('success', res.message);
-                            
+
                             $scope.fetchData();
                         })
                         .fail(function (xhr) {
@@ -906,7 +963,7 @@ app.component('onSiteVisitView', {
                 }
             });
         }
-        
+
         //Save Labour
         $scope.saveReturnedForm = function () {
             var form_id = '#return-part-form';
@@ -924,12 +981,12 @@ app.component('onSiteVisitView', {
                     let formData = new FormData($(form_id)[0]);
                     $('.returned_button').button('loading');
                     $.ajax({
-                            url: base_url + '/api/on-site-visit/return/parts',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/on-site-visit/return/parts',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             if (!res.success) {
                                 $('.returned_button').button('reset');
@@ -963,12 +1020,12 @@ app.component('onSiteVisitView', {
             formData.append('type', $type);
             $('.delete_lbr_parts').button('loading');
             $.ajax({
-                    url: base_url + '/api/on-site-visit/delete/issue-return/parts',
-                    method: "POST",
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                })
+                url: base_url + '/api/on-site-visit/delete/issue-return/parts',
+                method: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+            })
                 .done(function (res) {
                     if (!res.success) {
                         $rootScope.loading = false;
@@ -1036,14 +1093,14 @@ app.component('onSiteVisitView', {
             if (id && work_log_type) {
                 $('.work_log_action').button('loading');
                 $.ajax({
-                        url: base_url + '/api/on-site-visit/save/time-log',
-                        method: "POST",
-                        data: {
-                            on_site_order_id: $scope.site_visit.id,
-                            type_id: id,
-                            work_log_type: work_log_type,
-                        },
-                    })
+                    url: base_url + '/api/on-site-visit/save/time-log',
+                    method: "POST",
+                    data: {
+                        on_site_order_id: $scope.site_visit.id,
+                        type_id: id,
+                        work_log_type: work_log_type,
+                    },
+                })
                     .done(function (res) {
                         if (!res.success) {
                             $('.work_log_action').button('reset');
@@ -1080,12 +1137,12 @@ app.component('onSiteVisitView', {
                     let formData = new FormData($(form_id)[0]);
                     $('.submit').button('loading');
                     $.ajax({
-                            url: base_url + '/api/on-site-visit/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/on-site-visit/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             if (!res.success) {
                                 $('.submit').button('reset');
@@ -1102,7 +1159,7 @@ app.component('onSiteVisitView', {
                 }
             });
         }
-        
+
         $scope.removePart = function (index, id, type) {
             console.log(index, id, type);
             if (id == undefined) {
@@ -1119,7 +1176,7 @@ app.component('onSiteVisitView', {
             console.log(index, id, type);
             if (id == undefined) {
                 $scope.labour_details.splice(index, 1);
-            }else{
+            } else {
                 $scope.delete_reason = 10021;
                 $('#removal_reason').val('');
                 //HIDE REASON TEXTAREA 
@@ -1158,12 +1215,12 @@ app.component('onSiteVisitView', {
                         let formData = new FormData($(delete_form_id)[0]);
                         $rootScope.loading = true;
                         $.ajax({
-                                url: base_url + '/api/on-site-visit/labour-parts/delete',
-                                method: "POST",
-                                data: formData,
-                                processData: false,
-                                contentType: false,
-                            })
+                            url: base_url + '/api/on-site-visit/labour-parts/delete',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
                             .done(function (res) {
                                 if (!res.success) {
                                     $rootScope.loading = false;
@@ -1226,15 +1283,15 @@ app.component('onSiteVisitForm', {
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
-                    url: base_url + '/api/on-site-visit/get-form-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.id,
-                    },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
+                url: base_url + '/api/on-site-visit/get-form-data',
+                method: "POST",
+                data: {
+                    id: $routeParams.id,
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
                 .done(function (res) {
                     console.log(res)
                     if (!res.success) {
@@ -1273,10 +1330,10 @@ app.component('onSiteVisitForm', {
         $scope.searchCustomer = function (query) {
             return new Promise(function (resolve, reject) {
                 CustomerSvc.options({
-                        filter: {
-                            search: query
-                        }
-                    })
+                    filter: {
+                        search: query
+                    }
+                })
                     .then(function (response) {
                         resolve(response.data.options);
                     });
@@ -1299,12 +1356,12 @@ app.component('onSiteVisitForm', {
 
         $scope.countryChanged = function (country_id) {
             $.ajax({
-                    url: base_url + '/api/state/get-drop-down-List',
-                    method: "POST",
-                    data: {
-                        country_id: country_id,
-                    },
-                })
+                url: base_url + '/api/state/get-drop-down-List',
+                method: "POST",
+                data: {
+                    country_id: country_id,
+                },
+            })
                 .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
@@ -1337,8 +1394,8 @@ app.component('onSiteVisitForm', {
                     $http
                         .post(
                             laravel_routes['getCitySearchList'], {
-                                key: query,
-                            }
+                            key: query,
+                        }
                         )
                         .then(function (response) {
                             resolve(response.data);
@@ -1353,10 +1410,10 @@ app.component('onSiteVisitForm', {
         $scope.searchRepairOrders = function (query) {
             return new Promise(function (resolve, reject) {
                 RepairOrderSvc.options({
-                        filter: {
-                            search: query
-                        }
-                    })
+                    filter: {
+                        search: query
+                    }
+                })
                     .then(function (response) {
                         resolve(response.data.options);
                     });
@@ -1466,12 +1523,12 @@ app.component('onSiteVisitForm', {
                     let formData = new FormData($(form_id)[0]);
                     $('.submit').button('loading');
                     $.ajax({
-                            url: base_url + '/api/on-site-visit/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/on-site-visit/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             $('.submit').button('reset');
 
@@ -1509,12 +1566,12 @@ app.component('onSiteVisitForm', {
                     let formData = new FormData($(form_id)[0]);
                     $('.save_labour').button('loading');
                     $.ajax({
-                            url: base_url + '/api/on-site-visit/repair-order/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/on-site-visit/repair-order/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             if (!res.success) {
                                 $('.save_labour').button('reset');
@@ -1539,10 +1596,10 @@ app.component('onSiteVisitForm', {
         $scope.searchParts = function (query) {
             return new Promise(function (resolve, reject) {
                 PartSvc.options({
-                        filter: {
-                            search: query
-                        }
-                    })
+                    filter: {
+                        search: query
+                    }
+                })
                     .then(function (response) {
                         resolve(response.data.options);
                     });
@@ -1559,9 +1616,9 @@ app.component('onSiteVisitForm', {
                 }
             }
             PartSvc.getFormData({
-                    outletId: $scope.outlet_id,
-                    partId: part.id
-                })
+                outletId: $scope.outlet_id,
+                partId: part.id
+            })
                 .then(function (response) {
                     console.log(response);
 
@@ -1583,11 +1640,14 @@ app.component('onSiteVisitForm', {
                     $scope.on_site_part.part.total_amount = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
                     $scope.available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
                     $scope.on_site_part.part.qty = $qty;
-                    // $scope.calculatePartAmount();
+                    $scope.calculatePartAmount();
                 }).catch(function (error) {
                     console.log(error);
                 });
+        }
 
+        $scope.calculatePartAmount = function () {
+            $scope.on_site_part.part.total_amount = $scope.on_site_part.part.qty * $scope.on_site_part.part.mrp;
         }
 
         $scope.showPartForm = function (part_index, part = null) {
@@ -1625,9 +1685,9 @@ app.component('onSiteVisitForm', {
                 }
                 if (part.uom == undefined) {
                     PartSvc.getFormData({
-                            outletId: $scope.outlet_id,
-                            partId: part.part_id
-                        })
+                        outletId: $scope.outlet_id,
+                        partId: part.part_id
+                    })
                         .then(function (response) {
                             $scope.on_site_part.part = response.data.part;
                             $scope.on_site_part.part.qty = part.qty;
@@ -1663,12 +1723,12 @@ app.component('onSiteVisitForm', {
                     let formData = new FormData($(form_id)[0]);
                     $('.save_part').button('loading');
                     $.ajax({
-                            url: base_url + '/api/on-site-visit/parts/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/on-site-visit/parts/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             if (!res.success) {
                                 $('.save_part').button('reset');
@@ -1728,15 +1788,15 @@ app.component('onSiteVisitIssueBulkPart', {
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
-                    url: base_url + '/api/on-site-visit/get-bulk-form-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.id,
-                    },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
+                url: base_url + '/api/on-site-visit/get-bulk-form-data',
+                method: "POST",
+                data: {
+                    id: $routeParams.id,
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
                 .done(function (res) {
                     console.log(res)
                     if (!res.success) {
@@ -1824,12 +1884,12 @@ app.component('onSiteVisitIssueBulkPart', {
                     $('.submit').button('loading');
 
                     $.ajax({
-                            url: base_url + '/api/on-site-visit/bulk-form-data/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/on-site-visit/bulk-form-data/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             $('.submit').button('reset');
                             if (!res.success) {

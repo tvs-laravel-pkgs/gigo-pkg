@@ -59,6 +59,7 @@ class OnSiteVisitController extends Controller
 
         $vehicle_inwards = OnSiteOrder::join('customers', 'customers.id', 'on_site_orders.customer_id')
             ->join('outlets', 'outlets.id', 'on_site_orders.outlet_id')
+            ->join('users', 'users.id', 'on_site_orders.on_site_visit_user_id')
             ->leftjoin('on_site_order_statuses', 'on_site_order_statuses.id', 'on_site_orders.status_id')
             ->select(
                 'on_site_orders.id',
@@ -67,47 +68,50 @@ class OnSiteVisitController extends Controller
                 DB::raw('DATE_FORMAT(on_site_orders.planned_visit_date,"%d-%m-%Y") as date'),
                 'outlets.code as outlet_code',
                 'customers.name as customer_name',
-                'on_site_order_statuses.name as status'
+                'on_site_order_statuses.name as status',
+                DB::raw('CONCAT(users.ecode, " / ",users.name) as se_name'),
+                // 'users.name as se_name',
+                'users.contact_number as se_mobile'
             )
-            // ->where(function ($query) use ($start_date, $end_date) {
-            //     $query->whereDate('gate_logs.gate_in_date', '>=', $start_date)
-            //         ->whereDate('gate_logs.gate_in_date', '<=', $end_date);
-            // })
-            // ->where(function ($query) use ($request) {
-            //     if (!empty($request->reg_no)) {
-            //         $query->where('vehicles.registration_number', 'LIKE', '%' . $request->reg_no . '%');
-            //     }
-            // })
-            // ->where(function ($query) use ($request) {
-            //     if (!empty($request->membership)) {
-            //         $query->where('amc_policies.name', 'LIKE', '%' . $request->membership . '%');
-            //     }
-            // })
-            // ->where(function ($query) use ($request) {
-            //     if (!empty($request->gate_in_no)) {
-            //         $query->where('gate_logs.number', 'LIKE', '%' . $request->gate_in_no . '%');
-            //     }
-            // })
-            // ->where(function ($query) use ($request) {
-            //     if ($request->registration_type == '1' || $request->registration_type == '0') {
-            //         $query->where('vehicles.is_registered', $request->registration_type);
-            //     }
-            // })
-            // ->where(function ($query) use ($request) {
-            //     if (!empty($request->customer_id)) {
-            //         $query->where('vehicle_owners.customer_id', $request->customer_id);
-            //     }
-            // })
-            // ->where(function ($query) use ($request) {
-            //     if (!empty($request->model_id)) {
-            //         $query->where('vehicles.model_id', $request->model_id);
-            //     }
-            // })
-            // ->where(function ($query) use ($request) {
-            //     if (!empty($request->status_id)) {
-            //         $query->where('job_orders.status_id', $request->status_id);
-            //     }
-            // })
+        // ->where(function ($query) use ($start_date, $end_date) {
+        //     $query->whereDate('gate_logs.gate_in_date', '>=', $start_date)
+        //         ->whereDate('gate_logs.gate_in_date', '<=', $end_date);
+        // })
+        // ->where(function ($query) use ($request) {
+        //     if (!empty($request->reg_no)) {
+        //         $query->where('vehicles.registration_number', 'LIKE', '%' . $request->reg_no . '%');
+        //     }
+        // })
+        // ->where(function ($query) use ($request) {
+        //     if (!empty($request->membership)) {
+        //         $query->where('amc_policies.name', 'LIKE', '%' . $request->membership . '%');
+        //     }
+        // })
+        // ->where(function ($query) use ($request) {
+        //     if (!empty($request->gate_in_no)) {
+        //         $query->where('gate_logs.number', 'LIKE', '%' . $request->gate_in_no . '%');
+        //     }
+        // })
+        // ->where(function ($query) use ($request) {
+        //     if ($request->registration_type == '1' || $request->registration_type == '0') {
+        //         $query->where('vehicles.is_registered', $request->registration_type);
+        //     }
+        // })
+        // ->where(function ($query) use ($request) {
+        //     if (!empty($request->customer_id)) {
+        //         $query->where('vehicle_owners.customer_id', $request->customer_id);
+        //     }
+        // })
+        // ->where(function ($query) use ($request) {
+        //     if (!empty($request->model_id)) {
+        //         $query->where('vehicles.model_id', $request->model_id);
+        //     }
+        // })
+        // ->where(function ($query) use ($request) {
+        //     if (!empty($request->status_id)) {
+        //         $query->where('job_orders.status_id', $request->status_id);
+        //     }
+        // })
             ->where('on_site_orders.company_id', Auth::user()->company_id)
         ;
 
@@ -133,7 +137,7 @@ class OnSiteVisitController extends Controller
 
         return Datatables::of($vehicle_inwards)
             ->rawColumns(['status', 'action'])
-            
+
             ->editColumn('status', function ($vehicle_inward) {
                 $status = $vehicle_inward->status_id == '8460' || $vehicle_inward->status_id == '8469' || $vehicle_inward->status_id == '8477' || $vehicle_inward->status_id == '8479' ? 'green' : 'blue';
                 return '<span class="text-' . $status . '">' . $vehicle_inward->status . '</span>';
@@ -148,7 +152,7 @@ class OnSiteVisitController extends Controller
 
                 $output = '';
                 // dd($vehicle_inward->status_id,Entrust::can('edit-site-visit'));
-                if ($vehicle_inward->status_id == 1 && Entrust::can('edit-site-visit')){
+                if ($vehicle_inward->status_id == 1 && Entrust::can('edit-site-visit')) {
                     $output .= '<a href="#!/on-site-visit/form/' . $vehicle_inward->id . '" id = "" title="Form"><img src="' . $edit_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $edit_img . '" onmouseout=this.src="' . $edit_img . '"></a>';
                 }
 
@@ -172,8 +176,8 @@ class OnSiteVisitController extends Controller
     {
         ob_end_clean();
 
-		// ini_set('memory_limit', '50M');
-		ini_set('max_execution_time', 0);
+        // ini_set('memory_limit', '50M');
+        ini_set('max_execution_time', 0);
 
         // dd($request->all());
         if ($request->date) {
@@ -189,7 +193,7 @@ class OnSiteVisitController extends Controller
         }
 
         $vehicle_inward = JobOrder::with(['manualDeliveryLabourInvoice',
-		'manualDeliveryPartsInvoice'])->select('regions.code as region_code', 'states.code as state_code', 'customers.code as customer_code', 'customers.name as customer_name', 'gate_logs.number as gate_in_number', 'gate_logs.gate_in_date', 'gate_logs.gate_out_date', 'vehicles.registration_number', 'vehicles.engine_number', 'vehicles.chassis_number', 'job_orders.inward_cancel_reason_id', 'billing_type.name as billing_type', 'job_orders.warranty_reason', 'inward_cancel.name as inward_cancel_reason_name', 'job_orders.inward_cancel_reason', 'job_orders.vehicle_payment_status', 'pending_reasons.name as pending_reason', 'jv_customers.code as jv_customer_code', 'jv_customers.name as jv_customer_name', 'job_orders.pending_remarks', 'users.ecode as user_code', 'users.name as user_name', 'job_orders.vehicle_delivery_request_remarks', 'job_orders.approved_remarks', 'job_orders.approved_date_time', 'outlets.code as outlet_code', 'outlets.name as outlet_name', 'outlets.ax_name','vehicle_delivery_statuses.name as vehicle_delivery_status','job_orders.id')
+            'manualDeliveryPartsInvoice'])->select('regions.code as region_code', 'states.code as state_code', 'customers.code as customer_code', 'customers.name as customer_name', 'gate_logs.number as gate_in_number', 'gate_logs.gate_in_date', 'gate_logs.gate_out_date', 'vehicles.registration_number', 'vehicles.engine_number', 'vehicles.chassis_number', 'job_orders.inward_cancel_reason_id', 'billing_type.name as billing_type', 'job_orders.warranty_reason', 'inward_cancel.name as inward_cancel_reason_name', 'job_orders.inward_cancel_reason', 'job_orders.vehicle_payment_status', 'pending_reasons.name as pending_reason', 'jv_customers.code as jv_customer_code', 'jv_customers.name as jv_customer_name', 'job_orders.pending_remarks', 'users.ecode as user_code', 'users.name as user_name', 'job_orders.vehicle_delivery_request_remarks', 'job_orders.approved_remarks', 'job_orders.approved_date_time', 'outlets.code as outlet_code', 'outlets.name as outlet_name', 'outlets.ax_name', 'vehicle_delivery_statuses.name as vehicle_delivery_status', 'job_orders.id')
             ->join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
             ->leftJoin('vehicles', 'job_orders.vehicle_id', 'vehicles.id')
             ->leftJoin('customers', 'customers.id', 'job_orders.customer_id')
@@ -222,8 +226,8 @@ class OnSiteVisitController extends Controller
             }
         }
 
-        if($request->status_id){
-            $vehicle_inward = $vehicle_inward->where('job_orders.status_id',$request->status_id);
+        if ($request->status_id) {
+            $vehicle_inward = $vehicle_inward->where('job_orders.status_id', $request->status_id);
         }
 
         $vehicle_inwards = $vehicle_inward->get();
@@ -245,11 +249,11 @@ class OnSiteVisitController extends Controller
             'Vehicle Status',
             'Service Completed',
             'Billing Type',
-			'Invoice Date',
-			'Labour Invoice Number',
-			'Labour Amount',
-			'Parts Invoice Number',
-			'Parts Amount',
+            'Invoice Date',
+            'Labour Invoice Number',
+            'Labour Amount',
+            'Parts Invoice Number',
+            'Parts Amount',
             'Inward Cancel Reason',
             'Remarks',
             // 'Payment Status',
@@ -280,39 +284,39 @@ class OnSiteVisitController extends Controller
                 // if( $vehicle_inward->inward_cancel_reason_id){
                 // $vehicle_detail['billing_type'] = '';
                 // }else{
-                if($vehicle_inward->billing_type){
+                if ($vehicle_inward->billing_type) {
                     $vehicle_detail['service_completed'] = 'Yes';
-                }else{
+                } else {
                     $vehicle_detail['service_completed'] = 'No';
                 }
                 $vehicle_detail['billing_type'] = $vehicle_inward->billing_type ? $vehicle_inward->billing_type : '-';
                 // }
-				
-				if( $vehicle_inward->inward_cancel_reason_id){
-					$vehicle_detail['invoice_date'] = '-';
-					$vehicle_detail['labour_inv_number'] = '-';
-					$vehicle_detail['labour_amount'] = '';
-					$vehicle_detail['parts_inv_number'] = '-';
-					$vehicle_detail['parts_amount'] = '';
-				}else{
-					// dump($vehicle_inward->manualDeliveryLabourInvoice);
-					if($vehicle_inward->manualDeliveryLabourInvoice){
-						$vehicle_detail['invoice_date'] = $vehicle_inward->manualDeliveryLabourInvoice->invoice_date;
-						$vehicle_detail['labour_inv_number'] = $vehicle_inward->manualDeliveryLabourInvoice->number;
-						$vehicle_detail['labour_amount'] = $vehicle_inward->manualDeliveryLabourInvoice->amount;
-					}else{
-						$vehicle_detail['invoice_date'] = '-';
-						$vehicle_detail['labour_inv_number'] = '-';
-						$vehicle_detail['labour_amount'] = '';
-					}
-					if($vehicle_inward->manualDeliveryPartsInvoice){
-						$vehicle_detail['parts_inv_number'] = $vehicle_inward->manualDeliveryPartsInvoice->number;
-						$vehicle_detail['parts_amount'] = $vehicle_inward->manualDeliveryPartsInvoice->amount;
-					}else{
-						$vehicle_detail['parts_inv_number'] = '-';
-						$vehicle_detail['parts_amount'] = '';
-					}
-				}
+
+                if ($vehicle_inward->inward_cancel_reason_id) {
+                    $vehicle_detail['invoice_date'] = '-';
+                    $vehicle_detail['labour_inv_number'] = '-';
+                    $vehicle_detail['labour_amount'] = '';
+                    $vehicle_detail['parts_inv_number'] = '-';
+                    $vehicle_detail['parts_amount'] = '';
+                } else {
+                    // dump($vehicle_inward->manualDeliveryLabourInvoice);
+                    if ($vehicle_inward->manualDeliveryLabourInvoice) {
+                        $vehicle_detail['invoice_date'] = $vehicle_inward->manualDeliveryLabourInvoice->invoice_date;
+                        $vehicle_detail['labour_inv_number'] = $vehicle_inward->manualDeliveryLabourInvoice->number;
+                        $vehicle_detail['labour_amount'] = $vehicle_inward->manualDeliveryLabourInvoice->amount;
+                    } else {
+                        $vehicle_detail['invoice_date'] = '-';
+                        $vehicle_detail['labour_inv_number'] = '-';
+                        $vehicle_detail['labour_amount'] = '';
+                    }
+                    if ($vehicle_inward->manualDeliveryPartsInvoice) {
+                        $vehicle_detail['parts_inv_number'] = $vehicle_inward->manualDeliveryPartsInvoice->number;
+                        $vehicle_detail['parts_amount'] = $vehicle_inward->manualDeliveryPartsInvoice->amount;
+                    } else {
+                        $vehicle_detail['parts_inv_number'] = '-';
+                        $vehicle_detail['parts_amount'] = '';
+                    }
+                }
 
                 $vehicle_detail['inward_cancel_reason'] = $vehicle_inward->inward_cancel_reason_name ? $vehicle_inward->inward_cancel_reason_name : '-';
                 $vehicle_detail['remarks'] = $vehicle_inward->inward_cancel_reason ? $vehicle_inward->inward_cancel_reason : $vehicle_inward->warranty_reason;
@@ -323,15 +327,15 @@ class OnSiteVisitController extends Controller
         }
 
         $time_stamp = date('Y_m_d_h_i_s');
-		Excel::create('Vehicle Delivery - ' . $time_stamp, function ($excel) use ($header, $vehicle_details) {
-			$excel->sheet('Summary', function ($sheet) use ($header, $vehicle_details) {
-				$sheet->fromArray($vehicle_details, NULL, 'A1');
-				$sheet->row(1, $header);
-				$sheet->row(1, function ($row) {
-					$row->setBackground('#07c63a');
-				});
-			});
-			$excel->setActiveSheetIndex(0);
-		})->export('xlsx');
+        Excel::create('Vehicle Delivery - ' . $time_stamp, function ($excel) use ($header, $vehicle_details) {
+            $excel->sheet('Summary', function ($sheet) use ($header, $vehicle_details) {
+                $sheet->fromArray($vehicle_details, null, 'A1');
+                $sheet->row(1, $header);
+                $sheet->row(1, function ($row) {
+                    $row->setBackground('#07c63a');
+                });
+            });
+            $excel->setActiveSheetIndex(0);
+        })->export('xlsx');
     }
 }

@@ -457,17 +457,21 @@
                                                 <table class="table table-dark-grey">
                                                     <thead>
                                                         <tr>
+                                                            <th class="wid-100"></th>
                                                             <th>
                                                                 Labour Code
                                                             </th>
                                                             <th>
                                                                 Name
                                                             </th>
-                                                            <th>
+                                                            <!-- <th>
                                                                 Type
-                                                            </th>
+                                                            </th> -->
                                                             <th>
                                                                 Split Order Type
+                                                            </th>
+                                                            <th>
+                                                                Status
                                                             </th>
                                                             <th class="text-right">
                                                                 Hours
@@ -478,7 +482,6 @@
                                                             <th class="wid-180 white-space text-right">
                                                                 Labour Value
                                                             </th>
-                                                            <th class="wid-100"></th>
                                                             <!-- <th class="wid-100"></th> -->
                                                         </tr>
                                                     </thead>
@@ -488,24 +491,6 @@
                                                             id="tr_{{index}}"
                                                             ng-class="labour_details.removal_reason_id == 10022 ? 'strikethrough' : ''"
                                                             ng-if="labour_details.removal_reason_id != '10021'">
-                                                            <td>{{labour_details.code ? labour_details.code : ''}}
-                                                            </td>
-                                                            <td>{{labour_details.name ? labour_details.name : ''}}</td>
-                                                            <td>
-                                                                {{labour_details.type}}
-                                                            </td>
-                                                            <td>
-                                                                {{labour_details.split_order_type}}
-                                                            </td>
-                                                            <td class="text-right">
-                                                                {{labour_details.qty}}
-                                                            </td>
-                                                            <td class="text-right">
-                                                                {{labour_details.rate | number:2}}
-                                                            </td>
-                                                            <td class="wid-180 white-space text-right">
-                                                                {{labour_details.amount | number:2}}
-                                                            </td>
                                                             <td class="wid-100"
                                                                 ng-class="labour_details.removal_reason_id == 10022 ? 'my-disable' : ''">
                                                                 <button type="button"
@@ -524,6 +509,35 @@
                                                                         src="./public/theme/img/content/delete-active.svg"
                                                                         alt="Delete" />
                                                                 </button>
+                                                                <button
+                                                                    ng-if="site_visit.status_id != 6 && site_visit.status_id != 10 && labour_details.status_id != 8183"
+                                                                    class="btn img-btn btn-delete">
+                                                                    <img class="img-responsive radius-50"
+                                                                        ng-click="startLabour(index,labour_details,'labour')"
+                                                                        src="./public/theme/img/table/add-hover.svg"
+                                                                        alt="Delete" />
+                                                                </button>
+                                                            </td>
+                                                            <td>{{labour_details.code ? labour_details.code : ''}}
+                                                            </td>
+                                                            <td>{{labour_details.name ? labour_details.name : ''}}</td>
+                                                            <!-- <td>
+                                                                {{labour_details.type}}
+                                                            </td> -->
+                                                            <td>
+                                                                {{labour_details.split_order_type}}
+                                                            </td>
+                                                            <td>
+                                                                {{labour_details.status}}
+                                                            </td>
+                                                            <td class="text-right">
+                                                                {{labour_details.qty}}
+                                                            </td>
+                                                            <td class="text-right">
+                                                                {{labour_details.rate | number:2}}
+                                                            </td>
+                                                            <td class="wid-180 white-space text-right">
+                                                                {{labour_details.amount | number:2}}
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -536,7 +550,7 @@
                                                                     Add Labour
                                                                 </button>
                                                             </td>
-                                                            <td colspan="5" class="text-right">
+                                                            <td colspan="6" class="text-right">
                                                                 <b>
                                                                     Total Labour
                                                                 </b>
@@ -549,8 +563,8 @@
                                                                     {{labour_amount | number:2}}
                                                                 </b>
                                                             </td>
-                                                            <td class="wid-100">
-                                                            </td>
+                                                            <!-- <td class="wid-100">
+                                                            </td> -->
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -578,17 +592,21 @@
                                                 <table class="table table-dark-grey">
                                                     <thead>
                                                         <tr>
+                                                            <th class="wid-100"></th>
                                                             <th>
                                                                 Part Code
                                                             </th>
                                                             <th>
                                                                 Name
                                                             </th>
-                                                            <th>
+                                                            <!-- <th>
                                                                 Type
-                                                            </th>
+                                                            </th> -->
                                                             <th>
                                                                 Split Order Type
+                                                            </th>
+                                                            <th>
+                                                                Status
                                                             </th>
                                                             <th class="text-right">
                                                                 Rate
@@ -599,7 +617,6 @@
                                                             <th class="wid-180 white-space text-right">
                                                                 Amount
                                                             </th>
-                                                            <th class="wid-100"></th>
                                                             <!-- <th class="wid-100"></th> -->
                                                         </tr>
                                                     </thead>
@@ -609,27 +626,6 @@
                                                             id="tp_{{index}}"
                                                             ng-class="part_details.removal_reason_id == 10022 ? 'strikethrough' : ''"
                                                             ng-if="part_details.removal_reason_id != '10021'">
-                                                            <td>
-                                                                {{part_details.code}}
-                                                            </td>
-                                                            <td>
-                                                                {{part_details.name}}
-                                                            </td>
-                                                            <td>
-                                                                {{part_details.type}}
-                                                            </td>
-                                                            <td>
-                                                                {{part_details.split_order_type}}
-                                                            </td>
-                                                            <td class="text-right">
-                                                                {{part_details.rate | number:2}}
-                                                            </td>
-                                                            <td class="text-right">
-                                                                {{part_details.qty}}
-                                                            </td>
-                                                            <td class="wid-180 white-space text-right">
-                                                                {{part_details.amount | number:2}}
-                                                            </td>
                                                             <td class="wid-100"
                                                                 ng-class="part_details.removal_reason_id == 10022 ? 'my-disable' : ''">
                                                                 <button type="button"
@@ -648,6 +644,38 @@
                                                                         src="./public/theme/img/content/delete-active.svg"
                                                                         alt="Delete" />
                                                                 </button>
+                                                                <button
+                                                                    ng-if="site_visit.status_id != 6 && site_visit.status_id != 10 && part_details.status_id != 8202"
+                                                                    class="btn img-btn btn-delete">
+                                                                    <img class="img-responsive radius-50"
+                                                                        ng-click="issuePart(index,part_details,'parts')"
+                                                                        src="./public/theme/img/table/add-hover.svg"
+                                                                        alt="Issue Part" />
+                                                                </button>
+                                                            </td>
+                                                            <td>
+                                                                {{part_details.code}}
+                                                            </td>
+                                                            <td>
+                                                                {{part_details.name}}
+                                                            </td>
+                                                            <!-- <td>
+                                                                {{part_details.type}}
+                                                            </td> -->
+                                                            <td>
+                                                                {{part_details.split_order_type}}
+                                                            </td>
+                                                            <td>
+                                                                {{part_details.status}}
+                                                            </td>
+                                                            <td class="text-right">
+                                                                {{part_details.rate | number:2}}
+                                                            </td>
+                                                            <td class="text-right">
+                                                                {{part_details.qty}}
+                                                            </td>
+                                                            <td class="wid-180 white-space text-right">
+                                                                {{part_details.amount | number:2}}
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -673,7 +701,7 @@
                                                                     Return Part
                                                                 </button>
                                                             </td>
-                                                            <td colspan="5" class="text-right">
+                                                            <td colspan="6" class="text-right">
                                                                 <b>
                                                                     Total Parts
                                                                 </b>
@@ -686,8 +714,8 @@
                                                                     {{parts_rate | number:2}}
                                                                 </b>
                                                             </td>
-                                                            <td class="wid-100">
-                                                            </td>
+                                                            <!-- <td class="wid-100">
+                                                            </td> -->
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -696,7 +724,8 @@
                                             </div><!-- Spacing -->
                                             <h5 class="color-primary mb-10"
                                                 ng-if="$ctrl.hasPermission('parts-view-site-visit') && part_logs.length > 0">
-                                                <b>Parts Indent Logs</b></h5>
+                                                <b>Parts Indent Logs</b>
+                                            </h5>
                                             <hr class="hr-15"
                                                 ng-if="$ctrl.hasPermission('parts-view-site-visit') && part_logs.length > 0">
                                             <!-- Separater -->
@@ -841,7 +870,8 @@
                                         <div class="col-md-12" style="padding-left: 0px;">
                                             <div class="col-md-6">
                                                 <h6 class="mb-20"><b>Travel Log</b>
-                                                    <button type="button" ng-if="travel_start_button_status == 'true'"
+                                                    <button type="button"
+                                                        ng-if="travel_start_button_status == 'true' && site_visit.status_id != 10 "
                                                         ng-click="saveWorkLog(1,'travel_log')"
                                                         class="btn btn-start start_travel float-right">
                                                         <img class="img-responsive"
@@ -881,9 +911,13 @@
                                                                                         ng-repeat="travel_log in travel_logs">
                                                                                         <td>{{travel_log.start_date_time}}
                                                                                         </td>
-                                                                                        <td>{{travel_log.end_date_time ? travel_log.end_date_time : '-'}}
+                                                                                        <td>{{travel_log.end_date_time ?
+                                                                                            travel_log.end_date_time :
+                                                                                            '-'}}
                                                                                         </td>
-                                                                                        <td>{{travel_log.total_duration ? travel_log.total_duration : '-'}}
+                                                                                        <td>{{travel_log.total_duration
+                                                                                            ? travel_log.total_duration
+                                                                                            : '-'}}
                                                                                         </td>
                                                                                     </tr>
                                                                                     <tr ng-if="travel_logs.length ==0">
@@ -905,7 +939,8 @@
                                             <div class="col-md-6"
                                                 ng-if="site_visit.status_id == 13 || site_visit.status_id == 14 || site_visit.status_id == 10 ">
                                                 <h6 class="mb-20"><b>Work Log</b>
-                                                    <button type="button" ng-if="work_start_button_status == 'true'"
+                                                    <button type="button"
+                                                        ng-if="work_start_button_status == 'true' && site_visit.status_id != 10 "
                                                         ng-click="saveWorkLog(1,'work_log')"
                                                         class="btn btn-start float-right start_work">
                                                         <img class="img-responsive"
@@ -945,9 +980,13 @@
                                                                                         ng-repeat="work_log in work_logs">
                                                                                         <td>{{work_log.start_date_time}}
                                                                                         </td>
-                                                                                        <td>{{work_log.end_date_time ? work_log.end_date_time : '-'}}
+                                                                                        <td>{{work_log.end_date_time ?
+                                                                                            work_log.end_date_time :
+                                                                                            '-'}}
                                                                                         </td>
-                                                                                        <td>{{work_log.total_duration ? work_log.total_duration : '-'}}
+                                                                                        <td>{{work_log.total_duration ?
+                                                                                            work_log.total_duration :
+                                                                                            '-'}}
                                                                                         </td>
                                                                                     </tr>
                                                                                     <tr ng-if="work_logs.length ==0">
@@ -1078,12 +1117,13 @@
                                 </li>
                                 <li class="view-col-4">
                                     <span class="view-col-label">Amount</span>
-                                    <span class="view-data-list-value"
-                                        ng-if="on_site_order_ro.repair_order.is_editable == 0">{{on_site_order_ro.repair_order.amount | currency}}</span>
-                                    <input class="form-control required"
-                                        ng-if="on_site_order_ro.repair_order.is_editable == 1"
-                                        ng-model="on_site_order_ro.repair_order.amount" type="text"
-                                        name="repair_order_amount" value="{{on_site_order_ro.repair_order.amount}}"
+                                    <!-- <span class="view-data-list-value"
+                                        ng-if="on_site_order_ro.repair_order.is_editable == 0">{{on_site_order_ro.repair_order.amount
+                                        | currency}}</span> -->
+                                    <!-- ng-if="on_site_order_ro.repair_order.is_editable == 1" -->
+                                    <input class="form-control required" ng-model="on_site_order_ro.repair_order.amount"
+                                        type="text" name="repair_order_amount"
+                                        value="{{on_site_order_ro.repair_order.amount}}"
                                         onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="7">
                                 </li>
                             </ul>
@@ -1213,8 +1253,8 @@
                                 </li>
                                 <li class="view-col-4">
                                     <span class="view-col-label">Amount</span>
-                                    <span
-                                        class="view-data-list-value">{{on_site_part.part.total_amount | currency}}</span>
+                                    <span class="view-data-list-value">{{on_site_part.part.total_amount |
+                                        currency}}</span>
                                 </li>
                             </ul>
                         </div><!-- View Data -->
@@ -1507,6 +1547,27 @@
             </div><!-- Modal Content -->
         </form>
     </div><!-- Modal Dialog -->
+</div>
+<div class="modal fade alert-modal failure" id="confirm_start_labour_part_modal" role="dialog"
+    aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <!-- <form id="start_labour_part"> -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Confirmation?</h4>
+            </div>
+            <div class="modal-body">
+                <h5>{{labour_part_name}}</h5>
+                <p ng-if="labour_part_type == 'labour'">Are you sure? Do you want to start this work?</p>
+                <p ng-if="labour_part_type == 'parts'">Are you sure? Do you want to issue this part?</p>
+                <input type="hidden" name="labour_parts_id" id="labour_parts_id" value="">
+                <input type="hidden" name="labour_part_type" id="labour_part_type" value="">
+                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">Cancel</button>
+                <button class="btn btn-rose start_labour_part" ng-click="saveLabourPart()" type="button">Yes</button>
+            </div>
+        </div>
+        <!-- </form> -->
+    </div>
 </div>
 <!-- Modal Content
 <script src="./public/theme/js/imageuploadify-mgatepass.min.js"></script>

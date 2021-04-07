@@ -15,8 +15,8 @@ use App\GigoManualInvoice;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\WpoSoapController;
 use App\JobOrder;
-use App\JobOrderWarrantyDetail;
 use App\JobOrderPaymentDetail;
+use App\JobOrderWarrantyDetail;
 use App\MailConfiguration;
 use App\Mail\VehicleDeliveryRequestMail;
 use App\Outlet;
@@ -299,7 +299,7 @@ class ManualVehicleDeliveryController extends Controller
         }
 
         $customer_paid_labour_amount = 0;
-        if($labour_amount > 0 && $job_order->labour_discount_amount > 0){
+        if ($labour_amount > 0 && $job_order->labour_discount_amount > 0) {
             $customer_paid_labour_amount = $labour_amount - $job_order->labour_discount_amount;
             $customer_paid_labour_amount = number_format((float) $customer_paid_labour_amount, 2, '.', '');
         }
@@ -310,7 +310,6 @@ class ManualVehicleDeliveryController extends Controller
             $customer_paid_parts_amount = number_format((float) $customer_paid_parts_amount, 2, '.', '');
         }
 
-
         $balance_amount = ($labour_amount + $parts_amount) - $paid_amount;
         $job_order->balance_amount = $balance_amount;
         $job_order->customer_paid_labour_amount = $customer_paid_labour_amount;
@@ -318,8 +317,8 @@ class ManualVehicleDeliveryController extends Controller
 
         $aggregate_work = [];
         $aggregate_processed = 0;
-        if($job_order && $job_order->amcMember){
-            $aggregate_works =  $job_order->getAggregateWorkList($job_order->id,$job_order->amcMember->amcPolicy->id);
+        if ($job_order && $job_order->amcMember) {
+            $aggregate_works = $job_order->getAggregateWorkList($job_order->id, $job_order->amcMember->amcPolicy->id);
             $aggregate_work = $aggregate_works['aggregate_works'];
 
             //This is used to View page for show or hide aggregate works
@@ -328,7 +327,7 @@ class ManualVehicleDeliveryController extends Controller
 
         $job_order->aggregate_works = $aggregate_work;
         $job_order->aggregate_processed = $aggregate_processed;
-        
+
         $this->data['success'] = true;
         $this->data['job_order'] = $job_order;
         $this->data['invoice_date'] = $invoice_date;
@@ -586,9 +585,9 @@ class ManualVehicleDeliveryController extends Controller
                         $payment_status = 0;
                         $status_id = 8477;
 
-                        //Check Paid Amount 
-                        if($request->payment){
-                            foreach($request->payment as $payment){
+                        //Check Paid Amount
+                        if ($request->payment) {
+                            foreach ($request->payment as $payment) {
                                 // if (strtotime($gate_in_date) > strtotime($payment['receipt_date'])) {
                                 //     return response()->json([
                                 //         'success' => false,
@@ -598,7 +597,7 @@ class ManualVehicleDeliveryController extends Controller
                                 //         ],
                                 //     ]);
                                 // }
-                                if($payment['receipt_amount'] > 0){
+                                if ($payment['receipt_amount'] > 0) {
                                     $receipt_amount += $payment['receipt_amount'];
                                 }
                             }
@@ -608,7 +607,7 @@ class ManualVehicleDeliveryController extends Controller
                             if ($receipt_amount == ($labour_amount + $parts_amount)) {
                                 $payment_status = 1;
                                 $status_id = 8468;
-                            } else if ($receipt_amount > ($labour_amount + $parts_amount)) { 
+                            } else if ($receipt_amount > ($labour_amount + $parts_amount)) {
                                 return response()->json([
                                     'success' => false,
                                     'error' => 'Validation Error',
@@ -666,7 +665,6 @@ class ManualVehicleDeliveryController extends Controller
                         $job_order->labour_discount_amount = $request->labour_discount_amount;
                         $job_order->part_discount_amount = $request->part_discount_amount;
 
-
                         if ($request->vehicle_payment_status == 1) {
                             $job_order->vehicle_delivery_request_remarks = null;
                             // $job_order->status_id = 8468;
@@ -693,11 +691,11 @@ class ManualVehicleDeliveryController extends Controller
                             foreach ($request->aggregate_work as $key => $aggregate_work) {
                                 if (isset($aggregate_work['amount'])) {
                                     $job_order->aggregateWork()->attach(
-                                            $aggregate_work['aggregate_work_id'],
-                                            [
-                                                'amount' => $aggregate_work['amount'],
-                                            ]
-                                        );
+                                        $aggregate_work['aggregate_work_id'],
+                                        [
+                                            'amount' => $aggregate_work['amount'],
+                                        ]
+                                    );
                                 }
                             }
                         }
@@ -769,19 +767,19 @@ class ManualVehicleDeliveryController extends Controller
                             $payment->entity_type_id = 8434;
                             $payment->entity_id = $job_order->id;
                             $payment->received_amount = $receipt_amount;
-                            $payment->receipt_id = NULL;
+                            $payment->receipt_id = null;
                             $job_order->payment()->save($payment);
 
                             $remove_payment = JobOrderPaymentDetail::where('job_order_id', $job_order->id)->forceDelete();
 
-                            //Check Paid Amount 
-                            if($request->payment){
-                                foreach($request->payment as $payment){
+                            //Check Paid Amount
+                            if ($request->payment) {
+                                foreach ($request->payment as $payment) {
 
                                     //Check Receipt Number alreay saved or not
-                                    $receipt_number = JobOrderPaymentDetail::where('transaction_number',$payment['receipt_number'])->first();
+                                    $receipt_number = JobOrderPaymentDetail::where('transaction_number', $payment['receipt_number'])->first();
 
-                                    if($receipt_number){
+                                    if ($receipt_number) {
                                         return response()->json([
                                             'success' => false,
                                             'error' => 'Validation Error',
@@ -791,9 +789,9 @@ class ManualVehicleDeliveryController extends Controller
                                         ]);
                                     }
 
-                                     //save payment detail
+                                    //save payment detail
                                     $job_order_payment = new JobOrderPaymentDetail;
-                                    $job_order_payment->payment_mode_id =  $payment['payment_mode_id'];
+                                    $job_order_payment->payment_mode_id = $payment['payment_mode_id'];
                                     $job_order_payment->job_order_id = $job_order->id;
                                     $job_order_payment->transaction_number = $payment['receipt_number'];
                                     $job_order_payment->transaction_date = date('Y-m-d', strtotime($payment['receipt_date']));
@@ -801,7 +799,7 @@ class ManualVehicleDeliveryController extends Controller
                                     $job_order_payment->save();
                                 }
                             }
-                           
+
                         }
 
                         //Save Labour Invoice Details
@@ -815,7 +813,7 @@ class ManualVehicleDeliveryController extends Controller
                         $invoice_detail->payment_status_id = $payment_status_id;
                         $invoice_detail->created_by_id = Auth::user()->id;
                         $invoice_detail->created_at = Carbon::now();
-                        $invoice_detail->receipt_id = NULL;
+                        $invoice_detail->receipt_id = null;
 
                         $job_order->invoice()->save($invoice_detail);
 
@@ -833,7 +831,7 @@ class ManualVehicleDeliveryController extends Controller
                         $invoice_detail->payment_status_id = $payment_status_id;
                         $invoice_detail->created_by_id = Auth::user()->id;
                         $invoice_detail->created_at = Carbon::now();
-                        $invoice_detail->receipt_id = NULL;
+                        $invoice_detail->receipt_id = null;
 
                         $job_order->invoice()->save($invoice_detail);
 
@@ -876,7 +874,7 @@ class ManualVehicleDeliveryController extends Controller
 
                         //Send Mail for Serivice Head
                         if (!$payment_status) {
-                            $this->vehiceRequestMail($job_order->id,$type = 1);
+                            $this->vehiceRequestMail($job_order->id, $type = 1);
                         }
 
                     } elseif ($request->billing_type_id == 11523) {
@@ -1139,7 +1137,7 @@ class ManualVehicleDeliveryController extends Controller
                                     'unique:job_order_warranty_details,number,' . $request->job_order_id . ',job_order_id',
                                 ],
                             ]);
-    
+
                             if ($validator->fails()) {
                                 return response()->json([
                                     'success' => false,
@@ -1234,7 +1232,6 @@ class ManualVehicleDeliveryController extends Controller
                         //Delete previous payment
                         $remove_payment = JobOrderPaymentDetail::where('job_order_id', $job_order->id)->forceDelete();
 
-
                         DB::commit();
                         $message = "Vehicle delivery request saved successfully!";
                     }
@@ -1327,7 +1324,7 @@ class ManualVehicleDeliveryController extends Controller
                 ]);
 
             } else if ($request->type_id == 2) {
-                if($request->status == 'Reject'){
+                if ($request->status == 'Reject') {
                     $error_messages = [
                         'rejected_remarks.required' => "Vehicle Delivery Reject Remarks is required",
                     ];
@@ -1340,9 +1337,9 @@ class ManualVehicleDeliveryController extends Controller
                         'rejected_remarks' => [
                             'required',
                         ],
-    
+
                     ], $error_messages);
-                }else{
+                } else {
                     $error_messages = [
                         'approved_remarks.required' => "Vehicle Delivery Approval Remarks is required",
                     ];
@@ -1355,10 +1352,10 @@ class ManualVehicleDeliveryController extends Controller
                         'approved_remarks' => [
                             'required',
                         ],
-    
+
                     ], $error_messages);
                 }
-                
+
                 if ($validator->fails()) {
                     return response()->json([
                         'success' => false,
@@ -1382,12 +1379,12 @@ class ManualVehicleDeliveryController extends Controller
                 DB::beginTransaction();
 
                 $job_order->approver_id = Auth::user()->id;
-                
-                if($request->status == 'Reject'){
+
+                if ($request->status == 'Reject') {
                     $job_order->status_id = 8479;
                     $job_order->rejected_remarks = $request->rejected_remarks;
                     $message = "Manual Vehicle Delivery Rejected Successfully!";
-                }else{
+                } else {
                     $job_order->status_id = 8478;
                     $job_order->approved_remarks = $request->approved_remarks;
                     $job_order->approved_date_time = Carbon::now();
@@ -1395,14 +1392,14 @@ class ManualVehicleDeliveryController extends Controller
                 }
                 $job_order->save();
 
-                if($request->status == 'Approve'){
+                if ($request->status == 'Approve') {
                     $gate_pass = $this->generateGatePass($job_order);
                 }
 
                 DB::commit();
 
                 //Send Approved Mail for user
-                $this->vehiceRequestMail($job_order->id,$type = 2);
+                $this->vehiceRequestMail($job_order->id, $type = 2);
 
                 return response()->json([
                     'success' => true,
@@ -1532,7 +1529,7 @@ class ManualVehicleDeliveryController extends Controller
                 $payment->entity_type_id = 8434;
                 $payment->entity_id = $job_order->id;
                 $payment->received_amount = $request->receipt_amount;
-                $payment->receipt_id = NULL;
+                $payment->receipt_id = null;
                 $job_order->payment()->save($payment);
 
                 //save payment detail
@@ -1591,7 +1588,7 @@ class ManualVehicleDeliveryController extends Controller
         }
     }
 
-    public function vehiceRequestMail($job_order_id,$type)
+    public function vehiceRequestMail($job_order_id, $type)
     {
         $job_order = JobOrder::with([
             'vehicle',
@@ -1641,19 +1638,19 @@ class ManualVehicleDeliveryController extends Controller
 
             $outlet = $job_order->outlet->ax_name ? $job_order->outlet->ax_name : $job_order->outlet->name;
 
-            $subject = 'GIGO '.$outlet.' - '. $job_order->vehicle->currentOwner->customer->name.' vehicle need approval for delivery';
+            $subject = 'GIGO ' . $outlet . ' - ' . $job_order->vehicle->currentOwner->customer->name . ' vehicle need approval for delivery';
 
-            if($type == 2){
+            if ($type == 2) {
                 $to_email = [];
-                $user = User::where('id',$job_order->vehicle_delivery_requester_id)->first();
+                $user = User::where('id', $job_order->vehicle_delivery_requester_id)->first();
                 $cc_email = [];
-                if($user && $user->email){
+                if ($user && $user->email) {
                     $to_email = ['0' => $user->email];
                 }
-                if($job_order->status_id == 8478){
-                    $subject = 'GIGO '.$outlet.' - '. $job_order->vehicle->currentOwner->customer->name.' vehicle approved for delivery';
-                }else{
-                    $subject = 'GIGO '.$outlet.' - '. $job_order->vehicle->currentOwner->customer->name.' vehicle rejected for delivery';
+                if ($job_order->status_id == 8478) {
+                    $subject = 'GIGO ' . $outlet . ' - ' . $job_order->vehicle->currentOwner->customer->name . ' vehicle approved for delivery';
+                } else {
+                    $subject = 'GIGO ' . $outlet . ' - ' . $job_order->vehicle->currentOwner->customer->name . ' vehicle rejected for delivery';
                 }
             }
             // dd($subject);

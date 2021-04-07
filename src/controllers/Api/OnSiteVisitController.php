@@ -9,7 +9,6 @@ use App\Config;
 use App\Country;
 use App\Customer;
 use App\Employee;
-use App\Otp;
 use App\Entity;
 use App\FinancialYear;
 use App\Http\Controllers\Controller;
@@ -22,6 +21,7 @@ use App\OnSiteOrderPart;
 use App\OnSiteOrderRepairOrder;
 use App\OnSiteOrderReturnedPart;
 use App\OnSiteOrderTimeLog;
+use App\Otp;
 use App\Outlet;
 use App\Part;
 use App\PartStock;
@@ -233,7 +233,9 @@ class OnSiteVisitController extends Controller
             'outlet',
             'status',
             'onSiteOrderRepairOrders',
+            'onSiteOrderRepairOrders.status',
             'onSiteOrderParts',
+            'onSiteOrderParts.status',
             'photos',
         ])->where('id', $params['on_site_order_id'])->first();
 
@@ -271,6 +273,7 @@ class OnSiteVisitController extends Controller
                 $labour_details[$key]['customer_voice'] = $value->customerVoice;
                 $labour_details[$key]['customer_voice_id'] = $value->customer_voice_id;
                 $labour_details[$key]['status_id'] = $value->status_id;
+                $labour_details[$key]['status'] = $value->status->name;
                 if (in_array($value->split_order_type_id, $customer_paid_type) || !$value->split_order_type_id) {
                     if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
                         $labour_amount += $value->amount;
@@ -306,6 +309,7 @@ class OnSiteVisitController extends Controller
                 $part_details[$key]['split_order_type_id'] = $value->split_order_type_id;
                 $part_details[$key]['part'] = $value->part;
                 $part_details[$key]['status_id'] = $value->status_id;
+                $part_details[$key]['status'] = $value->status->name;
                 $part_details[$key]['customer_voice'] = $value->customerVoice;
                 $part_details[$key]['customer_voice_id'] = $value->customer_voice_id;
                 $part_details[$key]['repair_order'] = $value->part->repair_order_parts;
@@ -535,11 +539,11 @@ class OnSiteVisitController extends Controller
             $on_site_repair_order->qty = $repair_order->hours;
             $on_site_repair_order->split_order_type_id = $request->split_order_type_id;
             $on_site_repair_order->estimate_order_id = $estimate_order_id;
-            if ($request->repair_order_description) {
-                $on_site_repair_order->amount = $request->repair_order_amount;
-            } else {
-                $on_site_repair_order->amount = $repair_order->amount;
-            }
+            // if ($request->repair_order_description) {
+            $on_site_repair_order->amount = $request->repair_order_amount;
+            // } else {
+            // $on_site_repair_order->amount = $repair_order->amount;
+            // }
 
             if (in_array($request->split_order_type_id, $customer_paid_type)) {
                 $on_site_repair_order->status_id = 8180; //Customer Approval Pending
@@ -751,7 +755,7 @@ class OnSiteVisitController extends Controller
 
             $on_site_part->save();
 
-            if($on_site_order->is_customer_approved == 1){
+            if ($on_site_order->is_customer_approved == 1) {
                 $result = $this->getApprovedLabourPartsAmount($on_site_order->id);
 
                 if ($result['status'] == 'true') {
@@ -785,29 +789,30 @@ class OnSiteVisitController extends Controller
         }
     }
 
-    public function getApprovedLabourPartsAmount($site_visit_id) {
+    public function getApprovedLabourPartsAmount($site_visit_id)
+    {
 
-		$customer_paid_type = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
+        $customer_paid_type = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
 
-		$site_visit = OnSiteOrder::with([
-                'company',
-                'outlet',
-                'onSiteVisitUser',
-                'customer',
-                'customer.address',
-                'customer.address.country',
-                'customer.address.state',
-                'customer.address.city',
-                'status',
-                'onSiteOrderRepairOrders' => function ($q){
-                    $q->whereNull('removal_reason_id');
-                },
-                'onSiteOrderParts' => function ($q) {
-                    $q->whereNull('removal_reason_id');
-                },
-            ])->find($site_visit_id);
+        $site_visit = OnSiteOrder::with([
+            'company',
+            'outlet',
+            'onSiteVisitUser',
+            'customer',
+            'customer.address',
+            'customer.address.country',
+            'customer.address.state',
+            'customer.address.city',
+            'status',
+            'onSiteOrderRepairOrders' => function ($q) {
+                $q->whereNull('removal_reason_id');
+            },
+            'onSiteOrderParts' => function ($q) {
+                $q->whereNull('removal_reason_id');
+            },
+        ])->find($site_visit_id);
 
-		if ($site_visit->customer->primaryAddress) {
+        if ($site_visit->customer->primaryAddress) {
             //Check which tax applicable for customer
             if ($site_visit->outlet->state_id == $site_visit->customer->primaryAddress->state_id) {
                 $tax_type = 1160; //Within State
@@ -818,83 +823,83 @@ class OnSiteVisitController extends Controller
             $tax_type = 1160; //Within State
         }
 
-		$taxes = Tax::whereIn('id', [1, 2, 3])->get();
+        $taxes = Tax::whereIn('id', [1, 2, 3])->get();
 
+        $parts_amount = 0;
+        $labour_amount = 0;
+        $total_billing_amount = 0;
 
-		$parts_amount = 0;
-		$labour_amount = 0;
-		$total_billing_amount = 0;
+        if ($site_visit->onSiteOrderRepairOrders) {
+            foreach ($site_visit->onSiteOrderRepairOrders as $key => $labour) {
+                if ($labour->is_free_service != 1 && (in_array($labour->split_order_type_id, $customer_paid_type) || !$labour->split_order_type_id)) {
+                    $total_amount = 0;
+                    $tax_amount = 0;
+                    if ($labour->repairOrder->taxCode) {
+                        foreach ($labour->repairOrder->taxCode->taxes as $tax_key => $value) {
+                            $percentage_value = 0;
+                            if ($value->type_id == $tax_type) {
+                                $percentage_value = ($labour->amount * $value->pivot->percentage) / 100;
+                                $percentage_value = number_format((float) $percentage_value, 2, '.', '');
+                            }
+                            $tax_amount += $percentage_value;
+                        }
+                    }
 
-		 if ($site_visit->onSiteOrderRepairOrders) {
-                foreach ($site_visit->onSiteOrderRepairOrders as $key => $labour) {
-				if ($labour->is_free_service != 1 && (in_array($labour->split_order_type_id, $customer_paid_type) || !$labour->split_order_type_id)) {
-					$total_amount = 0;
-					$tax_amount = 0;
-					if ($labour->repairOrder->taxCode) {
-						foreach ($labour->repairOrder->taxCode->taxes as $tax_key => $value) {
-							$percentage_value = 0;
-							if ($value->type_id == $tax_type) {
-								$percentage_value = ($labour->amount * $value->pivot->percentage) / 100;
-								$percentage_value = number_format((float) $percentage_value, 2, '.', '');
-							}
-							$tax_amount += $percentage_value;
-						}
-					}
+                    $total_amount = $tax_amount + $labour->amount;
+                    $total_amount = number_format((float) $total_amount, 2, '.', '');
+                    $labour_amount += $total_amount;
+                }
+            }
+        }
 
-					$total_amount = $tax_amount + $labour->amount;
-					$total_amount = number_format((float) $total_amount, 2, '.', '');
-					$labour_amount += $total_amount;
-				}
-			}
-		}
+        if ($site_visit->onSiteOrderParts) {
+            foreach ($site_visit->onSiteOrderParts as $key => $parts) {
+                if ($parts->is_free_service != 1 && (in_array($parts->split_order_type_id, $customer_paid_type) || !$parts->split_order_type_id)) {
+                    $total_amount = 0;
 
-		if ($site_visit->onSiteOrderParts) {
-                foreach ($site_visit->onSiteOrderParts as $key => $parts) {
-				if ($parts->is_free_service != 1 && (in_array($parts->split_order_type_id, $customer_paid_type) || !$parts->split_order_type_id)) {
-					$total_amount = 0;
+                    $tax_amount = 0;
+                    if ($parts->part->taxCode) {
+                        if (count($parts->part->taxCode->taxes) > 0) {
+                            foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
+                                $percentage_value = 0;
+                                if ($value->type_id == $tax_type) {
+                                    $percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
+                                    $percentage_value = number_format((float) $percentage_value, 2, '.', '');
+                                }
+                                $tax_amount += $percentage_value;
+                            }
+                        }
+                    }
 
-					$tax_amount = 0;
-					if ($parts->part->taxCode) {
-						if (count($parts->part->taxCode->taxes) > 0) {
-							foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
-								$percentage_value = 0;
-								if ($value->type_id == $tax_type) {
-									$percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
-									$percentage_value = number_format((float) $percentage_value, 2, '.', '');
-								}
-								$tax_amount += $percentage_value;
-							}
-						}
-					}
+                    $total_amount = $tax_amount + $parts->amount;
+                    $total_amount = number_format((float) $total_amount, 2, '.', '');
+                    $parts_amount += $total_amount;
+                }
+            }
+        }
 
-					$total_amount = $tax_amount + $parts->amount;
-					$total_amount = number_format((float) $total_amount, 2, '.', '');
-					$parts_amount += $total_amount;
-				}
-			}
-		}
+        $total_billing_amount = $parts_amount + $labour_amount;
 
-		$total_billing_amount = $parts_amount + $labour_amount;
+        $total_billing_amount = round($total_billing_amount);
 
-		$total_billing_amount = round($total_billing_amount);
-
-		if ($total_billing_amount > $site_visit->approved_amount) {
-			// return $total_billing_amount;
+        if ($total_billing_amount > $site_visit->approved_amount) {
+            // return $total_billing_amount;
             $result['status'] = 'true';
             $result['total_billing_amount'] = $total_billing_amount;
-		} else {
-			$result['status'] = 'false';
+        } else {
+            $result['status'] = 'false';
             $result['total_billing_amount'] = $total_billing_amount;
-		}
+        }
 
         return $result;
-	}
+    }
 
-     public function sendCustomerOtp(Request $request) {
-		// dd($request->all());
-		try {
+    public function sendCustomerOtp(Request $request)
+    {
+        // dd($request->all());
+        try {
 
-			$on_site_order = OnSiteOrder::with(['customer'])->find($request->id);
+            $on_site_order = OnSiteOrder::with(['customer'])->find($request->id);
 
             if (!$on_site_order) {
                 return response()->json([
@@ -906,7 +911,7 @@ class OnSiteVisitController extends Controller
                 ]);
             }
 
-			if (!$on_site_order->customer) {
+            if (!$on_site_order->customer) {
                 return response()->json([
                     'success' => false,
                     'error' => 'Validation Error',
@@ -924,168 +929,171 @@ class OnSiteVisitController extends Controller
                 ]);
             }
 
+            DB::beginTransaction();
 
-			DB::beginTransaction();
+            $otp_no = mt_rand(111111, 999999);
+            $on_site_order_otp_update = OnSiteOrder::where('id', $request->id)
+                ->update([
+                    'otp_no' => $otp_no,
+                    'status_id' => 6, //Waiting for Customer Approval
+                    'is_customer_approved' => 0,
+                    'updated_by_id' => Auth::user()->id,
+                    'updated_at' => Carbon::now(),
+                ]);
 
-            $otp_no  = mt_rand(111111, 999999);
-			$on_site_order_otp_update = OnSiteOrder::where('id', $request->id)
-				->update([
-					'otp_no' => $otp_no,
-					'status_id' => 6, //Waiting for Customer Approval
-					'is_customer_approved' => 0,
-					'updated_by_id' => Auth::user()->id,
-					'updated_at' => Carbon::now(),
-				]);
+            DB::commit();
+            if (!$on_site_order_otp_update) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => ['On Site Order OTP Update Failed!'],
+                ]);
+            }
 
-			DB::commit();
-			if (!$on_site_order_otp_update) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => ['On Site Order OTP Update Failed!'],
-				]);
-			}
+            $current_time = date("Y-m-d H:m:s");
 
-			$current_time = date("Y-m-d H:m:s");
+            $expired_time = Entity::where('entity_type_id', 32)->select('name')->first();
+            if ($expired_time) {
+                $expired_time = date("Y-m-d H:i:s", strtotime('+' . $expired_time->name . ' hours', strtotime($current_time)));
+            } else {
+                $expired_time = date("Y-m-d H:i:s", strtotime('+1 hours', strtotime($current_time)));
+            }
 
-			$expired_time = Entity::where('entity_type_id', 32)->select('name')->first();
-			if ($expired_time) {
-				$expired_time = date("Y-m-d H:i:s", strtotime('+' . $expired_time->name . ' hours', strtotime($current_time)));
-			} else {
-				$expired_time = date("Y-m-d H:i:s", strtotime('+1 hours', strtotime($current_time)));
-			}
+            //Otp Save
+            $otp = new Otp;
+            $otp->entity_type_id = 10113;
+            $otp->entity_id = $on_site_order->id;
+            $otp->otp_no = $otp_no;
+            $otp->created_by_id = Auth::user()->id;
+            $otp->created_at = $current_time;
+            $otp->expired_at = $expired_time;
+            $otp->outlet_id = Auth::user()->employee->outlet_id;
+            $otp->save();
 
-			//Otp Save
-			$otp = new Otp;
-			$otp->entity_type_id = 10113;
-			$otp->entity_id = $on_site_order->id;
-			$otp->otp_no = $otp_no;
-			$otp->created_by_id = Auth::user()->id;
-			$otp->created_at = $current_time;
-			$otp->expired_at = $expired_time;
-			$otp->outlet_id = Auth::user()->employee->outlet_id;
-			$otp->save();
+            $message = 'OTP is ' . $otp_no . ' for Job Order Estimate. Please show this SMS to Our Service Executive to verify your Job Order Estimate';
 
-			$message = 'OTP is ' . $otp_no . ' for Job Order Estimate. Please show this SMS to Our Service Executive to verify your Job Order Estimate';
+            $msg = sendSMSNotification($customer_mobile, $message);
 
-			$msg = sendSMSNotification($customer_mobile, $message);
+            return response()->json([
+                'success' => true,
+                'mobile_number' => $customer_mobile,
+                'message' => 'OTP Sent successfully!!',
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Server Network Down!',
+                'errors' => ['Exception Error' => $e->getMessage()],
+            ]);
+        }
+    }
 
-			return response()->json([
-				'success' => true,
-				'mobile_number' => $customer_mobile,
-				'message' => 'OTP Sent successfully!!',
-			]);
-		} catch (Exception $e) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
-			]);
-		}
-	}
+    public function verifyOtp(Request $request)
+    {
+        // dd($request->all());
+        try {
 
-    public function verifyOtp(Request $request) {
-		// dd($request->all());
-		try {
+            $validator = Validator::make($request->all(), [
+                'on_site_order_id' => [
+                    'required',
+                    'exists:on_site_orders,id',
+                    'integer',
+                ],
+                'otp_no' => [
+                    'required',
+                    'min:8',
+                    'integer',
+                ],
+                'verify_otp' => [
+                    'required',
+                    'integer',
+                ],
+            ]);
 
-			$validator = Validator::make($request->all(), [
-				'on_site_order_id' => [
-					'required',
-					'exists:on_site_orders,id',
-					'integer',
-				],
-				'otp_no' => [
-					'required',
-					'min:8',
-					'integer',
-				],
-				'verify_otp' => [
-					'required',
-					'integer',
-				],
-			]);
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => $validator->errors()->all(),
+                ]);
+            }
 
-			if ($validator->fails()) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => $validator->errors()->all(),
-				]);
-			}
+            $on_site_order = OnSiteOrder::find($request->on_site_order_id);
 
-			$on_site_order = OnSiteOrder::find($request->on_site_order_id);
+            if (!$on_site_order) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => ['On Site Order Not Found!'],
+                ]);
+            }
 
-			if (!$on_site_order) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => ['On Site Order Not Found!'],
-				]);
-			}
+            DB::beginTransaction();
 
-			DB::beginTransaction();
+            $otp_validate = OnSiteOrder::where('id', $request->on_site_order_id)
+                ->where('otp_no', '=', $request->otp_no)
+                ->first();
+            if (!$otp_validate) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => ['On Site Order Approve Behalf of Customer OTP is wrong. Please try again.'],
+                ]);
+            }
 
-			$otp_validate = OnSiteOrder::where('id', $request->on_site_order_id)
-				->where('otp_no', '=', $request->otp_no)
-				->first();
-			if (!$otp_validate) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => ['On Site Order Approve Behalf of Customer OTP is wrong. Please try again.'],
-				]);
-			}
+            $current_time = date("Y-m-d H:m:s");
 
-			$current_time = date("Y-m-d H:m:s");
+            //Validate OTP -> Expired or Not
+            $otp_validate = OTP::where('entity_type_id', 10113)->where('entity_id', $request->on_site_order_id)->where('otp_no', '=', $request->otp_no)->where('expired_at', '>=', $current_time)
+                ->first();
+            if (!$otp_validate) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => ['OTP Expired!'],
+                ]);
+            }
 
-			//Validate OTP -> Expired or Not
-			$otp_validate = OTP::where('entity_type_id', 10113)->where('entity_id', $request->on_site_order_id)->where('otp_no', '=', $request->otp_no)->where('expired_at', '>=', $current_time)
-				->first();
-			if (!$otp_validate) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => ['OTP Expired!'],
-				]);
-			}
+            //UPDATE STATUS
+            if ($on_site_order->status_id == 6) {
+                $on_site_order->status_id = 8; //Estimation approved onbehalf of customer
+            }
+            $on_site_order->is_customer_approved = 1;
+            // if ($request->revised_estimate_amount) {
+            //     $job_order_status_update->estimated_amount = $request->revised_estimate_amount;
+            // }
+            $on_site_order->customer_approved_date_time = Carbon::now();
+            $on_site_order->updated_at = Carbon::now();
+            $on_site_order->save();
 
-			//UPDATE STATUS
-			// $on_site_order->status_id = 8; //Estimation approved onbehalf of customer
-			$on_site_order->is_customer_approved = 1;
-			// if ($request->revised_estimate_amount) {
-			// 	$job_order_status_update->estimated_amount = $request->revised_estimate_amount;
-			// }
-			$on_site_order->customer_approved_date_time = Carbon::now();
-			$on_site_order->updated_at = Carbon::now();
-			$on_site_order->save();
+            //UPDATE REPAIR ORDER STATUS
+            OnSiteOrderRepairOrder::where('on_site_order_id', $request->on_site_order_id)->where('is_customer_approved', 0)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8181, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
 
-			//UPDATE REPAIR ORDER STATUS
-			OnSiteOrderRepairOrder::where('on_site_order_id', $request->on_site_order_id)->where('is_customer_approved', 0)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8181, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
+            //UPDATE PARTS STATUS
+            OnSiteOrderPart::where('on_site_order_id', $request->on_site_order_id)->where('is_customer_approved', 0)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8201, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
 
-			//UPDATE PARTS STATUS
-			OnSiteOrderPart::where('on_site_order_id', $request->on_site_order_id)->where('is_customer_approved', 0)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8201, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
+            OnSiteOrderEstimate::where('on_site_order_id', $request->on_site_order_id)->where('status_id', 10071)->update(['status_id' => 10072, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
 
-			OnSiteOrderEstimate::where('on_site_order_id', $request->on_site_order_id)->where('status_id', 10071)->update(['status_id' => 10072, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
+            $result = $this->getApprovedLabourPartsAmount($on_site_order->id);
+            if ($result['status'] == 'true') {
+                $on_site_order->approved_amount = $result['total_billing_amount'];
+                $on_site_order->save();
+            }
 
-            // $result = $this->getApprovedLabourPartsAmount($site_visit->id);
+            DB::commit();
 
-            // $on_site_order->approved_amount = $result['total_billing_amount'];
-            // $on_site_order->save();
-
-			DB::commit();
-
-			return response()->json([
-				'success' => true,
-				'message' => 'Customer Approved Successfully',
-			]);
-		} catch (Exception $e) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
-			]);
-		}
-	}
+            return response()->json([
+                'success' => true,
+                'message' => 'Customer Approved Successfully',
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Server Network Down!',
+                'errors' => ['Exception Error' => $e->getMessage()],
+            ]);
+        }
+    }
 
     public function save(Request $request)
     {
@@ -1487,6 +1495,78 @@ class OnSiteVisitController extends Controller
                 'errors' => [
                     'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
                 ],
+            ]);
+        }
+    }
+
+    //PROCESS LABOUR PART
+    public function processLabourPart(Request $request)
+    {
+        // dd($request->all());
+        try {
+
+            if ($request->type == 'labour') {
+                $validator = Validator::make($request->all(), [
+                    'id' => [
+                        'required',
+                        'exists:on_site_order_repair_orders,id',
+                    ],
+
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => $validator->errors()->all(),
+                    ]);
+                }
+
+                $on_site_order_repair_order = OnSiteOrderRepairOrder::find($request->id);
+                $on_site_order_repair_order->status_id = 8183; //Start Work
+                $on_site_order_repair_order->updated_by_id = Auth::user()->id;
+                $on_site_order_repair_order->updated_at = Carbon::now();
+                $on_site_order_repair_order->save();
+
+                $message = 'Work Started Successfully!';
+            } else {
+                $validator = Validator::make($request->all(), [
+                    'id' => [
+                        'required',
+                        'exists:on_site_order_parts,id',
+                    ],
+
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => $validator->errors()->all(),
+                    ]);
+                }
+
+                $on_site_order_part = OnSiteOrderPart::find($request->id);
+                $on_site_order_part->status_id = 8202; //Issued
+                $on_site_order_part->updated_by_id = Auth::user()->id;
+                $on_site_order_part->updated_at = Carbon::now();
+                $on_site_order_part->save();
+
+                $message = 'Part issued Successfully!';
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+            ]);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Server Network Down!',
+                'errors' => ['Exception Error' => $e->getMessage()],
             ]);
         }
     }
