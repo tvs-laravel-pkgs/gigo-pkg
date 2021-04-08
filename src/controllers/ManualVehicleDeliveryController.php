@@ -81,17 +81,17 @@ class ManualVehicleDeliveryController extends Controller
                 'job_orders.driver_name',
                 'job_orders.driver_mobile_number as driver_mobile_number',
                 'job_orders.is_customer_agreed',
-                DB::raw('COALESCE(GROUP_CONCAT(amc_policies.name), "-") as amc_policies'),
+                DB::raw('COALESCE(CONCAT(amc_policies.name,"/",amc_policies.type), "-") as amc_policies'),
                 'configs.name as status',
                 'outlets.code as outlet_code',
                 DB::raw('COALESCE(customers.name, "-") as customer_name'),
                 'job_orders.vehicle_delivery_status_id',
                 DB::raw('IF(job_orders.vehicle_delivery_status_id IS NULL,"WIP",vehicle_delivery_statuses.name) as vehicle_status')
             )
-            // ->where(function ($query) use ($start_date, $end_date) {
-            //     $query->whereDate('gate_logs.gate_in_date', '>=', $start_date)
-            //         ->whereDate('gate_logs.gate_in_date', '<=', $end_date);
-            // })
+        // ->where(function ($query) use ($start_date, $end_date) {
+        //     $query->whereDate('gate_logs.gate_in_date', '>=', $start_date)
+        //         ->whereDate('gate_logs.gate_in_date', '<=', $end_date);
+        // })
             ->where(function ($query) use ($request) {
                 if (!empty($request->reg_no)) {
                     $query->where('vehicles.registration_number', 'LIKE', '%' . $request->reg_no . '%');
@@ -208,8 +208,8 @@ class ManualVehicleDeliveryController extends Controller
     {
         ob_end_clean();
 
-		// ini_set('memory_limit', '50M');
-		ini_set('max_execution_time', 0);
+        // ini_set('memory_limit', '50M');
+        ini_set('max_execution_time', 0);
 
         // dd($request->all());
         if ($request->date) {
@@ -225,7 +225,7 @@ class ManualVehicleDeliveryController extends Controller
         }
 
         $vehicle_inward = JobOrder::with(['manualDeliveryLabourInvoice',
-		'manualDeliveryPartsInvoice'])->select('regions.code as region_code', 'states.code as state_code', 'customers.code as customer_code', 'customers.name as customer_name', 'gate_logs.number as gate_in_number', 'gate_logs.gate_in_date', 'gate_logs.gate_out_date', 'vehicles.registration_number', 'vehicles.engine_number', 'vehicles.chassis_number', 'job_orders.inward_cancel_reason_id', 'billing_type.name as billing_type', 'job_orders.warranty_reason', 'inward_cancel.name as inward_cancel_reason_name', 'job_orders.inward_cancel_reason', 'job_orders.vehicle_payment_status', 'pending_reasons.name as pending_reason', 'jv_customers.code as jv_customer_code', 'jv_customers.name as jv_customer_name', 'job_orders.pending_remarks', 'users.ecode as user_code', 'users.name as user_name', 'job_orders.vehicle_delivery_request_remarks', 'job_orders.approved_remarks', 'job_orders.approved_date_time', 'outlets.code as outlet_code', 'outlets.name as outlet_name', 'outlets.ax_name','vehicle_delivery_statuses.name as vehicle_delivery_status','job_orders.id')
+            'manualDeliveryPartsInvoice'])->select('regions.code as region_code', 'states.code as state_code', 'customers.code as customer_code', 'customers.name as customer_name', 'gate_logs.number as gate_in_number', 'gate_logs.gate_in_date', 'gate_logs.gate_out_date', 'vehicles.registration_number', 'vehicles.engine_number', 'vehicles.chassis_number', 'job_orders.inward_cancel_reason_id', 'billing_type.name as billing_type', 'job_orders.warranty_reason', 'inward_cancel.name as inward_cancel_reason_name', 'job_orders.inward_cancel_reason', 'job_orders.vehicle_payment_status', 'pending_reasons.name as pending_reason', 'jv_customers.code as jv_customer_code', 'jv_customers.name as jv_customer_name', 'job_orders.pending_remarks', 'users.ecode as user_code', 'users.name as user_name', 'job_orders.vehicle_delivery_request_remarks', 'job_orders.approved_remarks', 'job_orders.approved_date_time', 'outlets.code as outlet_code', 'outlets.name as outlet_name', 'outlets.ax_name', 'vehicle_delivery_statuses.name as vehicle_delivery_status', 'job_orders.id')
             ->join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
             ->leftJoin('vehicles', 'job_orders.vehicle_id', 'vehicles.id')
             ->leftJoin('customers', 'customers.id', 'job_orders.customer_id')
@@ -258,8 +258,8 @@ class ManualVehicleDeliveryController extends Controller
             }
         }
 
-        if($request->status_id){
-            $vehicle_inward = $vehicle_inward->where('job_orders.status_id',$request->status_id);
+        if ($request->status_id) {
+            $vehicle_inward = $vehicle_inward->where('job_orders.status_id', $request->status_id);
         }
 
         $vehicle_inwards = $vehicle_inward->get();
@@ -281,11 +281,11 @@ class ManualVehicleDeliveryController extends Controller
             'Vehicle Status',
             'Service Completed',
             'Billing Type',
-			'Invoice Date',
-			'Labour Invoice Number',
-			'Labour Amount',
-			'Parts Invoice Number',
-			'Parts Amount',
+            'Invoice Date',
+            'Labour Invoice Number',
+            'Labour Amount',
+            'Parts Invoice Number',
+            'Parts Amount',
             'Inward Cancel Reason',
             'Remarks',
             // 'Payment Status',
@@ -316,39 +316,39 @@ class ManualVehicleDeliveryController extends Controller
                 // if( $vehicle_inward->inward_cancel_reason_id){
                 // $vehicle_detail['billing_type'] = '';
                 // }else{
-                if($vehicle_inward->billing_type){
+                if ($vehicle_inward->billing_type) {
                     $vehicle_detail['service_completed'] = 'Yes';
-                }else{
+                } else {
                     $vehicle_detail['service_completed'] = 'No';
                 }
                 $vehicle_detail['billing_type'] = $vehicle_inward->billing_type ? $vehicle_inward->billing_type : '-';
                 // }
-				
-				if( $vehicle_inward->inward_cancel_reason_id){
-					$vehicle_detail['invoice_date'] = '-';
-					$vehicle_detail['labour_inv_number'] = '-';
-					$vehicle_detail['labour_amount'] = '';
-					$vehicle_detail['parts_inv_number'] = '-';
-					$vehicle_detail['parts_amount'] = '';
-				}else{
-					// dump($vehicle_inward->manualDeliveryLabourInvoice);
-					if($vehicle_inward->manualDeliveryLabourInvoice){
-						$vehicle_detail['invoice_date'] = $vehicle_inward->manualDeliveryLabourInvoice->invoice_date;
-						$vehicle_detail['labour_inv_number'] = $vehicle_inward->manualDeliveryLabourInvoice->number;
-						$vehicle_detail['labour_amount'] = $vehicle_inward->manualDeliveryLabourInvoice->amount;
-					}else{
-						$vehicle_detail['invoice_date'] = '-';
-						$vehicle_detail['labour_inv_number'] = '-';
-						$vehicle_detail['labour_amount'] = '';
-					}
-					if($vehicle_inward->manualDeliveryPartsInvoice){
-						$vehicle_detail['parts_inv_number'] = $vehicle_inward->manualDeliveryPartsInvoice->number;
-						$vehicle_detail['parts_amount'] = $vehicle_inward->manualDeliveryPartsInvoice->amount;
-					}else{
-						$vehicle_detail['parts_inv_number'] = '-';
-						$vehicle_detail['parts_amount'] = '';
-					}
-				}
+
+                if ($vehicle_inward->inward_cancel_reason_id) {
+                    $vehicle_detail['invoice_date'] = '-';
+                    $vehicle_detail['labour_inv_number'] = '-';
+                    $vehicle_detail['labour_amount'] = '';
+                    $vehicle_detail['parts_inv_number'] = '-';
+                    $vehicle_detail['parts_amount'] = '';
+                } else {
+                    // dump($vehicle_inward->manualDeliveryLabourInvoice);
+                    if ($vehicle_inward->manualDeliveryLabourInvoice) {
+                        $vehicle_detail['invoice_date'] = $vehicle_inward->manualDeliveryLabourInvoice->invoice_date;
+                        $vehicle_detail['labour_inv_number'] = $vehicle_inward->manualDeliveryLabourInvoice->number;
+                        $vehicle_detail['labour_amount'] = $vehicle_inward->manualDeliveryLabourInvoice->amount;
+                    } else {
+                        $vehicle_detail['invoice_date'] = '-';
+                        $vehicle_detail['labour_inv_number'] = '-';
+                        $vehicle_detail['labour_amount'] = '';
+                    }
+                    if ($vehicle_inward->manualDeliveryPartsInvoice) {
+                        $vehicle_detail['parts_inv_number'] = $vehicle_inward->manualDeliveryPartsInvoice->number;
+                        $vehicle_detail['parts_amount'] = $vehicle_inward->manualDeliveryPartsInvoice->amount;
+                    } else {
+                        $vehicle_detail['parts_inv_number'] = '-';
+                        $vehicle_detail['parts_amount'] = '';
+                    }
+                }
 
                 $vehicle_detail['inward_cancel_reason'] = $vehicle_inward->inward_cancel_reason_name ? $vehicle_inward->inward_cancel_reason_name : '-';
                 $vehicle_detail['remarks'] = $vehicle_inward->inward_cancel_reason ? $vehicle_inward->inward_cancel_reason : $vehicle_inward->warranty_reason;
@@ -359,15 +359,15 @@ class ManualVehicleDeliveryController extends Controller
         }
 
         $time_stamp = date('Y_m_d_h_i_s');
-		Excel::create('Vehicle Delivery - ' . $time_stamp, function ($excel) use ($header, $vehicle_details) {
-			$excel->sheet('Summary', function ($sheet) use ($header, $vehicle_details) {
-				$sheet->fromArray($vehicle_details, NULL, 'A1');
-				$sheet->row(1, $header);
-				$sheet->row(1, function ($row) {
-					$row->setBackground('#07c63a');
-				});
-			});
-			$excel->setActiveSheetIndex(0);
-		})->export('xlsx');
+        Excel::create('Vehicle Delivery - ' . $time_stamp, function ($excel) use ($header, $vehicle_details) {
+            $excel->sheet('Summary', function ($sheet) use ($header, $vehicle_details) {
+                $sheet->fromArray($vehicle_details, null, 'A1');
+                $sheet->row(1, $header);
+                $sheet->row(1, function ($row) {
+                    $row->setBackground('#07c63a');
+                });
+            });
+            $excel->setActiveSheetIndex(0);
+        })->export('xlsx');
     }
 }
