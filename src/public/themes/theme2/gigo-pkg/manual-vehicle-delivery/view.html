@@ -499,7 +499,8 @@
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
-                                                            {{job_order.warranty_detail.warranty_date ? job_order.warranty_detail.warranty_date : '-'}}
+                                                            {{job_order.warranty_detail.warranty_date ?
+                                                            job_order.warranty_detail.warranty_date : '-'}}
                                                         </b>
                                                     </span>
                                                 </li>
@@ -509,7 +510,8 @@
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
-                                                            {{job_order.warranty_detail.number ? job_order.warranty_detail.number : '-'}}
+                                                            {{job_order.warranty_detail.number ?
+                                                            job_order.warranty_detail.number : '-'}}
                                                         </b>
                                                     </span>
                                                 </li>
@@ -519,7 +521,8 @@
                                                     </span>
                                                     <span class="view-col-value">
                                                         <b>
-                                                            {{job_order.warranty_detail.labour_amount ? job_order.warranty_detail.labour_amount : '-'}}
+                                                            {{job_order.warranty_detail.labour_amount ?
+                                                            job_order.warranty_detail.labour_amount : '-'}}
                                                         </b>
                                                     </span>
                                                 </li>
@@ -529,7 +532,8 @@
                                                     </span>
                                                     <span class="view-col-value">
                                                         <b>
-                                                            {{job_order.warranty_detail.parts_amount ? job_order.warranty_detail.parts_amount :'-'}}
+                                                            {{job_order.warranty_detail.parts_amount ?
+                                                            job_order.warranty_detail.parts_amount :'-'}}
                                                         </b>
                                                     </span>
                                                 </li>
@@ -602,7 +606,7 @@
                                                         ng-if="job_order.part_discount_amount > 0">
                                                         Customer to be paid -
                                                         <b>
-                                                        {{job_order.customer_paid_parts_amount}}
+                                                            {{job_order.customer_paid_parts_amount}}
                                                         </b>
                                                     </span>
                                                 </li>
@@ -619,8 +623,7 @@
                                             </ul>
                                             <!-- <button class="btn btn-secondary-dark btn-md btn-square">Edit</button> -->
                                         </div><!-- Column -->
-                                        <div class="col-md-12"
-                                            ng-if="job_order.aggregate_processed == 1">
+                                        <div class="col-md-12" ng-if="job_order.aggregate_coupon.length > 0">
                                             <h5 class="color-primary mb-10">
                                                 <b>
                                                     Aggregate Work Details
@@ -628,7 +631,35 @@
                                             </h5>
                                             <!-- <hr class="hr-15"> -->
                                             <div class="row">
-                                                <div class="col-md-12">
+                                                <div class="col-md-5">
+                                                    <h6 class="color-primary mb-10">
+                                                        <b>
+                                                            Aggregate Coupons
+                                                        </b>
+                                                    </h6>
+                                                    <div class="table-responsive">
+                                                        <table class="table table-dark-grey work_details_table"
+                                                            id="work_details_table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Coupon</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr
+                                                                    ng-repeat="(index,aggregate_coupon) in job_order.aggregate_coupon">
+                                                                    <td>{{aggregate_coupon.coupon_code}}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div><!-- Table Responsive -->
+                                                </div>
+                                                <div class="col-md-7">
+                                                    <h6 class="color-primary mb-10">
+                                                        <b>
+                                                            Aggregate Works
+                                                        </b>
+                                                    </h6>
                                                     <div class="table-responsive">
                                                         <table class="table table-dark-grey work_details_table"
                                                             id="work_details_table">
@@ -639,8 +670,7 @@
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                <tr
-                                                                    ng-repeat="(index,aggregate_work) in
+                                                                <tr ng-repeat="(index,aggregate_work) in
                                                                     job_order.aggregate_works"
                                                                     ng-if="aggregate_work.amount">
                                                                     <td>{{aggregate_work.name}}</td>

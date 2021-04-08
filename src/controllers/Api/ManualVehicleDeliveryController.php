@@ -4,6 +4,7 @@ namespace Abs\GigoPkg\Api;
 
 use Abs\GigoPkg\AmcMember;
 use Abs\SerialNumberPkg\SerialNumberGroup;
+use App\AmcAggregateCoupon;
 use App\Attachment;
 use App\Config;
 use App\Customer;
@@ -234,19 +235,22 @@ class ManualVehicleDeliveryController extends Controller
             'gateLog.chassisAttachment',
             'manualDeliveryLabourInvoice',
             'manualDeliveryPartsInvoice',
-            'manualDeliveryReceipt',
-            'manualDeliveryReceipt.paymentMode',
+            // 'manualDeliveryReceipt',
+            // 'manualDeliveryReceipt.paymentMode',
             'status',
             'pendingReason',
             'amcMember',
             'amcMember.amcPolicy',
-            'amcMember.amcPolicy.amcAggregateWork',
+            'amcMember.amcCustomer',
+            'amcMember.amcCustomer.amcAggreagteCoupon',
+            'amcMember.amcCustomer.activeAmcAggreagteCoupon',
             'transcationAttachment',
             'billingType',
             'inwardCancelReasonType',
             'warrantyDetail',
             'paymentDetail',
             'paymentDetail.paymentMode',
+            'aggregateCoupon',
         ])
             ->select([
                 'job_orders.*',
@@ -315,19 +319,37 @@ class ManualVehicleDeliveryController extends Controller
         $job_order->customer_paid_labour_amount = $customer_paid_labour_amount;
         $job_order->customer_paid_parts_amount = $customer_paid_parts_amount;
 
-        $aggregate_work = [];
-        $aggregate_processed = 0;
+        $aggregate_work = '';
+        $active_aggregate_coupons = 0;
+        $aggregate_coupons = '';
+        // $aggregate_processed = 0;
         if ($job_order && $job_order->amcMember) {
             $aggregate_works = $job_order->getAggregateWorkList($job_order->id, $job_order->amcMember->amcPolicy->id);
             $aggregate_work = $aggregate_works['aggregate_works'];
 
-            //This is used to View page for show or hide aggregate works
-            $aggregate_processed = $aggregate_works['aggregate_processed'];
+            if ($job_order->amcMember->amcCustomer && $job_order->amcMember->amcCustomer->amcAggreagteCoupon) {
+                $aggregate_coupons = $job_order->amcMember->amcCustomer->amcAggreagteCoupon;
+                if (count($aggregate_coupons) > 0) {
+                    $coupons = [];
+                    foreach ($aggregate_coupons as $aggregate_coupon) {
+                        // dd($aggregate_coupon);
+                        if ($aggregate_coupon->status_id == 1 || ($aggregate_coupon->job_order_id == $job_order->id)) {
+                            $coupon = [];
+                            $coupon['id'] = $aggregate_coupon->id;
+                            $coupon['coupon_code'] = $aggregate_coupon->coupon_code;
+                            $coupon['job_order_id'] = $aggregate_coupon->job_order_id;
+
+                            $coupons[] = $coupon;
+                        }
+                    }
+                    $aggregate_coupons = $coupons;
+                } else {
+                    $aggregate_coupons = '';
+                }
+            }
         }
 
         $job_order->aggregate_works = $aggregate_work;
-        $job_order->aggregate_processed = $aggregate_processed;
-
         $this->data['success'] = true;
         $this->data['job_order'] = $job_order;
         $this->data['invoice_date'] = $invoice_date;
@@ -348,6 +370,9 @@ class ManualVehicleDeliveryController extends Controller
         }
 
         $extras = [
+            'aggregate_works' => $aggregate_work,
+            'aggregate_coupons' => $aggregate_coupons,
+            'active_aggregate_coupons' => $active_aggregate_coupons,
             'purpose_list' => Config::getDropDownList([
                 'config_type_id' => 421,
                 'orderBy' => 'id',
@@ -511,35 +536,6 @@ class ManualVehicleDeliveryController extends Controller
                             ]);
                         }
 
-                        // if ($request->vehicle_payment_status == 1) {
-                        //     // $validator = Validator::make($request->all(), [
-                        //     //     'receipt_number' => [
-                        //     //         'required',
-                        //     //         // 'unique:receipts,temporary_receipt_no,' . $request->job_order_id . ',entity_id,receipt_of_id,7622',
-                        //     //         // 'unique:receipts,permanent_receipt_no,' . $request->job_order_id . ',entity_id,receipt_of_id,7622',
-                        //     //         'unique:job_order_payment_details,transaction_number,' . $request->job_order_id . ',job_order_id',
-                        //     //     ],
-                        //     // ]);
-
-                        //     // if ($validator->fails()) {
-                        //     //     return response()->json([
-                        //     //         'success' => false,
-                        //     //         'error' => 'Validation Error',
-                        //     //         'errors' => $validator->errors()->all(),
-                        //     //     ]);
-                        //     // }
-
-                        //     // if (strtotime($request->invoice_date) > strtotime($request->receipt_date)) {
-                        //     //     return response()->json([
-                        //     //         'success' => false,
-                        //     //         'error' => 'Validation Error',
-                        //     //         'errors' => [
-                        //     //             'Receipt Date should be greater than Invoice Date',
-                        //     //         ],
-                        //     //     ]);
-                        //     // }
-                        // }
-
                         $job_order = JobOrder::with('gateLog')->find($request->job_order_id);
 
                         if (!$job_order) {
@@ -588,15 +584,6 @@ class ManualVehicleDeliveryController extends Controller
                         //Check Paid Amount
                         if ($request->payment) {
                             foreach ($request->payment as $payment) {
-                                // if (strtotime($gate_in_date) > strtotime($payment['receipt_date'])) {
-                                //     return response()->json([
-                                //         'success' => false,
-                                //         'error' => 'Validation Error',
-                                //         'errors' => [
-                                //             'Receipt Date should be greater than Gate In Date',
-                                //         ],
-                                //     ]);
-                                // }
                                 if ($payment['receipt_amount'] > 0) {
                                     $receipt_amount += $payment['receipt_amount'];
                                 }
@@ -686,6 +673,32 @@ class ManualVehicleDeliveryController extends Controller
 
                         $job_order->aggregateWork()->sync([]);
 
+                        $amc_aggregate_coupon = AmcAggregateCoupon::where('job_order_id', $job_order->id)->update(['job_order_id' => null, 'status_id' => 1]);
+
+                        //Save Aggregate Coupons
+                        if ($request->aggregate_coupon) {
+                            foreach ($request->aggregate_coupon as $key => $aggregate_coupon) {
+                                if (isset($aggregate_coupon['coupon_status'])) {
+                                    $amc_aggregate_coupon = AmcAggregateCoupon::find($aggregate_coupon['coupon_id']);
+                                    if ($amc_aggregate_coupon) {
+                                        $amc_aggregate_coupon->job_order_id = $job_order->id;
+                                        $amc_aggregate_coupon->status_id = 2;
+                                        $amc_aggregate_coupon->updated_by_id = Auth::user()->id;
+                                        $amc_aggregate_coupon->updated_at = Carbon::now();
+                                        $amc_aggregate_coupon->save();
+                                    } else {
+                                        return response()->json([
+                                            'success' => false,
+                                            'error' => 'Validation Error',
+                                            'errors' => [
+                                                'Aggregate Coupon not found!',
+                                            ],
+                                        ]);
+                                    }
+                                }
+                            }
+                        }
+
                         //Save Aggregate Work
                         if ($request->aggregate_work) {
                             foreach ($request->aggregate_work as $key => $aggregate_work) {
@@ -708,58 +721,11 @@ class ManualVehicleDeliveryController extends Controller
 
                         $receipt_id = null;
                         if ($payment_status_id == 2) {
-
-                            // $validator = Validator::make($request->all(), [
-                            //     'receipt_number' => [
-                            //         'required',
-                            //         // 'unique:receipts,temporary_receipt_no,' . $request->job_order_id . ',entity_id,receipt_of_id,7622',
-                            //         // 'unique:receipts,permanent_receipt_no,' . $request->job_order_id . ',entity_id,receipt_of_id,7622',
-                            //         'unique:job_order_payment_details,transaction_number,' . $request->job_order_id . ',job_order_id',
-                            //     ],
-                            // ]);
-
-                            // if ($validator->fails()) {
-                            //     return response()->json([
-                            //         'success' => false,
-                            //         'error' => 'Validation Error',
-                            //         'errors' => $validator->errors()->all(),
-                            //     ]);
-                            // }
-
                             $labour_amount = $request->labour_amount;
                             $parts_amount = $request->parts_amount;
-                            // $receipt_amount = $request->receipt_amount;
-
-                            // if($receipt_amount != ($labour_amount + $parts_amount))
-                            // {
-                            //     return response()->json([
-                            //         'success' => false,
-                            //         'error' => 'Validation Error',
-                            //         'errors' => [
-                            //             'Receipt amount should be equal to Invoice amount!',
-                            //         ],
-                            //     ]);
-                            // }
 
                             //Save Receipt
                             $customer = Customer::find($job_order->customer_id);
-
-                            // $receipt = new Receipt;
-                            // $receipt->company_id = Auth::user()->company_id;
-                            // $receipt->temporary_receipt_no = $request->receipt_number;
-                            // $receipt->date = date('Y-m-d', strtotime($request->receipt_date));
-                            // $receipt->outlet_id = $job_order->outlet_id;
-                            // $receipt->receipt_of_id = 7622;
-                            // $receipt->entity_id = $job_order->id;
-                            // $receipt->permanent_receipt_no = $request->receipt_number;
-                            // $receipt->amount = $request->receipt_amount;
-                            // $receipt->settled_amount = $request->receipt_amount;
-                            // $receipt->payment_mode_id = $request->payment_mode_id;
-                            // $receipt->created_at = Carbon::now();
-
-                            // $customer->receipt()->save($receipt);
-
-                            // $receipt_id = $customer->receipt ? $customer->receipt[0] ? $customer->receipt[0]->id : null : null;
 
                             //Save Payment
                             $payment = new Payment;
@@ -981,6 +947,8 @@ class ManualVehicleDeliveryController extends Controller
 
                         $job_order->aggregateWork()->sync([]);
 
+                        $amc_aggregate_coupon = AmcAggregateCoupon::where('job_order_id', $job_order->id)->update(['job_order_id' => null, 'status_id' => 1]);
+
                         //Delete previous receipt
                         // $remove_receipt = Receipt::where('receipt_of_id', 7622)->where('entity_id', $job_order->id)->forceDelete();
 
@@ -1191,6 +1159,8 @@ class ManualVehicleDeliveryController extends Controller
 
                         $job_order->aggregateWork()->sync([]);
 
+                        $amc_aggregate_coupon = AmcAggregateCoupon::where('job_order_id', $job_order->id)->update(['job_order_id' => null, 'status_id' => 1]);
+
                         //CREATE DIRECTORY TO STORAGE PATH
                         $attachment_path = storage_path('app/public/gigo/job_order/attachments/');
                         Storage::makeDirectory($attachment_path, 0777);
@@ -1305,6 +1275,8 @@ class ManualVehicleDeliveryController extends Controller
                     $job_order->save();
 
                     $job_order->aggregateWork()->sync([]);
+
+                    $amc_aggregate_coupon = AmcAggregateCoupon::where('job_order_id', $job_order->id)->update(['job_order_id' => null, 'status_id' => 1]);
 
                     $gate_pass = $this->generateGatePass($job_order);
 
@@ -1503,25 +1475,6 @@ class ManualVehicleDeliveryController extends Controller
                 } else {
                     $payment_mode_id = $request->payment_mode_id;
                 }
-                //Delete previous receipt
-                // $remove_receipt = Receipt::where('receipt_of_id', 7622)->where('entity_id', $job_order->id)->forceDelete();
-
-                // $receipt = new Receipt;
-                // $receipt->company_id = Auth::user()->company_id;
-                // $receipt->temporary_receipt_no = $request->receipt_number;
-                // $receipt->date = date('Y-m-d', strtotime($request->receipt_date));
-                // $receipt->outlet_id = $job_order->outlet_id;
-                // $receipt->receipt_of_id = 7622;
-                // $receipt->entity_id = $job_order->id;
-                // $receipt->permanent_receipt_no = $request->receipt_number;
-                // $receipt->amount = $request->receipt_amount;
-                // $receipt->settled_amount = $request->receipt_amount;
-                // $receipt->payment_mode_id = $payment_mode_id;
-                // $receipt->created_at = Carbon::now();
-
-                // $customer->receipt()->save($receipt);
-
-                // $receipt_id = $customer->receipt ? $customer->receipt[0] ? $customer->receipt[0]->id : null : null;
 
                 //Save Payment
                 $payment = new Payment;
@@ -1608,7 +1561,7 @@ class ManualVehicleDeliveryController extends Controller
             'gateLog.chassisAttachment',
             'manualDeliveryLabourInvoice',
             'manualDeliveryPartsInvoice',
-            'manualDeliveryReceipt',
+            // 'manualDeliveryReceipt',
             'status',
             'outlet',
             'vehicleDeliveryRequestUser',

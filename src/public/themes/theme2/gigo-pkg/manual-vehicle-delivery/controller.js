@@ -64,51 +64,51 @@ app.component('manualVehicleDeliveryList', {
             },
 
             columns: [{
-                    data: 'action',
-                    class: 'action',
-                    name: 'action',
-                    searchable: false
-                },
-                {
-                    data: 'date',
-                    searchable: false
-                },
-                {
-                    data: 'vehicle_status',
-                    name: 'vehicle_delivery_statuses.name'
-                },
-                {
-                    data: 'outlet_code',
-                    name: 'outlets.code'
-                },
-                // {
-                //     data: 'registration_type',
-                //     name: 'registration_type'
-                // },
-                {
-                    data: 'registration_number',
-                    name: 'vehicles.registration_number'
-                },
-                {
-                    data: 'customer_name',
-                    name: 'customers.name'
-                },
-                {
-                    data: 'model_number',
-                    name: 'models.model_number'
-                },
-                {
-                    data: 'amc_policies',
-                    name: 'amc_policies.name'
-                },
-                {
-                    data: 'number',
-                    name: 'gate_logs.number'
-                },
-                {
-                    data: 'status',
-                    name: 'configs.name'
-                },
+                data: 'action',
+                class: 'action',
+                name: 'action',
+                searchable: false
+            },
+            {
+                data: 'date',
+                searchable: false
+            },
+            {
+                data: 'vehicle_status',
+                name: 'vehicle_delivery_statuses.name'
+            },
+            {
+                data: 'outlet_code',
+                name: 'outlets.code'
+            },
+            // {
+            //     data: 'registration_type',
+            //     name: 'registration_type'
+            // },
+            {
+                data: 'registration_number',
+                name: 'vehicles.registration_number'
+            },
+            {
+                data: 'customer_name',
+                name: 'customers.name'
+            },
+            {
+                data: 'model_number',
+                name: 'models.model_number'
+            },
+            {
+                data: 'amc_policies',
+                name: 'amc_policies.name'
+            },
+            {
+                data: 'number',
+                name: 'gate_logs.number'
+            },
+            {
+                data: 'status',
+                name: 'configs.name'
+            },
 
             ],
             "infoCallback": function (settings, start, end, max, total, pre) {
@@ -151,8 +151,8 @@ app.component('manualVehicleDeliveryList', {
                     $http
                         .post(
                             laravel_routes['getManualDeliveryVehicleFilter'], {
-                                key: query,
-                            }
+                            key: query,
+                        }
                         )
                         .then(function (response) {
                             resolve(response.data);
@@ -170,8 +170,8 @@ app.component('manualVehicleDeliveryList', {
                     $http
                         .post(
                             laravel_routes['getVehicleModelSearchList'], {
-                                key: query,
-                            }
+                            key: query,
+                        }
                         )
                         .then(function (response) {
                             resolve(response.data);
@@ -309,15 +309,15 @@ app.component('manualVehicleDeliveryList', {
                     let formData = new FormData($(split_form_id)[0]);
                     $('.submit').button('loading');
                     $.ajax({
-                            url: base_url + '/api/manual-vehicle-delivery/update/vehicle-status',
-                            method: "POST",
-                            data: formData,
-                            beforeSend: function (xhr) {
-                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                            },
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/manual-vehicle-delivery/update/vehicle-status',
+                        method: "POST",
+                        data: formData,
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             $('.submit').button('reset');
                             if (!res.success) {
@@ -371,15 +371,15 @@ app.component('manualVehicleDeliveryView', {
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
-                    url: base_url + '/api/manual-vehicle-delivery/get-form-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.id,
-                    },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
+                url: base_url + '/api/manual-vehicle-delivery/get-form-data',
+                method: "POST",
+                data: {
+                    id: $routeParams.id,
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
                 .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
@@ -462,12 +462,12 @@ app.component('manualVehicleDeliveryView', {
                     let formData = new FormData($(form_id)[0]);
                     $('.submit').button('loading');
                     $.ajax({
-                            url: base_url + '/api/manual-vehicle-delivery/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/manual-vehicle-delivery/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             $('.submit').button('reset');
 
@@ -516,12 +516,12 @@ app.component('manualVehicleDeliveryView', {
                     let formData = new FormData($(form_id)[0]);
                     $('.reject_submit').button('loading');
                     $.ajax({
-                            url: base_url + '/api/manual-vehicle-delivery/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/manual-vehicle-delivery/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             $('.reject_submit').button('reset');
 
@@ -572,12 +572,12 @@ app.component('manualVehicleDeliveryView', {
                     let formData = new FormData($(form_id)[0]);
                     $('.submit').button('loading');
                     $.ajax({
-                            url: base_url + '/api/manual-vehicle-delivery/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/manual-vehicle-delivery/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             $('.submit').button('reset');
 
@@ -651,15 +651,15 @@ app.component('manualVehicleDeliveryForm', {
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
-                    url: base_url + '/api/manual-vehicle-delivery/get-form-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.id,
-                    },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
+                url: base_url + '/api/manual-vehicle-delivery/get-form-data',
+                method: "POST",
+                data: {
+                    id: $routeParams.id,
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
                 .done(function (res) {
                     console.log(res)
                     if (!res.success) {
@@ -790,12 +790,12 @@ app.component('manualVehicleDeliveryForm', {
                     let formData = new FormData($(form_id)[0]);
                     $('.submit').button('loading');
                     $.ajax({
-                            url: base_url + '/api/manual-vehicle-delivery/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/manual-vehicle-delivery/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             $('.submit').button('reset');
 
@@ -1024,8 +1024,8 @@ app.component('manualVehicleDeliveryForm', {
                     $http
                         .post(
                             laravel_routes['getCustomerSearchList'], {
-                                key: query,
-                            }
+                            key: query,
+                        }
                         )
                         .then(function (response) {
                             resolve(response.data);
@@ -1047,6 +1047,23 @@ app.component('manualVehicleDeliveryForm', {
             $scope.job_order.transcation_attachment.splice(index, 1);
         }
 
+        //Aggregate Coupons
+        $(document).on('click', '.select_all_coupons', function () {
+            if (event.target.checked == true) {
+                $('.couponcheckbox').prop('checked', true);
+                $.each($('.couponcheckbox:checked'), function () {
+                    $scope.couponCheckbox($(this).val());
+                });
+            } else {
+                $('.couponcheckbox').prop('checked', false);
+            }
+        });
+
+        $scope.couponCheckbox = function (id) {
+            checkval = $('#coupon_check' + id).is(":checked");
+        }
+
+        //Aggregate Works
         $(document).on('click', '.select_all_works', function () {
             if (event.target.checked == true) {
                 $('.workcheckbox').prop('checked', true);
