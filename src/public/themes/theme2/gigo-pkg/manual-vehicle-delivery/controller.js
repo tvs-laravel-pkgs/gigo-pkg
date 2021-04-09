@@ -1056,11 +1056,74 @@ app.component('manualVehicleDeliveryForm', {
                 });
             } else {
                 $('.couponcheckbox').prop('checked', false);
+                $scope.couponValidate();
             }
         });
 
         $scope.couponCheckbox = function (id) {
             checkval = $('#coupon_check' + id).is(":checked");
+            $scope.couponValidate();
+        }
+
+        $scope.couponValidate = function () {
+            var selected_coupon = 0;
+            $.each($('.couponcheckbox:checked'), function () {
+                if ($('#coupon_check' + $(this).val()).is(":checked")) {
+                    selected_coupon++;
+                }
+            });
+
+            var selected_aggregate_works = 0;
+            $.each($('.workcheckbox:checked'), function () {
+                if ($('#check' + $(this).val()).is(":checked")) {
+                    selected_aggregate_works++;
+                    // alert($(this).val());
+                }
+            });
+
+            if ($scope.job_order.membership_id == 1) {
+
+                console.log('selected aggregate work --' + selected_aggregate_works);
+                console.log('selected coupon --' + selected_coupon);
+
+                if (selected_coupon > 5) {
+                    $form_save_status = 0;
+                    custom_noty('error', 'Invalid count of Aggregate Coupons!');
+                }
+
+                console.log('-----');
+
+                //Check Engine Work checked or not
+                if ($('.aggregate_work_10').is(":checked")) {
+                    // alert(selected_coupon);
+                    if (selected_coupon < 3) {
+                        $form_save_status = 0;
+                        custom_noty('error', 'Invalid Aggregate work!');
+                    }
+
+                    selected_aggregate_works = selected_aggregate_works - 1;
+                    selected_coupon = selected_coupon - 3;
+                }
+
+                console.log('selected aggregate work --' + selected_aggregate_works);
+                console.log('selected coupon --' + selected_coupon);
+
+                if (selected_aggregate_works > selected_coupon) {
+                    $form_save_status = 0;
+                    custom_noty('error', 'Invalid count of Aggregate Works!');
+                }
+
+            } else if ($scope.job_order.membership_id == 3) {
+                if (selected_aggregate_works > selected_coupon) {
+                    $form_save_status = 0;
+                    custom_noty('error', 'Invalid count of Aggregate Works!');
+                }
+
+                if (selected_coupon > 2) {
+                    $form_save_status = 0;
+                    custom_noty('error', 'Invalid count of Aggregate Coupons!');
+                }
+            }
         }
 
         //Aggregate Works
@@ -1085,6 +1148,7 @@ app.component('manualVehicleDeliveryForm', {
                     $('.work_details_table tbody tr #in_' + $(this).val()).val('');
                     $('.work_details_table tbody tr #checked_' + $(this).val()).val('0');
                 });
+                $scope.couponValidate();
             }
         });
 
@@ -1103,6 +1167,7 @@ app.component('manualVehicleDeliveryForm', {
                 $("#in_" + id).val('');
                 $('#in_' + id + '-error').remove();
             }
+            $scope.couponValidate();
         }
 
         setTimeout(function () {

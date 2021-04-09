@@ -721,7 +721,6 @@ class GateInController extends Controller
 
             $membership_data = $this->getSoap->GetTVSONEVehicleDetails($soap_number);
             // dd($membership_data);
-            $membership_message = '';
             if ($membership_data && $membership_data['success'] == 'true') {
                 // dump($membership_data);
 
@@ -794,15 +793,16 @@ class GateInController extends Controller
                 $job_order->service_policy_id = $amc_member->id;
                 $job_order->save();
 
-                $membership_message = '. TVS Membership Number is ' . $membership_data['membership_number'];
-
+                $membership_message = '. TVS Membership Number is ' . $membership_data['membership_number'] . ' - TVS';
+            } else {
+                $membership_message = ' - TVS';
             }
 
             $url = url('/') . '/vehicle/track/' . $job_order->id;
 
             $short_url = ShortUrl::createShortLink($url, $maxlength = "8");
 
-            $tracking_message = 'Greetings from TVS & Sons! Kindly click on this link to track vehicle service status: ' . $short_url;
+            $tracking_message = 'Greetings from TVS & Sons! Kindly click on this link to track vehicle service status: ' . $short_url . ' - TVS';
 
             //Save Driver & Security Signature
             if ($request->web == 'website') {

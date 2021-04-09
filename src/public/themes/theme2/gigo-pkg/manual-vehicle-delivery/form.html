@@ -752,7 +752,8 @@
                                                                         <input type="checkbox" id="check{{index}}"
                                                                             ng-click="checkCheckbox(index)"
                                                                             ng-checked="aggregate_work.checked"
-                                                                            class="workcheckbox" value="{{index}}" />
+                                                                            class="workcheckbox aggregate_work_{{aggregate_work.id}}"
+                                                                            value="{{aggregate_work.id}}" />
                                                                         <label for="check{{index}}"></label>
                                                                     </td>
                                                                     <td>{{aggregate_work.name}}</td>

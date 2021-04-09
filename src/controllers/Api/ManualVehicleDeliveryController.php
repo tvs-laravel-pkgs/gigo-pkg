@@ -322,6 +322,7 @@ class ManualVehicleDeliveryController extends Controller
         $aggregate_work = '';
         $active_aggregate_coupons = 0;
         $aggregate_coupons = '';
+        $membership_id = '';
         // $aggregate_processed = 0;
         if ($job_order && $job_order->amcMember) {
             $aggregate_works = $job_order->getAggregateWorkList($job_order->id, $job_order->amcMember->amcPolicy->id);
@@ -347,9 +348,15 @@ class ManualVehicleDeliveryController extends Controller
                     $aggregate_coupons = '';
                 }
             }
+
+            $membership_id = $job_order->amcMember->amcPolicy->id;
         }
 
         $job_order->aggregate_works = $aggregate_work;
+
+        //Used for Aggregate Coupon caluclate/validate
+        $job_order->membership_id = $membership_id;
+
         $this->data['success'] = true;
         $this->data['job_order'] = $job_order;
         $this->data['invoice_date'] = $invoice_date;
