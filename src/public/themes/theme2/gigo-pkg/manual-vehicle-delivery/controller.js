@@ -648,6 +648,7 @@ app.component('manualVehicleDeliveryForm', {
         $scope.job_order_id = $routeParams.job_order_id;
         $scope.label_name = "Receipt";
         $scope.attachment_count = 1;
+        $scope.form_save_status = 1;
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
@@ -787,31 +788,35 @@ app.component('manualVehicleDeliveryForm', {
                     custom_noty('error', 'You have errors, Please check all fields');
                 },
                 submitHandler: function (form) {
-                    let formData = new FormData($(form_id)[0]);
-                    $('.submit').button('loading');
-                    $.ajax({
-                        url: base_url + '/api/manual-vehicle-delivery/save',
-                        method: "POST",
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                    })
-                        .done(function (res) {
-                            $('.submit').button('reset');
-
-                            if (!res.success) {
-                                showErrorNoty(res);
-                                return;
-                            }
-                            custom_noty('success', res.message);
-                            $location.path('/manual-vehicle-delivery/table-list');
-
-                            $scope.$apply();
+                    if ($scope.form_save_status == 1) {
+                        let formData = new FormData($(form_id)[0]);
+                        $('.submit').button('loading');
+                        $.ajax({
+                            url: base_url + '/api/manual-vehicle-delivery/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
                         })
-                        .fail(function (xhr) {
-                            $('.submit').button('reset');
-                            custom_noty('error', 'Something went wrong at server');
-                        });
+                            .done(function (res) {
+                                $('.submit').button('reset');
+
+                                if (!res.success) {
+                                    showErrorNoty(res);
+                                    return;
+                                }
+                                custom_noty('success', res.message);
+                                $location.path('/manual-vehicle-delivery/table-list');
+
+                                $scope.$apply();
+                            })
+                            .fail(function (xhr) {
+                                $('.submit').button('reset');
+                                custom_noty('error', 'Something went wrong at server');
+                            });
+                    } else {
+                        custom_noty('error', 'Kindly check Aggregate Coupon and Aggregate Works!');
+                    }
                 }
             });
         }
@@ -1066,6 +1071,7 @@ app.component('manualVehicleDeliveryForm', {
         }
 
         $scope.couponValidate = function () {
+            $scope.form_save_status = 1;
             var selected_coupon = 0;
             $.each($('.couponcheckbox:checked'), function () {
                 if ($('#coupon_check' + $(this).val()).is(":checked")) {
@@ -1080,26 +1086,25 @@ app.component('manualVehicleDeliveryForm', {
                     // alert($(this).val());
                 }
             });
-
+            console.log('selected aggregate work --' + selected_aggregate_works);
+            console.log('selected coupon --' + selected_coupon);
             if ($scope.job_order.membership_id == 1) {
-
-                console.log('selected aggregate work --' + selected_aggregate_works);
-                console.log('selected coupon --' + selected_coupon);
-
                 if (selected_coupon > 5) {
-                    $form_save_status = 0;
-                    custom_noty('error', 'Invalid count of Aggregate Coupons!');
+                    $scope.form_save_status = 0;
+                    custom_noty('error', 'You have to choose 5 Aggregate coupons only!');
                 }
 
                 console.log('-----');
 
                 //Check Engine Work checked or not
                 if ($('.aggregate_work_10').is(":checked")) {
-                    // alert(selected_coupon);
                     if (selected_coupon < 3) {
-                        $form_save_status = 0;
-                        custom_noty('error', 'Invalid Aggregate work!');
+                        $scope.form_save_status = 0;
+                        custom_noty('error', 'You have to choose 3 Aggregate coupon to for Engine Overhauling!');
                     }
+                    // else {
+                    //     $scope.scope.form_save_status = 1;
+                    // }
 
                     selected_aggregate_works = selected_aggregate_works - 1;
                     selected_coupon = selected_coupon - 3;
@@ -1109,19 +1114,35 @@ app.component('manualVehicleDeliveryForm', {
                 console.log('selected coupon --' + selected_coupon);
 
                 if (selected_aggregate_works > selected_coupon) {
-                    $form_save_status = 0;
-                    custom_noty('error', 'Invalid count of Aggregate Works!');
+                    $scope.form_save_status = 0;
+                    custom_noty('error', 'Kindly choose one or more aggregate coupon for selected aggregate works');
                 }
+                //  else {
+                //     $scope.form_save_status = 1;
+                // }
+
+                if (selected_aggregate_works < selected_coupon) {
+                    $scope.form_save_status = 0;
+                    custom_noty('error', 'Kindly choose one or more aggregate works for selected aggregate coupon!');
+                }
+                // else {
+                //     $scope.form_save_status = 1;
+                // }
 
             } else if ($scope.job_order.membership_id == 3) {
                 if (selected_aggregate_works > selected_coupon) {
-                    $form_save_status = 0;
-                    custom_noty('error', 'Invalid count of Aggregate Works!');
+                    $scope.form_save_status = 0;
+                    custom_noty('error', 'Kindly choose one or more aggregate coupon for selected aggregate works');
+                }
+
+                if (selected_aggregate_works < selected_coupon) {
+                    $scope.form_save_status = 0;
+                    custom_noty('error', 'Kindly choose one or more aggregate works for selected aggregate coupon!');
                 }
 
                 if (selected_coupon > 2) {
-                    $form_save_status = 0;
-                    custom_noty('error', 'Invalid count of Aggregate Coupons!');
+                    $scope.form_save_status = 0;
+                    custom_noty('error', 'You have to choose 2 Aggregate coupons only!');
                 }
             }
         }

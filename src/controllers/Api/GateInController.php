@@ -745,22 +745,24 @@ class GateInController extends Controller
                 $amc_customer->save();
 
                 //Save Aggregate Coupons
-                $aggregate_coupons = explode(',', $membership_data['aggregate_coupon']);
+                if ($membership_data['aggregate_coupon']) {
+                    $aggregate_coupons = explode(',', $membership_data['aggregate_coupon']);
 
-                if (count($aggregate_coupons) > 0) {
-                    foreach ($aggregate_coupons as $aggregate_coupon) {
-                        $coupon = AmcAggregateCoupon::firstOrNew(['coupon_code' => str_replace(' ', '', $aggregate_coupon)]);
-                        if ($coupon->exists) {
-                            $coupon->updated_by_id = Auth::user()->id;
-                            $coupon->updated_at = Carbon::now();
-                        } else {
-                            $coupon->created_by_id = Auth::user()->id;
-                            $coupon->created_at = Carbon::now();
-                            $coupon->updated_at = null;
-                            $coupon->status_id = 1;
+                    if (count($aggregate_coupons) > 0) {
+                        foreach ($aggregate_coupons as $aggregate_coupon) {
+                            $coupon = AmcAggregateCoupon::firstOrNew(['coupon_code' => str_replace(' ', '', $aggregate_coupon)]);
+                            if ($coupon->exists) {
+                                $coupon->updated_by_id = Auth::user()->id;
+                                $coupon->updated_at = Carbon::now();
+                            } else {
+                                $coupon->created_by_id = Auth::user()->id;
+                                $coupon->created_at = Carbon::now();
+                                $coupon->updated_at = null;
+                                $coupon->status_id = 1;
+                            }
+                            $coupon->amc_customer_id = $amc_customer->id;
+                            $coupon->save();
                         }
-                        $coupon->amc_customer_id = $amc_customer->id;
-                        $coupon->save();
                     }
                 }
 
