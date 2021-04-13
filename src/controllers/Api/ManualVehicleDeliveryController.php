@@ -332,6 +332,7 @@ class ManualVehicleDeliveryController extends Controller
                 $aggregate_coupons = $job_order->amcMember->amcCustomer->amcAggreagteCoupon;
                 if (count($aggregate_coupons) > 0) {
                     $coupons = [];
+                    $available_coupon_count = 0;
                     foreach ($aggregate_coupons as $aggregate_coupon) {
                         // dd($aggregate_coupon);
                         if ($aggregate_coupon->status_id == 1 || ($aggregate_coupon->job_order_id == $job_order->id)) {
@@ -341,9 +342,12 @@ class ManualVehicleDeliveryController extends Controller
                             $coupon['job_order_id'] = $aggregate_coupon->job_order_id;
 
                             $coupons[] = $coupon;
+                            $available_coupon_count++;
                         }
                     }
-                    $aggregate_coupons = $coupons;
+                    if ($available_coupon_count > 0) {
+                        $aggregate_coupons = $coupons;
+                    }
                 } else {
                     $aggregate_coupons = '';
                 }
@@ -687,7 +691,7 @@ class ManualVehicleDeliveryController extends Controller
                             foreach ($request->aggregate_coupon as $key => $aggregate_coupon) {
                                 if (isset($aggregate_coupon['coupon_status'])) {
                                     $amc_aggregate_coupon = AmcAggregateCoupon::find($aggregate_coupon['coupon_id']);
-                                    if ($amc_aggregate_coupon) {
+                                    if ($amc_aggregate_coupon && $amc_aggregate_coupon->status_id == 1) {
                                         $amc_aggregate_coupon->job_order_id = $job_order->id;
                                         $amc_aggregate_coupon->status_id = 2;
                                         $amc_aggregate_coupon->updated_by_id = Auth::user()->id;
@@ -698,7 +702,7 @@ class ManualVehicleDeliveryController extends Controller
                                             'success' => false,
                                             'error' => 'Validation Error',
                                             'errors' => [
-                                                'Aggregate Coupon not found!',
+                                                'Aggregate Coupon not found / Aggregate Coupon already used for the another job order!',
                                             ],
                                         ]);
                                     }
