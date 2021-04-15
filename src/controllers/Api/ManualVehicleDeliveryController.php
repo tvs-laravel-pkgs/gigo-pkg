@@ -347,6 +347,8 @@ class ManualVehicleDeliveryController extends Controller
                     }
                     if ($available_coupon_count > 0) {
                         $aggregate_coupons = $coupons;
+                    } else {
+                        $aggregate_coupons = '';
                     }
                 } else {
                     $aggregate_coupons = '';
@@ -358,7 +360,7 @@ class ManualVehicleDeliveryController extends Controller
 
         $job_order->aggregate_works = $aggregate_work;
 
-        //Used for Aggregate Coupon caluclate/validate
+        //Used for Aggregate Coupon calculate/validate
         $job_order->membership_id = $membership_id;
 
         $this->data['success'] = true;
