@@ -941,6 +941,9 @@ class OnSiteVisitController extends Controller
                     'updated_at' => Carbon::now(),
                 ]);
 
+            //Generate PDF
+            $generate_on_site_estimate_pdf = OnSiteOrder::generateEstimatePDF($request->id);
+
             DB::commit();
             if (!$on_site_order_otp_update) {
                 return response()->json([
@@ -1843,8 +1846,9 @@ class OnSiteVisitController extends Controller
                 $site_visit->status_id = 6;
                 $otp_no = mt_rand(111111, 999999);
                 $site_visit->otp_no = $otp_no;
+
                 //Generate PDF
-                // $generate_on_site_estimate_pdf = OnSiteOrder::generateEstimatePDF($site_visit->id);
+                $generate_on_site_estimate_pdf = OnSiteOrder::generateEstimatePDF($site_visit->id);
 
                 $url = url('/') . '/on-site-visit/estimate/customer/view/' . $site_visit->id . '/' . $otp_no;
                 $short_url = ShortUrl::createShortLink($url, $maxlength = "7");

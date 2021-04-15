@@ -457,7 +457,7 @@
                                                 <table class="table table-dark-grey">
                                                     <thead>
                                                         <tr>
-                                                            <th class="wid-100"></th>
+                                                            <th class="wid-100">Action</th>
                                                             <th>
                                                                 Labour Code
                                                             </th>
@@ -592,7 +592,7 @@
                                                 <table class="table table-dark-grey">
                                                     <thead>
                                                         <tr>
-                                                            <th class="wid-100"></th>
+                                                            <th class="wid-100">Action</th>
                                                             <th>
                                                                 Part Code
                                                             </th>
@@ -1236,16 +1236,16 @@
                                     <span class="view-data-list-value">{{on_site_part.part.name}}</span>
                                 </li>
                                 <li class="view-col-4">
-                                    <span class="view-col-label">MRP</span>
+                                    <span class="view-col-label">Rate</span>
                                     <!-- <span class="view-data-list-value">{{on_site_part.part.mrp | currency}}</span> -->
-                                    <input class="form-control" ng-if="mrp_change == 1" ng-model="on_site_part.part.mrp"
-                                        type="text" name="mrp" value="{{on_site_part.part.mrp}}"
-                                        ng-keyup="calculatePartAmount()"
+                                    <!-- ng-if="mrp_change == 1" -->
+                                    <input class="form-control" ng-model="on_site_part.part.mrp" type="text" name="mrp"
+                                        value="{{on_site_part.part.mrp}}" ng-keyup="calculatePartAmount()"
                                         oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
-                                    <span ng-if="mrp_change != 1" class="view-data-list-value">
+                                    <!-- <span ng-if="mrp_change != 1" class="view-data-list-value">
                                         <input class="form-control" ng-if="mrp_change != 1" type="hidden" name="mrp"
                                             value="{{on_site_part.part.mrp}}">
-                                        {{on_site_part.part.mrp | currency}}</span>
+                                        {{on_site_part.part.mrp | currency}}</span> -->
                                 </li>
                                 <li class="view-col-4">
                                     <span class="view-col-label">UOM</span>
