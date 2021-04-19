@@ -1314,6 +1314,20 @@ app.config(['$routeProvider', function($routeProvider) {
 
 app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.
+    //TVS One Discount Request
+    when('/tvs-one/discount-request/table-list', {
+        template: '<tvs-one-discount-table-list></tvs-one-discount-table-list>',
+        title: 'TVS One Discount List',
+    }).
+
+    when('/tvs-one/discount-request/view/:id', {
+        template: '<tvs-one-discount-view></tvs-one-discount-view>',
+        title: 'View TVS One Discount',
+    });
+}]);
+
+app.config(['$routeProvider', function($routeProvider) {
+    $routeProvider.
     //On Site Viit
     when('/on-site-visit/table-list', {
         template: '<on-site-visit-list></on-site-visit-list>',

@@ -406,6 +406,12 @@
 </script>
 
 <script type='text/javascript'>
+    //TVS One Discount Request
+    var tvs_one_discount_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/tvs-one-discount/list.html')}}';
+    var tvs_one_discount_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/tvs-one-discount/view.html')}}';
+</script>
+
+<script type='text/javascript'>
 	//On Site Visit
     var on_site_visit_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/on-site-visit/list.html')}}';
 	var on_site_visit_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/on-site-visit/view.html')}}';

@@ -85,7 +85,7 @@
                                     </li>
                                     <li>
                                         <a data-target="#time_log_details" data-toggle="tab" aria-expanded="true"
-                                            class="filter">
+                                            class="filter" ng-if="!$ctrl.hasPermission('parts-view-site-visit')">
                                             Time Log
                                         </a>
                                     </li>
@@ -856,7 +856,8 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt"
+                                                        ng-if="!$ctrl.hasPermission('parts-view-site-visit')">Next</a>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->

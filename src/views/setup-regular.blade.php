@@ -1881,6 +1881,27 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 </script>
 <script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/manual-vehicle-delivery/controller.js')}}'></script>
 
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
+		//TVS One Discount Request
+		when('/tvs-one/discount-request/table-list', {
+			template: '<tvs-one-discount-table-list></tvs-one-discount-table-list>',
+			title: 'TVS One Discount List',
+		}).
+
+		when('/tvs-one/discount-request/view/:id', {
+			template: '<tvs-one-discount-view></tvs-one-discount-view>',
+			title: 'View TVS One Discount',
+		});
+	}]);
+
+	//TVS One Discount Request
+    var tvs_one_discount_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/tvs-one-discount/list.html')}}';
+	var tvs_one_discount_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/tvs-one-discount/view.html')}}';
+</script>
+<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/tvs-one-discount/controller.js')}}'></script>
+
 <!-- On Site Visit Detail -->
 <script type='text/javascript'>
 	app.config(['$routeProvider', function($routeProvider) {

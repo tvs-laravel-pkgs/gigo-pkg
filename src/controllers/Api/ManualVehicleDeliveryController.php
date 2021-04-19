@@ -251,6 +251,7 @@ class ManualVehicleDeliveryController extends Controller
             'paymentDetail',
             'paymentDetail.paymentMode',
             'aggregateCoupon',
+            'tvsOneApprovalStatus',
         ])
             ->select([
                 'job_orders.*',
@@ -678,6 +679,12 @@ class ManualVehicleDeliveryController extends Controller
                         $job_order->inward_cancel_reason_id = null;
                         $job_order->inward_cancel_reason = null;
                         $job_order->billing_type_id = $request->billing_type_id;
+                        $job_order->is_aggregate_work = $request->is_aggregate_work;
+                        if ($request->labour_discount_amount > 0 || $request->part_discount_amount) {
+                            $job_order->tvs_one_approval_status_id = 1;
+                        } else {
+                            $job_order->tvs_one_approval_status_id = null;
+                        }
                         $job_order->inward_cancel_reason_id = null;
                         $job_order->inward_cancel_reason = null;
                         $job_order->updated_by_id = Auth::user()->id;
@@ -953,6 +960,8 @@ class ManualVehicleDeliveryController extends Controller
                         $job_order->job_card_number = $request->job_card_number;
                         $job_order->labour_discount_amount = null;
                         $job_order->part_discount_amount = null;
+                        $job_order->is_aggregate_work = null;
+                        $job_order->tvs_one_approval_status_id = null;
 
                         $job_order->updated_by_id = Auth::user()->id;
                         $job_order->updated_at = Carbon::now();
@@ -1166,6 +1175,8 @@ class ManualVehicleDeliveryController extends Controller
                         $job_order->status_id = 8470;
                         $job_order->labour_discount_amount = null;
                         $job_order->part_discount_amount = null;
+                        $job_order->is_aggregate_work = null;
+                        $job_order->tvs_one_approval_status_id = null;
                         $job_order->updated_by_id = Auth::user()->id;
                         $job_order->updated_at = Carbon::now();
                         $job_order->save();
@@ -1282,7 +1293,8 @@ class ManualVehicleDeliveryController extends Controller
                     $job_order->approved_remarks = null;
                     $job_order->approved_date_time = null;
                     $job_order->warranty_reason = null;
-
+                    $job_order->is_aggregate_work = null;
+                    $job_order->tvs_one_approval_status_id = null;
                     $job_order->updated_by_id = Auth::user()->id;
                     $job_order->updated_at = Carbon::now();
                     $job_order->save();
@@ -1694,5 +1706,98 @@ class ManualVehicleDeliveryController extends Controller
         }
 
         return true;
+    }
+
+    //TVS Discount Save
+    public function tvsOneDiscountSave(Request $request)
+    {
+        // dd($request->all());
+        try {
+            if ($request->status == 'Reject') {
+                $error_messages = [
+                    'rejected_remarks.required' => "Vehicle Delivery Reject Remarks is required",
+                ];
+                $validator = Validator::make($request->all(), [
+                    'job_order_id' => [
+                        'required',
+                        'integer',
+                        'exists:job_orders,id',
+                    ],
+                    'rejected_remarks' => [
+                        'required',
+                    ],
+
+                ], $error_messages);
+            } else {
+                $error_messages = [
+                    'approved_remarks.required' => "Vehicle Delivery Approval Remarks is required",
+                ];
+                $validator = Validator::make($request->all(), [
+                    'job_order_id' => [
+                        'required',
+                        'integer',
+                        'exists:job_orders,id',
+                    ],
+                    'approved_remarks' => [
+                        'required',
+                    ],
+
+                ], $error_messages);
+            }
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => $validator->errors()->all(),
+                ]);
+            }
+
+            $job_order = JobOrder::find($request->job_order_id);
+
+            if (!$job_order) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => [
+                        'Job Order Not Found!',
+                    ],
+                ]);
+            }
+
+            DB::beginTransaction();
+
+            // $job_order->approver_id = Auth::user()->id;
+
+            if ($request->status == 'Reject') {
+                $job_order->tvs_one_approval_status_id = 3;
+                $job_order->tvs_one_rejected_remarks = $request->rejected_remarks;
+                $message = "TVS ONE Discount Rejected Successfully!";
+            } else {
+                $job_order->tvs_one_approval_status_id = 2;
+                $job_order->tvs_one_approved_remarks = $request->approved_remarks;
+                $message = "TVS ONE Discount Approved Successfully!";
+            }
+
+            $job_order->updated_at = Carbon::now();
+            $job_order->updated_by_id = Auth::user()->id;
+            $job_order->save();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+            ]);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Server Error',
+                'errors' => [
+                    'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+                ],
+            ]);
+        }
     }
 }

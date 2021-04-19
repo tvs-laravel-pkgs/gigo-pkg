@@ -675,9 +675,27 @@
                                                     Aggregate Details
                                                 </b>
                                             </h5>
-                                            <!-- <hr class="hr-15"> -->
+                                            <hr class="hr-15">
                                             <div class="row">
-                                                <div class="col-md-5">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Aggregate Works Processed ?
+                                                        </label>
+                                                        <div class="common-radio-button type-4">
+                                                            <input type="radio" id="aggregate_work_used"
+                                                                name="is_aggregate_work"
+                                                                ng-model="$ctrl.is_aggregate_work" ng-value="1">
+                                                            <label for="aggregate_work_used">Yes</label>
+                                                            <input type="radio" id="aggregate_work_not_used"
+                                                                name="is_aggregate_work"
+                                                                ng-model="$ctrl.is_aggregate_work" ng-value="0">
+                                                            <label for="aggregate_work_not_used">No</label>
+                                                        </div>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-12"></div>
+                                                <div class="col-md-5" ng-if="$ctrl.is_aggregate_work == 1">
                                                     <h6 class="color-primary mb-10">
                                                         <b>
                                                             Aggregate Coupons
@@ -722,7 +740,7 @@
                                                         </table>
                                                     </div><!-- Table Responsive -->
                                                 </div>
-                                                <div class="col-md-7">
+                                                <div class="col-md-7" ng-if="$ctrl.is_aggregate_work == 1">
                                                     <h6 class="color-primary mb-10">
                                                         <b>
                                                             Aggregate Works
@@ -771,9 +789,6 @@
                                                             </tbody>
                                                         </table>
                                                     </div><!-- Table Responsive -->
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <div class="clear-fix"><br></div>
                                                 </div>
                                             </div><!-- Row -->
                                         </div><!-- Column -->

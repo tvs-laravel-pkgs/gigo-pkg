@@ -474,6 +474,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
         Route::post('/manual-vehicle-delivery/save', 'ManualVehicleDeliveryController@save');
         Route::post('/manual-vehicle-delivery/update/vehicle-status', 'ManualVehicleDeliveryController@updateVehicleStatus');
 
+        //TVS One Discount Request
+        Route::post('/tvs-one/discount/save', 'ManualVehicleDeliveryController@tvsOneDiscountSave');
+
         //OnSite Vist
         Route::post('/on-site-visit/get-form-data', 'OnSiteVisitController@getFormData');
         Route::post('/on-site-visit/repair-order/save', 'OnSiteVisitController@saveLabourDetail');

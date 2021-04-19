@@ -543,6 +543,11 @@ class JobOrder extends BaseModel
         return $this->hasMany('App\AmcAggregateCoupon', 'job_order_id');
     }
 
+    public function tvsOneApprovalStatus()
+    {
+        return $this->belongsTo('App\TvsOneApprovalStatus', 'tvs_one_approval_status_id');
+    }
+
     // Query Scopes --------------------------------------------------------------
 
     public function scopeFilterSearch($query, $term)

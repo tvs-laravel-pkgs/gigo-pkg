@@ -736,6 +736,12 @@ app.component('manualVehicleDeliveryForm', {
                         $('.part_discount_class').val('');
                     }
 
+                    if ($scope.job_order.is_aggregate_work == 1) {
+                        self.is_aggregate_work = 1;
+                    } else {
+                        self.is_aggregate_work = 0;
+                    }
+
                 })
                 .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
