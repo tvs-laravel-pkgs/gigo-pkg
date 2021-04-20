@@ -15,7 +15,7 @@ app.component('tvsOneDiscountTableList', {
         }
         self.search_key = '';
         self.user = $scope.user = HelperService.getLoggedUser();
-        self.export_url = exportManualVehicleDeliveryUrl;
+        self.export_url = exportTVSOneDiscountUrl;
         // var table_scroll;
         self.csrf_token = $('meta[name="csrf-token"]').attr('content');
 
@@ -150,7 +150,7 @@ app.component('tvsOneDiscountTableList', {
                 return new Promise(function (resolve, reject) {
                     $http
                         .post(
-                            laravel_routes['getManualDeliveryVehicleFilter'], {
+                            laravel_routes['getCustomerSearchList'], {
                             key: query,
                         }
                         )

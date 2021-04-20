@@ -262,7 +262,7 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
     //TVS One Discount
     Route::get('/tvs-one/discount-request/get-list', 'ManualVehicleDeliveryController@getTVSOneRequestList')->name('getTVSOneRequestList');
     Route::get('/tvs-one/discount-request/get-filter-data', 'ManualVehicleDeliveryController@getTVSOneRequestFilter')->name('getTVSOneRequestFilter');
-    Route::post('/tvs-one/discount-request/export', 'ManualVehicleDeliveryController@export')->name('getManualDeliveryVehicleExport');
+    Route::post('/tvs-one/discount-request/export', 'ManualVehicleDeliveryController@exportTvsOneDiscount')->name('exportTvsOneDiscount');
 
     //On Site Visit
     Route::get('/on-site-visit/get-list', 'OnSiteVisitController@getOnSiteVisitList')->name('getOnSiteVisitList');

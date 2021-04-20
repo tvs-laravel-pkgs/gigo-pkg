@@ -138,7 +138,7 @@ app.component('onSiteVisitList', {
                 return new Promise(function (resolve, reject) {
                     $http
                         .post(
-                            laravel_routes['getManualDeliveryVehicleFilter'], {
+                            laravel_routes['getCustomerSearchList'], {
                             key: query,
                         }
                         )

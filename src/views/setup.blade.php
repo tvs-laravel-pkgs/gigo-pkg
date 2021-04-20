@@ -114,6 +114,9 @@
     //Manual Vehicle Delivery export
     var exportManualVehicleDeliveryUrl = "{{route('getManualDeliveryVehicleExport')}}";
 
+    //TVS One Discount export
+    var exportTVSOneDiscountUrl = "{{route('exportTvsOneDiscount')}}";
+
 </script>
 <!-- <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-segment/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-primary-application/controller.js')}}"></script>

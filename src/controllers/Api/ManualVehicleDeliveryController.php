@@ -680,7 +680,12 @@ class ManualVehicleDeliveryController extends Controller
                         $job_order->inward_cancel_reason = null;
                         $job_order->billing_type_id = $request->billing_type_id;
                         $job_order->is_aggregate_work = $request->is_aggregate_work;
-                        if ($request->labour_discount_amount > 0 || $request->part_discount_amount) {
+                        // if ($request->labour_discount_amount > 0 || $request->part_discount_amount) {
+                        //     $job_order->tvs_one_approval_status_id = 1;
+                        // } else {
+                        //     $job_order->tvs_one_approval_status_id = null;
+                        // }
+                        if ($request->pending_reason_id == 2) {
                             $job_order->tvs_one_approval_status_id = 1;
                         } else {
                             $job_order->tvs_one_approval_status_id = null;

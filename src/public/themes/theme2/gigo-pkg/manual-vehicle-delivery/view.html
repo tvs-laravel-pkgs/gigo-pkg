@@ -811,6 +811,44 @@
                                             </ul>
                                             <!-- <button class="btn btn-secondary-dark btn-md btn-square">Edit</button> -->
                                         </div><!-- Column -->
+                                        <div class="col-md-12"
+                                            ng-if="job_order.tvs_one_approval_status_id == 2 || job_order.tvs_one_approval_status_id == 3">
+                                            <h5 class="color-primary mb-10"><b>TVS ONE Discount</b></h5>
+                                            <ul class="view-row mb-no">
+                                                <li class="view-col-3">
+                                                    <span class="view-col-label">
+                                                        TVS One Discount Request Status
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b>
+                                                            {{job_order.tvs_one_approval_status.name}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3"
+                                                    ng-if="job_order.tvs_one_approval_status_id == 2">
+                                                    <span class="view-col-label">
+                                                        Approved Remarks
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b>
+                                                            {{job_order.tvs_one_approved_remarks}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3"
+                                                    ng-if="job_order.tvs_one_approval_status_id == 3">
+                                                    <span class="view-col-label">
+                                                        Rejected Remarks
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b>
+                                                            {{job_order.tvs_one_rejected_remarks}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                            </ul>
+                                        </div><!-- Column -->
                                         <div class="col-md-12" ng-if="job_order.transcation_attachment.length > 0">
                                             <h5 class="color-primary mb-10"><b>Attachments</b></h5>
                                             <div class="col-md-12" ng-if="job_order.transcation_attachment.length > 0">
