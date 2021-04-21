@@ -286,6 +286,7 @@ class ManualVehicleDeliveryController extends Controller
                 }
             })
             ->where('job_orders.company_id', Auth::user()->company_id)
+            ->where('job_orders.pending_reason_id', 2)
         ;
 
         if ($request->date_range) {
