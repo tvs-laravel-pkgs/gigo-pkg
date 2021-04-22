@@ -1824,7 +1824,7 @@ class ManualVehicleDeliveryController extends Controller
                         $labour_invoice->save();
 
                         //Update Job Order
-                        if ($job_order->status_id != 8477 && $job_order->status_id != 8478 && $job_order->status_id != 8479) {
+                        if ($job_order->status_id != 8477 && $job_order->status_id != 8479) {
                             $job_order->status_id = 8467;
                             $job_order->save();
                         }
@@ -1852,7 +1852,7 @@ class ManualVehicleDeliveryController extends Controller
                         $parts_invoice->save();
 
                         //Update Job Order
-                        if ($job_order->status_id != 8477 && $job_order->status_id != 8478 && $job_order->status_id != 8479) {
+                        if ($job_order->status_id != 8477 && $job_order->status_id != 8479) {
                             $job_order->status_id = 8467;
                             $job_order->save();
                         }
