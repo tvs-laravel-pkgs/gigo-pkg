@@ -969,6 +969,66 @@
                                         ng-model="job_order.tvs_one_rejected_remarks"></textarea>
                                 </div><!-- Field -->
                             </div><!-- Column -->
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <h6 class="color-primary mb-10">
+                                        <b>
+                                            Invoice Details
+                                        </b>
+                                    </h6>
+                                    <table class="table table-dark-grey work_details_table" id="invoice_details_table">
+                                        <thead>
+                                            <tr>
+                                                <td class="table-checkbox">
+                                                    <div class="separate-checkbox">
+                                                        <input id="select_all_invoices" type="checkbox"
+                                                            class="select_all_invoices">
+                                                        <label for="select_all_invoices"
+                                                            class="header-checkbox-label"></label>
+                                                    </div><!-- Check Box -->
+                                                </td>
+                                                <th></th>
+                                                <th>Invoice Amount</th>
+                                                <th>Updated Invoice Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="table-checkbox">
+                                                    <input type="checkbox" id="check1" ng-click="checkCheckbox(1)"
+                                                        class="invoicecheckbox" value="1" ng-checked="false" />
+                                                    <label for="check1"></label>
+                                                </td>
+                                                <td>Labour</td>
+                                                <td>{{job_order.manual_delivery_labour_invoice.amount}}</td>
+                                                <td><input type="text" class="form-control"
+                                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                                        ng-show="false" name="labour_amount" id="in_1"
+                                                        placeholder="Ex: 0.00">
+                                                    <input type="hidden" name="labour_id"
+                                                        value="{{job_order.manual_delivery_labour_invoice.id}}">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="table-checkbox">
+                                                    <input type="checkbox" id="check2" ng-click="checkCheckbox(2)"
+                                                        ng-checked="false" class="invoicecheckbox" value="2" />
+                                                    <label for="check2"></label>
+                                                </td>
+                                                <td>Parts</td>
+                                                <td>{{job_order.manual_delivery_parts_invoice.amount}}</td>
+                                                <td><input type="text" class="form-control"
+                                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                                        name="parts_amount" ng-show="false" id="in_2"
+                                                        placeholder="Ex: 0.00">
+                                                    <input type="hidden" name="part_id"
+                                                        value="{{job_order.manual_delivery_parts_invoice.id}}">
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div><!-- Table Responsive -->
+                            </div><!-- Column -->
                         </div><!-- Row -->
                     </div><!-- Modal Form -->
                 </div><!-- Modal Body -->

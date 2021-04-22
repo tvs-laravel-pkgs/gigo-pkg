@@ -289,13 +289,36 @@ class VehicleGatePassController extends Controller
                 'jobOrder.vehicle',
             ])->find($request->gate_log_id);
 
-            $job_order = JobOrder::find($gate_log->jobOrder->id);
+            $job_order = JobOrder::with([
+                'manualDeliveryLabourInvoice',
+                'manualDeliveryPartsInvoice',
+                'paymentDetail',
+            ])->find($gate_log->jobOrder->id);
 
             if ($job_order) {
                 $job_order->vehicle_delivery_status_id = 3;
-                if ($job_order->status_id == 8478) {
-                    $job_order->status_id = 8467; // Waiting for Payment
+                // if ($job_order->status_id == 8478) {
+                //     $job_order->status_id = 8467; // Waiting for Payment
+                // }
+
+                //Labour & Parts Amount
+                $labour_amount = $job_order->manualDeliveryLabourInvoice ? $job_order->manualDeliveryLabourInvoice->amount : 0;
+                $parts_amount = $job_order->manualDeliveryPartsInvoice ? $job_order->manualDeliveryPartsInvoice->amount : 0;
+
+                //Paid amount
+                $paid_amount = 0;
+                if (count($job_order->paymentDetail) > 0) {
+                    foreach ($job_order->paymentDetail as $deliveryReceipt) {
+                        $paid_amount += $deliveryReceipt['amount'];
+                    }
                 }
+
+                $balance_amount = ($labour_amount + $parts_amount) - $paid_amount;
+
+                if ($balance_amount > 0) {
+                    $job_order->status_id = 8467; // Payment Pending
+                }
+
                 $job_order->save();
 
                 $inventories = DB::table('job_order_vehicle_inventory_item')->where('gate_log_id', $gate_log->id)->where('entry_type_id', 11301)->delete();

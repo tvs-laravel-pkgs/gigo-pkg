@@ -286,7 +286,7 @@ class ManualVehicleDeliveryController extends Controller
                 }
             })
             ->where('job_orders.company_id', Auth::user()->company_id)
-            ->where('job_orders.pending_reason_id', 2)
+        // ->where('job_orders.pending_reason_id', 2)
         ;
 
         if ($request->date_range) {
@@ -588,7 +588,7 @@ class ManualVehicleDeliveryController extends Controller
             ->join('states', 'states.id', 'outlets.state_id')
             ->join('regions', 'regions.state_id', 'states.id')
             ->join('tvs_one_approval_statuses', 'tvs_one_approval_statuses.id', 'job_orders.tvs_one_approval_status_id')
-            ->where('job_orders.pending_reason_id', 2)
+        // ->where('job_orders.pending_reason_id', 2)
             ->whereNotNull('job_orders.status_id')
             ->whereNotNull('service_policy_id')
             ->whereDate('gate_logs.gate_in_date', '>=', $start_date)

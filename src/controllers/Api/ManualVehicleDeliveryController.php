@@ -587,6 +587,14 @@ class ManualVehicleDeliveryController extends Controller
 
                         DB::beginTransaction();
 
+                        if ($job_order->tvs_one_approval_status_id != 2 && $job_order->tvs_one_approval_status_id != 3) {
+                            if ($request->labour_discount_amount > 0 || $request->part_discount_amount) {
+                                $job_order->tvs_one_approval_status_id = 1;
+                            } else {
+                                $job_order->tvs_one_approval_status_id = null;
+                            }
+                        }
+
                         //Check Invoice,Receipt amount
                         $labour_amount = $request->labour_amount;
                         $parts_amount = $request->parts_amount;
@@ -680,16 +688,19 @@ class ManualVehicleDeliveryController extends Controller
                         $job_order->inward_cancel_reason = null;
                         $job_order->billing_type_id = $request->billing_type_id;
                         $job_order->is_aggregate_work = $request->is_aggregate_work;
-                        // if ($request->labour_discount_amount > 0 || $request->part_discount_amount) {
+
+                        // if ($job_order->tvs_one_approval_status_id != 2 && $job_order->tvs_one_approval_status_id != 3) {
+                        //     if ($request->labour_discount_amount > 0 || $request->part_discount_amount) {
+                        //         $job_order->tvs_one_approval_status_id = 1;
+                        //     } else {
+                        //         $job_order->tvs_one_approval_status_id = null;
+                        //     }
+                        // }
+                        // if ($request->pending_reason_id == 2) {
                         //     $job_order->tvs_one_approval_status_id = 1;
                         // } else {
                         //     $job_order->tvs_one_approval_status_id = null;
                         // }
-                        if ($request->pending_reason_id == 2) {
-                            $job_order->tvs_one_approval_status_id = 1;
-                        } else {
-                            $job_order->tvs_one_approval_status_id = null;
-                        }
                         $job_order->inward_cancel_reason_id = null;
                         $job_order->inward_cancel_reason = null;
                         $job_order->updated_by_id = Auth::user()->id;
@@ -1604,8 +1615,19 @@ class ManualVehicleDeliveryController extends Controller
             ->find($job_order_id);
 
         $total_amount = $job_order->manualDeliveryLabourInvoice->amount + $job_order->manualDeliveryPartsInvoice->amount;
-        // dd($job_order->outlet,$job_order->vehicleDeliveryRequestUser);
+
+        //Total Discount Amount
+        $discount_amount = ($job_order->labour_discount_amount > 0 ? $job_order->labour_discount_amount : 0) + ($job_order->part_discount_amount > 0 ? $job_order->part_discount_amount : 0);
+
+        $job_order->customer_to_paid_amount = $total_amount - $discount_amount;
+
+        $total_amount = number_format($total_amount, 2);
         $job_order->total_amount = $total_amount;
+
+        $discount_amount = number_format($discount_amount, 2);
+        $job_order->discount_amount = $discount_amount;
+        // dd($total_amount, $discount_amount);
+
         if ($job_order) {
             $user_details = MailConfiguration::where('config_id', 3011)->pluck('to_email')->first();
             $to_email = explode(',', $user_details);
@@ -1716,7 +1738,7 @@ class ManualVehicleDeliveryController extends Controller
     //TVS Discount Save
     public function tvsOneDiscountSave(Request $request)
     {
-        // dd($request->all());
+        dd($request->all());
         try {
             if ($request->status == 'Reject') {
                 $error_messages = [
@@ -1778,6 +1800,40 @@ class ManualVehicleDeliveryController extends Controller
                 $job_order->tvs_one_approval_status_id = 3;
                 $job_order->tvs_one_rejected_remarks = $request->rejected_remarks;
                 $message = "TVS ONE Discount Rejected Successfully!";
+
+                //Labour amount updates
+                if ($request->labour_amount) {
+                    $labour_invoice = GigoManualInvoice::find($request->labour_id);
+                    if ($labour_invoice) {
+                        $labour_invoice->amount = $request->labour_amount;
+                        $labour_invoice->updated_by_id = Auth::user()->id;
+                        $labour_invoice->updated_at = Carbon::now();
+                        $labour_invoice->save();
+
+                        //Update Job Order
+                        if ($job_order->status_id != 8477 && $job_order->status_id != 8478 && $job_order->status_id != 8479) {
+                            $job_order->status_id = 8467;
+                            $job_order->save();
+                        }
+                    }
+                }
+
+                //Parts amount updates
+                if ($request->parts_amount) {
+                    $parts_invoice = GigoManualInvoice::find($request->part_id);
+                    if ($parts_invoice) {
+                        $parts_invoice->amount = $request->parts_amount;
+                        $parts_invoice->updated_by_id = Auth::user()->id;
+                        $parts_invoice->updated_at = Carbon::now();
+                        $parts_invoice->save();
+
+                        //Update Job Order
+                        if ($job_order->status_id != 8477 && $job_order->status_id != 8478 && $job_order->status_id != 8479) {
+                            $job_order->status_id = 8467;
+                            $job_order->save();
+                        }
+                    }
+                }
             } else {
                 $job_order->tvs_one_approval_status_id = 2;
                 $job_order->tvs_one_approved_remarks = $request->approved_remarks;

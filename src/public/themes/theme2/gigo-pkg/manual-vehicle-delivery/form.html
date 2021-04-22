@@ -631,9 +631,12 @@
                                                             placeholder="Ex: 1000" class="form-control amount
                                                             labour_invoice_amount" id="labour_invoice_amount"
                                                             value="{{job_order.manual_delivery_labour_invoice.amount}}"
-                                                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                                            placeholder="Ex: 0.00">
                                                         <span style="font-size: 11px;"
                                                             class="error labour_discount_amount"
+                                                            ng-if="job_order.labour_discount_amount > 0"></span><br>
+                                                        <span style="font-size: 11px;" class="error labour_pay_amount"
                                                             ng-if="job_order.labour_discount_amount > 0"></span>
                                                         <input type="hidden" class="labour_discount_class"
                                                             value="{{job_order.labour_discount_amount}}"
@@ -657,9 +660,12 @@
                                                             placeholder="Ex: 2000" class="form-control amount
                                                             parts_invoice_amount" id="parts_invoice_amount"
                                                             value="{{job_order.manual_delivery_parts_invoice.amount}}"
-                                                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                                            placeholder="Ex: 0.00">
                                                         <span style="font-size: 11px;"
                                                             class="error part_discount_amount"
+                                                            ng-if="job_order.part_discount_amount > 0"></span><br>
+                                                        <span style="font-size: 11px;" class="error part_pay_amount"
                                                             ng-if="job_order.part_discount_amount > 0"></span>
                                                         <input type="hidden" class="part_discount_class"
                                                             value="{{job_order.part_discount_amount}}"
@@ -779,7 +785,7 @@
                                                                             oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
                                                                             name="aggregate_work[{{index}}][amount]"
                                                                             ng-show="aggregate_work.checked"
-                                                                            id="in_{{index}}"
+                                                                            id="in_{{index}}" placeholder="Ex: 0.00"
                                                                             value="{{aggregate_work.amount}}">
                                                                         <input type="hidden"
                                                                             name="aggregate_work[{{index}}][aggregate_work_id]"

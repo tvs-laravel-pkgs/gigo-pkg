@@ -719,21 +719,28 @@ app.component('manualVehicleDeliveryForm', {
                     if ($scope.job_order.labour_discount_amount && $scope.job_order.labour_discount_amount > 0) {
                         $('.labour_discount_class').val($scope.job_order.labour_discount_amount);
                         var customer_paid_labour_amount = $scope.job_order.manual_delivery_labour_invoice.amount - $scope.job_order.labour_discount_amount;
-                        $('.labour_discount_amount').html('Customer to be paid - ₹ ' + customer_paid_labour_amount);
                         $('.labour_discount_amount').show();
+                        $('.labour_pay_amount').show();
+                        $('.labour_discount_amount').html('Discount amount - ₹ ' + $scope.job_order.labour_discount_amount);
+                        $('.labour_pay_amount').html('Customer to be paid - ₹ ' + customer_paid_labour_amount);
                     } else {
                         $('.labour_discount_amount').hide();
+                        $('.labour_pay_amount').hide();
                         $('.labour_discount_class').val('');
                     }
 
                     if ($scope.job_order.part_discount_amount && $scope.job_order.part_discount_amount > 0) {
                         $('.part_discount_class').val($scope.job_order.part_discount_amount);
                         var customer_paid_part_amount = $scope.job_order.manual_delivery_parts_invoice.amount - $scope.job_order.part_discount_amount;
-                        $('.part_discount_amount').html('Customer to be paid - ₹ ' + customer_paid_part_amount);
                         $('.part_discount_amount').show();
+                        $('.part_pay_amount').show();
+
+                        $('.part_discount_amount').html('Discount amount - ₹ ' + $scope.job_order.part_discount_amount);
+                        $('.part_pay_amount').html('Customer to be paid - ₹ ' + customer_paid_part_amount);
                     } else {
                         $('.part_discount_amount').hide();
                         $('.part_discount_class').val('');
+                        $('.part_pay_amount').hide();
                     }
 
                     if ($scope.job_order.is_aggregate_work == 1) {
@@ -935,11 +942,15 @@ app.component('manualVehicleDeliveryForm', {
                     $('.labour_discount_class').val(labour_discount_value);
                     $scope.job_order.labour_discount_amount = labour_discount_value;
                     $('.labour_discount_amount').show();
-                    $('.labour_discount_amount').html('Customer to be paid - ₹ ' + labour_amount);
+                    $('.labour_pay_amount').show();
+                    $('.labour_discount_amount').html('Discount amount - ₹ ' + labour_discount_value);
+                    $('.labour_pay_amount').html('Customer to be paid - ₹ ' + labour_amount);
+
                 } else {
                     $('.labour_discount_class').val('');
                     $scope.job_order.labour_discount_amount = 0;
                     $('.labour_discount_amount').hide();
+                    $('.labour_pay_amount').hide();
                 }
 
                 //Parts discount
@@ -955,11 +966,14 @@ app.component('manualVehicleDeliveryForm', {
                     $('.part_discount_class').val(part_discount_value);
                     $scope.job_order.part_discount_amount = part_discount_value;
                     $('.part_discount_amount').show();
-                    $('.part_discount_amount').html('Customer to be paid - ₹ ' + parts_amount);
+                    $('.part_pay_amount').show();
+                    $('.part_discount_amount').html('Discount amount - ₹ ' + part_discount_value);
+                    $('.part_pay_amount').html('Customer to be paid - ₹ ' + parts_amount);
                 } else {
                     $('.part_discount_class').val('');
                     $scope.job_order.part_discount_amount = 0;
                     $('.part_discount_amount').hide();
+                    $('.part_pay_amount').hide();
                 }
 
                 total_amount = parseFloat(labour_amount) + parseFloat(parts_amount);

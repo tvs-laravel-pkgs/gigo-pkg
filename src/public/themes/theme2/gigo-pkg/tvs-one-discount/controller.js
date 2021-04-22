@@ -493,6 +493,38 @@ app.component('tvsOneDiscountView', {
             });
         }
 
+        //Invoice Updates
+        $(document).on('click', '.select_all_invoices', function () {
+            if (event.target.checked == true) {
+                $('.invoicecheckbox').prop('checked', true);
+                $.each($('.invoicecheckbox:checked'), function () {
+                    $scope.checkCheckbox($(this).val());
+                });
+            } else {
+                $('.invoicecheckbox').prop('checked', false);
+                $.each($('.invoicecheckbox'), function () {
+                    $scope.checkCheckbox($(this).val());
+                });
+            }
+        });
+
+        $scope.checkCheckbox = function (id) {
+            checkval = $('#check' + id).is(":checked");
+            if (checkval == true) {
+                $("#in_" + id).removeClass('ng-hide');
+                $("#in_" + id).addClass('required');
+                $("#in_" + id).addClass('error');
+            } else {
+                $("#in_" + id).addClass('ng-hide');
+                $("#in_" + id).val(" ");
+                $("#in_" + id).removeClass('required');
+                $("#in_" + id).removeClass('error');
+                $("#in_" + id).closest('.form-group').find('label.error').remove();
+                $("#in_" + id).val('');
+                $('#in_' + id + '-error').remove();
+            }
+        }
+
         /* Image Uploadify Funtion */
         $('.image_uploadify').imageuploadify();
 
