@@ -163,11 +163,11 @@ class GateInController extends Controller
                     'mimes:jpeg,jpg,png',
                     // 'max:3072',
                 ],
-                'chassis_photo' => [
-                    'required',
-                    'mimes:jpeg,jpg,png',
-                    // 'max:3072',
-                ],
+                // 'chassis_photo' => [
+                //     'required',
+                //     'mimes:jpeg,jpg,png',
+                //     // 'max:3072',
+                // ],
                 'is_registered' => [
                     'required',
                     'integer',
@@ -723,45 +723,48 @@ class GateInController extends Controller
             // dd($membership_data);
             if ($membership_data && $membership_data['success'] == 'true') {
                 // dump($membership_data);
+                $amc_customer_id = null;
+                if ($membership_data['tvs_one_customer_code']) {
+                    $amc_customer = AmcCustomer::firstOrNew(['tvs_one_customer_code' => $membership_data['tvs_one_customer_code']]);
 
-                $amc_customer = AmcCustomer::firstOrNew(['tvs_one_customer_code' => $membership_data['tvs_one_customer_code']]);
-
-                if (!$amc_customer->customer_id) {
-                    $customer = Customer::where('code', ltrim($membership_data['al_dms_code'], '0'))->first();
-                    if ($customer) {
-                        $amc_customer->customer_id = $customer->id;
+                    if (!$amc_customer->customer_id) {
+                        $customer = Customer::where('code', ltrim($membership_data['al_dms_code'], '0'))->first();
+                        if ($customer) {
+                            $amc_customer->customer_id = $customer->id;
+                        }
                     }
-                }
 
-                if ($amc_customer->exists) {
-                    $amc_customer->updated_by_id = Auth::user()->id;
-                    $amc_customer->updated_at = Carbon::now();
-                } else {
-                    $amc_customer->created_by_id = Auth::user()->id;
-                    $amc_customer->created_at = Carbon::now();
-                    $amc_customer->updated_at = null;
-                }
+                    if ($amc_customer->exists) {
+                        $amc_customer->updated_by_id = Auth::user()->id;
+                        $amc_customer->updated_at = Carbon::now();
+                    } else {
+                        $amc_customer->created_by_id = Auth::user()->id;
+                        $amc_customer->created_at = Carbon::now();
+                        $amc_customer->updated_at = null;
+                    }
 
-                $amc_customer->save();
+                    $amc_customer->save();
 
-                //Save Aggregate Coupons
-                if ($membership_data['aggregate_coupon']) {
-                    $aggregate_coupons = explode(',', $membership_data['aggregate_coupon']);
+                    $amc_customer_id = $amc_customer->id;
 
-                    if (count($aggregate_coupons) > 0) {
-                        foreach ($aggregate_coupons as $aggregate_coupon) {
-                            $coupon = AmcAggregateCoupon::firstOrNew(['coupon_code' => str_replace(' ', '', $aggregate_coupon)]);
-                            if ($coupon->exists) {
-                                $coupon->updated_by_id = Auth::user()->id;
-                                $coupon->updated_at = Carbon::now();
-                            } else {
-                                $coupon->created_by_id = Auth::user()->id;
-                                $coupon->created_at = Carbon::now();
-                                $coupon->updated_at = null;
-                                $coupon->status_id = 1;
+                    //Save Aggregate Coupons
+                    if ($membership_data['aggregate_coupon']) {
+                        $aggregate_coupons = explode(',', $membership_data['aggregate_coupon']);
+                        if (count($aggregate_coupons) > 0) {
+                            foreach ($aggregate_coupons as $aggregate_coupon) {
+                                $coupon = AmcAggregateCoupon::firstOrNew(['coupon_code' => str_replace(' ', '', $aggregate_coupon)]);
+                                if ($coupon->exists) {
+                                    $coupon->updated_by_id = Auth::user()->id;
+                                    $coupon->updated_at = Carbon::now();
+                                } else {
+                                    $coupon->created_by_id = Auth::user()->id;
+                                    $coupon->created_at = Carbon::now();
+                                    $coupon->updated_at = null;
+                                    $coupon->status_id = 1;
+                                }
+                                $coupon->amc_customer_id = $amc_customer->id;
+                                $coupon->save();
                             }
-                            $coupon->amc_customer_id = $amc_customer->id;
-                            $coupon->save();
                         }
                     }
                 }
@@ -788,7 +791,7 @@ class GateInController extends Controller
 
                 $amc_member->start_date = date('Y-m-d', strtotime($membership_data['start_date']));
                 $amc_member->expiry_date = date('Y-m-d', strtotime($membership_data['end_date']));
-                $amc_member->amc_customer_id = $amc_customer->id;
+                $amc_member->amc_customer_id = $amc_customer_id;
 
                 $amc_member->save();
 

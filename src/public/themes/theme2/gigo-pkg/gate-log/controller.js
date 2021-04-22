@@ -1,6 +1,6 @@
 app.component('gateLogList', {
     templateUrl: gate_log_list_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $scope.loading = true;
         $('#search_gate_log').focus();
         var self = this;
@@ -28,10 +28,10 @@ app.component('gateLogList', {
             },
             pageLength: 10,
             processing: true,
-            stateSaveCallback: function(settings, data) {
+            stateSaveCallback: function (settings, data) {
                 localStorage.setItem('CDataTables_' + settings.sInstance, JSON.stringify(data));
             },
-            stateLoadCallback: function(settings) {
+            stateLoadCallback: function (settings) {
                 var state_save_val = JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
                 if (state_save_val) {
                     $('#search_gate_log').val(state_save_val.search.search);
@@ -45,7 +45,7 @@ app.component('gateLogList', {
                 url: laravel_routes['getGateLogList'],
                 type: "GET",
                 dataType: "json",
-                data: function(d) {
+                data: function (d) {
                     d.date_range = $("#date_range").val();
                     d.model_id = $("#model_id").val();
                     d.outlet_id = $("#outlet_id").val();
@@ -65,43 +65,43 @@ app.component('gateLogList', {
                 //{ data: 'status', name: 'configs.name' },
 
             ],
-            "infoCallback": function(settings, start, end, max, total, pre) {
+            "infoCallback": function (settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)
                 $('.foot_info').html('Showing ' + start + ' to ' + end + ' of ' + max + ' entries')
             },
-            rowCallback: function(row, data) {
+            rowCallback: function (row, data) {
                 $(row).addClass('highlight-row');
             }
         });
         $('.dataTables_length select').select2();
 
-        $scope.clear_search = function() {
+        $scope.clear_search = function () {
             $('#search_gate_log').val('');
             $('#gate_logs_list').DataTable().search('').draw();
         }
-        $('.refresh_table').on("click", function() {
+        $('.refresh_table').on("click", function () {
             $('#gate_logs_list').DataTable().ajax.reload();
         });
 
         var dataTables = $('#gate_logs_list').dataTable();
-        $("#search_gate_log").keyup(function() {
+        $("#search_gate_log").keyup(function () {
             dataTables.fnFilter(this.value);
         });
 
         //DELETE
-        $scope.deleteGateLog = function($id) {
+        $scope.deleteGateLog = function ($id) {
             $('#gate_log_id').val($id);
         }
-        $scope.deleteConfirm = function() {
+        $scope.deleteConfirm = function () {
             $id = $('#gate_log_id').val();
             $http.post(
                 laravel_routes['deleteGateLog'], {
-                    id: $id
-                }
-            ).then(function(response) {
+                id: $id
+            }
+            ).then(function (response) {
                 if (response.data.success) {
                     custom_noty('success', 'Gate Log Deleted Successfully');
-                    $('#gate_logs_list').DataTable().ajax.reload(function(json) {});
+                    $('#gate_logs_list').DataTable().ajax.reload(function (json) { });
                     $location.path('/gate-log/list');
                 } else {
                     custom_noty('error', 'Gate Log cannot be deleted!');
@@ -112,36 +112,36 @@ app.component('gateLogList', {
         // FOR FILTER
         $http.get(
             laravel_routes['getGateLogFilter']
-        ).then(function(response) {
+        ).then(function (response) {
             // console.log(response);
             self.status = response.data.status;
             self.model_list = response.data.model_list;
             self.outlet_list = response.data.outlet_list;
         });
-        $element.find('input').on('keydown', function(ev) {
+        $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
         });
 
-        $scope.onSelectedmodel = function(model_selected) {
+        $scope.onSelectedmodel = function (model_selected) {
             $('#model_ids').val(model_selected);
         }
 
-        $scope.onSelectedStatus = function(status_selected) {
+        $scope.onSelectedStatus = function (status_selected) {
             $('#status').val(status_selected);
         }
 
-        $scope.onSelectedoutlet = function(outlet_selected) {
+        $scope.onSelectedoutlet = function (outlet_selected) {
             $('#outlet_id').val(outlet_selected);
         }
 
-        $scope.clearSearchTerm = function() {
+        $scope.clearSearchTerm = function () {
             $scope.searchTerm = '';
             $scope.searchTerm1 = '';
             $scope.searchTerm2 = '';
             $scope.searchTerm3 = '';
         };
         /* Modal Md Select Hide */
-        $('.modal').bind('click', function(event) {
+        $('.modal').bind('click', function (event) {
             if ($('.md-select-menu-container').hasClass('md-active')) {
                 $mdSelect.hide();
             }
@@ -165,22 +165,22 @@ app.component('gateLogList', {
             }
         });
 
-        $('.daterange').on('apply.daterangepicker', function(ev, picker) {
+        $('.daterange').on('apply.daterangepicker', function (ev, picker) {
             $(this).val(picker.startDate.format('DD-MM-YYYY') + ' to ' + picker.endDate.format('DD-MM-YYYY'));
             //dataTables.fnFilter();
         });
 
-        $('.daterange').on('cancel.daterangepicker', function(ev, picker) {
+        $('.daterange').on('cancel.daterangepicker', function (ev, picker) {
             $(this).val('');
         });
 
-        $scope.applyFilter = function() {
+        $scope.applyFilter = function () {
             // $('#status').val(self.status);
             dataTables.fnFilter();
             $('#gate-log-filter-modal').modal('hide');
         }
 
-        $scope.reset_filter = function() {
+        $scope.reset_filter = function () {
             $("#date_range").val('');
             $("#model_id").val('');
             $("#outlet_id").val('');
@@ -196,7 +196,7 @@ app.component('gateLogList', {
 
 app.component('gateLogForm', {
     templateUrl: gate_log_form_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $route) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $route) {
         // alert("test");
         var self = this;
         // $("input:text:visible:first").focus();
@@ -218,7 +218,7 @@ app.component('gateLogForm', {
             showBrowse: false,
             showRemove: false,
             allowedFileTypes: ['image'],
-            slugCallback: function(filename) {
+            slugCallback: function (filename) {
                 return filename.replace('(', '_').replace(']', '_');
             }
         });
@@ -237,17 +237,17 @@ app.component('gateLogForm', {
         $scope.reading_type_status = 2;
 
         //for md-select search
-        $element.find('input').on('keydown', function(ev) {
+        $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
         });
 
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $.ajax({
-                    url: base_url + '/api/gate-in-entry/get-form-data',
-                    method: "GET",
-                })
-                .done(function(res) {
+                url: base_url + '/api/gate-in-entry/get-form-data',
+                method: "GET",
+            })
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -255,50 +255,50 @@ app.component('gateLogForm', {
                     $scope.extras = res.extras;
                     $scope.$apply();
 
-                    setTimeout(function() {
+                    setTimeout(function () {
                         $('#registration_number').prop('readonly', true);
                         $('.chassis_number').prop('readonly', true);
                         $('.engine_number').prop('readonly', true);
                     }, 1000);
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
         $scope.fetchData();
 
-        $('.btn-nxt').on("click", function() {
+        $('.btn-nxt').on("click", function () {
             $('.editDetails-tabs li.active').next().children('a').trigger("click");
             tabPaneFooter();
         });
-        $('.btn-prev').on("click", function() {
+        $('.btn-prev').on("click", function () {
             $('.editDetails-tabs li.active').prev().children('a').trigger("click");
             tabPaneFooter();
         });
-        $('.btn-pills').on("click", function() {
+        $('.btn-pills').on("click", function () {
             tabPaneFooter();
         });
 
-        $scope.btnNxt = function() {}
-        $scope.prev = function() {}
+        $scope.btnNxt = function () { }
+        $scope.prev = function () { }
 
-        setTimeout(function() {
+        setTimeout(function () {
             $('input[type=search]').addClass('vehicleSearchBox');
             $(".vehicleSearchBox").attr("maxlength", 17);
             $('.vehicleSearchBox').css('text-transform', 'uppercase');
         }, 1000);
 
         //GET VEHICLE LIST
-        self.searchVehicle = function(query) {
+        self.searchVehicle = function (query) {
             if (query) {
-                return new Promise(function(resolve, reject) {
+                return new Promise(function (resolve, reject) {
                     $http
                         .post(
                             laravel_routes['getVehicleSearchList'], {
-                                key: query,
-                            }
+                            key: query,
+                        }
                         )
-                        .then(function(response) {
+                        .then(function (response) {
                             resolve(response.data);
                         });
                 });
@@ -307,7 +307,7 @@ app.component('gateLogForm', {
             }
         }
 
-        self.getVehicle = function(item) {
+        self.getVehicle = function (item) {
             if (item) {
                 console.log(item);
                 var registration_number = item.registration_number;
@@ -339,7 +339,7 @@ app.component('gateLogForm', {
             }
         }
 
-        $scope.getSelectedVehicle = function(index, vehicle_detail) {
+        $scope.getSelectedVehicle = function (index, vehicle_detail) {
             if (!vehicle_detail) {
                 $('.chassis_number').val('');
                 $('.engine_number').val('');
@@ -365,9 +365,9 @@ app.component('gateLogForm', {
             }
         }
 
-        $scope.SearchType = function(id) {
+        $scope.SearchType = function (id) {
             if (id == 1) {
-                setTimeout(function() {
+                setTimeout(function () {
                     $('#registration_number').prop('readonly', true);
                     $('.chassis_number').prop('readonly', true);
                     $('.engine_number').prop('readonly', true);
@@ -384,7 +384,7 @@ app.component('gateLogForm', {
                 $scope.reading_type_status = 2;
             }
         }
-        $scope.showDiv = function(id) {
+        $scope.showDiv = function (id) {
             if (event.target.checked == true) {
                 $("#remarks_div_" + id).removeClass('ng-hide');
                 $("#remarks_div_" + id).val('');
@@ -396,7 +396,7 @@ app.component('gateLogForm', {
             }
         }
 
-        $(document).on('keyup', ".registration_number", function() {
+        $(document).on('keyup', ".registration_number", function () {
             if ($(this).val().length == 2) {
                 $('.registration_number').val($(this).val() + '-');
             }
@@ -432,14 +432,14 @@ app.component('gateLogForm', {
                 'driver_photo': {
                     required: true,
                 },
-                'chassis_photo': {
-                    required: true,
-                },
+                // 'chassis_photo': {
+                //     required: true,
+                // },
                 'is_registered': {
                     required: true,
                 },
                 'registration_number': {
-                    required: function(element) {
+                    required: function (element) {
                         if (self.is_registered == '1') {
                             return true;
                         }
@@ -483,7 +483,7 @@ app.component('gateLogForm', {
                     maxlength: 10,
                 },
                 'chassis_number': {
-                    required: function(element) {
+                    required: function (element) {
                         if (self.gatein_entry_type_id == '1') {
                             return true;
                         }
@@ -493,7 +493,7 @@ app.component('gateLogForm', {
                     maxlength: 17,
                 },
                 'engine_number': {
-                    required: function(element) {
+                    required: function (element) {
                         if (self.gatein_entry_type_id == '2') {
                             return true;
                         }
@@ -539,7 +539,7 @@ app.component('gateLogForm', {
                     maxlength: 'Maximum 191 Characters',
                 }
             },
-            errorPlacement: function(error, element) {
+            errorPlacement: function (error, element) {
                 if (element.hasClass("vehicle_photo")) {
                     custom_noty('error', 'Vehicle Photo is Required')
                 } else if (element.hasClass("km_reading_photo")) {
@@ -552,23 +552,23 @@ app.component('gateLogForm', {
                     error.insertAfter(element)
                 }
             },
-            invalidHandler: function(event, validator) {
+            invalidHandler: function (event, validator) {
                 custom_noty('error', 'You have errors, Please check all tabs');
             },
-            submitHandler: function(form) {
+            submitHandler: function (form) {
                 let formData = new FormData($(form_id)[0]);
                 $('#submit').button('loading');
                 $.ajax({
-                        url: base_url + '/api/gate-in-entry/create',
-                        method: "POST",
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        beforeSend: function(xhr) {
-                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                        },
-                    })
-                    .done(function(res) {
+                    url: base_url + '/api/gate-in-entry/create',
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                    .done(function (res) {
                         if (!res.success) {
                             $('#submit').button('reset');
                             showErrorNoty(res);
@@ -581,13 +581,13 @@ app.component('gateLogForm', {
                             $scope.$apply();
                         }
                     })
-                    .fail(function(xhr) {
+                    .fail(function (xhr) {
                         $('#submit').button('reset');
                         custom_noty('error', 'Something went wrong at server');
                     });
             }
         });
-        $scope.reloadPage = function() {
+        $scope.reloadPage = function () {
             // $location.reload(true);
             $('#confirm_notification').modal('hide');
             $('body').removeClass('modal-open');

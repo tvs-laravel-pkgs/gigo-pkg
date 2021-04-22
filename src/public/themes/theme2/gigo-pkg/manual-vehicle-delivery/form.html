@@ -499,7 +499,9 @@
                                                     <div class="form-group">
                                                         <label>Job Card Number<sup class="mandatory">*</sup></label>
                                                         <input type="text" class="form-control required"
-                                                            placeholder="Ex:12345" ng-model="job_order.job_card_number"
+                                                            placeholder="Ex:12345"
+                                                            onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')"
+                                                            ng-model="job_order.job_card_number"
                                                             value="{{job_order.job_card_number}}"
                                                             name="job_card_number" />
                                                     </div><!-- Feild -->
@@ -842,6 +844,15 @@
                                                         </div>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
+                                                <div class="col-md-3" ng-if="$ctrl.vehicle_payment_status">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Customer to be Paid
+                                                        </label>
+                                                        <input type="text" readonly
+                                                            class="form-control customer_to_be_paid_amount">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
                                                 <div class="col-md-12">
                                                     <div class="clear-fix"></div>
                                                 </div>
@@ -941,10 +952,29 @@
                                                             </tfoot>
                                                         </table>
                                                     </div><!-- Table Responsive -->
+                                                    <br>
                                                     <input type="hidden" name="removal_payment_ids"
                                                         class="removal_payment_ids" id="removal_payment_ids">
                                                 </div><!-- Column -->
                                                 <div class="col-md-12"></div>
+                                                <div class="col-md-3" ng-if="$ctrl.vehicle_payment_status">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Customer Paid Amount
+                                                        </label>
+                                                        <input type="text" readonly
+                                                            class="form-control customer_paid_amount">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3" ng-if="$ctrl.vehicle_payment_status">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Remaining Amount
+                                                        </label>
+                                                        <input type="text" readonly
+                                                            class="form-control customer_paid_remaining_amount">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
                                                 <div class="col-md-3"
                                                     ng-if="$ctrl.vehicle_payment_status && $ctrl.remarks_status == 1">
                                                     <div class="form-group">

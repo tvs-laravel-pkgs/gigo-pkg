@@ -980,6 +980,7 @@ app.component('manualVehicleDeliveryForm', {
                 total_amount = total_amount.toFixed(2);
 
                 $('.paid_amount_0').val(total_amount);
+                $('.customer_to_be_paid_amount').val(total_amount);
 
                 $scope.$apply();
             }, 100);
@@ -1020,16 +1021,24 @@ app.component('manualVehicleDeliveryForm', {
                     total_paid_amount += receipt_amount;
                 });
 
+                var remaining_amount = 0;
                 if (total_paid_amount >= total_amount) {
                     // $('.receipt_amount').val(total_amount);
                     self.remarks_status = 0;
+                    remaining_amount = 0;
                 } else if (total_amount > total_paid_amount) {
                     if (total_paid_amount > 0) {
                         self.remarks_status = 1;
+                        remaining_amount = total_amount - total_paid_amount;
                     } else {
-                        self.remarks_status = 0;
+                        self.remarks_status = 1;
+                        remaining_amount = total_amount;
                     }
                 }
+
+                $('.customer_paid_amount').val(total_paid_amount);
+                $('.customer_paid_remaining_amount').val(remaining_amount);
+
                 $scope.$apply();
             }, 100);
         }

@@ -587,13 +587,13 @@ class ManualVehicleDeliveryController extends Controller
 
                         DB::beginTransaction();
 
-                        if ($job_order->tvs_one_approval_status_id != 2 && $job_order->tvs_one_approval_status_id != 3) {
-                            if ($request->labour_discount_amount > 0 || $request->part_discount_amount) {
-                                $job_order->tvs_one_approval_status_id = 1;
-                            } else {
-                                $job_order->tvs_one_approval_status_id = null;
-                            }
+                        // if ($job_order->tvs_one_approval_status_id != 2) {
+                        if ($request->labour_discount_amount > 0 || $request->part_discount_amount) {
+                            $job_order->tvs_one_approval_status_id = 1;
+                        } else {
+                            $job_order->tvs_one_approval_status_id = null;
                         }
+                        // }
 
                         //Check Invoice,Receipt amount
                         $labour_amount = $request->labour_amount;
@@ -1738,7 +1738,7 @@ class ManualVehicleDeliveryController extends Controller
     //TVS Discount Save
     public function tvsOneDiscountSave(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         try {
             if ($request->status == 'Reject') {
                 $error_messages = [
@@ -1780,7 +1780,10 @@ class ManualVehicleDeliveryController extends Controller
                 ]);
             }
 
-            $job_order = JobOrder::find($request->job_order_id);
+            $job_order = JobOrder::with([
+                'amcMember',
+                'amcMember.amcPolicy',
+            ])->find($request->job_order_id);
 
             if (!$job_order) {
                 return response()->json([
@@ -1794,8 +1797,6 @@ class ManualVehicleDeliveryController extends Controller
 
             DB::beginTransaction();
 
-            // $job_order->approver_id = Auth::user()->id;
-
             if ($request->status == 'Reject') {
                 $job_order->tvs_one_approval_status_id = 3;
                 $job_order->tvs_one_rejected_remarks = $request->rejected_remarks;
@@ -1803,6 +1804,18 @@ class ManualVehicleDeliveryController extends Controller
 
                 //Labour amount updates
                 if ($request->labour_amount) {
+
+                    //Labour discount percentage
+                    if ($job_order->amcMember && $job_order->amcMember->amcPolicy && $job_order->amcMember->amcPolicy->labour_discount_percentage) {
+                        $labour_discount_percentage = $job_order->amcMember->amcPolicy->labour_discount_percentage;
+                        $labour_discount_value = ($request->labour_amount * $labour_discount_percentage) / 100;
+
+                        $job_order->labour_discount_amount = $labour_discount_value;
+                    } else {
+                        $job_order->labour_discount_amount = null;
+                    }
+
+                    // $labour_discount_percentage =
                     $labour_invoice = GigoManualInvoice::find($request->labour_id);
                     if ($labour_invoice) {
                         $labour_invoice->amount = $request->labour_amount;
@@ -1820,6 +1833,17 @@ class ManualVehicleDeliveryController extends Controller
 
                 //Parts amount updates
                 if ($request->parts_amount) {
+
+                    //Parts discount percentage
+                    if ($job_order->amcMember && $job_order->amcMember->amcPolicy && $job_order->amcMember->amcPolicy->part_discount_percentage) {
+                        $part_discount_percentage = $job_order->amcMember->amcPolicy->part_discount_percentage;
+                        $parts_discount_value = ($request->parts_amount * $part_discount_percentage) / 100;
+
+                        $job_order->part_discount_amount = $parts_discount_value;
+                    } else {
+                        $job_order->part_discount_amount = null;
+                    }
+
                     $parts_invoice = GigoManualInvoice::find($request->part_id);
                     if ($parts_invoice) {
                         $parts_invoice->amount = $request->parts_amount;
