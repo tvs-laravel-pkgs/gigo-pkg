@@ -314,6 +314,8 @@ app.component('tvsOneDiscountView', {
 
         self.angular_routes = angular_routes;
 
+        self.reject_reason_id = 2;
+
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
 

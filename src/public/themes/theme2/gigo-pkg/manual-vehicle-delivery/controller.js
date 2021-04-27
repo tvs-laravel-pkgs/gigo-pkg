@@ -933,11 +933,12 @@ app.component('manualVehicleDeliveryForm', {
                 if (labour_amount && $scope.job_order.amc_member && $scope.job_order.amc_member.amc_policy.labour_discount_percentage) {
                     labour_discount_value = (labour_amount * $scope.job_order.amc_member.amc_policy.labour_discount_percentage) / 100;
                     console.log('-----------labour--------------');
+                    labour_discount_value = labour_discount_value.toFixed(2);
                     console.log(labour_discount_value);
 
                     //labour amount after discount
                     labour_amount = labour_amount - labour_discount_value;
-
+                    labour_amount = labour_amount.toFixed(2);
                     console.log(labour_amount);
                     $('.labour_discount_class').val(labour_discount_value);
                     $scope.job_order.labour_discount_amount = labour_discount_value;
@@ -957,11 +958,12 @@ app.component('manualVehicleDeliveryForm', {
                 if (parts_amount && $scope.job_order.amc_member && $scope.job_order.amc_member.amc_policy.part_discount_percentage) {
                     part_discount_value = (parts_amount * $scope.job_order.amc_member.amc_policy.part_discount_percentage) / 100;
                     console.log('-----------part--------------');
+                    part_discount_value = part_discount_value.toFixed(2);
                     console.log(part_discount_value);
 
                     //part amount after discount
                     parts_amount = parts_amount - part_discount_value;
-
+                    parts_amount = parts_amount.toFixed(2);
                     console.log(parts_amount);
                     $('.part_discount_class').val(part_discount_value);
                     $scope.job_order.part_discount_amount = part_discount_value;
@@ -1008,7 +1010,7 @@ app.component('manualVehicleDeliveryForm', {
                 }
 
                 total_amount = parseFloat(labour_amount) + parseFloat(parts_amount);
-                // total_amount = total_amount.toFixed(2);
+                total_amount = total_amount.toFixed(2);
                 console.log("Total Amount -- " + total_amount);
                 // console.log("Bill Amount -- " + receipt_amount);
 
@@ -1035,6 +1037,8 @@ app.component('manualVehicleDeliveryForm', {
                         remaining_amount = total_amount;
                     }
                 }
+
+                remaining_amount = remaining_amount.toFixed(2);
 
                 $('.customer_paid_amount').val(total_paid_amount);
                 $('.customer_paid_remaining_amount').val(remaining_amount);

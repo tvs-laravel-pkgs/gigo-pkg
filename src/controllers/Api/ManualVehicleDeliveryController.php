@@ -410,6 +410,10 @@ class ManualVehicleDeliveryController extends Controller
                 'orderBy' => 'id',
                 'default_text' => 'Select Reason',
             ]),
+            'tvs_one_request_reject_reasons' => [
+                ['id' => '1', 'name' => 'Invalid Invoice Amount'],
+                ['id' => '2', 'name' => 'Other Reasons'],
+            ],
         ];
 
         $this->data['extras'] = $extras;

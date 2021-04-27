@@ -870,14 +870,14 @@
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                     <button type="button"
-                                                        ng-if="job_order.tvs_one_approval_status_id == 1"
+                                                        ng-if="job_order.tvs_one_approval_status_id == 1 && hasPerm('verify-tvs-one-discount-request')"
                                                         ng-click="showApprovalForm(job_order)"
                                                         class="btn btn-secondary-dark btn-min-wdth btn-nxt">
                                                         Approve
                                                     </button>
                                                     <!-- && hasPerm('verify-tvs-one-discount-request') -->
                                                     <button type="button"
-                                                        ng-if="job_order.tvs_one_approval_status_id == 1"
+                                                        ng-if="job_order.tvs_one_approval_status_id == 1 && hasPerm('verify-tvs-one-discount-request')"
                                                         ng-click="showRejectForm(job_order)"
                                                         class="btn btn-secondary-dark btn-min-wdth btn-nxt">
                                                         Reject
@@ -960,7 +960,30 @@
                 <div class="modal-body">
                     <div class="modal-form">
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Reason<sup class="mandatory">*</sup></label>
+                                    <md-select ng-model="$ctrl.reject_reason_id" placeholder="Select Reason"
+                                        data-md-container-class="selectdemoSelectHeader"
+                                        ng-change="getRejectedReason($ctrl.reject_reason_id)">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchPendingReason" type="search"
+                                                placeholder="Search for a Reason.."
+                                                class="demo-header-searchbox md-text"
+                                                ng-keydown="$event.stopPropagation()">
+                                        </md-select-header>
+                                        <md-optgroup>
+                                            <md-option ng-value="type.id"
+                                                ng-repeat="type in extras.tvs_one_request_reject_reasons | filter:searchPendingReason">
+                                                {{type.name}}
+                                            </md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" class="required" name="reject_reason_id"
+                                        value="{{$ctrl.reject_reason_id}}">
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label>
                                         Remarks<sup class="mandatory">*</sup>
@@ -969,7 +992,7 @@
                                         ng-model="job_order.tvs_one_rejected_remarks"></textarea>
                                 </div><!-- Field -->
                             </div><!-- Column -->
-                            <div class="col-md-12">
+                            <div class="col-md-12" ng-if="$ctrl.reject_reason_id == 1">
                                 <div class="table-responsive">
                                     <h6 class="color-primary mb-10">
                                         <b>

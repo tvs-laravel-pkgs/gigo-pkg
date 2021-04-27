@@ -155,7 +155,7 @@
                                                     </div><!-- Column -->
                                                 </div>
                                                 <div class="row mb-0">
-                                                    <div class="col-md-4" ng-if="$ctrl.switch_value == 'Returnable'">
+                                                    <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label>
                                                                 Search JobCard
@@ -163,7 +163,7 @@
                                                             <md-autocomplete md-selected-item="$ctrl.gate_pass.job_card" md-search-text="jobCardSearchKey" md-items="job_card in $ctrl.searchJobCard(jobCardSearchKey)" md-item-text="job_card.job_card_number" md-min-length="4" md-escape-options="clear" placeholder="Job Card Number" md-selected-item-change="console.log(1);jobCardSelected(job_card)" md-autofocus md-no-cache="true">
                                                                 <md-item-template>
                                                                     <span>
-                                                                        {{job_card.job_card_number}}
+                                                                        {{job_card.job_card_number}} /  {{job_card.date}}
                                                                     </span>
                                                                 </md-item-template>
                                                                 <md-not-found>
@@ -173,7 +173,7 @@
                                                             <input type="hidden" name="job_card_id" value="{{$ctrl.gate_pass.job_card.id}}">
                                                         </div><!-- Feild -->
                                                     </div><!-- Column -->
-                                                    <div class="col-md-4" ng-if="$ctrl.switch_value == 'Returnable'">
+                                                    <div class="col-md-4">
                                                         <div class="input-text form-group">
                                                             <label>
                                                                 Job Card Date
