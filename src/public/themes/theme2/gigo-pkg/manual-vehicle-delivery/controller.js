@@ -1121,7 +1121,7 @@ app.component('manualVehicleDeliveryForm', {
             });
             console.log('selected aggregate work --' + selected_aggregate_works);
             console.log('selected coupon --' + selected_coupon);
-            if ($scope.job_order.membership_id == 1) {
+            if ($scope.job_order.membership_id == 1 || $scope.job_order.membership_id == 7) {
                 if (selected_coupon > 5) {
                     $scope.form_save_status = 0;
                     custom_noty('error', 'You have to choose 5 Aggregate coupons only!');
@@ -1162,7 +1162,7 @@ app.component('manualVehicleDeliveryForm', {
                 //     $scope.form_save_status = 1;
                 // }
 
-            } else if ($scope.job_order.membership_id == 3) {
+            } else if ($scope.job_order.membership_id == 3 || $scope.job_order.membership_id == 8) {
                 if (selected_aggregate_works > selected_coupon) {
                     $scope.form_save_status = 0;
                     custom_noty('error', 'Kindly choose one or more aggregate coupon for selected aggregate works');
