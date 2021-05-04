@@ -266,6 +266,9 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 
     //On Site Visit
     Route::get('/on-site-visit/get-list', 'OnSiteVisitController@getOnSiteVisitList')->name('getOnSiteVisitList');
+    //On Site REPAIR ORDER SEARCH
+    Route::post('on-site-visit/repair-order/search', 'OnSiteVisitController@getRepairOrderSearchList')->name('getRepairOrderSearchList');
+
     // Route::get('/manual-vehicle-delivery/get-filter-data', 'ManualVehicleDeliveryController@getManualDeliveryVehicleFilter')->name('getManualDeliveryVehicleFilter');
     // Route::post('/manual-vehicle-delivery/export', 'ManualVehicleDeliveryController@export')->name('getManualDeliveryVehicleExport');
 

@@ -493,6 +493,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
         Route::post('on-site-visit/request/otp', 'OnSiteVisitController@sendCustomerOtp');
         Route::post('on-site-visit/verify/otp', 'OnSiteVisitController@verifyOtp');
         Route::post('on-site-visit/labour-part/process', 'OnSiteVisitController@processLabourPart');
+        Route::post('/on-site-visit/amc-customer/save', 'OnSiteVisitController@amcCustomerSave');
+        Route::post('/on-site-visit/get/part/stock-details', 'OnSiteVisitController@getPartStockDetails');
 
     });
 });

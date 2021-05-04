@@ -163,37 +163,6 @@
                         </div><!-- Column -->
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Registration Type</label>
-                                <md-select ng-model="$ctrl.registration_type_selected" md-on-close="clearSearchTerm()"
-                                    ng-change="onSelectedRegistrationType($ctrl.registration_type_selected)"
-                                    data-md-container-class="selectdemoSelectHeader"
-                                    placeholder="Select Registration Type">
-                                    <md-select-header class="demo-select-header">
-                                        <input ng-model="searchTerm" type="search"
-                                            placeholder="Search for a Registration Type"
-                                            class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
-                                    </md-select-header>
-                                    <md-optgroup>
-                                        <md-option ng-value="registration_type.id"
-                                            ng-repeat="registration_type in $ctrl.extras.registration_type_list | filter:searchTerm">
-                                            {{registration_type.name}}</md-option>
-                                    </md-optgroup>
-                                </md-select>
-                                <input type="hidden" class="form-control type-sm" name="registration_type"
-                                    id="registration_type" value="">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>
-                                    Registration No
-                                </label>
-                                <input type="text" class="form-control" id="reg_no" name="reg_no"
-                                    placeholder="Enter Registration No" autocomplete="off" ng-model="$ctrl.reg_no">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                        <div class="col-md-6">
-                            <div class="form-group">
                                 <label>
                                     Membership
                                 </label>

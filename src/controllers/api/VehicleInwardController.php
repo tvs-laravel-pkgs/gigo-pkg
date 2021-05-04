@@ -7656,26 +7656,7 @@ class VehicleInwardController extends Controller
     public function getRepairOrderSearchList(Request $request)
     {
         // dd($request->all());
-        $key = $request->key;
-        $list = [];
-
-        if ($key) {
-            $list = RepairOrder::with([
-                'repairOrderType',
-                'uom',
-                'taxCode',
-                'skillLevel',
-            ])
-                ->where(function ($q) use ($key) {
-                    $q->where('repair_orders.code', 'like', $key . '%')
-                        ->orWhere('repair_orders.name', 'like', '%' . $key . '%')
-                    ;
-                })
-                ->orderBy('repair_orders.name')
-                ->get();
-        }
-
-        return response()->json($list);
+        return RepairOrder::searchRepairOrder($request);
     }
 
     public function getCustomerVoiceSearchList(Request $request)
@@ -7751,6 +7732,7 @@ class VehicleInwardController extends Controller
                     ;
                 })
             // ->orderBy('parts.name','ASC')
+                ->where('parts.business_id', 16)
                 ->orderBy('part_stocks.stock', 'DESC')
                 ->get();
         }

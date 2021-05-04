@@ -211,7 +211,7 @@
                                     md-selected-item="$ctrl.customer"
                                     md-selected-item-change="selectedCustomer($ctrl.customer.id)"
                                     md-search-text="$ctrl.customerSearchText" md-item-text="option.name"
-                                    md-min-length="3" placeholder="Customer Name" md-autofocus>
+                                    md-min-length="3" placeholder="Customer Name" md-no-cache="true" md-autofocus>
                                     <md-item-template>
                                         <span>
                                             {{option.name}}
@@ -232,7 +232,7 @@
                                     md-selected-item="$ctrl.vehicle_model"
                                     md-selected-item-change="selectedVehicleModel($ctrl.vehicle_model.id)"
                                     md-search-text="$ctrl.vehicleModelSearchText" md-item-text="option.model_name"
-                                    md-min-length="3" placeholder="Vehicle Model Name" md-autofocus>
+                                    md-min-length="3" placeholder="Vehicle Model Name" md-no-cache="true" md-autofocus>
                                     <md-item-template>
                                         <span>
                                             {{option.model_name}}

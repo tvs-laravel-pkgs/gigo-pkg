@@ -4,6 +4,7 @@ namespace Abs\GigoPkg\Api;
 
 use Abs\SerialNumberPkg\SerialNumberGroup;
 use Abs\TaxPkg\Tax;
+use App\AmcCustomer;
 use App\Attachment;
 use App\Config;
 use App\Country;
@@ -226,6 +227,7 @@ class OnSiteVisitController extends Controller
             'outlet',
             'onSiteVisitUser',
             'customer',
+            'customer.amcCustomer',
             'customer.address',
             'customer.address.country',
             'customer.address.state',
@@ -304,6 +306,7 @@ class OnSiteVisitController extends Controller
                 $part_details[$key]['rate'] = $value->rate;
                 $part_details[$key]['qty'] = $value->qty;
                 $part_details[$key]['amount'] = $value->amount;
+                $part_details[$key]['total_amount'] = $value->amount;
                 $part_details[$key]['split_order_type'] = $value->splitOrderType ? $value->splitOrderType->code . "|" . $value->splitOrderType->name : '-';
                 $part_details[$key]['removal_reason_id'] = $value->removal_reason_id;
                 $part_details[$key]['split_order_type_id'] = $value->split_order_type_id;
@@ -343,6 +346,24 @@ class OnSiteVisitController extends Controller
         return $result;
     }
 
+    public function getPartStockDetails(Request $request)
+    {
+        // dd($request->all());
+        $part = Part::with([
+            'uom',
+            'partStock' => function ($query) use ($request) {
+                $query->where('outlet_id', $request->outlet_id);
+            },
+            'taxCode',
+            'taxCode.taxes',
+        ])
+            ->find($request->part_id);
+
+        $data['part'] = $part;
+
+        return response()->json(['success' => true, 'data' => $data]);
+    }
+
     public function getFormData(Request $request)
     {
         // dd($request->all());
@@ -362,6 +383,61 @@ class OnSiteVisitController extends Controller
             $params['on_site_order_id'] = $request->id;
 
             $result = $this->getLabourPartsData($params);
+
+            $site_visit = $result['site_visit'];
+            $amc_customer_status = 0;
+            if ($site_visit && $site_visit->customer && $site_visit->customer->amcCustomer) {
+                if (date('Y-m-d', strtotime($site_visit->customer->amcCustomer->expiry_date)) >= date('Y-m-d')) {
+                    $amc_customer_status = 1;
+                }
+
+                if (date('Y-m-d', strtotime($site_visit->customer->amcCustomer->start_date)) <= date('Y-m-d')) {
+                    $amc_customer_status = 1;
+                } else {
+                    $amc_customer_status = 0;
+                }
+            }
+
+            //Check Estimate PDF Available or not
+            $directoryPath = storage_path('app/public/on-site-visit/pdf/' . $site_visit->number . '_estimate.pdf');
+            if (file_exists($directoryPath)) {
+                $site_visit->estimate_pdf = url('storage/app/public/on-site-visit/pdf/' . $site_visit->number . '_estimate.pdf');
+            } else {
+                $site_visit->estimate_pdf = '';
+            }
+
+            //Check Revised Estimate PDF Available or not
+            $directoryPath = storage_path('app/public/on-site-visit/pdf/' . $site_visit->number . '_revised_estimate.pdf');
+            if (file_exists($directoryPath)) {
+                $site_visit->revised_estimate_pdf = url('storage/app/public/on-site-visit/pdf/' . $site_visit->number . '_revised_estimate.pdf');
+            } else {
+                $site_visit->revised_estimate_pdf = '';
+            }
+
+            //Check Labour PDF Available or not
+            $directoryPath = storage_path('app/public/on-site-visit/pdf/' . $site_visit->number . '_labour_invoice.pdf');
+            if (file_exists($directoryPath)) {
+                $site_visit->labour_pdf = url('storage/app/public/on-site-visit/pdf/' . $site_visit->number . '_labour_invoice.pdf');
+            } else {
+                $site_visit->labour_pdf = '';
+            }
+
+            //Check Part PDF Available or not
+            $directoryPath = storage_path('app/public/on-site-visit/pdf/' . $site_visit->number . '_parts_invoice.pdf');
+            if (file_exists($directoryPath)) {
+                $site_visit->part_pdf = url('storage/app/public/on-site-visit/pdf/' . $site_visit->number . '_parts_invoice.pdf');
+            } else {
+                $site_visit->part_pdf = '';
+            }
+
+            //Check Bill Detail PDF Available or not
+            $directoryPath = storage_path('app/public/on-site-visit/pdf/' . $site_visit->number . '_bill_details.pdf');
+            if (file_exists($directoryPath)) {
+                $site_visit->bill_detail_pdf = url('storage/app/public/on-site-visit/pdf/' . $site_visit->number . '_bill_details.pdf');
+            } else {
+                $site_visit->bill_detail_pdf = '';
+            }
+
         } else {
             $site_visit = new OnSiteOrder;
             // $previous_number = OnSiteOrder::where('outlet_id',Auth::user()->working_outlet_id)->orderBy('id','desc')->first();
@@ -374,6 +450,7 @@ class OnSiteVisitController extends Controller
             $result['part_amount'] = 0;
             $result['labours'] = [];
             $result['not_approved_labour_parts_count'] = 0;
+            $amc_customer_status = 0;
         }
 
         $this->data['success'] = true;
@@ -398,6 +475,7 @@ class OnSiteVisitController extends Controller
             'labours' => $result['labours'],
             'not_approved_labour_parts_count' => $result['not_approved_labour_parts_count'],
             'extras' => $extras,
+            'amc_customer_status' => $amc_customer_status,
             'country' => Country::find(1),
         ]);
     }
@@ -540,7 +618,7 @@ class OnSiteVisitController extends Controller
             $on_site_repair_order->split_order_type_id = $request->split_order_type_id;
             $on_site_repair_order->estimate_order_id = $estimate_order_id;
             // if ($request->repair_order_description) {
-            $on_site_repair_order->amount = $request->repair_order_amount;
+            $on_site_repair_order->amount = isset($request->repair_order_amount) ? $request->repair_order_amount : $repair_order->amount;
             // } else {
             // $on_site_repair_order->amount = $repair_order->amount;
             // }
@@ -894,6 +972,96 @@ class OnSiteVisitController extends Controller
         return $result;
     }
 
+    public function amcCustomerSave(Request $request)
+    {
+        // dd($request->all());
+        try {
+
+            $on_site_order = OnSiteOrder::with(['customer'])->find($request->id);
+
+            if (!$on_site_order) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => [
+                        'On Site Visit Not Found!',
+                    ],
+                ]);
+            }
+
+            if ($request->type_id == 1) {
+                if (!$on_site_order->customer) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => ['Customer Not Found!'],
+                    ]);
+                }
+
+                $customer_mobile = $on_site_order->customer->mobile_no;
+
+                if (!$customer_mobile) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => ['Customer Mobile Number Not Found!'],
+                    ]);
+                }
+
+                DB::beginTransaction();
+
+                $message = 'Thanks for the interest';
+
+                $msg = sendSMSNotification($customer_mobile, $message);
+
+                DB::commit();
+
+                $message = 'Message Sent successfully!!';
+
+            } elseif ($request->type_id == 2) {
+
+                if (strtotime($request->amc_starting_date) >= strtotime($request->amc_ending_date)) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => [
+                            'AMC Ending Date should be greater than AMC Starting Date',
+                        ],
+                    ]);
+                }
+
+                $amc_customer = AmcCustomer::firstOrNew(['customer_id' => $request->customer_id, 'amc_customer_type_id' => 2, 'tvs_one_customer_code' => $request->amc_customer_code]);
+
+                if ($amc_customer->exists) {
+                    $amc_customer->updated_by_id = Auth::user()->id;
+                    $amc_customer->updated_at = Carbon::now();
+                } else {
+                    $amc_customer->total_services = 12;
+                    $amc_customer->remaining_services = 12;
+                    $amc_customer->created_by_id = Auth::user()->id;
+                    $amc_customer->created_at = Carbon::now();
+                }
+                $amc_customer->start_date = date('Y-m-d', strtotime($request->amc_starting_date));
+                $amc_customer->expiry_date = date('Y-m-d', strtotime($request->amc_ending_date));
+                $amc_customer->save();
+
+                $message = 'AMC Customer details saved successfully!';
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+            ]);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Server Network Down!',
+                'errors' => ['Exception Error' => $e->getMessage()],
+            ]);
+        }
+    }
+
     public function sendCustomerOtp(Request $request)
     {
         // dd($request->all());
@@ -941,8 +1109,17 @@ class OnSiteVisitController extends Controller
                     'updated_at' => Carbon::now(),
                 ]);
 
+            $site_visit_estimates = OnSiteOrderEstimate::where('on_site_order_id', $on_site_order->id)->count();
+
+            //Type 1 -> Estimate
+            //Type 2 -> Revised Estimate
+            $type = 1;
+            if ($site_visit_estimates > 1) {
+                $type = 2;
+            }
+
             //Generate PDF
-            $generate_on_site_estimate_pdf = OnSiteOrder::generateEstimatePDF($request->id);
+            $generate_on_site_estimate_pdf = OnSiteOrder::generateEstimatePDF($on_site_order->id, $type);
 
             DB::commit();
             if (!$on_site_order_otp_update) {
@@ -1289,6 +1466,7 @@ class OnSiteVisitController extends Controller
                 $validator = Validator::make($request->all(), [
                     'job_card_number' => [
                         'required',
+                        'unique:on_site_orders,job_card_number,' . $request->on_site_order_id . ',id,company_id,' . Auth::user()->company_id,
                     ],
                     'on_site_order_id' => [
                         'required',
@@ -1434,7 +1612,7 @@ class OnSiteVisitController extends Controller
         }
     }
 
-    //SAVE ISSUED PART
+    //SAVE STOCK INCHAGRE > ISSUED PART
     public function saveIssuedPart(Request $request)
     {
         // dd($request->all());
@@ -1502,7 +1680,7 @@ class OnSiteVisitController extends Controller
         }
     }
 
-    //PROCESS LABOUR PART
+    //START LABOUR WORK & ISSUE PART
     public function processLabourPart(Request $request)
     {
         // dd($request->all());
@@ -1847,8 +2025,17 @@ class OnSiteVisitController extends Controller
                 $otp_no = mt_rand(111111, 999999);
                 $site_visit->otp_no = $otp_no;
 
+                $site_visit_estimates = OnSiteOrderEstimate::where('on_site_order_id', $site_visit->id)->count();
+
+                //Type 1 -> Estimate
+                //Type 2 -> Revised Estimate
+                $type = 1;
+                if ($site_visit_estimates > 1) {
+                    $type = 2;
+                }
+
                 //Generate PDF
-                $generate_on_site_estimate_pdf = OnSiteOrder::generateEstimatePDF($site_visit->id);
+                $generate_on_site_estimate_pdf = OnSiteOrder::generateEstimatePDF($site_visit->id, $type);
 
                 $url = url('/') . '/on-site-visit/estimate/customer/view/' . $site_visit->id . '/' . $otp_no;
                 $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
@@ -1887,6 +2074,8 @@ class OnSiteVisitController extends Controller
             } elseif ($request->type_id == 4) {
                 $site_visit->status_id = 10;
 
+                OnSiteOrderRepairOrder::where('on_site_order_id', $site_visit->id)->where('status_id', 8183)->whereNull('removal_reason_id')->update(['status_id' => 8187, 'updated_at' => Carbon::now()]);
+
                 $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id', 2)->whereNull('end_date_time')->first();
                 if ($travel_log) {
                     $travel_log->end_date_time = Carbon::now();
@@ -1894,6 +2083,43 @@ class OnSiteVisitController extends Controller
                     $travel_log->updated_at = Carbon::now();
                     $travel_log->save();
                 }
+
+                //Generate Labour PDF
+                $generate_on_site_estimate_pdf = OnSiteOrder::generateLabourPDF($site_visit->id);
+
+                //Generate Part PDF
+                $generate_on_site_estimate_pdf = OnSiteOrder::generatePartPDF($site_visit->id);
+
+                //Generate Bill Details PDF
+                $generate_on_site_estimate_pdf = OnSiteOrder::generateEstimatePDF($site_visit->id, $type = 3);
+
+                $otp_no = mt_rand(111111, 999999);
+                $site_visit->otp_no = $otp_no;
+
+                $url = url('/') . '/on-site-visit/view/bill-details/' . $site_visit->id . '/' . $otp_no;
+                $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
+
+                $message = 'Dear Customer, Kindly click on this link to pay for the TVS job order ' . $short_url . ' Job Card Number : ' . $site_visit->job_card_number . ' - TVS';
+
+                if (!$site_visit->customer) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => ['Customer Not Found!'],
+                    ]);
+                }
+
+                $customer_mobile = $site_visit->customer->mobile_no;
+
+                if (!$customer_mobile) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => ['Customer Mobile Number Not Found!'],
+                    ]);
+                }
+
+                $msg = sendSMSNotification($customer_mobile, $message);
 
                 $message = 'On Site Visit Completed Successfully!';
             } else {
@@ -2132,14 +2358,15 @@ class OnSiteVisitController extends Controller
             } else {
                 if ($request->type_id == 1) {
 
-                    //Check alreay save or not not means site visit status update
+                    //Check already save or not not means site visit status update
                     $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id', 2)->first();
-                    if (!$travel_log) {
-                        $site_visit->status_id = 14;
-                        $site_visit->updated_by_id = Auth::user()->id;
-                        $site_visit->updated_at = Carbon::now();
-                        $site_visit->save();
-                    }
+
+                    // if (!$travel_log) {
+                    $site_visit->status_id = 14;
+                    $site_visit->updated_by_id = Auth::user()->id;
+                    $site_visit->updated_at = Carbon::now();
+                    $site_visit->save();
+                    // }
 
                     //Check Previous entry closed or not
                     $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id', 2)->whereNull('end_date_time')->first();
@@ -2171,6 +2398,12 @@ class OnSiteVisitController extends Controller
                             ],
                         ]);
                     }
+
+                    $site_visit->status_id = 15;
+                    $site_visit->updated_by_id = Auth::user()->id;
+                    $site_visit->updated_at = Carbon::now();
+                    $site_visit->save();
+
                     $travel_log->end_date_time = Carbon::now();
                     $travel_log->updated_by_id = Auth::user()->id;
                     $travel_log->updated_at = Carbon::now();
@@ -2283,5 +2516,12 @@ class OnSiteVisitController extends Controller
                 ],
             ]);
         }
+    }
+
+    //Get Repair Orders
+    public function getRepairOrderSearchList(Request $request)
+    {
+        // dd($request->all());
+        return RepairOrder::searchRepairOrder($request);
     }
 }

@@ -6,6 +6,7 @@ use App\Config;
 use App\Customer;
 use App\Http\Controllers\Controller;
 use App\JobOrder;
+use App\RepairOrder;
 use App\VehicleDeliveryStatus;
 use App\VehicleModel;
 use Auth;
@@ -170,6 +171,12 @@ class OnSiteVisitController extends Controller
     public function getVehicleModelSearchList(Request $request)
     {
         return VehicleModel::searchVehicleModel($request);
+    }
+
+    //Get Repair Orders
+    public function getRepairOrderSearchList(Request $request)
+    {
+        return RepairOrder::searchRepairOrder($request);
     }
 
     public function export(Request $request)

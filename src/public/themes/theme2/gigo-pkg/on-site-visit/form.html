@@ -45,10 +45,10 @@
                         <div class="page-tab-form-top-left-info">
                             <span class="page-tab-form-top-left-info-content">
                                 <b>
-                                    {{site_visit.number}} |   
+                                    {{site_visit.number}} |
                                 </b>
                                 <span>
-                                    {{customer.code}} |  {{customer.name}}
+                                    {{customer.code}} | {{customer.name}}
                                 </span>
                             </span>
                         </div>
@@ -144,9 +144,9 @@
                                                                         <sup class="mandatory">*</sup>
                                                                     </label>
                                                                     <md-autocomplete
-                                                                        md-items="option in searchCustomer(customerSearchText)"
+                                                                        md-items="option in searchCustomer($ctrl.customerSearchText)"
                                                                         md-selected-item="customerResult"
-                                                                        md-search-text="customerSearchText"
+                                                                        md-search-text="$ctrl.customerSearchText"
                                                                         md-selected-item-change="customerChanged(customerResult)"
                                                                         md-item-text="option.code" md-min-length="3"
                                                                         placeholder="Customer Code / Name"
@@ -210,8 +210,7 @@
                                                                     </label>
                                                                     <input type="text" class="form-control"
                                                                         placeholder="Enter Email" autocomplete="off"
-                                                                        ng-model="customer.email"
-                                                                        name="email" />
+                                                                        ng-model="customer.email" name="email" />
                                                                 </div><!-- Feild -->
                                                             </div><!-- Column -->
                                                             <div class="col-md-3">
@@ -305,7 +304,8 @@
                                                                         md-selected-item="customer.address.city"
                                                                         md-search-text="$ctrl.citySearchText"
                                                                         md-item-text="option.name" md-min-length="3"
-                                                                        placeholder="City Name" md-autofocus>
+                                                                        placeholder="City Name" md-autofocus
+                                                                        md-no-cache="true">
                                                                         <md-item-template>
                                                                             <span>
                                                                                 {{option.name}}
@@ -343,6 +343,7 @@
                                                                     </label>
                                                                     <input type="text" class="form-control"
                                                                         minlength="15" maxlength="15"
+                                                                        onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')"
                                                                         placeholder="Enter GST No" autocomplete="off"
                                                                         ng-model="customer.gst_number"
                                                                         name="gst_number" />
@@ -355,7 +356,9 @@
                                                                         <!-- No -->
                                                                     </label>
                                                                     <input type="text" class="form-control"
-                                                                        placeholder="Enter PAN" autocomplete="off"
+                                                                        placeholder="Enter PAN"
+                                                                        onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')"
+                                                                        autocomplete="off"
                                                                         ng-model="customer.pan_number" minlength="10"
                                                                         maxlength="10" name="pan_number" />
                                                                 </div><!-- Feild -->
@@ -765,7 +768,8 @@
                                 <li class="view-col-4">
                                     <span class="view-col-label">Amount</span>
                                     <span class="view-data-list-value"
-                                        ng-if="on_site_order_ro.repair_order.is_editable == 0">{{on_site_order_ro.repair_order.amount | currency}}</span>
+                                        ng-if="on_site_order_ro.repair_order.is_editable == 0">{{on_site_order_ro.repair_order.amount
+                                        | currency}}</span>
                                     <input class="form-control required"
                                         ng-if="on_site_order_ro.repair_order.is_editable == 1"
                                         ng-model="on_site_order_ro.repair_order.amount" type="text"
@@ -899,8 +903,8 @@
                                 </li>
                                 <li class="view-col-4">
                                     <span class="view-col-label">Amount</span>
-                                    <span
-                                        class="view-data-list-value">{{on_site_part.part.total_amount | currency}}</span>
+                                    <span class="view-data-list-value">{{on_site_part.part.total_amount |
+                                        currency}}</span>
                                 </li>
                             </ul>
                         </div><!-- View Data -->

@@ -387,6 +387,7 @@ app.component('onSiteVisitView', {
                     $scope.labour_amount = res.labour_amount;
                     $scope.parts_rate = res.parts_rate;
                     $scope.labours = res.labours;
+                    $scope.amc_customer_status = res.amc_customer_status;
                     $scope.not_approved_labour_parts_count = res.not_approved_labour_parts_count;
 
                     $scope.outlet_id = $scope.site_visit ? $scope.site_visit.outlet_id : self.user.working_outlet_id;
@@ -502,10 +503,14 @@ app.component('onSiteVisitView', {
                     $('.submit_otp_confirm').button('reset');
                     $('.submit').button('reset');
                     $('.start_labour_part').button('reset');
+                    $('.send_amc_confirm').button('reset');
+                    $('.amc_customer_save').button('reset');
                     $('#confirm_start_labour_part_modal').modal('hide');
                     $('#labour_form_modal').modal('hide');
                     $('#part_form_modal').modal('hide');
                     $("#confirmation_modal").modal('hide');
+                    $("#amc_confirmation_modal").modal('hide');
+                    $("#amc_update_modal").modal('hide');
                     $("#billing_confirmation_modal").modal('hide');
                     $("#estimate_confirmation_modal").modal('hide');
                     $("#work_complete_confirmation_modal").modal('hide');
@@ -546,19 +551,26 @@ app.component('onSiteVisitView', {
         }
 
         $scope.searchRepairOrders = function (query) {
-            return new Promise(function (resolve, reject) {
-                RepairOrderSvc.options({
-                    filter: {
-                        search: query
-                    }
-                })
-                    .then(function (response) {
-                        resolve(response.data.options);
-                    });
-            });
+            if (query) {
+                return new Promise(function (resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getRepairOrderSearchList'], {
+                            key: query,
+                            business_id: 11,
+                        }
+                        )
+                        .then(function (response) {
+                            resolve(response.data);
+                        });
+                });
+            } else {
+                return [];
+            }
         }
 
         $scope.showLabourForm = function (labour_index, labour = null) {
+            console.log(labour);
             $scope.on_site_order_ro = [];
             $scope.on_site_repair_order_id = '';
             if (labour_index === false) {
@@ -579,20 +591,28 @@ app.component('onSiteVisitView', {
                 if (labour.category == undefined) {
                     RepairOrderSvc.read(labour.labour_id)
                         .then(function (response) {
+                            console.log(response);
                             $scope.on_site_order_ro.repair_order = response.data.repair_order;
 
                             // if (labour.repair_order.is_editable == 1) {
                             $scope.on_site_order_ro.repair_order.amount = labour.amount;
                             // }
-
                         });
                 }
+
                 $scope.on_site_order_ro.repair_order = labour;
+
+                if (labour.amount == 0) {
+                    $scope.on_site_order_ro.repair_order.amount = labour.rate;
+                }
             }
 
             $scope.labour_index = labour_index;
             $scope.labour_modal_action = labour_index === false ? 'Add' : 'Edit';
             $('#labour_form_modal').modal('show');
+            console.log($scope.on_site_order_ro);
+            // console.log($scope.on_site_order_ro.repair_order);
+            // console.log($scope.on_site_order_ro.repair_order.repair_order_type);
         }
 
         $scope.init = function () {
@@ -670,6 +690,7 @@ app.component('onSiteVisitView', {
         }
 
         $scope.partSelected = function (part) {
+            console.log(part);
             $qty = 1;
             if (!part) {
                 return;
@@ -678,13 +699,20 @@ app.component('onSiteVisitView', {
                     $qty = part.qty;
                 }
             }
-            PartSvc.getFormData({
-                outletId: $scope.outlet_id,
-                partId: part.id
-            })
-                .then(function (response) {
-                    console.log(response);
 
+            $.ajax({
+                url: base_url + '/api/on-site-visit/get/part/stock-details',
+                method: "POST",
+                data: {
+                    outlet_id: $scope.outlet_id,
+                    part_id: part.id,
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
+                .done(function (response) {
+                    console.log(response)
                     $local_purchase_part = '(L)';
                     $part_code = response.data.part.code;
 
@@ -692,7 +720,7 @@ app.component('onSiteVisitView', {
                         $scope.on_site_part.part.mrp = 0;
                         $scope.mrp_change = 1;
                     } else {
-                        $scope.on_site_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
+                        $scope.on_site_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.mrp : '0';
                         $scope.mrp_change = 0;
                     }
 
@@ -700,14 +728,18 @@ app.component('onSiteVisitView', {
                         $scope.on_site_part.part.mrp = $scope.part_mrp;
                     }
 
-                    $scope.on_site_part.part.total_amount = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
                     $scope.available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
-                    $scope.on_site_part.part.qty = $qty;
-                    // $scope.calculatePartAmount();
-                }).catch(function (error) {
-                    console.log(error);
-                });
 
+                    $scope.on_site_part.part.qty = $qty;
+
+                    $scope.calculatePartAmount();
+                    console.log($scope.on_site_part);
+
+                    $scope.$apply();
+                })
+                .fail(function (xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
         }
 
         $scope.calculatePartAmount = function () {
@@ -715,27 +747,20 @@ app.component('onSiteVisitView', {
         }
 
         $scope.showPartForm = function (part_index, part = null) {
-            // console.log(part);
+            console.log(part);
             $scope.part_mrp = 0;
             $scope.part_id = '';
-            self.part_customer_voice_id = '';
-            self.repair_order_ids = [];
-            // $scope.job_order.repair_order = [];
             $scope.on_site_part = [];
             $scope.on_site_part_id = '';
+            $scope.mrp_change = 0;
             if (part_index === false) {
                 // $scope.part_details = {};
             } else {
-                self.part_customer_voice_id = part.customer_voice_id;
+                // $scope.part_mrp = part.total_amount;
                 $scope.part_mrp = part.rate;
                 $scope.part_id = part.part_id;
                 $scope.on_site_part_id = part.id;
 
-                angular.forEach(part.repair_order, function (rep_order, key) {
-                    self.repair_order_ids.push(rep_order.id)
-                });
-
-                $scope.repair_orders = part.repair_order;
                 if (part.split_order_type_id != null) {
                     if (part.split_order_type_id == undefined) {
                         $split_id = part.pivot.split_order_type_id;
@@ -747,6 +772,7 @@ app.component('onSiteVisitView', {
                             $scope.on_site_part.split_order_type = response.data.split_order_type;
                         });
                 }
+
                 if (part.uom == undefined) {
                     PartSvc.getFormData({
                         outletId: $scope.outlet_id,
@@ -1242,6 +1268,81 @@ app.component('onSiteVisitView', {
             }
         }
 
+        //AMC
+        $scope.sendAMCConfirm = function (type_id) {
+            $('.send_amc_confirm').button('loading');
+            $.ajax({
+                url: base_url + '/api/on-site-visit/amc-customer/save',
+                method: "POST",
+                data: {
+                    id: $scope.site_visit.id,
+                    type_id: type_id,
+                },
+            })
+                .done(function (res) {
+                    if (!res.success) {
+                        $('.send_amc_confirm').button('reset');
+                        showErrorNoty(res);
+                        return;
+                    }
+                    custom_noty('success', res.message);
+                    $scope.fetchData();
+                })
+                .fail(function (xhr) {
+                    $('.send_amc_confirm').button('reset');
+                });
+        }
+
+        //Save AMC Customer Details
+        $scope.saveAMCCustomerDetails = function () {
+            var form_id = '#amc_customer_save';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'customer_id': {
+                        required: true,
+                    },
+                    'amc_customer_code': {
+                        required: true,
+                    },
+                    'amc_starting_date': {
+                        required: true,
+                    },
+                    'amc_ending_date': {
+                        required: true,
+                    },
+                },
+                messages: {},
+                invalidHandler: function (event, validator) {
+                    custom_noty('error', 'You have errors, Please check all fields');
+                },
+                submitHandler: function (form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.amc_customer_save').button('loading');
+                    $.ajax({
+                        url: base_url + '/api/on-site-visit/amc-customer/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
+                        .done(function (res) {
+                            if (!res.success) {
+                                $('.amc_customer_save').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            $scope.fetchData();
+                        })
+                        .fail(function (xhr) {
+                            $('.amc_customer_save').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
         //Scrollable Tabs
         setTimeout(function () {
             scrollableTabs();
@@ -1335,6 +1436,7 @@ app.component('onSiteVisitForm', {
                     }
                 })
                     .then(function (response) {
+                        console.log(response);
                         resolve(response.data.options);
                     });
             });

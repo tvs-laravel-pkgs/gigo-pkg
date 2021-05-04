@@ -13,9 +13,20 @@ class AmcCustomer extends Model
     protected $table = 'amc_customers';
     public $timestamps = true;
     protected $fillable = [
+        "amc_customer_type_id",
         "customer_id",
         "tvs_one_customer_code",
     ];
+
+    public function getStartDateAttribute($value)
+    {
+        return empty($value) ? '' : date('d-m-Y', strtotime($value));
+    }
+
+    public function getExpiryDateAttribute($value)
+    {
+        return empty($value) ? '' : date('d-m-Y', strtotime($value));
+    }
 
     public function amcMember()
     {
