@@ -143,7 +143,7 @@
                                             Job order number
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete md-selected-item="warranty_job_order_request.job_order" md-search-text="jobOrderSearchKey" md-items="job_order in searchJobOrders(jobOrderSearchKey)" md-item-text="job_order.number" md-min-length="3" md-escape-options="clear" placeholder="Ex. JO001" md-input-id="jo_ac">
+                                        <md-autocomplete md-selected-item="warranty_job_order_request.job_order" md-search-text="jobOrderSearchKey" md-items="job_order in searchJobOrders(jobOrderSearchKey)" md-item-text="job_order.number" md-min-length="3" md-escape-options="clear" placeholder="Ex. JO001" md-input-id="jo_ac" md-no-cache="true">
                                             <!-- md-autofocus  -->
                                             <md-item-template>
                                                 <span>
@@ -190,7 +190,7 @@
                                             Outlet
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete md-selected-item="warranty_job_order_request.job_order.outlet" md-search-text="outlet_search_key" md-items="outlet in searchOutlet(outlet_search_key)" md-item-text="outlet.code+' / '+outlet.name" md-min-length="2" md-escape-options="clear" placeholder="Outlet" ng-model-options="{trackBy: '$value.id' }" md-selected-item-change="outletChanged(warranty_job_order_request.job_order.outlet)" name="outlet_id">
+                                        <md-autocomplete md-selected-item="warranty_job_order_request.job_order.outlet" md-search-text="outlet_search_key" md-items="outlet in searchOutlet(outlet_search_key)" md-item-text="outlet.code+' / '+outlet.name" md-min-length="2" md-escape-options="clear" placeholder="Outlet" ng-model-options="{trackBy: '$value.id' }" md-selected-item-change="outletChanged(warranty_job_order_request.job_order.outlet)" name="outlet_id" md-no-cache="true">
                                             <!-- md-autofocus  -->
                                             <md-item-template>
                                                 <span>
@@ -313,7 +313,7 @@
                                             Search vehicle
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete md-selected-item-change="vehicleSelected(warranty_job_order_request.job_order.vehicle)" md-selected-item="warranty_job_order_request.job_order.vehicle" md-search-text="vehicle_search_key" md-items="vehicle in searchVehicles(vehicle_search_key)" md-item-text="vehicle.chassis_number +' / '+ vehicle.registration_number" md-min-length="3" md-escape-options="clear" placeholder="Chassis # / Registration # / Engine #" md-input-id="vehicle_ac">
+                                        <md-autocomplete md-selected-item-change="vehicleSelected(warranty_job_order_request.job_order.vehicle)" md-selected-item="warranty_job_order_request.job_order.vehicle" md-search-text="vehicle_search_key" md-items="vehicle in searchVehicles(vehicle_search_key)" md-item-text="vehicle.chassis_number +' / '+ vehicle.registration_number" md-min-length="3" md-escape-options="clear" placeholder="Chassis # / Registration # / Engine #" md-input-id="vehicle_ac" md-no-cache="true">
                                             <!-- md-autofocus  -->
                                             <md-item-template>
                                                 <span>
@@ -500,7 +500,7 @@
                                             Search customer
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete md-items="option in searchCustomer(customerSearchText)" md-selected-item="customer" md-search-text="customerSearchText" md-selected-item-change="customerChanged(customer)" md-item-text="option.code" md-min-length="3" placeholder="Customer Name" ng-model-options="{trackBy: '$value.id' }" md-input-id="customer_ac">
+                                        <md-autocomplete md-items="option in searchCustomer(customerSearchText)" md-selected-item="customer" md-search-text="customerSearchText" md-selected-item-change="customerChanged(customer)" md-item-text="option.code" md-min-length="3" placeholder="Customer Name" ng-model-options="{trackBy: '$value.id' }" md-input-id="customer_ac" md-no-cache="true">
                                             <md-item-template>
                                                 <span>
                                                     {{option.name}} / {{option.code}}
@@ -589,7 +589,7 @@
                                             City
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete md-items="option in $ctrl.searchCity($ctrl.citySearchText)" md-selected-item="warranty_job_order_request.customer_address.city" md-search-text="$ctrl.citySearchText" md-item-text="option.name" md-min-length="3" placeholder="City Name" md-input-id="city_ac" md-selected-item-change="$ctrl.citySelected(warranty_job_order_request.customer_address.city)">
+                                        <md-autocomplete md-items="option in $ctrl.searchCity($ctrl.citySearchText)" md-selected-item="warranty_job_order_request.customer_address.city" md-search-text="$ctrl.citySearchText" md-item-text="option.name" md-min-length="3" placeholder="City Name" md-input-id="city_ac" md-selected-item-change="$ctrl.citySelected(warranty_job_order_request.customer_address.city)" md-no-cache="true">
                                             <!-- md-autofocus  -->
                                             <md-item-template>
                                                 <span>
@@ -758,7 +758,7 @@
                                             Complaint code
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete md-no-cache="true" md-selected-item="warranty_job_order_request.complaint" md-search-text="complaintSearchKey" md-items="complaint in searchCompaints(complaintSearchKey)" md-item-text="complaint.code+' / '+complaint.name" md-min-length="3" md-escape-options="clear" placeholder="Ex. 01C4" md-input-id="complaint_ac">
+                                        <md-autocomplete md-no-cache="true" md-selected-item="warranty_job_order_request.complaint" md-search-text="complaintSearchKey" md-items="complaint in searchCompaints(complaintSearchKey)" md-item-text="complaint.code+' / '+complaint.name" md-min-length="3" md-escape-options="clear" placeholder="Ex. 01C4" md-input-id="complaint_ac" md-no-cache="true">
                                             <md-item-template>
                                                 <span>
                                                     {{complaint.code+' / '+complaint.name}}
@@ -785,7 +785,7 @@
                                             Fault code
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete md-selected-item="warranty_job_order_request.fault" md-search-text="faultSearchKey" md-items="fault in searchFaults(faultSearchKey)" md-item-text="fault.code+' / '+fault.name" md-min-length="1" md-escape-options="clear" placeholder="Ex. AA" md-input-id="fault_ac">
+                                        <md-autocomplete md-selected-item="warranty_job_order_request.fault" md-search-text="faultSearchKey" md-items="fault in searchFaults(faultSearchKey)" md-item-text="fault.code+' / '+fault.name" md-min-length="1" md-escape-options="clear" placeholder="Ex. AA" md-input-id="fault_ac" md-no-cache="true">
                                             <md-item-template>
                                                 <span>
                                                     {{fault.code+' / '+fault.name}}
@@ -812,7 +812,7 @@
                                             Supplier code
                                             <sup class="mandatory"></sup>
                                         </label>
-                                        <md-autocomplete md-selected-item="warranty_job_order_request.supplier" md-search-text="supplierSearchKey" md-items="supplier in searchPartSuppliers(supplierSearchKey)" md-item-text="supplier.code +' /  '+supplier.name" md-min-length="3" md-escape-options="clear" placeholder="Ex. Kumar Auto Eng." md-input-id="parts_supplier_ac">
+                                        <md-autocomplete md-selected-item="warranty_job_order_request.supplier" md-search-text="supplierSearchKey" md-items="supplier in searchPartSuppliers(supplierSearchKey)" md-item-text="supplier.code +' /  '+supplier.name" md-min-length="3" md-escape-options="clear" placeholder="Ex. Kumar Auto Eng." md-input-id="parts_supplier_ac" md-no-cache="true">
                                             <md-item-template>
                                                 <span>
                                                     {{supplier.code+' / '+supplier.name}}
