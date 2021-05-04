@@ -10,6 +10,7 @@ use Abs\ImportCronJobPkg\ImportCronJob;
 use Abs\UomPkg\Uom;
 use App\BaseModel;
 use App\Company;
+use App\Business;
 use App\Part;
 use Auth;
 use DB;
@@ -283,6 +284,7 @@ class RepairOrder extends BaseModel {
 	public static function saveFromObject($record_data) {
 		$record = [
 			'Company Code' => $record_data->company_code,
+            'Business Code' => $record_data->business_code,
 			'Group Code' => $record_data->group_code,
 			'Code' => $record_data->code,
 			'Name' => $record_data->name,
@@ -307,6 +309,15 @@ class RepairOrder extends BaseModel {
 				'errors' => ['Invalid Company : ' . $record_data['Company Code']],
 			];
 		}
+
+        $business = Business::where('code', $record_data['Business Code'])->first();
+        if (!$business) {
+            // return [
+            //     'success' => false,
+            //     'errors' => ['Invalid Business : ' . $record_data['Business Code']],
+            // ];
+            $business = '';
+        }
 
 		if (!isset($record_data['created_by_id'])) {
 			$admin = $company->admin();
@@ -366,6 +377,7 @@ class RepairOrder extends BaseModel {
 			$record->is_editable = 0;
 		}
 
+        $record->business_id = $business ? $business->id : 16;
 		$record->amount = $amount;
 		$record->created_by_id = $created_by_id;
 		$record->save();
@@ -426,4 +438,35 @@ class RepairOrder extends BaseModel {
 		// return $record;
 
 	}
+
+    public static function searchRepairOrder($request) {
+        // dd($request->all());
+        $key = $request->key;
+        if (isset($request->business_id)) {
+            $business_id = $request->business_id;
+        } else {
+            $business_id = 16;
+        }
+
+        $list = [];
+
+        if ($key) {
+            $list = RepairOrder::with([
+                'repairOrderType',
+                'uom',
+                'taxCode',
+                'skillLevel',
+            ])
+                ->where(function ($q) use ($key) {
+                    $q->where('repair_orders.code', 'like', $key . '%')
+                        ->orWhere('repair_orders.name', 'like', '%' . $key . '%')
+                    ;
+                })
+                ->where('repair_orders.business_id', $business_id)
+                ->orderBy('repair_orders.name')
+                ->get();
+        }
+
+        return response()->json($list);
+    }
 }
