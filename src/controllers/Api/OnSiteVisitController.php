@@ -396,6 +396,14 @@ class OnSiteVisitController extends Controller
                 } else {
                     $amc_customer_status = 0;
                 }
+
+                $remaining_services = $site_visit->customer->amcCustomer->remaining_services ? $site_visit->customer->amcCustomer->remaining_services : 0;
+
+                if ($remaining_services > 0) {
+                    $amc_customer_status = 1;
+                } else {
+                    $amc_customer_status = 0;
+                }
             }
 
             //Check Estimate PDF Available or not

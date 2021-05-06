@@ -2356,6 +2356,10 @@ class VehicleInwardController extends Controller
             $job_order->customer_id = $customer->id;
             $job_order->save();
 
+            //Mapped customer to vehicle
+            $vehicle->customer_id = $customer->id;
+            $vehicle->save();
+
             DB::commit();
 
             return response()->json([

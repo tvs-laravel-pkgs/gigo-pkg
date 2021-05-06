@@ -496,5 +496,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
         Route::post('/on-site-visit/amc-customer/save', 'OnSiteVisitController@amcCustomerSave');
         Route::post('/on-site-visit/get/part/stock-details', 'OnSiteVisitController@getPartStockDetails');
 
+        //Battery
+        Route::post('/battery/get-form-data', 'BatteryController@getFormData');
+        Route::post('/battery/save', 'BatteryController@save');
     });
 });

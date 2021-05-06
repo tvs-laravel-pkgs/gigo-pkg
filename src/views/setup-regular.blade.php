@@ -1933,3 +1933,29 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 </script>
 <script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/on-site-visit/controller.js')}}'></script>
 
+<!-- Battery -->
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
+		//Battery
+		when('/battery/table-list', {
+			template: '<battery-list></battery-list>',
+			title: 'Battery Status List',
+		}).
+		when('/battery/form/:id?', {
+			template: '<battery-form></battery-form>',
+			title: 'Battery Status Form',
+		}).
+		when('/battery/view/:id', {
+			template: '<battery-view></battery-view>',
+			title: 'Battery Status View',
+		});
+	}]);
+
+	//Battery
+    var battery_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/battery/list.html')}}';
+    var battery_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/battery/form.html')}}';
+    var battery_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/battery/view.html')}}';
+</script>
+<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/battery/controller.js')}}'></script>
+

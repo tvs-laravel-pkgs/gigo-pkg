@@ -1346,3 +1346,20 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'On Site Visit Issue Parts',
     });
 }]);
+
+app.config(['$routeProvider', function($routeProvider) {
+    $routeProvider.
+    //Battery
+    when('/battery/table-list', {
+        template: '<battery-list></battery-list>',
+        title: 'Battery Status List',
+    }).
+    when('/battery/form/:id?', {
+        template: '<battery-form></battery-form>',
+        title: 'Battery Status Form',
+    }).
+    when('/battery/view/:id', {
+        template: '<battery-view></battery-view>',
+        title: 'Battery Status View',
+    });
+}]);

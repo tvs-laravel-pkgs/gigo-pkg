@@ -1,0 +1,918 @@
+<div class="content-wrap cndn-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/battery/table-list" type="button" class="btn-back btn-img">
+                        <img class="img-responsive my-tooltip" src="./public/theme/img/content/previous.svg" alt="Back"
+                            ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left" />
+                    </a>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content title-block">
+                    <h1 class="title"><b>Battery Form</b></h1>
+                    <p class="subtitle">
+                        <a href="#!/on-site-visit/table-list">
+                            Battery
+                        </a> /
+                        {{action}}
+                    </p>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <form id="battery_status_form" autocomplete="off">
+            <input type="hidden" name="id" value="{{battery.id}}">
+            <div class="page-tab-form pb-70">
+                <div class="page-tab-form-top">
+                    <div class="page-tab-form-top-left">
+                        <div class="page-tab-form-top-left-title">General Info</div>
+                        <div class="page-tab-form-top-left-link">
+                            <a class="btn-link-arrow side-tab-toggle">
+                                <i class="ionicons ion-md-arrow-round-back"></i>
+                                <i class="ionicons ion-md-arrow-round-forward"></i>
+                            </a>
+                        </div>
+                        <div class="page-tab-form-top-left-info">
+                            <span class="page-tab-form-top-left-info-content">
+                                <b>
+                                    {{vehicle.registration_number}} |
+                                </b>
+                                <span>
+                                    {{customer.code}} | {{customer.name}}
+                                </span>
+                            </span>
+                        </div>
+                    </div><!-- Page Tab Form Top Left -->
+                </div><!-- Page Tab Form Top -->
+                <div class="tab-form-wrap side-tab-open">
+                    <div class="tab-form-header side-tab-open">
+                        <div class="tab-header">
+                            <!-- Filters -->
+                            <div class="isotope-filters animated" data-animation="fadeInLeft"
+                                data-animation-delay="300">
+                                <ul class="nav nav-pills cndn-tabs">
+                                    <li class="active">
+                                        <a class="filter active" data-target="#gatein_details" data-toggle="tab"
+                                            aria-expanded="true">
+                                            Basic Info
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a data-target="#load_test_details" data-toggle="tab" aria-expanded="true"
+                                            class="filter">
+                                            Battery /<br> Load Test Details
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div><!-- Filters -->
+                        </div><!-- Tab Header -->
+                    </div><!-- Tab Form Header -->
+                    <div class="tab-form-body side-tab-open">
+                        <div class="tab-content">
+                            <div class="tab-pane fade in active" id="gatein_details" data-animation="fadeInUp"
+                                data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-12" style="padding-left: 0px;">
+                                            <h5 class="color-primary mb-10">
+                                                <b>
+                                                    Basic Information
+                                                </b>
+                                            </h5>
+                                            <div class="panel-group" id="accordion">
+                                                <div class="panel panel-default type-3">
+                                                    <div class="panel-heading">
+                                                        <a class="panel-title" data-toggle="collapse"
+                                                            data-parent="#accordion" data-target="#collapse1">
+                                                            Vehicle Details
+                                                            <span class="arrow"></span>
+                                                        </a>
+                                                    </div>
+                                                    <div id="collapse1" class="panel-collapse collapse in">
+                                                        <div class="panel-body">
+                                                            <ul class="view-row mb-no">
+                                                                <li class="view-col-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Search Type
+                                                                            <sup class="mandatory">*</sup>
+                                                                        </label>
+                                                                        <div class="common-radio-button type-4">
+                                                                            <input type="radio"
+                                                                                id="vehicle_search_type_yes"
+                                                                                name="vehicle_search_type"
+                                                                                ng-model="$ctrl.search_type"
+                                                                                ng-value="true">
+                                                                            <label for="vehicle_search_type_yes">
+                                                                                Existing<span class="rd-focused"></span>
+                                                                            </label>
+                                                                            <input type="radio"
+                                                                                id="vehicle_search_type_no"
+                                                                                name="vehicle_search_type"
+                                                                                ng-model="$ctrl.search_type"
+                                                                                ng-value="false">
+                                                                            <label for="vehicle_search_type_no">
+                                                                                New<span class="rd-focused"></span>
+                                                                            </label>
+                                                                        </div>
+                                                                    </div><!-- Feild -->
+                                                                </li>
+                                                                <li class="view-col-3"
+                                                                    ng-if="$ctrl.search_type == true">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Search vehicle
+                                                                            <sup class="mandatory">*</sup>
+                                                                        </label>
+                                                                        <md-autocomplete
+                                                                            md-selected-item-change="vehicleSelected(vehicle)"
+                                                                            md-selected-item="vehicle"
+                                                                            md-search-text="vehicle_search_key"
+                                                                            md-items="vehicle in searchVehicles(vehicle_search_key)"
+                                                                            md-item-text="vehicle.chassis_number +' / '+ vehicle.registration_number"
+                                                                            md-min-length="3" md-escape-options="clear"
+                                                                            placeholder="Chassis # / Registration # / Engine #"
+                                                                            md-input-id="vehicle_ac" md-no-cache="true">
+                                                                            <!-- md-autofocus  -->
+                                                                            <md-item-template>
+                                                                                <span>
+                                                                                    {{vehicle.registration_number}} /
+                                                                                    {{vehicle.chassis_number}}
+                                                                                </span>
+                                                                            </md-item-template>
+                                                                            <md-not-found>
+                                                                                No records matching
+                                                                                "{{vehicle_search_key}}" were found.
+                                                                            </md-not-found>
+                                                                        </md-autocomplete>
+                                                                        <input type="hidden" name="vehicle_id"
+                                                                            value="{{vehicle.id}}">
+                                                                    </div><!-- Feild -->
+                                                                </li>
+                                                                <li class="view-col-3"
+                                                                    ng-if="$ctrl.search_type != true">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Select vehicle
+                                                                            <sup class="mandatory">*</sup>
+                                                                        </label>
+                                                                        <md-autocomplete
+                                                                            md-selected-item-change="vehicleSelected(battery.vehicle_battery.vehicle)"
+                                                                            md-selected-item="battery.vehicle_battery.vehicle"
+                                                                            md-search-text="vehicle_search_key"
+                                                                            md-items="vehicle in searchVehicles(vehicle_search_key)"
+                                                                            md-item-text="vehicle.chassis_number +' / '+ vehicle.registration_number"
+                                                                            md-min-length="3" md-escape-options="clear"
+                                                                            placeholder="Chassis # / Registration # / Engine #"
+                                                                            md-input-id="vehicle_ac" md-no-cache="true">
+                                                                            <!-- md-autofocus  -->
+                                                                            <md-item-template>
+                                                                                <span>
+                                                                                    {{vehicle.registration_number}} /
+                                                                                    {{vehicle.chassis_number}}
+                                                                                </span>
+                                                                            </md-item-template>
+                                                                            <md-not-found>
+                                                                                No records matching
+                                                                                "{{vehicle_search_key}}" were found.
+                                                                            </md-not-found>
+                                                                        </md-autocomplete>
+                                                                        <input type="hidden" name="vehicle_id"
+                                                                            value="{{battery.vehicle_battery.vehicle.id}}">
+                                                                    </div><!-- Feild -->
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Engine Number
+                                                                            <sup class="mandatory">*</sup>
+                                                                        </label>
+                                                                        <input required type="text"
+                                                                            class="form-control engine_number"
+                                                                            minlength="5" maxlength="64"
+                                                                            placeholder="Enter Engine Number"
+                                                                            autocomplete="off" id="engine_number"
+                                                                            name="engine_number"
+                                                                            ng-model="vehicle.engine_number" />
+                                                                    </div><!-- Feild -->
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Chassis number
+                                                                            <sup class="mandatory">*</sup>
+                                                                        </label>
+                                                                        <input required type="text"
+                                                                            class="form-control chassis_number"
+                                                                            minlength="8" maxlength="17"
+                                                                            placeholder="Enter Chassis Number"
+                                                                            autocomplete="off" id="chassis_number"
+                                                                            name="chassis_number"
+                                                                            ng-model="vehicle.chassis_number" />
+                                                                    </div><!-- Feild -->
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Vehicle Reg number
+                                                                        </label>
+                                                                        <input required type="text"
+                                                                            class="form-control registration_number"
+                                                                            minlength="8" maxlength="13"
+                                                                            id="registration_number"
+                                                                            placeholder="Enter Vehicle Registration Number"
+                                                                            value="" autocomplete="off"
+                                                                            name="registration_number"
+                                                                            oninput="this.value = this.value.toUpperCase()"
+                                                                            ng-model="vehicle.registration_number" />
+                                                                    </div><!-- Feild -->
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Vehicle Model
+                                                                            <sup class="mandatory">*</sup>
+                                                                        </label>
+                                                                        <md-autocomplete
+                                                                            md-items="option in $ctrl.searchVehicleModel($ctrl.modelSearchText)"
+                                                                            md-selected-item="vehicle.model"
+                                                                            md-selected-item-change="selectedVehicleModel(vehicle.model.id)"
+                                                                            md-search-text="$ctrl.modelSearchText"
+                                                                            md-item-text="option.model_name"
+                                                                            md-min-length="3"
+                                                                            placeholder="Vehicle Model Name"
+                                                                            md-autofocus>
+                                                                            <md-item-template>
+                                                                                <span>
+                                                                                    {{option.model_name}} /
+                                                                                    {{option.number}}
+                                                                                </span>
+                                                                            </md-item-template>
+                                                                            <md-not-found>
+                                                                                No Vehicle Model matching
+                                                                                "{{$ctrl.modelSearchText}}" were found.
+                                                                            </md-not-found>
+                                                                        </md-autocomplete>
+                                                                        <input type="hidden" name="model_id"
+                                                                            value="{{vehicle.model.id}}">
+                                                                    </div><!-- Feild -->
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Reading Type
+                                                                            <sup class="mandatory">
+                                                                                *
+                                                                            </sup>
+                                                                        </label>
+                                                                        <md-select ng-model="vehicle.km_reading_type_id"
+                                                                            placeholder="Select Reading Type"
+                                                                            data-md-container-class="selectdemoSelectHeader"
+                                                                            ng-disabled="reading_type_status == 1">
+                                                                            <md-select-header
+                                                                                class="demo-select-header">
+                                                                                <input ng-model="searchReadingType"
+                                                                                    type="search"
+                                                                                    placeholder="Search for a Reading Type.."
+                                                                                    class="demo-header-searchbox md-text">
+                                                                            </md-select-header>
+                                                                            <md-optgroup>
+                                                                                <md-option ng-value="option.id"
+                                                                                    ng-repeat="option in extras.reading_type_list | filter:searchReadingType">
+                                                                                    {{option.name}}
+                                                                                </md-option>
+                                                                            </md-optgroup>
+                                                                        </md-select>
+                                                                        <input type="hidden" name="km_reading_type_id"
+                                                                            value="{{vehicle.km_reading_type_id}}"
+                                                                            class="required">
+                                                                    </div><!-- Feild -->
+                                                                </li><!-- Column -->
+                                                                <li class="view-col-3"
+                                                                    ng-if="vehicle.km_reading_type_id == 8040">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            KM Reading
+                                                                            <sup class="mandatory">*</sup></label>
+                                                                        <input type="text"
+                                                                            class="form-control km_reading"
+                                                                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                                                            maxlength="6" placeholder="Ex: 45000"
+                                                                            autocomplete="off" name="km_reading"
+                                                                            ng-model="vehicle.km_reading"
+                                                                            value="{{vehicle.km_reading}}" />
+                                                                    </div><!-- Feild -->
+                                                                </li><!-- Column -->
+                                                                <li class="view-col-3"
+                                                                    ng-if="vehicle.km_reading_type_id == 8041">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            HR Reading
+                                                                            <sup class="mandatory">*</sup></label>
+                                                                        <input type="text"
+                                                                            class="form-control hr_reading"
+                                                                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                                                            maxlength="4" placeholder="Ex: 1000"
+                                                                            autocomplete="off" name="hr_reading"
+                                                                            ng-model="vehicle.hr_reading"
+                                                                            value="{{vehicle.hr_reading}}" />
+                                                                    </div><!-- Feild -->
+                                                                </li><!-- Column -->
+                                                                <li class="view-col-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Sold date
+                                                                        </label>
+                                                                        <div class="input-group date"
+                                                                            data-provide="datepicker"
+                                                                            data-date-start-view="2"
+                                                                            data-date-end-date="0d">
+                                                                            <input type="text" class="form-control"
+                                                                                placeholder="Ex: 01-01-2020"
+                                                                                ng-model="vehicle.sold_date"
+                                                                                name="sold_date" />
+                                                                            <div class="input-group-addon">
+                                                                                <img class="img-responsive"
+                                                                                    src="./public/theme/img/content/calender-gray-icon.svg"
+                                                                                    alt="Calendar Image" />
+                                                                            </div>
+                                                                        </div><!-- Input Group -->
+                                                                    </div><!-- Feild -->
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel-group" id="accordion">
+                                                <div class="panel panel-default type-3">
+                                                    <div class="panel-heading">
+                                                        <a class="panel-title" data-toggle="collapse"
+                                                            data-parent="#accordion" data-target="#collapse2">
+                                                            Customer Details
+                                                            <span class="arrow"></span>
+                                                        </a>
+                                                    </div>
+                                                    <div id="collapse2" class="panel-collapse collapse in">
+                                                        <div class="panel-body">
+                                                            <ul class="view-row mb-no">
+                                                                <li class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Search Type
+                                                                            <sup class="mandatory">*</sup>
+                                                                        </label>
+                                                                        <div class="common-radio-button type-4">
+                                                                            <input type="radio"
+                                                                                id="customer_search_type_yes"
+                                                                                name="customer_search_type"
+                                                                                ng-model="$ctrl.customer_search_type"
+                                                                                ng-value="true">
+                                                                            <label for="customer_search_type_yes">
+                                                                                Existing<span class="rd-focused"></span>
+                                                                            </label>
+                                                                            <input type="radio"
+                                                                                id="customer_search_type_no"
+                                                                                name="customer_search_type"
+                                                                                ng-model="$ctrl.customer_search_type"
+                                                                                ng-value="false">
+                                                                            <label for="customer_search_type_no">
+                                                                                New<span class="rd-focused"></span>
+                                                                            </label>
+                                                                        </div>
+                                                                    </div><!-- Feild -->
+                                                                </li>
+                                                                <li class="col-md-3"
+                                                                    ng-if="$ctrl.customer_search_type == true ">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Search customer
+                                                                            <sup class="mandatory">*</sup>
+                                                                        </label>
+                                                                        <md-autocomplete
+                                                                            md-items="option in searchCustomer($ctrl.customerSearchText)"
+                                                                            md-selected-item="vehicle"
+                                                                            md-search-text="$ctrl.customerSearchText"
+                                                                            md-selected-item-change="customerChanged(customer)"
+                                                                            md-item-text="customer.code"
+                                                                            md-min-length="3"
+                                                                            placeholder="Customer Code / Name"
+                                                                            md-input-id="customer_ac"
+                                                                            md-no-cache="true">
+                                                                            <md-item-template>
+                                                                                <span>
+                                                                                    {{customer.name}} /
+                                                                                    {{customer.code}}
+                                                                                </span>
+                                                                            </md-item-template>
+                                                                            <md-not-found>
+                                                                                No Customer matching
+                                                                                "{{$ctrl.customerSearchText}}" were
+                                                                                found.
+                                                                            </md-not-found>
+                                                                        </md-autocomplete>
+                                                                        <input type="hidden"
+                                                                            class="form-control required"
+                                                                            id="customer_id" name="customer_id"
+                                                                            value="{{customer.id}}">
+                                                                    </div><!-- Feild -->
+                                                                </li><!-- Column -->
+                                                                <li class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Code
+                                                                            <sup class="mandatory">*</sup>
+                                                                        </label>
+                                                                        <input type="text" class="form-control required"
+                                                                            placeholder="Enter Code" autocomplete="off"
+                                                                            ng-model="customer.code" name="code" />
+                                                                    </div><!-- Feild -->
+                                                                </li><!-- Column -->
+                                                                <li class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Name
+                                                                            <sup class="mandatory">*</sup>
+                                                                        </label>
+                                                                        <input type="text" class="form-control required"
+                                                                            placeholder="Enter Name" autocomplete="off"
+                                                                            ng-model="customer.name" name="name" />
+                                                                    </div><!-- Feild -->
+                                                                </li><!-- Column -->
+                                                                <li class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Mobile Number
+                                                                            <sup class="mandatory">*</sup>
+                                                                        </label>
+                                                                        <input type="text" class="form-control"
+                                                                            minlength="10" maxlength="10"
+                                                                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                                                            placeholder="Enter Mobile No"
+                                                                            autocomplete="off" maxlength="10"
+                                                                            ng-model="customer.mobile_no"
+                                                                            name="mobile_no" />
+                                                                    </div><!-- Feild -->
+                                                                </li><!-- Column -->
+                                                                <li class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Email
+                                                                        </label>
+                                                                        <input type="text" class="form-control"
+                                                                            placeholder="Enter Email" autocomplete="off"
+                                                                            ng-model="customer.email" name="email" />
+                                                                    </div><!-- Feild -->
+                                                                </li><!-- Column -->
+                                                                <li class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Address Line 1
+                                                                            <sup class="mandatory">*</sup>
+                                                                        </label>
+                                                                        <input type="text" class="form-control required"
+                                                                            placeholder="Enter Address"
+                                                                            autocomplete="off"
+                                                                            ng-model="customer.address.address_line1"
+                                                                            name="address_line1" />
+                                                                    </div><!-- Feild -->
+                                                                </li><!-- Column -->
+                                                                <li class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Address Line 2
+                                                                        </label>
+                                                                        <input type="text" class="form-control"
+                                                                            placeholder="Enter Address"
+                                                                            autocomplete="off" maxlength="64"
+                                                                            ng-model="customer.address.address_line2"
+                                                                            name="address_line2" />
+                                                                    </div><!-- Feild -->
+                                                                </li><!-- Column -->
+                                                                <li class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Country
+                                                                            <sup class="mandatory">*</sup>
+                                                                        </label>
+                                                                        <md-select ng-model="$ctrl.country"
+                                                                            placeholder="Select Country"
+                                                                            data-md-container-class="selectdemoSelectHeader"
+                                                                            ng-model-options="{trackBy: '$value.id' }"
+                                                                            ng-change="countryChanged($ctrl.country.id)">
+                                                                            <md-select-header
+                                                                                class="demo-select-header">
+                                                                                <input ng-model="searchCountry"
+                                                                                    type="search"
+                                                                                    placeholder="Search for a country.."
+                                                                                    class="demo-header-searchbox md-text"
+                                                                                    ng-keydown="$event.stopPropagation()">
+                                                                            </md-select-header>
+                                                                            <md-optgroup>
+                                                                                <md-option ng-value="country"
+                                                                                    ng-repeat="country in extras.country_list | filter:searchCountry">
+                                                                                    {{country.name}}
+                                                                                </md-option>
+                                                                            </md-optgroup>
+                                                                        </md-select>
+                                                                        <input type="hidden" name="country_id"
+                                                                            class="required"
+                                                                            value="{{$ctrl.country.id}}">
+                                                                    </div><!-- Feild -->
+                                                                </li><!-- Column -->
+                                                                <li class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            State
+                                                                            <sup class="mandatory">*</sup>
+                                                                        </label>
+                                                                        <md-select ng-model="$ctrl.state"
+                                                                            placeholder="Select State"
+                                                                            data-md-container-class="selectdemoSelectHeader"
+                                                                            ng-model-options="{trackBy: '$value.id' }">
+                                                                            <md-select-header
+                                                                                class="demo-select-header">
+                                                                                <input ng-model="searchState"
+                                                                                    type="search"
+                                                                                    placeholder="Search for a state.."
+                                                                                    class="demo-header-searchbox md-text"
+                                                                                    ng-keydown="$event.stopPropagation()">
+                                                                            </md-select-header>
+                                                                            <md-optgroup>
+                                                                                <md-option ng-value="state"
+                                                                                    ng-repeat="state in extras.state_list | filter:searchState">
+                                                                                    {{state.name}}
+                                                                                </md-option>
+                                                                            </md-optgroup>
+                                                                        </md-select>
+                                                                        <input type="hidden" name="state_id"
+                                                                            class="required" value="{{$ctrl.state.id}}">
+                                                                    </div><!-- Feild -->
+                                                                </li><!-- Column -->
+                                                                <li class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            City
+                                                                            <sup class="mandatory">*</sup>
+                                                                        </label>
+                                                                        <md-autocomplete
+                                                                            md-items="option in $ctrl.searchCity($ctrl.citySearchText)"
+                                                                            md-selected-item="customer.address.city"
+                                                                            md-search-text="$ctrl.citySearchText"
+                                                                            md-item-text="option.name" md-min-length="3"
+                                                                            placeholder="City Name" md-autofocus
+                                                                            md-no-cache="true">
+                                                                            <md-item-template>
+                                                                                <span>
+                                                                                    {{option.name}}
+                                                                                </span>
+                                                                            </md-item-template>
+                                                                            <md-not-found>
+                                                                                No City matching
+                                                                                "{{$ctrl.citySearchText}}"
+                                                                                were found.
+                                                                            </md-not-found>
+                                                                        </md-autocomplete>
+                                                                        <input type="hidden" class="required"
+                                                                            id="city_id" name="city_id"
+                                                                            value="{{customer.address.city.id}}">
+                                                                    </div><!-- Feild -->
+                                                                </li><!-- Column -->
+                                                                <li class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            PIN Code
+                                                                            <sup class="mandatory">*</sup>
+                                                                        </label>
+                                                                        <input type="text" class="form-control"
+                                                                            minlength="6" maxlength="6"
+                                                                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                                                            maxlength="6" placeholder="Enter PIN Code"
+                                                                            autocomplete="off"
+                                                                            ng-model="customer.address.pincode"
+                                                                            name="pincode" />
+                                                                    </div><!-- Feild -->
+                                                                </li><!-- Column -->
+                                                                <li class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            GST No
+                                                                        </label>
+                                                                        <input type="text" class="form-control"
+                                                                            minlength="15" maxlength="15"
+                                                                            onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')"
+                                                                            placeholder="Enter GST No"
+                                                                            autocomplete="off"
+                                                                            ng-model="customer.gst_number"
+                                                                            name="gst_number" />
+                                                                    </div><!-- Feild -->
+                                                                </li><!-- Column -->
+                                                                <li class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            PAN
+                                                                            <!-- No -->
+                                                                        </label>
+                                                                        <input type="text" class="form-control"
+                                                                            placeholder="Enter PAN"
+                                                                            onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')"
+                                                                            autocomplete="off"
+                                                                            ng-model="customer.pan_number"
+                                                                            minlength="10" maxlength="10"
+                                                                            name="pan_number" />
+                                                                    </div><!-- Feild -->
+                                                                </li><!-- Column -->
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <a class="btn btn-secondary-dark btn-nxt">Next</a>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                            <div class="tab-pane fade" id="load_test_details" data-animation="fadeInUp"
+                                data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-12" style="padding-left: 0px;">
+                                            <h5 class="color-primary mb-10">
+                                                <b>
+                                                    Load Test Informations
+                                                </b>
+                                            </h5>
+                                            <div class="panel-group" id="accordion">
+                                                <div class="panel panel-default type-3">
+                                                    <div class="panel-heading">
+                                                        <a class="panel-title" data-toggle="collapse"
+                                                            data-parent="#accordion" data-target="#collapse3">
+                                                            Battery Details
+                                                            <span class="arrow"></span>
+                                                        </a>
+                                                    </div>
+                                                    <div id="collapse3" class="panel-collapse collapse in">
+                                                        <div class="panel-body">
+                                                            <ul class="view-row mb-no">
+                                                                <li class="view-col-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Battery
+                                                                            <sup class="mandatory">*</sup>
+                                                                        </label>
+                                                                        <md-select
+                                                                            ng-model="battery.vehicle_battery.battery_make_id"
+                                                                            placeholder="Select Battery"
+                                                                            data-md-container-class="selectdemoSelectHeader">
+                                                                            <md-select-header
+                                                                                class="demo-select-header">
+                                                                                <input ng-model="searchBattery"
+                                                                                    type="search"
+                                                                                    placeholder="Search for a Battery.."
+                                                                                    class="demo-header-searchbox md-text"
+                                                                                    ng-keydown="$event.stopPropagation()">
+                                                                            </md-select-header>
+                                                                            <md-optgroup>
+                                                                                <md-option ng-value="list.id"
+                                                                                    ng-repeat="list in extras.battery_list | filter:searchBattery">
+                                                                                    {{list.name}}
+                                                                                </md-option>
+                                                                            </md-optgroup>
+                                                                        </md-select>
+                                                                        <input type="hidden" class="required"
+                                                                            name="battery_make_id"
+                                                                            value="{{battery.vehicle_battery.battery_make_id}}">
+                                                                    </div><!-- Feild -->
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Battery Serial Number
+                                                                        </label>
+                                                                        <input type="text" class="form-control"
+                                                                            minlength="5" maxlength="30"
+                                                                            placeholder="Enter Serial Number"
+                                                                            autocomplete="off"
+                                                                            name="battery_serial_number"
+                                                                            ng-model="battery.vehicle_battery.battery_serial_number" />
+                                                                    </div><!-- Feild -->
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            AMP Hour
+                                                                            <sup class="mandatory">*</sup>
+                                                                        </label>
+                                                                        <input required type="text"
+                                                                            class="form-control required" minlength="3"
+                                                                            maxlength="3" placeholder="Ex:110"
+                                                                            autocomplete="off" name="amp_hour"
+                                                                            ng-model="battery.vehicle_battery.amp_hour" />
+                                                                    </div><!-- Feild -->
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Battery Voltage
+                                                                            <sup class="mandatory">*</sup>
+                                                                        </label>
+                                                                        <input required type="text"
+                                                                            class="form-control required" minlength="3"
+                                                                            placeholder="Ex:12V" autocomplete="off"
+                                                                            name="battery_voltage"
+                                                                            ng-model="battery.vehicle_battery.battery_voltage" />
+                                                                    </div><!-- Feild -->
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Battery Manufactured Date
+                                                                            <sup class="mandatory">*</sup>
+                                                                        </label>
+                                                                        <div class="input-group date"
+                                                                            data-date-start-view="1"
+                                                                            data-date-min-view-mode="1"
+                                                                            data-date-end-date="0d"
+                                                                            data-provide="datepicker">
+                                                                            <input type="text" name="manufactured_date"
+                                                                                value="{{battery.vehicle_battery.manufactured_date}}"
+                                                                                class="form-control"
+                                                                                placeholder="Select Invoice Date" />
+                                                                            <div class="input-group-addon">
+                                                                                <img class="img-responsive"
+                                                                                    src="./public/theme/img/content/calender-gray-icon.svg"
+                                                                                    alt="Calendar Image" />
+                                                                            </div>
+                                                                        </div><!-- Input Group -->
+                                                                    </div><!-- Feild -->
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel-group" id="accordion">
+                                                <div class="panel panel-default type-3">
+                                                    <div class="panel-heading">
+                                                        <a class="panel-title" data-toggle="collapse"
+                                                            data-parent="#accordion" data-target="#collapse3">
+                                                            Load Test Results
+                                                            <span class="arrow"></span>
+                                                        </a>
+                                                    </div>
+                                                    <div id="collapse3" class="panel-collapse collapse in">
+                                                        <div class="panel-body">
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label>Load Test Status<sup
+                                                                                    class="mandatory">*</sup></label>
+                                                                            <div class="color-radio-group">
+                                                                                <div class="color-radio-item">
+                                                                                    <input type="radio"
+                                                                                        id="load_radio_good"
+                                                                                        name="load_test_status_id"
+                                                                                        value="1" ng-value="1"
+                                                                                        ng-checked="battery.load_test_status_id == 1" />
+                                                                                    <label for="load_radio_good"
+                                                                                        class="radio-good"></label>
+                                                                                </div>
+                                                                                <div class="color-radio-item">
+                                                                                    <input type="radio"
+                                                                                        id="load_radio_average"
+                                                                                        name="load_test_status_id"
+                                                                                        value="2" ng-value="2"
+                                                                                        ng-checked="battery.load_test_status_id == 2" />
+                                                                                    <label for="load_radio_average"
+                                                                                        class="radio-average"></label>
+                                                                                </div>
+                                                                                <div class="color-radio-item">
+                                                                                    <input type="radio"
+                                                                                        id="load_radio_bad"
+                                                                                        name="load_test_status_id"
+                                                                                        value="3" ng-value="3"
+                                                                                        ng-checked="battery.load_test_status_id == 3" />
+                                                                                    <label for="load_radio_bad"
+                                                                                        class="radio-bad"></label>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div><!-- Feild -->
+                                                                    </div><!-- Column -->
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label>Hydrometer Electrolyte Status
+                                                                                <sup class="mandatory">*</sup></label>
+                                                                            <div class="color-radio-group">
+                                                                                <div class="color-radio-group">
+                                                                                    <div class="color-radio-item">
+                                                                                        <input type="radio"
+                                                                                            id="hydro_radio_good"
+                                                                                            name="hydrometer_electrolyte_status_id"
+                                                                                            value="1" ng-value="1"
+                                                                                            ng-checked="battery.hydrometer_electrolyte_status_id == 1" />
+                                                                                        <label for="hydro_radio_good"
+                                                                                            class="radio-good"></label>
+                                                                                    </div>
+                                                                                    <div class="color-radio-item">
+                                                                                        <input type="radio"
+                                                                                            id="hydro_radio_average"
+                                                                                            name="hydrometer_electrolyte_status_id"
+                                                                                            value="2" ng-value="2"
+                                                                                            ng-checked="battery.hydrometer_electrolyte_status_id == 2" />
+                                                                                        <label for="hydro_radio_average"
+                                                                                            class="radio-average"></label>
+                                                                                    </div>
+                                                                                    <div class="color-radio-item">
+                                                                                        <input type="radio"
+                                                                                            id="hydro_radio_bad"
+                                                                                            name="hydrometer_electrolyte_status_id"
+                                                                                            value="3" ng-value="3"
+                                                                                            ng-checked="battery.hydrometer_electrolyte_status_id == 3" />
+                                                                                        <label for="hydro_radio_bad"
+                                                                                            class="radio-bad"></label>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div><!-- Feild -->
+                                                                    </div><!-- Column -->
+                                                                    <div class="col-md-3">
+                                                                        <div class="form-group">
+                                                                            <label>
+                                                                                Overall Status
+                                                                                <sup class="mandatory">*</sup>
+                                                                            </label>
+                                                                            <md-select
+                                                                                ng-model="battery.overall_status_id"
+                                                                                placeholder="Select Status"
+                                                                                data-md-container-class="selectdemoSelectHeader">
+                                                                                <md-select-header
+                                                                                    class="demo-select-header">
+                                                                                    <input ng-model="searchStatus"
+                                                                                        type="search"
+                                                                                        placeholder="Search for a Status.."
+                                                                                        class="demo-header-searchbox md-text"
+                                                                                        ng-keydown="$event.stopPropagation()">
+                                                                                </md-select-header>
+                                                                                <md-optgroup>
+                                                                                    <md-option ng-value="list.id"
+                                                                                        ng-repeat="list in extras.battery_load_test_status_list | filter:searchStatus">
+                                                                                        {{list.name}}
+                                                                                    </md-option>
+                                                                                </md-optgroup>
+                                                                            </md-select>
+                                                                            <input type="hidden" class="required"
+                                                                                name="overall_status_id"
+                                                                                value="{{battery.overall_status_id}}">
+                                                                        </div><!-- Feild -->
+                                                                    </div>
+                                                                    <div class="col-md-9">
+                                                                        <div class="form-group">
+                                                                            <label>
+                                                                                Remarks
+                                                                                <sup class="mandatory">*</sup>
+                                                                            </label>
+                                                                            <textarea class="form-control required"
+                                                                                rows="4" name="remarks"
+                                                                                placeholder="Enter Details">{{battery.remarks}}</textarea>
+                                                                        </div><!-- Feild -->
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <button type="submit" class="btn btn-red btn-min-wdth submit"
+                                                    ng-click="saveBatteryStatus()">Save</button>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                    </div><!-- Tab Content -->
+                </div><!-- Tab Form Body -->
+            </div><!-- Tab Form Wrap -->
+    </div><!-- Page Form -->
+    </form>
+</div><!-- Page Main Content -->
+</div><!-- Content Wrap -->
+
+<script src="./public/theme/js/imageuploadify-mgatepass.min.js"></script>
