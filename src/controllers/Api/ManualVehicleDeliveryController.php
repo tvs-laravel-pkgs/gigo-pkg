@@ -470,10 +470,15 @@ class ManualVehicleDeliveryController extends Controller
 
         DB::beginTransaction();
 
-        if ($job_order->gateLog->status_id == 8124) {
-            $job_order->vehicle_delivery_status_id = 3;
+        if ($request->vehicle_delivery_status_id == 4) {
+            $job_order->vehicle_delivery_status_id = 4;
+            $job_order->status_id = 8470;
         } else {
-            $job_order->vehicle_delivery_status_id = $request->vehicle_delivery_status_id;
+            if ($job_order->gateLog->status_id == 8124) {
+                $job_order->vehicle_delivery_status_id = 3;
+            } else {
+                $job_order->vehicle_delivery_status_id = $request->vehicle_delivery_status_id;
+            }
         }
 
         $job_order->updated_by_id = Auth::user()->id;
