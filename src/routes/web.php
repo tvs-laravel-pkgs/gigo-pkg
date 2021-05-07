@@ -376,5 +376,6 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
     //Battery
     Route::get('/battery/get-list', 'BatteryController@getBatteryList')->name('getBatteryList');
     Route::get('/battery/get-filter-data', 'BatteryController@getBatteryFilterData')->name('getBatteryFilterData');
+    Route::post('/battery/export', 'BatteryController@export')->name('exportBatteryLoadTest');
 
 });

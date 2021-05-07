@@ -13,7 +13,7 @@ class BatteryLoadTestResult extends BaseModel
     protected $table = 'battery_load_test_results';
     public $timestamps = true;
     protected $fillable =
-        ["company_id", "outlet_id", "vehicle_battery_id", "load_test_status_id", "hydrometer_electrolyte_status_id", "remarks"]
+        ["company_id", "outlet_id", "vehicle_battery_id", "amp_hour", "battery_voltage", "load_test_status_id", "hydrometer_electrolyte_status_id", "remarks"]
     ;
 
     public function vehicleBattery()

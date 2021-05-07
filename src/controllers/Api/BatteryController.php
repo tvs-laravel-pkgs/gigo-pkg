@@ -336,8 +336,6 @@ class BatteryController extends Controller
             }
 
             $vehicle_battery->battery_serial_number = isset($request->battery_serial_number) ? $request->battery_serial_number : null;
-            $vehicle_battery->amp_hour = $request->amp_hour;
-            $vehicle_battery->battery_voltage = $request->battery_voltage;
 
             $vehicle_battery->save();
 
@@ -358,6 +356,8 @@ class BatteryController extends Controller
             $battery_result->load_test_status_id = $request->load_test_status_id;
             $battery_result->hydrometer_electrolyte_status_id = $request->hydrometer_electrolyte_status_id;
             $battery_result->overall_status_id = $request->overall_status_id;
+            $battery_result->amp_hour = $request->amp_hour;
+            $battery_result->battery_voltage = $request->battery_voltage;
             $battery_result->remarks = $request->remarks;
             $battery_result->save();
 

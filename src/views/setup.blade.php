@@ -117,6 +117,9 @@
     //TVS One Discount export
     var exportTVSOneDiscountUrl = "{{route('exportTvsOneDiscount')}}";
 
+    //Battery export
+    var exportBatteryLoadTest = "{{route('exportBatteryLoadTest')}}";
+
 </script>
 <!-- <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-segment/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-primary-application/controller.js')}}"></script>

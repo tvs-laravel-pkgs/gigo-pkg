@@ -13,7 +13,7 @@ class VehicleBattery extends BaseModel
     protected $table = 'vehicle_batteries';
     public $timestamps = true;
     protected $fillable =
-        ["company_id", "business_id", "vehicle_id", "customer_id", "battery_make_id", "manufactured_date", "amp_hour", "battery_voltage_id"]
+        ["company_id", "business_id", "vehicle_id", "customer_id", "battery_make_id", "manufactured_date"]
     ;
 
     public function getManufacturedDateAttribute($value)

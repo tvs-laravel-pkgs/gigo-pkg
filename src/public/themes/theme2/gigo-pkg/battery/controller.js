@@ -15,7 +15,7 @@ app.component('batteryList', {
         }
         self.search_key = '';
         self.user = $scope.user = HelperService.getLoggedUser();
-        self.export_url = exportManualVehicleDeliveryUrl;
+        self.export_url = exportBatteryLoadTest;
         // var table_scroll;
         self.csrf_token = $('meta[name="csrf-token"]').attr('content');
 
