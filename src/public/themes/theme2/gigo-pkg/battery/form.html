@@ -55,7 +55,7 @@
                                 data-animation-delay="300">
                                 <ul class="nav nav-pills cndn-tabs">
                                     <li class="active">
-                                        <a class="filter active" data-target="#gatein_details" data-toggle="tab"
+                                        <a class="filter active" data-target="#basic_details" data-toggle="tab"
                                             aria-expanded="true">
                                             Basic Info
                                         </a>
@@ -72,7 +72,7 @@
                     </div><!-- Tab Form Header -->
                     <div class="tab-form-body side-tab-open">
                         <div class="tab-content">
-                            <div class="tab-pane fade in active" id="gatein_details" data-animation="fadeInUp"
+                            <div class="tab-pane fade in active" id="basic_details" data-animation="fadeInUp"
                                 data-animation-delay="300">
                                 <div class="tab-pane-wrap">
                                     <div class="row">
@@ -150,38 +150,6 @@
                                                                         </md-autocomplete>
                                                                         <input type="hidden" name="vehicle_id"
                                                                             value="{{vehicle.id}}">
-                                                                    </div><!-- Feild -->
-                                                                </li>
-                                                                <li class="view-col-3"
-                                                                    ng-if="$ctrl.search_type != true">
-                                                                    <div class="form-group">
-                                                                        <label>
-                                                                            Select vehicle
-                                                                            <sup class="mandatory">*</sup>
-                                                                        </label>
-                                                                        <md-autocomplete
-                                                                            md-selected-item-change="vehicleSelected(battery.vehicle_battery.vehicle)"
-                                                                            md-selected-item="battery.vehicle_battery.vehicle"
-                                                                            md-search-text="vehicle_search_key"
-                                                                            md-items="vehicle in searchVehicles(vehicle_search_key)"
-                                                                            md-item-text="vehicle.chassis_number +' / '+ vehicle.registration_number"
-                                                                            md-min-length="3" md-escape-options="clear"
-                                                                            placeholder="Chassis # / Registration # / Engine #"
-                                                                            md-input-id="vehicle_ac" md-no-cache="true">
-                                                                            <!-- md-autofocus  -->
-                                                                            <md-item-template>
-                                                                                <span>
-                                                                                    {{vehicle.registration_number}} /
-                                                                                    {{vehicle.chassis_number}}
-                                                                                </span>
-                                                                            </md-item-template>
-                                                                            <md-not-found>
-                                                                                No records matching
-                                                                                "{{vehicle_search_key}}" were found.
-                                                                            </md-not-found>
-                                                                        </md-autocomplete>
-                                                                        <input type="hidden" name="vehicle_id"
-                                                                            value="{{battery.vehicle_battery.vehicle.id}}">
                                                                     </div><!-- Feild -->
                                                                 </li>
                                                                 <li class="view-col-3">

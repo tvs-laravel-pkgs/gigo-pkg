@@ -28,7 +28,7 @@ class BatteryLoadTestResult extends BaseModel
 
     public function batteryLoadTestStatus()
     {
-        return $this->belongsTo('App\BatteryLoadTestStatus', 'outlet_id');
+        return $this->belongsTo('App\BatteryLoadTestStatus', 'overall_status_id');
     }
 
     public function loadTestStatus()

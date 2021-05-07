@@ -34,4 +34,8 @@ class VehicleBattery extends BaseModel
     {
         return $this->belongsTo('App\Vehicle', 'vehicle_id');
     }
+    public function batteryMake()
+    {
+        return $this->belongsTo('App\BatteryMake', 'battery_make_id');
+    }
 }

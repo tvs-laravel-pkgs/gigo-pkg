@@ -10,7 +10,7 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/on-site-visit/table-list" type="button" class="btn-back btn-img">
+                    <a href="#!/battery/table-list" type="button" class="btn-back btn-img">
                         <img class="img-responsive my-tooltip" src="./public/theme/img/content/previous.svg" alt="Back"
                             ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left" />
                     </a>
@@ -18,8 +18,8 @@
                 <div class="page-header-content title-block">
                     <h1 class="title"><b>View On Site Visit</b></h1>
                     <p class="subtitle">
-                        <a href="#!/on-site-visit/table-list">
-                            On Site Visit
+                        <a href="#!/battery/table-list">
+                            Battery Load Test
                         </a> /
                         View
                     </p>
@@ -42,21 +42,14 @@
                             </a>
                         </div>
                         <div class="page-tab-form-top-left-info">
-                            <span class="page-tab-form-top-left-info-content">
-                                <b>
-                                    {{site_visit.number}} |
-                                </b>
-                                <span>
-                                    {{customer.code}} | {{customer.name}}
-                                </span>
+                            <b>
+                                {{vehicle.registration_number}} |
+                            </b>
+                            <span>
+                                {{customer.code}} | {{customer.name}}
                             </span>
                         </div>
                     </div><!-- Page Tab Form Top Left -->
-                    <div class="page-tab-form-top-right">
-                        <div class="page-tab-form-top-right-info">
-                            Status : {{site_visit.status.name}}
-                        </div>
-                    </div><!-- Page Tab Form Top Right -->
                 </div><!-- Page Tab Form Top -->
                 <div class="tab-form-wrap side-tab-open">
                     <div class="tab-form-header side-tab-open">
@@ -71,29 +64,10 @@
                                             Basic Info
                                         </a>
                                     </li>
-                                    <li ng-if="site_visit.status_id != 1 && site_visit.status_id != 11">
-                                        <a data-target="#labour_details" data-toggle="tab" aria-expanded="true"
-                                            class="filter">
-                                            Labour Details
-                                        </a>
-                                    </li>
-                                    <li ng-if="site_visit.status_id != 1 && site_visit.status_id != 11">
-                                        <a data-target="#parts_details" data-toggle="tab" aria-expanded="true"
-                                            class="filter">
-                                            Parts Details
-                                        </a>
-                                    </li>
                                     <li>
-                                        <a data-target="#time_log_details" data-toggle="tab" aria-expanded="true"
-                                            class="filter" ng-if="!$ctrl.hasPermission('parts-view-site-visit')">
-                                            Time Log
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a ng-if="site_visit.status_id != 1 && site_visit.status_id != 2 && site_visit.status_id != 3 && site_visit.status_id != 4 && site_visit.status_id != 5 && !$ctrl.hasPermission('parts-view-site-visit')"
-                                            data-target="#pdf_details" data-toggle="tab" aria-expanded="true"
-                                            class="filter" ng-if="">
-                                            PDF
+                                        <a data-target="#load_test_details" data-toggle="tab" aria-expanded="true"
+                                            class="filter">
+                                            Battery /<br> Load Test Details
                                         </a>
                                     </li>
                                 </ul>
@@ -117,7 +91,7 @@
                                                     <div class="panel-heading">
                                                         <a class="panel-title" data-toggle="collapse"
                                                             data-parent="#accordion" data-target="#collapse1">
-                                                            Customer Details
+                                                            Vehicle Details
                                                             <span class="arrow"></span>
                                                         </a>
                                                     </div>
@@ -127,119 +101,75 @@
                                                                 <ul class="view-row mb-no">
                                                                     <li class="view-col-3">
                                                                         <span class="view-col-label">
-                                                                            Code
+                                                                            Registration Number
                                                                         </span>
                                                                         <span class="view-data-list-value">
                                                                             <b>
-                                                                                {{site_visit.customer.code}}
+                                                                                {{vehicle.registration_number}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
                                                                     <li class="view-col-3">
                                                                         <span class="view-col-label">
-                                                                            Name
+                                                                            Engine Number
                                                                         </span>
                                                                         <span class="view-data-list-value">
                                                                             <b>
-                                                                                {{site_visit.customer.name}}
+                                                                                {{vehicle.engine_number}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
                                                                     <li class="view-col-3">
                                                                         <span class="view-col-label">
-                                                                            Mobile No
+                                                                            Chassis Number
                                                                         </span>
                                                                         <span class="view-col-value">
                                                                             <b>
-                                                                                {{site_visit.customer.mobile_no}}
+                                                                                {{vehicle.chassis_number}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
                                                                     <li class="view-col-3">
                                                                         <span class="view-col-label">
-                                                                            Email
+                                                                            Vehicle Model
                                                                         </span>
                                                                         <span class="view-col-value">
                                                                             <b>
-                                                                                {{site_visit.customer.email}}
+                                                                                {{vehicle.model.model_name}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
-                                                                    <li class="view-col-3 ptb-2">
+                                                                    <li class="view-col-3"
+                                                                        ng-if="vehicle.km_reading_type_id == 8040">
                                                                         <span class="view-col-label">
-                                                                            Address
-                                                                        </span>
-                                                                        <span
-                                                                            class="view-col-value">{{site_visit.customer.address.address_line1}},
-                                                                            {{site_visit.customer.address.address_line2}},
-                                                                            {{site_visit.customer.address.city.name}},
-                                                                            {{site_visit.customer.address.state.name}},
-                                                                            {{site_visit.customer.address.pincode}},
-                                                                            {{site_visit.customer.address.country.name}}.</span>
-                                                                    </li>
-                                                                    <li class="view-col-3">
-                                                                        <span class="view-col-label">
-                                                                            GST No
+                                                                            KM Reading
                                                                         </span>
                                                                         <span class="view-col-value">
-                                                                            {{site_visit.customer.gst_number}}
+                                                                            {{vehicle.km_reading}}
                                                                         </span>
                                                                     </li>
-                                                                    <li class="view-col-3">
+                                                                    <li class="view-col-3"
+                                                                        ng-if="vehicle.km_reading_type_id == 8041">
                                                                         <span class="view-col-label">
-                                                                            PAN
-                                                                            <!-- No -->
+                                                                            HR Reading
                                                                         </span>
                                                                         <span class="view-data-list-value">
                                                                             <b>
-                                                                                {{site_visit.customer.pan_number}}
+                                                                                {{vehicle.hr_reading}}
+                                                                            </b>
+                                                                        </span>
+                                                                    </li>
+                                                                    <li class="view-col-3">
+                                                                        <span class="view-col-label">
+                                                                            Sold Date
+                                                                        </span>
+                                                                        <span class="view-data-list-value">
+                                                                            <b>
+                                                                                {{vehicle.sold_date}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
                                                                 </ul>
-                                                                <hr class="hr-15"
-                                                                    ng-if="site_visit.customer.amc_customer">
-                                                                <!-- Separater -->
-                                                                <h5 class="color-primary mb-10"
-                                                                    ng-if="site_visit.customer.amc_customer">
-                                                                    <b>
-                                                                        AMC Customer Details
-                                                                    </b>
-                                                                </h5>
-                                                                <ul class="view-row mb-no"
-                                                                    ng-if="site_visit.customer.amc_customer">
-                                                                    <li class="view-col-3">
-                                                                        <span class="view-col-label">
-                                                                            AMC Customer Code
-                                                                        </span>
-                                                                        <span class="view-data-list-value">
-                                                                            <b>
-                                                                                {{site_visit.customer.amc_customer.tvs_one_customer_code}}
-                                                                            </b>
-                                                                        </span>
-                                                                    </li>
-                                                                    <li class="view-col-3">
-                                                                        <span class="view-col-label">
-                                                                            AMC Starting Date
-                                                                        </span>
-                                                                        <span class="view-data-list-value">
-                                                                            <b>
-                                                                                {{site_visit.customer.amc_customer.start_date}}
-                                                                            </b>
-                                                                        </span>
-                                                                    </li>
-                                                                    <li class="view-col-3">
-                                                                        <span class="view-col-label">
-                                                                            AMC Ending Date
-                                                                        </span>
-                                                                        <span class="view-col-value">
-                                                                            <b>
-                                                                                {{site_visit.customer.amc_customer.expiry_date}}
-                                                                            </b>
-                                                                        </span>
-                                                                    </li>
-                                                                </ul>
-                                                                <!-- <button class="btn btn-secondary-dark btn-md btn-square">Edit</button> -->
                                                             </div><!-- Column -->
                                                         </div>
                                                     </div>
@@ -250,30 +180,171 @@
                                                     <div class="panel-heading">
                                                         <a class="panel-title" data-toggle="collapse"
                                                             data-parent="#accordion" data-target="#collapse2">
-                                                            Visit Information
+                                                            Customer Details
                                                             <span class="arrow"></span>
                                                         </a>
                                                     </div>
-                                                    <div id="collapse2" class="panel-collapse collapse">
+                                                    <div id="collapse2" class="panel-collapse collapse in">
+                                                        <div class="panel-body">
+                                                            <div class="col-md-12">
+                                                                <ul class="view-row mb-no">
+                                                                    <li class="view-col-3">
+                                                                        <span class="view-col-label">
+                                                                            Code
+                                                                        </span>
+                                                                        <span class="view-data-list-value">
+                                                                            <b>
+                                                                                {{customer.code}}
+                                                                            </b>
+                                                                        </span>
+                                                                    </li>
+                                                                    <li class="view-col-3">
+                                                                        <span class="view-col-label">
+                                                                            Name
+                                                                        </span>
+                                                                        <span class="view-data-list-value">
+                                                                            <b>
+                                                                                {{customer.name}}
+                                                                            </b>
+                                                                        </span>
+                                                                    </li>
+                                                                    <li class="view-col-3">
+                                                                        <span class="view-col-label">
+                                                                            Mobile No
+                                                                        </span>
+                                                                        <span class="view-col-value">
+                                                                            <b>
+                                                                                {{customer.mobile_no}}
+                                                                            </b>
+                                                                        </span>
+                                                                    </li>
+                                                                    <li class="view-col-3">
+                                                                        <span class="view-col-label">
+                                                                            Email
+                                                                        </span>
+                                                                        <span class="view-col-value">
+                                                                            <b>
+                                                                                {{customer.email}}
+                                                                            </b>
+                                                                        </span>
+                                                                    </li>
+                                                                    <li class="view-col-3 ptb-2">
+                                                                        <span class="view-col-label">
+                                                                            Address
+                                                                        </span>
+                                                                        <span
+                                                                            class="view-col-value">{{customer.address.address_line1}},
+                                                                            {{customer.address.address_line2}},
+                                                                            {{customer.address.city.name}},
+                                                                            {{customer.address.state.name}},
+                                                                            {{customer.address.pincode}},
+                                                                            {{customer.address.country.name}}.</span>
+                                                                    </li>
+                                                                    <li class="view-col-3">
+                                                                        <span class="view-col-label">
+                                                                            GST No
+                                                                        </span>
+                                                                        <span class="view-col-value">
+                                                                            {{customer.gst_number}}
+                                                                        </span>
+                                                                    </li>
+                                                                    <li class="view-col-3">
+                                                                        <span class="view-col-label">
+                                                                            PAN
+                                                                        </span>
+                                                                        <span class="view-data-list-value">
+                                                                            <b>
+                                                                                {{customer.pan_number}}
+                                                                            </b>
+                                                                        </span>
+                                                                    </li>
+                                                                </ul>
+
+                                                            </div><!-- Column -->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                            <div class="tab-pane fade" id="load_test_details" data-animation="fadeInUp"
+                                data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-12" style="padding-left: 0px;">
+                                            <h5 class="color-primary mb-10">
+                                                <b>
+                                                    Load Test Informations
+                                                </b>
+                                            </h5>
+                                            <div class="panel-group" id="accordion">
+                                                <div class="panel panel-default type-3">
+                                                    <div class="panel-heading">
+                                                        <a class="panel-title" data-toggle="collapse"
+                                                            data-parent="#accordion" data-target="#collapse3">
+                                                            Battery Details
+                                                            <span class="arrow"></span>
+                                                        </a>
+                                                    </div>
+                                                    <div id="collapse3" class="panel-collapse collapse in">
                                                         <div class="panel-body">
                                                             <ul class="view-row mb-no">
-                                                                <li class="view-col-4">
+                                                                <li class="view-col-3">
                                                                     <span class="view-col-label">
-                                                                        Customer Remarks
+                                                                        Battery Make
                                                                     </span>
                                                                     <span class="view-data-list-value">
                                                                         <b>
-                                                                            {{site_visit.customer_remarks}}
+                                                                            {{battery.vehicle_battery.battery_make.name}}
                                                                         </b>
                                                                     </span>
                                                                 </li>
-                                                                <li class="view-col-4">
+                                                                <li class="view-col-3">
                                                                     <span class="view-col-label">
-                                                                        Planned Visit Date
+                                                                        Battery Serial Number
                                                                     </span>
                                                                     <span class="view-data-list-value">
                                                                         <b>
-                                                                            {{site_visit.planned_visit_date}}
+                                                                            {{battery.vehicle_battery.battery_serial_number}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        AMP Hour
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <b>
+                                                                            {{battery.vehicle_battery.amp_hour}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Battery Voltage
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <b>
+                                                                            {{battery.vehicle_battery.battery_voltage}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Battery Manufactured Date
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <b>
+                                                                            {{battery.vehicle_battery.manufactured_date}}
                                                                         </b>
                                                                     </span>
                                                                 </li>
@@ -282,897 +353,92 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="panel-group" id="accordion" ng-if="site_visit.status_id != 1">
+                                            <div class="panel-group" id="accordion">
                                                 <div class="panel panel-default type-3">
                                                     <div class="panel-heading">
                                                         <a class="panel-title" data-toggle="collapse"
                                                             data-parent="#accordion" data-target="#collapse3">
-                                                            Visit Details
+                                                            Load Test Results
                                                             <span class="arrow"></span>
                                                         </a>
                                                     </div>
                                                     <div id="collapse3" class="panel-collapse collapse in">
                                                         <div class="panel-body">
-                                                            <div class="row">
-                                                                <div class="col-md-12"
-                                                                    ng-if="site_visit.status_id == 11">
-                                                                    <input type="hidden" name="save_type_id" value="2">
-                                                                    <div class="col-md-6">
-                                                                        <div class="form-group">
-                                                                            <label>Issue Details<sup
-                                                                                    class="mandatory">*</sup></label>
-                                                                            <textarea class="form-control required"
-                                                                                name="se_remarks" rows="4"
-                                                                                placeholder="Enter Remarks">{{site_visit.se_remarks}}</textarea>
-                                                                        </div><!-- Feild -->
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <div class="form-group">
-                                                                            <label>Parts Requirements<sup
-                                                                                    class="mandatory">*</sup></label>
-                                                                            <textarea class="form-control required"
-                                                                                name="parts_requirements" rows="4"
-                                                                                placeholder="Enter Remarks">{{site_visit.parts_requirements}}</textarea>
-                                                                        </div><!-- Feild -->
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-12"
-                                                                    ng-if="site_visit.status_id != 11 && site_visit.status_id != 1">
-                                                                    <ul class="view-row mb-no">
-                                                                        <li class="view-col-4">
-                                                                            <span class="view-col-label">
-                                                                                Issue Details
-                                                                            </span>
-                                                                            <span class="view-data-list-value">
-                                                                                <b>
-                                                                                    {{site_visit.se_remarks}}
-                                                                                </b>
-                                                                            </span>
-                                                                        </li>
-                                                                        <li class="view-col-4">
-                                                                            <span class="view-col-label">
-                                                                                Parts Requirements
-                                                                            </span>
-                                                                            <span class="view-data-list-value">
-                                                                                <b>
-                                                                                    {{site_visit.parts_requirements}}
-                                                                                </b>
-                                                                            </span>
-                                                                        </li>
-                                                                    </ul>
-                                                                </div>
-                                                                <div class="col-md-12">
-                                                                    <h5 class="color-primary mb-10">
+                                                            <ul class="view-row mb-no">
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Load Test Status
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <div class="color-list-item green"
+                                                                            ng-if="battery.load_test_status_id == 1">
+                                                                            {{battery.load_test_status.name}}
+                                                                        </div><!-- Color List Item -->
+                                                                        <div class="color-list-item yellow"
+                                                                            ng-if="battery.load_test_status_id == 2">
+                                                                            {{battery.load_test_status.name}}
+                                                                        </div><!-- Color List Item -->
+                                                                        <div class="color-list-item red"
+                                                                            ng-if="battery.load_test_status_id == 3">
+                                                                            {{battery.load_test_status.name}}
+                                                                        </div><!-- Color List Item -->
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Hydrometer Electrolyte Status
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <div class="color-list-item green"
+                                                                            ng-if="battery.hydrometer_electrolyte_status_id == 1">
+                                                                            {{battery.hydrometer_electrolyte_status.name}}
+                                                                        </div><!-- Color List Item -->
+                                                                        <div class="color-list-item yellow"
+                                                                            ng-if="battery.hydrometer_electrolyte_status_id == 2">
+                                                                            {{battery.hydrometer_electrolyte_status.name}}
+                                                                        </div><!-- Color List Item -->
+                                                                        <div class="color-list-item red"
+                                                                            ng-if="battery.hydrometer_electrolyte_status_id == 3">
+                                                                            {{battery.hydrometer_electrolyte_status.name}}
+                                                                        </div><!-- Color List Item -->
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Overall Status
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
                                                                         <b>
-                                                                            Attachments
+                                                                            {{battery.battery_load_test_status.name}}
                                                                         </b>
-                                                                    </h5>
-                                                                    <hr class="hr-15"><!-- Separater -->
-                                                                    <div class="row">
-                                                                        <div class="col-md-12">
-                                                                            <div class="row"
-                                                                                ng-if="site_visit.photos.length > 0">
-                                                                                <div class="col-md-4"
-                                                                                    ng-repeat="(key, photo) in site_visit.photos">
-                                                                                    <div style="position: relative">
-                                                                                        <span
-                                                                                            ng-if="site_visit.status_id == 11"
-                                                                                            style="position: absolute; top: 4px; right: 5px"
-                                                                                            ng-click="remove_attachment(photo.id,key,1)">
-                                                                                            <img src="./public/theme/img/content/icons/delete.svg"
-                                                                                                style="width: 25px;" /></span>
-                                                                                        <a ng-if="photo.name.substr(photo.name.length - 3)=='jpg'  || photo.name.substr(photo.name.length - 3)=='jpeg' || photo.name.substr(photo.name.length - 3)=='png' || photo.name.substr(photo.name.length - 3)=='bmp'"
-                                                                                            href="./storage/app/public/gigo/on-site/{{photo.name}}"
-                                                                                            target="_blank"
-                                                                                            class="thumbnail">
-                                                                                            <img
-                                                                                                ng-src="./storage/app/public/gigo/on-site/{{photo.name}}" />
-                                                                                        </a>
-                                                                                        <p>{{photo.path}}</p>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <span
-                                                                                ng-if="site_visit.photos.length ==  0">No
-                                                                                Attachements Found!</span>
-                                                                        </div><!-- Column -->
-                                                                    </div>
-                                                                    <div class="row" ng-if="site_visit.status_id == 11">
-                                                                        <div class="col-md-4"
-                                                                            ng-repeat="(key,value) in site_visit.photos1">
-                                                                            <div class="form-group">
-                                                                                <div class="grey-box-attachment-wrap">
-                                                                                    <div
-                                                                                        class="grey-box-attachment-feild">
-                                                                                        <div class="file-loading">
-                                                                                            <input accept="image/*"
-                                                                                                class="attachments"
-                                                                                                type="file"
-                                                                                                name="photos[]"
-                                                                                                angular-bfi="bfiConfig"
-                                                                                                watch-options="true">
-                                                                                        </div><!-- File Loading -->
-                                                                                    </div>
-                                                                                    <!-- Grey Box Attachment Feild -->
-                                                                                    <div
-                                                                                        class="grey-box-attachment-feild">
-                                                                                        <div class="feild-btn-wrap">
-                                                                                            <div class="feild-wrap">
-                                                                                                <input maxlength="255"
-                                                                                                    type="text"
-                                                                                                    name="attachment_descriptions[]"
-                                                                                                    class="form-control"
-                                                                                                    placeholder="Enter Description" />
-                                                                                            </div>
-                                                                                            <div class="btn-wrap">
-                                                                                                <button type="button"
-                                                                                                    class="btn-img">
-                                                                                                    <img ng-click="removeUploader(key)"
-                                                                                                        class="img-responsive"
-                                                                                                        src="./public/theme/img/content/delete-active.svg"
-                                                                                                        alt="Delete" />
-                                                                                                </button>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <!-- Grey Box Attachment Feild -->
-                                                                                </div>
-                                                                                <!-- Grey Box Attachment Wrap -->
-                                                                            </div><!-- Feild -->
-                                                                        </div><!-- Column -->
-                                                                        <div class="col-md-4">
-                                                                            <button type="button"
-                                                                                class="addPhotoBtn btn btn-md type2 btn-green btn-square"
-                                                                                ng-click="addPhoto()">
-                                                                                Add Photo
-                                                                            </button>
-                                                                        </div>
-                                                                    </div><!-- Row -->
-                                                                </div><!-- Column -->
-                                                            </div>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Remarks
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <b>
+                                                                            {{battery.remarks}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                            </ul>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="panel-group" id="accordion"
-                                                ng-if="site_visit.status_id == 8 || site_visit.status_id == 9 || site_visit.status_id == 10 || site_visit.status_id == 12 || site_visit.status_id == 13 || site_visit.status_id == 14">
-                                                <div class="panel panel-default type-3">
-                                                    <div class="panel-heading">
-                                                        <a class="panel-title" data-toggle="collapse"
-                                                            data-parent="#accordion" data-target="#collapse4">
-                                                            Job Card Details
-                                                            <span class="arrow"></span>
-                                                        </a>
-                                                    </div>
-                                                    <div id="collapse4" class="panel-collapse collapse in">
-                                                        <div class="panel-body">
-                                                            <div class="row">
-                                                                <div class="col-md-12"
-                                                                    ng-if="site_visit.status_id == 8 || site_visit.status_id == 12">
-                                                                    <input type="hidden" name="save_type_id" value="3">
-                                                                    <div class="col-md-6">
-                                                                        <div class="form-group">
-                                                                            <label>Job Card Number<sup
-                                                                                    class="mandatory">*</sup></label>
-                                                                            <input type="text"
-                                                                                class="form-control required"
-                                                                                name="job_card_number"
-                                                                                onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')"
-                                                                                value="{{site_visit.job_card_number}}">
-                                                                        </div><!-- Feild -->
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-12"
-                                                                    ng-if="site_visit.status_id != 8 && site_visit.status_id != 12">
-                                                                    <ul class="view-row mb-no">
-                                                                        <li class="view-col-4">
-                                                                            <span class="view-col-label">
-                                                                                Job Card Number
-                                                                            </span>
-                                                                            <span class="view-data-list-value">
-                                                                                <b>
-                                                                                    {{site_visit.job_card_number}}
-                                                                                </b>
-                                                                            </span>
-                                                                        </li>
-                                                                    </ul>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div><!-- Column -->
-                                        <div class="tab-pane-footer">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <a class="btn btn-red part_request" data-toggle="modal"
-                                                        data-target="#amc_update_modal"
-                                                        ng-if="amc_customer_status == 0 && !$ctrl.hasPermission('parts-view-site-visit') && site_visit.status_id != 10">Update
-                                                        AMC Customer</a>
-                                                    <input type="hidden" name="attachment_removal_ids"
-                                                        id="attachment_removal_ids" value="">
-                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                    <button type="submit"
-                                                        ng-if="site_visit.status_id == 8 || site_visit.status_id == 11 || site_visit.status_id == 12"
-                                                        class="btn btn-red btn-min-wdth submit"
-                                                        ng-click="saveOnSiteVisit()">Save</button>
-                                                </div>
-                                            </div>
-                                        </div><!-- Tab Footer -->
-                                    </div><!-- Row -->
-                                </div><!-- Tab Pane Wrap -->
-                            </div><!-- Tabe Pane -->
-                            <div class="tab-pane fade" id="labour_details" data-animation="fadeInUp"
-                                data-animation-delay="300">
-                                <div class="tab-pane-wrap">
-                                    <div class="row">
-                                        <div class="col-md-12" style="padding-left: 0px;">
-                                            <h5 class="color-primary mb-10"><b>Labour Details</b></h5>
-                                            <hr class="hr-15"><!-- Separater -->
-                                            <div class="table-responsive">
-                                                <table class="table table-dark-grey">
-                                                    <thead>
-                                                        <tr>
-                                                            <th class="wid-100">Action</th>
-                                                            <th>
-                                                                Labour Code
-                                                            </th>
-                                                            <th>
-                                                                Name
-                                                            </th>
-                                                            <!-- <th>
-                                                                Type
-                                                            </th> -->
-                                                            <th>
-                                                                Split Order Type
-                                                            </th>
-                                                            <th>
-                                                                Status
-                                                            </th>
-                                                            <!-- <th class="text-right">
-                                                                Hours
-                                                            </th> -->
-                                                            <th class="text-right">
-                                                                Rate
-                                                            </th>
-                                                            <th class="wid-180 white-space text-right">
-                                                                Labour Value
-                                                            </th>
-                                                            <!-- <th class="wid-100"></th> -->
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr class="ptb-12"
-                                                            ng-repeat="(index, labour_details) in labour_details"
-                                                            id="tr_{{index}}"
-                                                            ng-class="labour_details.removal_reason_id == 10022 ? 'strikethrough' : ''"
-                                                            ng-if="labour_details.removal_reason_id != '10021'">
-                                                            <td class="wid-100"
-                                                                ng-class="labour_details.removal_reason_id == 10022 ? 'my-disable' : ''">
-                                                                <button type="button"
-                                                                    ng-if="site_visit.status_id != 6 && site_visit.status_id != 10 && !$ctrl.hasPermission('parts-view-site-visit')"
-                                                                    ng-click="showLabourForm(index,labour_details)"
-                                                                    class="btn img-btn btn-delete">
-                                                                    <img class="img-responsive radius-50"
-                                                                        src="./public/theme/img/table/cndn/edit-blue.svg"
-                                                                        alt="Edit" />
-                                                                </button>
-                                                                <button
-                                                                    ng-if="site_visit.status_id != 6 && site_visit.status_id != 10 && !$ctrl.hasPermission('parts-view-site-visit')"
-                                                                    class="btn img-btn btn-delete">
-                                                                    <img class="img-responsive radius-50"
-                                                                        ng-click="removeLabour(index,labour_details.id,'labour')"
-                                                                        src="./public/theme/img/content/delete-active.svg"
-                                                                        alt="Delete" />
-                                                                </button>
-                                                                <button
-                                                                    ng-if="site_visit.status_id != 6 && site_visit.status_id != 10 && labour_details.status_id != 8183 && !$ctrl.hasPermission('parts-view-site-visit')"
-                                                                    class="btn img-btn btn-delete">
-                                                                    <img class="img-responsive radius-50"
-                                                                        ng-click="startLabour(index,labour_details,'labour')"
-                                                                        src="./public/theme/img/table/add-hover.svg"
-                                                                        alt="Delete" />
-                                                                </button>
-                                                            </td>
-                                                            <td>{{labour_details.code ? labour_details.code : ''}}
-                                                            </td>
-                                                            <td>{{labour_details.name ? labour_details.name : ''}}</td>
-                                                            <!-- <td>
-                                                                {{labour_details.type}}
-                                                            </td> -->
-                                                            <td>
-                                                                {{labour_details.split_order_type}}
-                                                            </td>
-                                                            <td>
-                                                                {{labour_details.status}}
-                                                            </td>
-                                                            <!-- <td class="text-right">
-                                                                {{labour_details.qty}}
-                                                            </td> -->
-                                                            <td class="text-right">
-                                                                {{labour_details.rate | number:2}}
-                                                            </td>
-                                                            <td class="wid-180 white-space text-right">
-                                                                {{labour_details.amount | number:2}}
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                <button
-                                                                    ng-if="!$ctrl.hasPermission('parts-view-site-visit') && site_visit.status_id != 6 && site_visit.status_id != 10"
-                                                                    type="button"
-                                                                    class="btn btn-md type2 btn-green btn-square"
-                                                                    ng-click="showLabourForm(false)">
-                                                                    Add Labour
-                                                                </button>
-                                                            </td>
-                                                            <td colspan="5" class="text-right">
-                                                                <b>
-                                                                    Total Labour
-                                                                </b>
-                                                            </td>
-                                                            <td class="wid-180 white-space  text-right">
-                                                                <img class="img-responsive img-inline"
-                                                                    src="./public/theme/img/table/cndn/table-rupee.svg"
-                                                                    alt="Rupee" />
-                                                                <b id="total_amount_labour">
-                                                                    {{labour_amount | number:2}}
-                                                                </b>
-                                                            </td>
-                                                            <!-- <td class="wid-100">
-                                                            </td> -->
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div><!-- Table Responsive -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-12"
-                                            ng-if="!$ctrl.hasPermission('parts-view-site-visit') && site_visit.status_id != 10">
-                                            <div class="text-center pt-40">
-                                                <a class="btn btn-red part_request" data-toggle="modal"
-                                                    data-target="#amc_confirmation_modal"
-                                                    ng-if="labour_amount > 3600 && amc_customer_status == 0">Convert as
-                                                    AMC Customer</a>
-                                            </div>
-                                            <div class="mb-20"></div><!-- Spacing -->
                                         </div>
-                                        <div class="tab-pane-footer">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                </div>
-                                            </div>
-                                        </div><!-- Tab Footer -->
-                                    </div><!-- Row -->
-                                </div><!-- Tab Pane Wrap -->
-                            </div><!-- Tabe Pane -->
-                            <div class="tab-pane fade" id="parts_details" data-animation="fadeInUp"
-                                data-animation-delay="300">
-                                <div class="tab-pane-wrap">
-                                    <div class="row">
-                                        <div class="col-md-12" style="padding-left: 0px;">
-                                            <h5 class="color-primary mb-10"><b>Parts Details</b></h5>
-                                            <hr class="hr-15"><!-- Separater -->
-                                            <div class="table-responsive">
-                                                <table class="table table-dark-grey">
-                                                    <thead>
-                                                        <tr>
-                                                            <th class="wid-100">Action</th>
-                                                            <th>
-                                                                Part Code
-                                                            </th>
-                                                            <th>
-                                                                Name
-                                                            </th>
-                                                            <!-- <th>
-                                                                Type
-                                                            </th> -->
-                                                            <th>
-                                                                Split Order Type
-                                                            </th>
-                                                            <th>
-                                                                Status
-                                                            </th>
-                                                            <th class="text-right">
-                                                                Rate
-                                                            </th>
-                                                            <th class="text-right">
-                                                                Quantity
-                                                            </th>
-                                                            <th class="wid-180 white-space text-right">
-                                                                Amount
-                                                            </th>
-                                                            <!-- <th class="wid-100"></th> -->
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr class="ptb-12"
-                                                            ng-repeat="(index, part_details) in part_details"
-                                                            id="tp_{{index}}"
-                                                            ng-class="part_details.removal_reason_id == 10022 ? 'strikethrough' : ''"
-                                                            ng-if="part_details.removal_reason_id != '10021'">
-                                                            <td class="wid-100"
-                                                                ng-class="part_details.removal_reason_id == 10022 ? 'my-disable' : ''">
-                                                                <button type="button"
-                                                                    ng-if="site_visit.status_id != 6 && site_visit.status_id != 10"
-                                                                    ng-click="showPartForm(index,part_details)"
-                                                                    class="btn img-btn btn-delete">
-                                                                    <img class="img-responsive radius-50"
-                                                                        src="./public/theme/img/table/cndn/edit-blue.svg"
-                                                                        alt="Edit" />
-                                                                </button>
-                                                                <button
-                                                                    ng-if="site_visit.status_id != 6 && site_visit.status_id != 10"
-                                                                    class="btn img-btn btn-delete">
-                                                                    <img class="img-responsive radius-50"
-                                                                        ng-click="removePart(index,part_details.id,'parts')"
-                                                                        src="./public/theme/img/content/delete-active.svg"
-                                                                        alt="Delete" />
-                                                                </button>
-                                                                <button
-                                                                    ng-if="site_visit.status_id != 6 && site_visit.status_id != 10 && part_details.status_id != 8202 && !$ctrl.hasPermission('parts-view-site-visit')"
-                                                                    class="btn img-btn btn-delete">
-                                                                    <img class="img-responsive radius-50"
-                                                                        ng-click="issuePart(index,part_details,'parts')"
-                                                                        src="./public/theme/img/table/add-hover.svg"
-                                                                        alt="Issue Part" />
-                                                                </button>
-                                                            </td>
-                                                            <td>
-                                                                {{part_details.code}}
-                                                            </td>
-                                                            <td>
-                                                                {{part_details.name}}
-                                                            </td>
-                                                            <!-- <td>
-                                                                {{part_details.type}}
-                                                            </td> -->
-                                                            <td>
-                                                                {{part_details.split_order_type}}
-                                                            </td>
-                                                            <td>
-                                                                {{part_details.status}}
-                                                            </td>
-                                                            <td class="text-right">
-                                                                {{part_details.rate | number:2}}
-                                                            </td>
-                                                            <td class="text-right">
-                                                                {{part_details.qty}}
-                                                            </td>
-                                                            <td class="wid-180 white-space text-right">
-                                                                {{part_details.amount | number:2}}
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                <button
-                                                                    ng-if="site_visit.status_id != 6 && site_visit.status_id != 10"
-                                                                    type="button"
-                                                                    class="btn btn-md type2 btn-green btn-square"
-                                                                    ng-click="showPartForm(false)">
-                                                                    Add Part
-                                                                </button>
-                                                                <!-- <a ng-if="part_details.length > 0 && site_visit.is_customer_approved == '1' && site_visit.status_id != 10 && $ctrl.hasPermission('parts-view-site-visit')"
-                                                                    href=".#!/on-site-visit/issue-bulk-part/form/{{site_visit.id}}"
-                                                                    class="btn btn-md type2 btn-green btn-square">
-                                                                    Issue Parts
-                                                                </a> -->
-                                                                <button
-                                                                    ng-if="part_logs.length > 0 && site_visit.status_id != 10"
-                                                                    type="button"
-                                                                    class="btn btn-md type2 btn-green btn-square"
-                                                                    data-toggle="modal"
-                                                                    data-target="#part_return_modal">
-                                                                    Return Part
-                                                                </button>
-                                                            </td>
-                                                            <td colspan="6" class="text-right">
-                                                                <b>
-                                                                    Total Parts
-                                                                </b>
-                                                            </td>
-                                                            <td class="wid-180 white-space text-right">
-                                                                <img class="img-responsive img-inline"
-                                                                    src="./public/theme/img/table/cndn/table-rupee.svg"
-                                                                    alt="Rupee" />
-                                                                <b id="total_amount_part">
-                                                                    {{parts_rate | number:2}}
-                                                                </b>
-                                                            </td>
-                                                            <!-- <td class="wid-100">
-                                                            </td> -->
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div><!-- Table Responsive -->
-                                            <div class="mb-15" ng-if="$ctrl.hasPermission('parts-view-site-visit')">
-                                            </div><!-- Spacing -->
-                                            <h5 class="color-primary mb-10"
-                                                ng-if="$ctrl.hasPermission('parts-view-site-visit') && part_logs.length > 0">
-                                                <b>Parts Indent Logs</b>
-                                            </h5>
-                                            <hr class="hr-15"
-                                                ng-if="$ctrl.hasPermission('parts-view-site-visit') && part_logs.length > 0">
-                                            <!-- Separater -->
-                                            <div class="table-responsive"
-                                                ng-if="$ctrl.hasPermission('parts-view-site-visit') && part_logs.length > 0">
-                                                <table class="table table-dark-grey">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>
-                                                                Part Code
-                                                            </th>
-                                                            <th>
-                                                                Part Name
-                                                            </th>
-                                                            <th>
-                                                                Transcation Type
-                                                            </th>
-                                                            <th>
-                                                                Quantity
-                                                            </th>
-                                                            <th>
-                                                                Issue Mode
-                                                            </th>
-                                                            <th>
-                                                                Mechnanic
-                                                            </th>
-                                                            <th>
-                                                                Date
-                                                            </th>
-                                                            <th>
-                                                                Returned Remarks
-                                                            </th>
-                                                            <th>
-                                                                Action
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr class="ptb-12" ng-repeat="(index,log) in part_logs">
-                                                            <td>
-                                                                {{log.code}}
-                                                            </td>
-                                                            <td>
-                                                                {{log.name}}
-                                                            </td>
-                                                            <td>
-                                                                {{log.transaction_type}}
-                                                            </td>
-                                                            <td>
-                                                                {{log.qty}}
-                                                            </td>
-                                                            <td>
-                                                                {{log.issue_mode}}
-                                                            </td>
-                                                            <td>
-                                                                {{log.mechanic}}
-                                                            </td>
-                                                            <td>
-                                                                {{log.date}}
-                                                            </td>
-                                                            <td>
-                                                                {{log.remarks}}
-                                                            </td>
-                                                            <td>
-                                                                <button type="button" class="btn img-btn btn-delete"
-                                                                    ng-click="removeLog(index,log)">
-                                                                    <img class="img-responsive radius-50"
-                                                                        src="./public/theme/img/content/delete-active.svg"
-                                                                        alt="Delete" />
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                        <tr ng-if="part_logs.length == 0">
-                                                            <td colspan="9" class="text-center">No Logs Found</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div><!-- Table Responsive -->
-                                            <div class="mb-20"></div><!-- Spacing -->
-                                            <hr>
-                                            <!-- ng-if="site_visit.status_id == 2 && labours.length > 0" -->
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
                                             <div class="col-md-12">
-                                                <div class="text-center pt-40">
-                                                    <a class="btn btn-red part_request" data-toggle="modal"
-                                                        data-target="#confirmation_modal"
-                                                        ng-if="site_visit.status_id == 2">Send to Module Store to Add
-                                                        Parts</a>
-                                                    <a class="btn btn-red part_request" data-toggle="modal"
-                                                        data-target="#estimate_confirmation_modal"
-                                                        ng-if="site_visit.status_id == 4 && $ctrl.hasPermission('parts-view-site-visit')">Ready
-                                                        for
-                                                        Estimate</a>
-                                                    <a class="btn btn-red part_request" data-toggle="modal"
-                                                        data-target="#send_customer_modal" ng-if="site_visit.status_id != 4 &&
-                                                        !$ctrl.hasPermission('parts-view-site-visit') &&
-                                                        not_approved_labour_parts_count > 0 &&
-                                                        site_visit.is_customer_approved == 0">Send to
-                                                        Customer for Approval</a>
-
-                                                    <a class="btn btn-red part_request" data-toggle="modal"
-                                                        data-target="#send_otp_customer_modal" ng-if="site_visit.status_id != 4 &&
-                                                        !$ctrl.hasPermission('parts-view-site-visit') &&
-                                                        not_approved_labour_parts_count > 0 &&
-                                                        site_visit.is_customer_approved == 0">Approve on behalf of
-                                                        Customer</a>
-
-                                                    <!-- <button
-                                                            class="btn btn-bordered btn-grey btn-min-wdth approval_behalf is_customer_agreed"
-                                                            ng-click="saveEstimate(3)">Approve on behalf of
-                                                            Customer</button>
-                                                        <button
-                                                            class="btn btn-secondary-dark btn-min-wdth send_to_customer_approval is_customer_agreed"
-                                                            ng-click="saveEstimate(4)">Send to Customer for
-                                                            Approval</button> -->
-                                                    <!-- <a class="btn btn-red part_request ng-hide" data-toggle="modal"
-                                                        data-target="#billing_confirmation_modal">Ready for
-                                                        Billing</a> -->
-                                                    <a class="btn btn-red part_request"
-                                                        ng-if="site_visit.status_id == 14 && !$ctrl.hasPermission('parts-view-site-visit')"
-                                                        data-toggle="modal"
-                                                        data-target="#work_complete_confirmation_modal">Work
-                                                        Completed</a>
-                                                </div>
-                                                <div class="mb-20"></div><!-- Spacing -->
+                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                             </div>
-                                        </div><!-- Column -->
-                                        <div class="tab-pane-footer">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt"
-                                                        ng-if="!$ctrl.hasPermission('parts-view-site-visit')">Next</a>
-                                                </div>
-                                            </div>
-                                        </div><!-- Tab Footer -->
-                                    </div><!-- Row -->
-                                </div><!-- Tab Pane Wrap -->
-                            </div><!-- Tabe Pane -->
-                            <div class="tab-pane fade" id="time_log_details" data-animation="fadeInUp"
-                                data-animation-delay="300">
-                                <div class="tab-pane-wrap">
-                                    <div class="row">
-                                        <div class="col-md-12" style="padding-left: 0px;">
-                                            <div class="col-md-6">
-                                                <h6 class="mb-20"><b>Travel Log</b>
-                                                    <button type="button"
-                                                        ng-if="travel_start_button_status == 'true' && site_visit.status_id != 10 "
-                                                        ng-click="saveWorkLog(1,'travel_log')"
-                                                        class="btn btn-start start_travel float-right">
-                                                        <img class="img-responsive"
-                                                            src="./public/theme/img/start-timer.svg" />
-                                                        <span class="btn-start-text">Start</span>
-                                                    </button>
-                                                    <button type="button" ng-if="travel_end_button_status == 'true'"
-                                                        ng-click="saveWorkLog(2,'travel_log')"
-                                                        class="btn btn-stop float-right end_travel_travel">
-                                                        <img class="img-responsive"
-                                                            src="./public/theme/img/stop-timer.svg" />
-                                                        <span class="btn-stop-text">Stop</span>
-                                                    </button>
-                                                </h6>
-                                                <div class="panel-group" id="accordion">
-                                                    <div class="panel panel-default type-5">
-                                                        <div class="panel-heading">
-                                                            <a class="panel-title in" data-toggle="collapse"
-                                                                data-parent="#accordion" data-target="#collapse6">
-                                                                Total Duration : {{total_travel_hours}}
-                                                                <span class="arrow"></span>
-                                                            </a>
-                                                        </div>
-                                                        <div id="collapse6" class="panel-collapse collapse in">
-                                                            <div class="panel-body">
-                                                                <div class="row">
-                                                                    <div class="col-md-12">
-                                                                        <div class="table-responsive">
-                                                                            <table class="table table-form type-3">
-                                                                                <thead>
-                                                                                    <th>Start Time</th>
-                                                                                    <th>End Time</th>
-                                                                                    <th>Duration</th>
-                                                                                </thead>
-                                                                                <tbody>
-                                                                                    <tr
-                                                                                        ng-repeat="travel_log in travel_logs">
-                                                                                        <td>{{travel_log.start_date_time}}
-                                                                                        </td>
-                                                                                        <td>{{travel_log.end_date_time ?
-                                                                                            travel_log.end_date_time :
-                                                                                            '-'}}
-                                                                                        </td>
-                                                                                        <td>{{travel_log.total_duration
-                                                                                            ? travel_log.total_duration
-                                                                                            : '-'}}
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                    <tr ng-if="travel_logs.length ==0">
-                                                                                        <td colspan="3"
-                                                                                            class="text-center">
-                                                                                            No Travel Log Found!
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                </tbody>
-                                                                            </table>
-                                                                        </div><!-- Table Responsive -->
-                                                                    </div><!-- Column -->
-                                                                </div><!-- Row -->
-                                                            </div><!-- Panel Body -->
-                                                        </div><!-- Panel Collapse -->
-                                                    </div><!-- Panel -->
-                                                </div><!-- Panel Group -->
-                                            </div>
-                                            <div class="col-md-6"
-                                                ng-if="site_visit.status_id == 13 || site_visit.status_id == 14 || site_visit.status_id == 10 || site_visit.status_id == 15">
-                                                <h6 class="mb-20"><b>Work Log</b>
-                                                    <button type="button"
-                                                        ng-if="work_start_button_status == 'true' && site_visit.status_id != 10 "
-                                                        ng-click="saveWorkLog(1,'work_log')"
-                                                        class="btn btn-start float-right start_work">
-                                                        <img class="img-responsive"
-                                                            src="./public/theme/img/start-timer.svg" />
-                                                        <span class="btn-start-text">Start</span>
-                                                    </button>
-                                                    <button type="button" ng-if="work_end_button_status == 'true'"
-                                                        ng-click="saveWorkLog(2,'work_log')"
-                                                        class="btn btn-stop float-right end_work">
-                                                        <img class="img-responsive"
-                                                            src="./public/theme/img/stop-timer.svg" />
-                                                        <span class="btn-stop-text">Stop</span>
-                                                    </button>
-                                                </h6>
-                                                <div class="panel-group" id="accordion">
-                                                    <div class="panel panel-default type-5">
-                                                        <div class="panel-heading">
-                                                            <a class="panel-title in" data-toggle="collapse"
-                                                                data-parent="#accordion" data-target="#collapse7">
-                                                                Total Duration : {{total_work_hours}}
-                                                                <span class="arrow"></span>
-                                                            </a>
-                                                        </div>
-                                                        <div id="collapse7" class="panel-collapse collapse in">
-                                                            <div class="panel-body">
-                                                                <div class="row">
-                                                                    <div class="col-md-12">
-                                                                        <div class="table-responsive">
-                                                                            <table class="table table-form type-3">
-                                                                                <thead>
-                                                                                    <th>Start Time</th>
-                                                                                    <th>End Time</th>
-                                                                                    <th>Duration</th>
-                                                                                </thead>
-                                                                                <tbody>
-                                                                                    <tr
-                                                                                        ng-repeat="work_log in work_logs">
-                                                                                        <td>{{work_log.start_date_time}}
-                                                                                        </td>
-                                                                                        <td>{{work_log.end_date_time ?
-                                                                                            work_log.end_date_time :
-                                                                                            '-'}}
-                                                                                        </td>
-                                                                                        <td>{{work_log.total_duration ?
-                                                                                            work_log.total_duration :
-                                                                                            '-'}}
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                    <tr ng-if="work_logs.length ==0">
-                                                                                        <td colspan="3"
-                                                                                            class="text-center">
-                                                                                            No Work Log Found!
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                </tbody>
-                                                                            </table>
-                                                                        </div><!-- Table Responsive -->
-                                                                    </div><!-- Column -->
-                                                                </div><!-- Row -->
-                                                            </div><!-- Panel Body -->
-                                                        </div><!-- Panel Collapse -->
-                                                    </div><!-- Panel -->
-                                                </div><!-- Panel Group -->
-                                            </div>
-                                        </div><!-- Column -->
-                                        <div class="tab-pane-footer">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <a ng-if="site_visit.status_id != 1 && site_visit.status_id != 2 && site_visit.status_id != 3 && site_visit.status_id != 4 && site_visit.status_id != 5 && !$ctrl.hasPermission('parts-view-site-visit')"
-                                                        class="btn btn-secondary-dark btn-nxt">Next</a>
-                                                </div>
-                                            </div>
-                                        </div><!-- Tab Footer -->
-                                    </div><!-- Row -->
-                                </div><!-- Tab Pane Wrap -->
-                            </div><!-- Tabe Pane -->
-                            <div class="tab-pane fade" id="pdf_details" data-animation="fadeInUp"
-                                data-animation-delay="300">
-                                <div class="tab-pane-wrap">
-                                    <div class="row">
-                                        <div class="col-md-12" style="padding-left: 0px;">
-                                            <h5 class="color-primary mb-10"><b>PDF</b></h5>
-                                            <hr class="hr-15"><!-- Separater -->
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <ul class="checklist-form-ul">
-                                                        <li ng-if="site_visit.estimate_pdf">
-                                                            <div class="checklist-item-wrap pad-big">
-                                                                <div class="checklist-item-value">
-                                                                    Estimate
-                                                                </div>
-                                                                <div class="checklist-item-value-sm">
-                                                                    <a target="_blank"
-                                                                        href="{{site_visit.estimate_pdf}}"
-                                                                        class="btn btn-secondary-dark btn-square btn-block"
-                                                                        href="#">PDF</a>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                        <li ng-if="site_visit.revised_estimate_pdf">
-                                                            <div class="checklist-item-wrap pad-big">
-                                                                <div class="checklist-item-value">
-                                                                    Revised Estimate
-                                                                </div>
-                                                                <div class="checklist-item-value-sm">
-                                                                    <a target="_blank"
-                                                                        href="{{site_visit.revised_estimate_pdf}}"
-                                                                        class="btn btn-secondary-dark btn-square btn-block"
-                                                                        href="#">PDF</a>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                        <li ng-if="site_visit.labour_pdf">
-                                                            <div class="checklist-item-wrap pad-big">
-                                                                <div class="checklist-item-value">
-                                                                    Labour Invoice
-                                                                </div>
-                                                                <div class="checklist-item-value-sm">
-                                                                    <a target="_blank" href="{{site_visit.labour_pdf}}"
-                                                                        class="btn btn-secondary-dark btn-square btn-block"
-                                                                        href="#">PDF</a>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                        <li ng-if="site_visit.part_pdf">
-                                                            <div class="checklist-item-wrap pad-big">
-                                                                <div class="checklist-item-value">
-                                                                    Part Invoice
-                                                                </div>
-                                                                <div class="checklist-item-value-sm">
-                                                                    <a target="_blank" href="{{site_visit.part_pdf}}"
-                                                                        class="btn btn-secondary-dark btn-square btn-block"
-                                                                        href="#">PDF</a>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                        <li ng-if="site_visit.bill_detail_pdf">
-                                                            <div class="checklist-item-wrap pad-big">
-                                                                <div class="checklist-item-value">
-                                                                    Bill Details
-                                                                </div>
-                                                                <div class="checklist-item-value-sm">
-                                                                    <a target="_blank"
-                                                                        href="{{site_visit.bill_detail_pdf}}"
-                                                                        class="btn btn-secondary-dark btn-square btn-block"
-                                                                        href="#">PDF</a>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div><!-- Column -->
-                                        <div class="tab-pane-footer">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                </div>
-                                            </div>
-                                        </div><!-- Tab Footer -->
-                                    </div><!-- Row -->
-                                </div><!-- Tab Pane Wrap -->
-                            </div><!-- Tabe Pane -->
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
                         </div><!-- Tab Content -->
                     </div><!-- Tab Form Body -->
                 </div><!-- Tab Form Wrap -->
@@ -1180,635 +446,4 @@
         </form>
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
-<div class="modal fade filter" id="labour_form_modal" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <form id="labour_form" autocomplete="off">
-            <input type="hidden" name="on_site_order_id" value="{{site_visit.id}}">
-            <input type="hidden" name="on_site_repair_order_id" value="{{on_site_repair_order_id}}">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i
-                            class="icon ion-md-close"></i></button>
-                    <h5 class="modal-title" id="myModalLabel">
-                        {{modal_action}} Labour
-                    </h5>
-                </div><!-- Modal Header -->
-                <div class="modal-body">
-                    <div class="modal-form">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>
-                                        ROT Code
-                                        <span class="mandatory">*</span>
-                                    </label>
-                                    <md-autocomplete md-selected-item="on_site_order_ro.repair_order"
-                                        md-search-text="repairOrderSearchKey"
-                                        md-items="repair_order in searchRepairOrders(repairOrderSearchKey)"
-                                        md-item-text="repair_order.code" md-min-length="3" md-escape-options="clear"
-                                        placeholder="Ex. ABS100"
-                                        md-selected-item-change="repairOrderSelected(on_site_order_ro.repair_order)"
-                                        md-input-id="repairOrderAutoCompleteId" md-no-cache="true">
-                                        <md-item-template>
-                                            <span>
-                                                {{repair_order.code}} / {{repair_order.name}}
-                                            </span>
-                                        </md-item-template>
-                                        <md-not-found>
-                                            No records matching "{{repairOrderSearchKey}}" were found.
-                                        </md-not-found>
-                                    </md-autocomplete>
-                                    <input type="hidden" class="required" name="rot_id"
-                                        value="{{on_site_order_ro.repair_order.id}}">
-                                </div><!-- Field -->
-                            </div><!-- Column -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>
-                                        Split Order Type
-                                        <span class="mandatory">*</span>
-                                    </label>
-                                    <md-select ng-model="on_site_order_ro.split_order_type"
-                                        placeholder="Select Split Order Type"
-                                        data-md-container-class="selectdemoSelectHeader"
-                                        ng-model-options="{trackBy: '$value.id' }">
-                                        <md-select-header class="demo-select-header">
-                                            <input ng-model="searchSplitOrderTypeKey" type="search"
-                                                placeholder="Search.." class="demo-header-searchbox md-text">
-                                        </md-select-header>
-                                        <md-optgroup>
-                                            <md-option ng-value="split_order_type"
-                                                ng-repeat="split_order_type in options.split_order_types | filter:searchSplitOrderTypeKey">
-                                                {{split_order_type.name}} / {{split_order_type.code}}
-                                            </md-option>
-                                        </md-optgroup>
-                                    </md-select>
-                                    <input type="hidden" class="required" name="split_order_type_id"
-                                        value="{{on_site_order_ro.split_order_type.id}}">
-                                </div><!-- Field -->
-                            </div><!-- Column -->
-                        </div><!-- Row -->
-                        <div class="view-details mb-no" ng-if="on_site_order_ro.repair_order">
-                            <ul class="view-row mb-no pad-tb-none">
-                                <li class="view-col-4">
-                                    <span class="view-col-label">ROT Description</span>
-                                    <span class="view-data-list-value"
-                                        ng-if="on_site_order_ro.repair_order.is_editable == 0">{{on_site_order_ro.repair_order.name}}</span>
-                                    <input class="form-control" ng-if="on_site_order_ro.repair_order.is_editable == 1"
-                                        ng-model="on_site_order_ro.repair_order.name" type="text"
-                                        name="repair_order_description" value="{{on_site_order_ro.repair_order.name}}">
-                                </li>
-                                <li class="view-col-4">
-                                    <span class="view-col-label">Category</span>
-                                    <span
-                                        class="view-data-list-value">{{on_site_order_ro.repair_order.repair_order_type.short_name}}</span>
-                                </li>
-                                <li class="view-col-4">
-                                    <span class="view-col-label">Amount</span>
-                                    <span class="view-data-list-value"
-                                        ng-if="amc_customer_status == 0">{{on_site_order_ro.repair_order.amount
-                                        | currency}}</span>
-                                    <input class="form-control required" ng-if="amc_customer_status == 1"
-                                        ng-model="on_site_order_ro.repair_order.amount" type="text"
-                                        name="repair_order_amount" value="{{on_site_order_ro.repair_order.amount}}"
-                                        onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="7">
-                                </li>
-                            </ul>
-                        </div><!-- View Data -->
-                    </div><!-- Modal Form -->
-                </div><!-- Modal Body -->
-                <div class="modal-footer">
-                    <div class="row">
-                        <div class="col-md-6">
-                        </div><!-- Column -->
-                        <div class="col-md-6 text-right">
-                            <button type="button" data-dismiss="modal"
-                                class="btn btn-primary btn-bordered cancel_modal_btn">
-                                Cancel
-                            </button>
-                            <button type="submit" ng-click="saveLabour()"
-                                class="btn btn-bordered save_labour">Submit</button>
-                        </div><!-- Column -->
-                    </div><!-- Row -->
-                </div><!-- Modal Footer -->
-            </div><!-- Modal Content -->
-        </form>
-    </div><!-- Modal Dialog -->
-</div><!-- Modal -->
-<div class="modal fade filter" id="part_form_modal" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <form id="part_form" autocomplete="off">
-            <input type="hidden" name="on_site_order_id" value="{{site_visit.id}}">
-            <input type="hidden" name="on_site_part_id" value="{{on_site_part_id}}">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i
-                            class="icon ion-md-close"></i></button>
-                    <h5 class="modal-title" id="myModalLabel">
-                        {{modal_action}} Part
-                    </h5>
-                </div><!-- Modal Header -->
-                <div class="modal-body">
-                    <div class="modal-form">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>
-                                        Part Code
-                                        <span class="mandatory">*</span>
-                                    </label>
-                                    <md-autocomplete md-selected-item="on_site_part.part" md-search-text="partSearchKey"
-                                        md-items="part in searchParts(partSearchKey)" md-item-text="part.code"
-                                        md-min-length="4" md-escape-options="clear" placeholder="Ex. F0831610"
-                                        md-selected-item-change="partSelected(part)">
-                                        <md-item-template>
-                                            <span>
-                                                {{part.code}} / {{part.name}}
-                                            </span>
-                                        </md-item-template>
-                                        <md-not-found>
-                                            No records matching "{{partSearchKey}}" were found.
-                                        </md-not-found>
-                                    </md-autocomplete>
-                                    <input type="hidden" name="part_id" value="{{on_site_part.part.id}}">
-                                </div><!-- Field -->
-                            </div><!-- Column -->
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>Available Quantity</label>
-                                    <input type="text" ng-model="available_quantity"
-                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
-                                        class="form-control" placeholder="Available Quantity" autocomplete="off"
-                                        readonly />
-                                </div><!-- Feild -->
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>
-                                        Split Order Type
-                                        <span class="mandatory">*</span>
-                                    </label>
-                                    <md-select ng-model="on_site_part.split_order_type" placeholder="Split Order Type"
-                                        data-md-container-class="selectdemoSelectHeader"
-                                        ng-model-options="{trackBy: '$value.id' }">
-                                        <md-select-header class="demo-select-header">
-                                            <input ng-model="searchSplitOrderTypeKey" type="search"
-                                                placeholder="Search.." class="demo-header-searchbox md-text">
-                                        </md-select-header>
-                                        <md-optgroup>
-                                            <md-option ng-value="split_order_type"
-                                                ng-repeat="split_order_type in options.split_order_types | filter:searchSplitOrderTypeKey">
-                                                {{split_order_type.name}} / {{split_order_type.code}}
-                                            </md-option>
-                                        </md-optgroup>
-                                    </md-select>
-                                    <input type="hidden" name="split_order_type_id"
-                                        value="{{on_site_part.split_order_type.id}}">
-                                </div><!-- Field -->
-                            </div><!-- Column -->
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>Quantity <sup class="mandatory">*</sup></label>
-                                    <input type="text" name="qty" ng-model="on_site_part.part.qty"
-                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
-                                        ng-keyup="calculatePartAmount()" class="form-control"
-                                        placeholder="Enter Quantity" autocomplete="off" />
-                                </div><!-- Feild -->
-                            </div>
-                        </div><!-- Row -->
-                        <div class="view-details mb-no" ng-if="on_site_part.part">
-                            <ul class="view-row mb-no pad-tb-none">
-                                <li class="view-col-4">
-                                    <span class="view-col-label">Part Description</span>
-                                    <span class="view-data-list-value">{{on_site_part.part.name}}</span>
-                                </li>
-                                <li class="view-col-4">
-                                    <span class="view-col-label">MRP</span>
-                                    <input class="form-control" ng-if="mrp_change == 1" ng-model="on_site_part.part.mrp"
-                                        type="text" name="mrp" value="{{on_site_part.part.mrp}}"
-                                        ng-keyup="calculatePartAmount()"
-                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
-                                    <span ng-if="mrp_change != 1" class="view-data-list-value">
-                                        <input class="form-control" ng-if="mrp_change != 1" type="hidden" name="mrp"
-                                            value="{{on_site_part.part.mrp}}">
-                                        {{on_site_part.part.mrp | currency}}</span>
-                                </li>
-
-                                <li class="view-col-4">
-                                    <span class="view-col-label">UOM</span>
-                                    <span class="view-data-list-value">{{on_site_part.part.uom.code}}</span>
-                                </li>
-                                <li class="view-col-4">
-                                    <span class="view-col-label">Amount</span>
-                                    <span class="view-data-list-value">{{on_site_part.part.total_amount |
-                                        currency}}</span>
-                                </li>
-                            </ul>
-                        </div><!-- View Data -->
-                    </div><!-- Modal Form -->
-                </div><!-- Modal Body -->
-                <div class="modal-footer">
-                    <div class="row">
-                        <div class="col-md-6">
-                        </div><!-- Column -->
-                        <div class="col-md-6 text-right">
-                            <button type="button" data-dismiss="modal"
-                                class="btn btn-primary btn-bordered cancel_modal_btn">
-                                Cancel
-                            </button>
-                            <button type="submit" ng-click="savePart()"
-                                class="btn btn-bordered save_part">Submit</button>
-                        </div><!-- Column -->
-                    </div><!-- Row -->
-                </div><!-- Modal Footer -->
-            </div><!-- Modal Content -->
-        </form>
-    </div><!-- Modal Dialog -->
-</div><!-- Modal -->
-<div class="modal fade alert-modal failure" id="confirmation_modal" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">CONFIRMATION?</h4>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure? Do you want to send Stock Incharge to add Parts? </p>
-                <input type="hidden" name="job_order_id" value="{{job_order.id}}">
-                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">No</button>
-                <button class="btn btn-success send_confirm" ng-click="sendConfirm(1)">Yes</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade alert-modal failure" id="estimate_confirmation_modal" role="dialog"
-    aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">CONFIRMATION?</h4>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure? Do you added all parts related labour works?</p>
-                <input type="hidden" name="job_order_id" value="{{job_order.id}}">
-                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">No</button>
-                <button class="btn btn-success send_confirm" ng-click="sendConfirm(2)">Yes</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade alert-modal failure" id="send_customer_modal" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">CONFIRMATION?</h4>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure?Do you want to send this estimate for customer Approval? </p>
-                <input type="hidden" name="job_order_id" value="{{job_order.id}}">
-                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">No</button>
-                <button class="btn btn-success send_confirm" ng-click="sendConfirm(3)">Yes</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade alert-modal failure" id="send_otp_customer_modal" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">CONFIRMATION?</h4>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure?Do you want to send this estimate for customer Approval? </p>
-                <input type="hidden" name="job_order_id" value="{{job_order.id}}">
-                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">No</button>
-                <button class="btn btn-success send_otp_confirm" ng-click="sendOTPConfirm()">Yes</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal modal-otp alert-modal fade" id="otp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <form id="approve_behalf_customer_confirm">
-                <div class="modal-header">
-                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i
-                            class="icon ion-md-close"></i></button>
-                </div><!-- Modal Header -->
-                <div class="modal-body">
-                    <h6 class="title">ENTER OTP</h6>
-                    <p class="info">Received in Customer Mobile +91{{site_visit.customer.mobile_no}}</span></p>
-                    <div class="form-group">
-                        <input type="text" autofocus name="otp_no" maxlength="6"
-                            oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');"
-                            class="form-control text-center" placeholder="Enter OTP" autocomplete="off" />
-                        <input type="hidden" name="on_site_order_id" id="on_site_order_id" value="{{site_visit.id}}" />
-                        <input type="hidden" name="verify_otp" id="id" value="1" />
-                    </div><!-- Feild -->
-                    <button type="submit" class="btn btn-secondary-dark btn-square btn-block submit_otp_confirm"
-                        ng-click="saveOTP()">SUBMIT</button>
-                    <button type="button" class="btn-link link resend_otp" ng-click="sendOTPConfirm()">RESEND
-                        OTP</button>
-                </div><!-- Modal Body -->
-            </form>
-        </div><!-- Modal Content -->
-    </div><!-- Modal Dialog -->
-</div><!-- Modal -->
-<div class="modal fade alert-modal failure" id="work_complete_confirmation_modal" role="dialog"
-    aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">CONFIRMATION?</h4>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure?Do you complete all the works? </p>
-                <input type="hidden" name="job_order_id" value="{{job_order.id}}">
-                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">No</button>
-                <button class="btn btn-success send_confirm" ng-click="sendConfirm(4)">Yes</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade alert-modal {{modal_type}}" id="confirm_work_log" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">Confirmation?</h4>
-            </div>
-            <div class="modal-body">
-                <p>Are You Sure? Do you {{log_action}} {{log_action_type}}?</p>
-                <input type="hidden" name="work_log_id" id="work_log_id" value="">
-                <input type="hidden" name="work_log_type" id="work_log_type" value="">
-                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">Cancel</button>
-                <button class="btn btn-rose work_log_action" ng-click="saveWorkLogConfirm()" type="button">Yes</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade alert-modal failure" id="delete_log" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">Confirmation?</h4>
-            </div>
-            <div class="modal-body">
-                <h5>Delete</h5>
-                <p>You can’t retrive the data again, Are you sure you want to delete? </p>
-                <input type="hidden" name="delete_labour_details" class="delete_labour_details" value="">
-                <input type="hidden" name="log_type" id="log_type" value="">
-                <input type="hidden" name="log_id" id="log_id" value="">
-                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">Cancel</button>
-                <button class="btn btn-rose delete_lbr_parts" ng-click="deleteConfirm()" type="button">Yes</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade filter" id="part_return_modal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close ripple reject_close" data-dismiss="modal" aria-label="Close">
-                    <i class="icon ion-md-close"></i>
-                </button>
-                <h5 class="modal-title">
-                    Return Part
-                </h5>
-            </div>
-            <div class="modal-body">
-                <div class="modal-form">
-                    <form id="return-part-form" autocomplete="off">
-                        <input type="hidden" name="on_site_order_id" value="{{site_visit.id}}">
-                        <input type="hidden" name="job_order_returned_part_id"
-                            value="{{$ctrl.job_order_returned_part_id}}">
-                        <input type="hidden" name="type_id" value="2">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>
-                                        Part <sup class="mandatory">*</sup>
-                                    </label>
-                                    <md-select ng-model="return_part.on_site_order_part_id" placeholder="Select Part"
-                                        data-md-container-class="selectdemoSelectHeader">
-                                        <md-select-header class="demo-select-header">
-                                            <input ng-model="searchreturnPartKey" type="search" placeholder="Search.."
-                                                class="demo-header-searchbox md-text">
-                                        </md-select-header>
-                                        <md-optgroup>
-                                            <md-option ng-value="return_part.on_site_order_part_id"
-                                                ng-repeat="return_part in on_site_order_parts | filter:searchreturnPartKey">
-                                                {{return_part.name}} / {{return_part.code}}
-                                            </md-option>
-                                        </md-optgroup>
-                                    </md-select>
-                                    <input type="hidden" name="on_site_order_part_id"
-                                        value="{{return_part.on_site_order_part_id}}" class="required">
-                                </div><!-- Field -->
-                            </div><!-- Column -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Quantity <sup class="mandatory">*</sup></label>
-                                    <input type="text" name="returned_qty"
-                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
-                                        class="form-control required" placeholder="Enter Quantity" autocomplete="off" />
-                                </div><!-- Feild -->
-                            </div><!-- Column -->
-                            <div class="col-md-8">
-                                <div class="form-group">
-                                    <label>Remarks <sup class="mandatory">*</sup></label>
-                                    <textarea class="form-control required" rows="5" id="remarks"
-                                        name="remarks"></textarea>
-                                </div><!-- Feild -->
-                            </div><!-- Column -->
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 text-right mb-15">
-                                <button type="button" data-dismiss="modal"
-                                    class="btn btn-primary btn-bordered cancel_modal_btn">
-                                    Cancel
-                                </button>
-                                <button type="submit" class="btn btn-bordered returned_button"
-                                    ng-click="saveReturnedForm()">Submit</button>
-                            </div><!-- Column -->
-                        </div><!-- Row -->
-                    </form>
-                </div>
-            </div>
-        </div><!-- Modal Content -->
-    </div><!-- Modal Dialog -->
-</div><!-- Modal -->
-<div class="modal filter fade" id="delete_labour_parts" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-sm finance-view-modal" role="document">
-        <form id="labour_parts_remove">
-            <input type="hidden" name="labour_parts_id" id="labour_parts_id" value="">
-            <input type="hidden" name="payable_type" id="payable_type" value="">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i
-                            class="icon ion-md-close"></i></button>
-                    <h4 class="modal-title">Delete Request</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label>
-                                                Delete Reason
-                                                <sup class="mandatory">*</sup></label>
-                                            <div class="common-radio-button type-4">
-                                                <input type="radio" id="worngly_entered" name="removal_reason_id"
-                                                    ng-model="delete_reason" ng-value="10021" value="10021"
-                                                    ng-checked="delete_reason">
-                                                <label for="worngly_entered">
-                                                    Added By Mistake
-                                                </label>
-                                                <input type="radio" ng-model="delete_reason" id="customer_delete"
-                                                    name="removal_reason_id" ng-value="10022" value="10022">
-                                                <label for="customer_delete">
-                                                    Customer Denied
-                                                </label>
-                                            </div>
-                                            <div id="errorDeleteReasonRequired"></div>
-                                        </div><!-- Feild -->
-                                    </div><!-- Column -->
-                                </div><!-- Feild -->
-                            </div><!-- Column -->
-                            <div class="col-md-12" ng-if="delete_reason == '10022'">
-                                <div class="form-group">
-                                    <label>Remarks <sup class="mandatory">*</sup></label>
-                                    <textarea class="form-control" rows="5" id="removal_reason"
-                                        name="removal_reason"></textarea>
-                                </div><!-- Feild -->
-                            </div><!-- Column -->
-                        </div><!-- Row -->
-                    </div><!-- Container -->
-                </div><!-- Modal Body -->
-                <div class="modal-footer">
-                    <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">
-                        Cancel
-                    </button>
-                    <button class="btn btn-red part_labour_delete" ng-click="saveLabourPartDeleteForm()">Submit</button>
-                </div><!-- Modal Footer -->
-            </div><!-- Modal Content -->
-        </form>
-    </div><!-- Modal Dialog -->
-</div>
-<div class="modal fade alert-modal failure" id="confirm_start_labour_part_modal" role="dialog"
-    aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <!-- <form id="start_labour_part"> -->
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">Confirmation?</h4>
-            </div>
-            <div class="modal-body">
-                <h5>{{labour_part_name}}</h5>
-                <p ng-if="labour_part_type == 'labour'">Are you sure? Do you want to start this work?</p>
-                <p ng-if="labour_part_type == 'parts'">Are you sure? Do you want to issue this part?</p>
-                <input type="hidden" name="labour_parts_id" id="labour_parts_id" value="">
-                <input type="hidden" name="labour_part_type" id="labour_part_type" value="">
-                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">Cancel</button>
-                <button class="btn btn-rose start_labour_part" ng-click="saveLabourPart()" type="button">Yes</button>
-            </div>
-        </div>
-        <!-- </form> -->
-    </div>
-</div>
-
-<div class="modal fade alert-modal failure" id="amc_confirmation_modal" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">CONFIRMATION?</h4>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure? Do you add this customer to AMC Customer? </p>
-                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">No</button>
-                <button class="btn btn-success send_amc_confirm" ng-click="sendAMCConfirm(1)">Yes</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal filter fade" id="amc_update_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <form id="amc_customer_save">
-            <input type="hidden" name="customer_id" value="{{site_visit.customer_id}}">
-            <input type="hidden" name="id" value="{{site_visit.id}}">
-            <input type="hidden" name="type_id" value="2">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i
-                            class="icon ion-md-close"></i></button>
-                    <h4 class="modal-title">AMC Customer Details</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>AMC Customer Code<sup class="mandatory">*</sup></label>
-                                    <input type="text" autofocus name="amc_customer_code" class="form-control"
-                                        placeholder="Enter AMC Customer Code" autocomplete="off" />
-                                </div><!-- Feild -->
-                            </div><!-- Column -->
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>
-                                        AMC Starting Date
-                                        <sup class="mandatory">
-                                            *
-                                        </sup>
-                                    </label>
-                                    <div class="input-group date" data-date-start-view="2" data-provide="datepicker"
-                                        data-date-auto-close="true">
-                                        <input type="text" class="form-control" placeholder="Ex:28-04-2021"
-                                            name="amc_starting_date" />
-                                        <div class="input-group-addon">
-                                            <img class="img-responsive"
-                                                src="./public/theme/img/content/calender-gray-icon.svg"
-                                                alt="Calendar Image" />
-                                        </div>
-                                    </div><!-- Input Group -->
-                                </div><!-- Feild -->
-                            </div><!-- Column -->
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>
-                                        AMC Ending Date
-                                        <sup class="mandatory">
-                                            *
-                                        </sup>
-                                    </label>
-                                    <div class="input-group date" data-date-start-view="2" data-provide="datepicker"
-                                        data-date-auto-close="true">
-                                        <input type="text" class="form-control" placeholder="Ex:27-04-2022"
-                                            name="amc_ending_date" />
-                                        <div class="input-group-addon">
-                                            <img class="img-responsive"
-                                                src="./public/theme/img/content/calender-gray-icon.svg"
-                                                alt="Calendar Image" />
-                                        </div>
-                                    </div><!-- Input Group -->
-                                </div><!-- Feild -->
-                            </div><!-- Column -->
-                        </div><!-- Row -->
-                    </div><!-- Container -->
-                </div><!-- Modal Body -->
-                <div class="modal-footer">
-                    <div class="col-md-6"></div>
-                    <div class="col-md-6 text-right">
-                        <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">
-                            Cancel
-                        </button>
-                        <button class="btn btn-red amc_customer_save"
-                            ng-click="saveAMCCustomerDetails()">Submit</button>
-                    </div>
-                </div><!-- Modal Footer -->
-            </div><!-- Modal Content -->
-        </form>
-    </div><!-- Modal Dialog -->
-</div>
-<!-- Modal Content
 <script src="./public/theme/js/imageuploadify-mgatepass.min.js"></script>

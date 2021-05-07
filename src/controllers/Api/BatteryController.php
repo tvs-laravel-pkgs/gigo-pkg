@@ -31,7 +31,12 @@ class BatteryController extends Controller
         if ($request->id) {
             $battery = BatteryLoadTestResult::with([
                 'vehicleBattery',
+                'vehicleBattery.batteryMake',
                 'vehicleBattery.customer',
+                'vehicleBattery.customer.address',
+                'vehicleBattery.customer.address.country',
+                'vehicleBattery.customer.address.state',
+                'vehicleBattery.customer.address.city',
                 'vehicleBattery.vehicle',
                 'vehicleBattery.vehicle.model',
                 'outlet',
