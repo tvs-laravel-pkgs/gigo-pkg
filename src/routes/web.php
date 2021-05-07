@@ -372,4 +372,9 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
     //OTP
     Route::get('/otp/get-list', 'OTPController@getOTPList')->name('getOTPList');
     Route::get('/otp/get-filter-data', 'OTPController@getOTPFilter')->name('getOTPFilter');
+
+    //Battery
+    Route::get('/battery/get-list', 'BatteryController@getBatteryList')->name('getBatteryList');
+    Route::get('/battery/get-filter-data', 'BatteryController@getBatteryFilterData')->name('getBatteryFilterData');
+
 });

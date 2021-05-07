@@ -19,6 +19,11 @@ app.component('batteryList', {
         // var table_scroll;
         self.csrf_token = $('meta[name="csrf-token"]').attr('content');
 
+        self.battery_make_id = '';
+        self.load_test_status_id = '';
+        self.hydro_status_id = '';
+        self.overall_status_id = '';
+
         // table_scroll = $('.page-main-content.list-page-content').height() - 37;
         $('.page-main-content.list-page-content').css("overflow-y", "auto");
         var dataTable = $('#battery_list').DataTable({
@@ -48,18 +53,17 @@ app.component('batteryList', {
             paging: true,
             stateSave: true,
             ajax: {
-                url: laravel_routes['getOnSiteVisitList'],
+                url: laravel_routes['getBatteryList'],
                 type: "GET",
                 dataType: "json",
                 data: function (d) {
                     d.date_range = $("#filter_date_range").val();
-                    d.registration_type = $("#registration_type").val();
                     d.reg_no = $("#reg_no").val();
                     d.customer_id = $("#customer_id").val();
-                    d.model_id = $("#model_id").val();
-                    d.membership = $("#membership").val();
-                    d.gate_in_no = $("#gate_in_no").val();
-                    d.status_id = $("#status_id").val();
+                    d.battery_make_id = $("#battery_make_id").val();
+                    d.load_test_status_id = $("#load_test_status_id").val();
+                    d.hydro_status_id = $("#hydro_status_id").val();
+                    d.overall_status_id = $("#overall_status_id").val();
                 },
             },
 
@@ -82,21 +86,26 @@ app.component('batteryList', {
                 name: 'customers.name'
             },
             {
-                data: 'number',
-                name: 'on_site_orders.number'
+                data: 'registration_number',
+                name: 'vehicles.registration_number'
             },
             {
-                data: 'se_name',
-                name: 'users.name'
+                data: 'battery_name',
+                name: 'battery_makes.name'
             },
             {
-                data: 'se_mobile',
-                name: 'users.contact_number'
+                data: 'load_test_status',
+                name: 'load_test_statuses.name'
             },
             {
-                data: 'status',
-                name: 'on_site_order_statuses.name'
+                data: 'hydrometer_electrolyte_status',
+                name: 'hydrometer_electrolyte_statuses.name'
             },
+            {
+                data: 'overall_status',
+                name: 'battery_load_test_statuses.name'
+            },
+
 
             ],
             "infoCallback": function (settings, start, end, max, total, pre) {
@@ -122,13 +131,9 @@ app.component('batteryList', {
             dataTables.fnFilter(self.search_key);
         }
 
-        $scope.listRedirect = function (type) {
-            window.location = "#!/inward-vehicle/table-list";
-            return false;
-        }
         // FOR FILTER
         $http.get(
-            laravel_routes['getManualDeliveryVehicleFilter']
+            laravel_routes['getBatteryFilterData']
         ).then(function (response) {
             self.extras = response.data.extras;
         });
@@ -188,15 +193,7 @@ app.component('batteryList', {
         $scope.selectedCustomer = function (id) {
             $('#customer_id').val(id);
         }
-        $scope.selectedVehicleModel = function (id) {
-            $('#model_id').val(id);
-        }
-        $scope.onSelectedRegistrationType = function (id) {
-            $('#registration_type').val(id);
-        }
-        $scope.onSelectedStatus = function (id) {
-            $('#status_id').val(id);
-        }
+
         $scope.applyFilter = function () {
             dataTables.fnFilter();
             $('#vehicle-inward-filter-modal').modal('hide');
@@ -231,26 +228,14 @@ app.component('batteryList', {
 
         $scope.reset_filter = function () {
             $("#filter_date_range").val('');
-            $("#registration_type").val('');
             $("#reg_no").val('');
             $("#customer_id").val('');
-            $("#model_id").val('');
-            $("#membership").val('');
-            $("#gate_in_no").val('');
-            $("#status_id").val('');
+            $("#battery_make_id").val('');
+            $("#load_test_status_id").val('');
+            $("#hydro_status_id").val('');
+            $("#overall_status_id").val('');
             dataTables.fnFilter();
             $('#vehicle-inward-filter-modal').modal('hide');
-        }
-
-        //Change Status
-        $scope.changeStatus = function (id, vehicle_delivery_status_id) {
-            setTimeout(function () {
-                $scope.job_order_id = id;
-                $scope.vehicle_delivery_status_id = vehicle_delivery_status_id;
-
-                $('#vehicle_delivery_status_id').val(vehicle_delivery_status_id);
-                $('#job_order_id').val(id);
-            }, 100);
         }
 
         /* DateRange Picker */
@@ -280,54 +265,6 @@ app.component('batteryList', {
         $('.daterange').on('cancel.daterangepicker', function (ev, picker) {
             $(this).val('');
         });
-
-        $scope.vehicleStatusSave = function () {
-            var split_form_id = '#vehicle_status_form';
-            var v = jQuery(split_form_id).validate({
-                ignore: '',
-                rules: {
-                    'job_order_id': {
-                        required: true,
-                    },
-                    'vehicle_delivery_status_id': {
-                        required: true,
-                    },
-                },
-                submitHandler: function (form) {
-                    let formData = new FormData($(split_form_id)[0]);
-                    $('.submit').button('loading');
-                    $.ajax({
-                        url: base_url + '/api/manual-vehicle-delivery/update/vehicle-status',
-                        method: "POST",
-                        data: formData,
-                        beforeSend: function (xhr) {
-                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                        },
-                        processData: false,
-                        contentType: false,
-                    })
-                        .done(function (res) {
-                            $('.submit').button('reset');
-                            if (!res.success) {
-                                showErrorNoty(res);
-                                return;
-                            }
-                            custom_noty('success', res.message);
-                            $scope.job_order_id = '';
-                            $scope.vehicle_delivery_status_id = '';
-                            $('#change_vehicle_status').modal('hide');
-                            $('#job_order_id').val('');
-                            $('#vehicle_delivery_status_id').val('');
-                            dataTables.fnFilter();
-                        })
-                        .fail(function (xhr) {
-                            $('.submit').button('reset');
-                            custom_noty('error', 'Something went wrong at server');
-                            dataTables.fnFilter();
-                        });
-                }
-            });
-        }
 
         $rootScope.loading = false;
     }
@@ -1366,7 +1303,7 @@ app.component('batteryForm', {
         });
         var self = this;
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('add-manual-vehicle-delivery') && !self.hasPermission('edit-manual-vehicle-delivery')) {
+        if (!self.hasPermission('add-battery-result') && !self.hasPermission('edit-battery-result')) {
             window.location = "#!/page-permission-denied";
             return false;
         }
@@ -1375,10 +1312,6 @@ app.component('batteryForm', {
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
-        console.log(self.user);
-        $scope.job_order_id = $routeParams.job_order_id;
-        $scope.label_name = "Receipt";
-        $scope.attachment_count = 1;
         self.customer_search_type = true;
         self.search_type = true;
 

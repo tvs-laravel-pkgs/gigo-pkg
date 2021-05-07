@@ -2,14 +2,15 @@
 
 namespace Abs\GigoPkg;
 
-use Abs\AmcPkg\AmcPolicy;
 use App\AmcAggregateCoupon;
+use App\BatteryLoadTestStatus;
+use App\BatteryMake;
 use App\Config;
 use App\Customer;
 use App\Http\Controllers\Controller;
+use App\HydrometerElectrolyteStatus;
 use App\JobOrder;
-use App\TvsOneApprovalStatus;
-use App\VehicleDeliveryStatus;
+use App\LoadTestStatus;
 use App\VehicleModel;
 use Auth;
 use DB;
@@ -26,29 +27,21 @@ class BatteryController extends Controller
         $this->data['theme'] = config('custom.theme');
     }
 
-    public function getManualDeliveryVehicleFilter()
+    public function getBatteryFilterData()
     {
-        $params = [
-            'config_type_id' => 49,
-            'add_default' => true,
-            'default_text' => "Select Status",
+        $extras = [
+            'battery_list' => collect(BatteryMake::where('company_id', Auth::user()->company_id)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Battery']),
+            'battery_load_test_status_list' => collect(BatteryLoadTestStatus::where('company_id', Auth::user()->company_id)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Status']),
+            'load_test_result_status_list' => collect(LoadTestStatus::where('company_id', Auth::user()->company_id)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Status']),
+            'hydrometer_status_list' => collect(HydrometerElectrolyteStatus::where('company_id', Auth::user()->company_id)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Status']),
         ];
-        $this->data['extras'] = [
-            'registration_type_list' => [
-                ['id' => '', 'name' => 'Select Registration Type'],
-                ['id' => '1', 'name' => 'Registered Vehicle'],
-                ['id' => '0', 'name' => 'Un-Registered Vehicle'],
-            ],
-            'status_list' => Config::getDropDownList($params),
-            'vehicle_delivery_status_list' => VehicleDeliveryStatus::where('company_id', Auth::user()->company_id)->where('id', '!=', 3)->get(),
-            'tvs_one_request_status_list' => collect(TvsOneApprovalStatus::select('name', 'id')->get())->prepend(['id' => '', 'name' => 'Select Status']),
-            'policies_list' => collect(AmcPolicy::select('type', 'id')->whereIn('id', [1, 3])->get())->prepend(['id' => '', 'type' => 'Select Policy']),
-        ];
+
+        $this->data['extras'] = $extras;
 
         return response()->json($this->data);
     }
 
-    public function getManualDeliveryVehicleList(Request $request)
+    public function getBatteryList(Request $request)
     {
         // dd($request->all());
         if ($request->date_range) {
@@ -63,121 +56,94 @@ class BatteryController extends Controller
             $end_date = date('Y-m-t 23:59:59');
         }
 
-        $vehicle_inwards = JobOrder::join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
-            ->leftJoin('vehicles', 'job_orders.vehicle_id', 'vehicles.id')
-            ->leftJoin('vehicle_owners', function ($join) {
-                $join->on('vehicle_owners.vehicle_id', 'job_orders.vehicle_id')
-                    ->whereRaw('vehicle_owners.from_date = (select MAX(vehicle_owners1.from_date) from vehicle_owners as vehicle_owners1 where vehicle_owners1.vehicle_id = job_orders.vehicle_id)');
-            })
-            ->leftJoin('customers', 'customers.id', 'vehicle_owners.customer_id')
-            ->leftJoin('models', 'models.id', 'vehicles.model_id')
-            ->leftJoin('amc_members', 'amc_members.vehicle_id', 'vehicles.id')
-            ->leftJoin('amc_policies', 'amc_policies.id', 'amc_members.policy_id')
-            ->leftJoin('vehicle_delivery_statuses', 'vehicle_delivery_statuses.id', 'job_orders.vehicle_delivery_status_id')
-            ->join('configs', 'configs.id', 'job_orders.status_id')
-            ->join('outlets', 'outlets.id', 'job_orders.outlet_id')
+        $battery_list = BatteryLoadTestResult::join('vehicle_batteries', 'vehicle_batteries.id', 'battery_load_test_results.vehicle_battery_id')
+            ->join('customers', 'customers.id', 'vehicle_batteries.customer_id')
+            ->join('vehicles', 'vehicles.id', 'vehicle_batteries.vehicle_id')
+            ->join('battery_makes', 'battery_makes.id', 'vehicle_batteries.battery_make_id')
+            ->join('outlets', 'outlets.id', 'battery_load_test_results.outlet_id')
+            ->join('load_test_statuses', 'load_test_statuses.id', 'battery_load_test_results.load_test_status_id')
+            ->join('hydrometer_electrolyte_statuses', 'hydrometer_electrolyte_statuses.id', 'battery_load_test_results.hydrometer_electrolyte_status_id')
+            ->join('battery_load_test_statuses', 'battery_load_test_statuses.id', 'battery_load_test_results.overall_status_id')
             ->select(
-                'job_orders.id',
-                DB::raw('IF(vehicles.is_registered = 1,"Registered Vehicle","Un-Registered Vehicle") as registration_type'),
+                'battery_load_test_results.id',
+                'customers.name as customer_name',
+                'battery_makes.name as battery_name',
                 'vehicles.registration_number',
-                DB::raw('COALESCE(models.model_number, "-") as model_number'),
-                'gate_logs.number',
-                'job_orders.status_id',
-                DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%d/%m/%Y, %h:%i %p") as date'),
-                'job_orders.driver_name',
-                'job_orders.driver_mobile_number as driver_mobile_number',
-                'job_orders.is_customer_agreed',
-                DB::raw('COALESCE(CONCAT(amc_policies.name,"/",amc_policies.type), "-") as amc_policies'),
-                'configs.name as status',
                 'outlets.code as outlet_code',
-                DB::raw('COALESCE(customers.name, "-") as customer_name'),
-                'job_orders.vehicle_delivery_status_id',
-                DB::raw('IF(job_orders.vehicle_delivery_status_id IS NULL,"WIP",vehicle_delivery_statuses.name) as vehicle_status')
+                'load_test_statuses.name as load_test_status',
+                'hydrometer_electrolyte_statuses.name as hydrometer_electrolyte_status',
+                'battery_load_test_statuses.name as overall_status',
+                DB::raw('DATE_FORMAT(battery_load_test_results.created_at,"%d/%m/%Y, %h:%i %p") as date'),
             )
-        // ->where(function ($query) use ($start_date, $end_date) {
-        //     $query->whereDate('gate_logs.gate_in_date', '>=', $start_date)
-        //         ->whereDate('gate_logs.gate_in_date', '<=', $end_date);
-        // })
+
             ->where(function ($query) use ($request) {
                 if (!empty($request->reg_no)) {
                     $query->where('vehicles.registration_number', 'LIKE', '%' . $request->reg_no . '%');
                 }
             })
-            ->where(function ($query) use ($request) {
-                if (!empty($request->membership)) {
-                    $query->where('amc_policies.name', 'LIKE', '%' . $request->membership . '%');
-                }
-            })
-            ->where(function ($query) use ($request) {
-                if (!empty($request->gate_in_no)) {
-                    $query->where('gate_logs.number', 'LIKE', '%' . $request->gate_in_no . '%');
-                }
-            })
-            ->where(function ($query) use ($request) {
-                if ($request->registration_type == '1' || $request->registration_type == '0') {
-                    $query->where('vehicles.is_registered', $request->registration_type);
-                }
-            })
+
             ->where(function ($query) use ($request) {
                 if (!empty($request->customer_id)) {
-                    $query->where('vehicle_owners.customer_id', $request->customer_id);
+                    $query->where('vehicle_batteries.customer_id', $request->customer_id);
                 }
             })
+
             ->where(function ($query) use ($request) {
-                if (!empty($request->model_id)) {
-                    $query->where('vehicles.model_id', $request->model_id);
+                if (!empty($request->battery_make_id) && $request->battery_make_id != '<%$ctrl.battery_make_id%>') {
+                    $query->where('vehicle_batteries.battery_make_id', $request->battery_make_id);
                 }
             })
+
             ->where(function ($query) use ($request) {
-                if (!empty($request->status_id)) {
-                    $query->where('job_orders.status_id', $request->status_id);
+                if (!empty($request->load_test_status_id) && $request->load_test_status_id != '<%$ctrl.load_test_status_id%>') {
+                    $query->where('battery_load_test_results.load_test_status_id', $request->load_test_status_id);
                 }
             })
-            ->where('job_orders.company_id', Auth::user()->company_id)
+
+            ->where(function ($query) use ($request) {
+                if (!empty($request->hydro_status_id) && $request->hydro_status_id != '<%$ctrl.hydro_status_id%>') {
+                    $query->where('battery_load_test_results.hydrometer_electrolyte_status_id', $request->hydro_status_id);
+                }
+            })
+
+            ->where(function ($query) use ($request) {
+                if (!empty($request->overall_status_id) && $request->overall_status_id != '<%$ctrl.overall_status_id%>') {
+                    $query->where('battery_load_test_results.overall_status_id', $request->overall_status_id);
+                }
+            })
+
+            ->where('battery_load_test_results.company_id', Auth::user()->company_id)
+        // ->get()
         ;
 
+        // dd($battery_list);
         if ($request->date_range) {
-            $vehicle_inwards->whereDate('gate_logs.gate_in_date', '>=', $start_date)->whereDate('gate_logs.gate_in_date', '<=', $end_date);
+            $battery_list->whereDate('battery_load_test_results.created_at', '>=', $start_date)->whereDate('battery_load_test_results.created_at', '<=', $end_date);
         }
 
-        if (!Entrust::can('view-all-outlet-manual-vehicle-delivery')) {
-            if (Entrust::can('view-mapped-outlet-manual-vehicle-delivery')) {
+        if (!Entrust::can('view-all-outlet-battery-result')) {
+            if (Entrust::can('view-mapped-outlet-battery-result')) {
                 $outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
                 array_push($outlet_ids, Auth::user()->employee->outlet_id);
-                $vehicle_inwards->whereIn('job_orders.outlet_id', $outlet_ids);
+                $battery_list->whereIn('battery_load_test_results.outlet_id', $outlet_ids);
             } else {
-                $vehicle_inwards->where('job_orders.outlet_id', Auth::user()->working_outlet_id);
+                $battery_list->where('battery_load_test_results.outlet_id', Auth::user()->working_outlet_id);
             }
         }
 
-        if (Entrust::can('verify-manual-vehicle-delivery')) {
-            $vehicle_inwards->whereIn('job_orders.status_id', [8477]);
-        }
+        $battery_list->orderBy('battery_load_test_results.created_at', 'DESC');
 
-        $vehicle_inwards->groupBy('job_orders.id');
-        $vehicle_inwards->orderBy('gate_logs.gate_in_date', 'DESC');
-        // $vehicle_inwards->orderBy('job_orders.status_id', 'DESC');
-
-        return Datatables::of($vehicle_inwards)
-            ->rawColumns(['status', 'action'])
-            ->filterColumn('registration_type', function ($query, $keyword) {
-                $sql = 'IF(vehicles.is_registered = 1,"Registered Vehicle","Un-Registered Vehicle")  like ?';
-                $query->whereRaw($sql, ["%{$keyword}%"]);
-            })
-            ->editColumn('status', function ($vehicle_inward) {
-                $status = $vehicle_inward->status_id == '8460' || $vehicle_inward->status_id == '8469' || $vehicle_inward->status_id == '8477' || $vehicle_inward->status_id == '8479' ? 'green' : 'blue';
-                return '<span class="text-' . $status . '">' . $vehicle_inward->status . '</span>';
-            })
-            ->editColumn('vehicle_status', function ($vehicle_inward) {
-                $status = 'blue';
-                if ($vehicle_inward->vehicle_delivery_status_id == 3) {
-                    $status = 'green';
-                } elseif ($vehicle_inward->vehicle_delivery_status_id == 2 || $vehicle_inward->vehicle_delivery_status_id == 4) {
-                    $status = 'red';
-                }
-                return '<span class="text-' . $status . '">' . $vehicle_inward->vehicle_status . '</span>';
-            })
-            ->addColumn('action', function ($vehicle_inward) {
+        return Datatables::of($battery_list)
+        // ->editColumn('vehicle_status', function ($vehicle_inward) {
+        //     $status = 'blue';
+        //     if ($vehicle_inward->vehicle_delivery_status_id == 3) {
+        //         $status = 'green';
+        //     } elseif ($vehicle_inward->vehicle_delivery_status_id == 2 || $vehicle_inward->vehicle_delivery_status_id == 4) {
+        //         $status = 'red';
+        //     }
+        //     return '<span class="text-' . $status . '">' . $vehicle_inward->vehicle_status . '</span>';
+        // })
+            ->addColumn('action', function ($battery_list) {
                 $view_img = asset('public/themes/' . $this->data['theme'] . '/img/content/table/view.svg');
                 $edit_img = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
 
@@ -186,15 +152,14 @@ class BatteryController extends Controller
 
                 $output = '';
 
-                if ($vehicle_inward->vehicle_delivery_status_id != 3 && $vehicle_inward->vehicle_delivery_status_id != 4 && !Entrust::can('verify-manual-vehicle-delivery')) {
-                    $output .= '<a href="javascript:;" data-toggle="modal" data-target="#change_vehicle_status" onclick="angular.element(this).scope().changeStatus(' . $vehicle_inward->id . ',' . $vehicle_inward->vehicle_delivery_status_id . ')" title="Change Vehicle Status"><img src="' . $status_img . '" alt="Change Vehicle Status" class="img-responsive delete" onmouseover=this.src="' . $status_img_hover . '" onmouseout=this.src="' . $status_img . '"></a>
-					';
+                if (Entrust::can('edit-battery-result')) {
+                    $output .= '<a href="#!/battery/form/' . $battery_list->id . '" id = "" title="Form"><img src="' . $edit_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $edit_img . '" onmouseout=this.src="' . $edit_img . '"></a>';
                 }
 
-                if ($vehicle_inward->status_id != 8478 && $vehicle_inward->status_id != 8477 && $vehicle_inward->status_id != 8467 && $vehicle_inward->status_id != 8468 && $vehicle_inward->status_id != 8470 && !Entrust::can('verify-manual-vehicle-delivery')) {
-                    $output .= '<a href="#!/manual-vehicle-delivery/form/' . $vehicle_inward->id . '" id = "" title="Form"><img src="' . $edit_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $edit_img . '" onmouseout=this.src="' . $edit_img . '"></a>';
+                if (Entrust::can('view-battery-result')) {
+                    $output .= '<a href="#!/battery/view/' . $battery_list->id . '" id = "" title="View"><img src="' . $view_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $view_img . '" onmouseout=this.src="' . $view_img . '"></a>';
                 }
-                $output .= '<a href="#!/manual-vehicle-delivery/view/' . $vehicle_inward->id . '" id = "" title="View"><img src="' . $view_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $view_img . '" onmouseout=this.src="' . $view_img . '"></a>';
+
                 return $output;
             })
             ->make(true);

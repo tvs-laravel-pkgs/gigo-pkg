@@ -2266,6 +2266,56 @@ class GigoPkgPermissionSeeder extends Seeder
                 'name' => 'export-tvs-one-discount-request',
                 'display_name' => 'Export',
             ],
+
+            //Battery
+            [
+                'display_order' => 100,
+                'parent' => 'gigo-pages',
+                'name' => 'gigo-battery',
+                'display_name' => 'Battery',
+            ],
+            [
+                'display_order' => 3,
+                'parent' => 'gigo-battery',
+                'name' => 'add-battery-result',
+                'display_name' => 'Add',
+            ],
+            [
+                'display_order' => 3,
+                'parent' => 'gigo-battery',
+                'name' => 'edit-battery-result',
+                'display_name' => 'Edit',
+            ],
+            [
+                'display_order' => 3,
+                'parent' => 'gigo-battery',
+                'name' => 'view-battery-result',
+                'display_name' => 'View',
+            ],
+            [
+                'display_order' => 5,
+                'parent' => 'gigo-battery',
+                'name' => 'view-own-outlet-battery-result',
+                'display_name' => 'View Own Outlet',
+            ],
+            [
+                'display_order' => 6,
+                'parent' => 'gigo-battery',
+                'name' => 'view-mapped-outlet-battery-result',
+                'display_name' => 'View Mapped Outlet',
+            ],
+            [
+                'display_order' => 7,
+                'parent' => 'gigo-battery',
+                'name' => 'view-all-outlet-battery-result',
+                'display_name' => 'View all Outlet',
+            ],
+            [
+                'display_order' => 8,
+                'parent' => 'gigo-battery',
+                'name' => 'export-battery-result',
+                'display_name' => 'Export',
+            ],
         ];
         Permission::createFromArrays($permissions);
     }

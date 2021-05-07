@@ -9,7 +9,6 @@ use App\Config;
 use App\Country;
 use App\Customer;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\WpoSoapController;
 use App\HydrometerElectrolyteStatus;
 use App\LoadTestStatus;
 use App\User;
@@ -25,11 +24,6 @@ use Validator;
 class BatteryController extends Controller
 {
     public $successStatus = 200;
-
-    public function __construct(WpoSoapController $getSoap = null)
-    {
-        $this->getSoap = $getSoap;
-    }
 
     public function getFormData(Request $request)
     {
@@ -344,8 +338,13 @@ class BatteryController extends Controller
 
             if ($request->id) {
                 $battery_result = BatteryLoadTestResult::find($request->id);
+                $battery_result->updated_by_id = Auth::user()->id;
+                $battery_result->updated_at = Carbon::now();
             } else {
                 $battery_result = new BatteryLoadTestResult;
+                $battery_result->created_by_id = Auth::user()->id;
+                $battery_result->created_at = Carbon::now();
+                $battery_result->updated_at = null;
             }
 
             $battery_result->company_id = Auth::user()->company_id;
@@ -355,14 +354,11 @@ class BatteryController extends Controller
             $battery_result->hydrometer_electrolyte_status_id = $request->hydrometer_electrolyte_status_id;
             $battery_result->overall_status_id = $request->overall_status_id;
             $battery_result->remarks = $request->remarks;
-            $battery_result->created_by_id = Auth::user()->id;
-            $battery_result->created_at = Carbon::now();
-            $battery_result->updated_at = null;
             $battery_result->save();
 
             DB::commit();
 
-            $message = 'Battery Details Saved Succesfully!';
+            $message = 'Battery Details Saved Successfully!';
 
             return response()->json([
                 'success' => true,
