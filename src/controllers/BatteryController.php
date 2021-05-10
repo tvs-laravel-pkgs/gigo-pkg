@@ -71,7 +71,7 @@ class BatteryController extends Controller
                 'load_test_statuses.name as load_test_status',
                 'hydrometer_electrolyte_statuses.name as hydrometer_electrolyte_status',
                 'battery_load_test_statuses.name as overall_status',
-                DB::raw('DATE_FORMAT(battery_load_test_results.created_at,"%d/%m/%Y, %h:%i %p") as date'),
+                DB::raw('DATE_FORMAT(battery_load_test_results.created_at,"%d/%m/%Y, %h:%i %p") as date')
             )
 
             ->where(function ($query) use ($request) {

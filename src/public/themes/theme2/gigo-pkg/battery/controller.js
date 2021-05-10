@@ -9,7 +9,7 @@ app.component('batteryList', {
         $('.master_link').addClass('active').trigger('click');
 
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('gigo-manual-vehicle-delivery')) {
+        if (!self.hasPermission('gigo-battery')) {
             window.location = "#!/page-permission-denied";
             return false;
         }
