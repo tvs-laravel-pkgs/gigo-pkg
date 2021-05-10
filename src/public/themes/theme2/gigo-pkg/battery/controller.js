@@ -280,7 +280,7 @@ app.component('batteryView', {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         $scope.hasPerm = HelperService.hasPerm;
-        if (!self.hasPermission('view-manual-vehicle-delivery')) {
+        if (!self.hasPermission('view-battery-result')) {
             window.location = "#!/page-permission-denied";
             return false;
         }
