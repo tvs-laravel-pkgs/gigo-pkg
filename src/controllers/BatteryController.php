@@ -70,7 +70,7 @@ class BatteryController extends Controller
                 'outlets.code as outlet_code',
                 'load_test_statuses.name as load_test_status',
                 'hydrometer_electrolyte_statuses.name as hydrometer_electrolyte_status',
-                'battery_load_test_statuses.name as overall_status',
+                'battery_load_test_statuses.name as overall_status', 'hydrometer_electrolyte_status_id', 'load_test_status_id',
                 DB::raw('DATE_FORMAT(battery_load_test_results.created_at,"%d/%m/%Y, %h:%i %p") as date')
             )
 
@@ -132,15 +132,24 @@ class BatteryController extends Controller
         $battery_list->orderBy('battery_load_test_results.created_at', 'DESC');
 
         return Datatables::of($battery_list)
-        // ->editColumn('vehicle_status', function ($vehicle_inward) {
-        //     $status = 'blue';
-        //     if ($vehicle_inward->vehicle_delivery_status_id == 3) {
-        //         $status = 'green';
-        //     } elseif ($vehicle_inward->vehicle_delivery_status_id == 2 || $vehicle_inward->vehicle_delivery_status_id == 4) {
-        //         $status = 'red';
-        //     }
-        //     return '<span class="text-' . $status . '">' . $vehicle_inward->vehicle_status . '</span>';
-        // })
+            ->editColumn('load_test_status', function ($battery_list) {
+                $status = 'yellow';
+                if ($battery_list->load_test_status_id == 1) {
+                    $status = 'green';
+                } elseif ($battery_list->load_test_status_id == 3) {
+                    $status = 'red';
+                }
+                return '<span class="text-' . $status . '">' . $battery_list->load_test_status . '</span>';
+            })
+            ->editColumn('hydrometer_electrolyte_status', function ($battery_list) {
+                $status = 'yellow';
+                if ($battery_list->hydrometer_electrolyte_status_id == 1) {
+                    $status = 'green';
+                } elseif ($battery_list->hydrometer_electrolyte_status_id == 3) {
+                    $status = 'red';
+                }
+                return '<span class="text-' . $status . '">' . $battery_list->hydrometer_electrolyte_status . '</span>';
+            })
             ->addColumn('action', function ($battery_list) {
                 $view_img = asset('public/themes/' . $this->data['theme'] . '/img/content/table/view.svg');
                 $edit_img = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');

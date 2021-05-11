@@ -281,6 +281,7 @@ class BatteryController extends Controller
             if ($request->sold_date) {
                 $vehicle->sold_date = date('Y-m-d', strtotime($request->sold_date));
             }
+            $vehicle->model_id = $request->model_id;
             $vehicle->save();
 
             //Save Customer
