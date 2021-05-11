@@ -45,13 +45,20 @@ class BatteryController extends Controller
                 'hydrometerElectrolyteStatus',
             ])->find($request->id);
             $action = 'Edit';
+
+            $user = User::with(['outlet'])->find($battery->created_by_id);
+
         } else {
             $battery = new BatteryLoadTestResult;
             $action = 'New';
+
+            $user = User::with(['outlet'])->find(Auth::user()->id);
         }
 
         $this->data['battery'] = $battery;
         $this->data['action'] = $action;
+
+        $this->data['user'] = $user;
 
         $extras = [
             'battery_list' => collect(BatteryMake::where('company_id', Auth::user()->company_id)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Battery']),

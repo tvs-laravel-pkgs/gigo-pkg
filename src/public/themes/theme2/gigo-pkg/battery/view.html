@@ -42,14 +42,24 @@
                             </a>
                         </div>
                         <div class="page-tab-form-top-left-info">
-                            <b>
-                                {{vehicle.registration_number}} |
-                            </b>
-                            <span>
-                                {{customer.code}} | {{customer.name}}
+                            <span class="page-tab-form-top-left-info-content">
+                                <b>{{user_info.ecode}} / {{user_info.name}} | </b>
+                                <b>
+                                    {{vehicle.registration_number}} |
+                                </b>
+                                <span>
+                                    <!-- {{customer.code}} | -->
+                                    {{customer.name}}
+                                </span>
                             </span>
                         </div>
                     </div><!-- Page Tab Form Top Left -->
+                    <div class="page-tab-form-top-right">
+                        <div class="page-tab-form-top-right-info">
+                            Outlet : {{user_info.outlet.code}} / {{user_info.outlet.ax_name ? user_info.outlet.ax_name :
+                            user_info.outlet.name }}
+                        </div>
+                    </div>
                 </div><!-- Page Tab Form Top -->
                 <div class="tab-form-wrap side-tab-open">
                     <div class="tab-form-header side-tab-open">

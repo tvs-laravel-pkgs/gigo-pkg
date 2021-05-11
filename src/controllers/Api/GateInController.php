@@ -1139,10 +1139,18 @@ class GateInController extends Controller
         // dd($request->all());
         $key = $request->key;
 
-        $list = Vehicle::with(['kmReadingType'])->select(
+        $list = Vehicle::with([
+            'kmReadingType',
+            'currentOwner',
+            'currentOwner.customer',
+            'model']
+        )->select(
             'driver_name',
             'driver_mobile_number',
             'service_contact_number',
+            'sold_date',
+            'customer_id',
+            'model_id',
             'km_reading_type_id',
             'km_reading',
             'hr_reading',

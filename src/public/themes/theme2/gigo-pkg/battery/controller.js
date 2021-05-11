@@ -311,6 +311,7 @@ app.component('batteryView', {
 
                     $scope.battery = res.battery;
                     $scope.extras = res.extras;
+                    $scope.user_info = res.user;
                     self.country = res.extras.country;
                     $scope.action = res.action;
 
@@ -391,6 +392,7 @@ app.component('batteryForm', {
                     $scope.extras = res.extras;
                     self.country = res.extras.country;
                     $scope.action = res.action;
+                    $scope.user_info = res.user;
 
                     $scope.customer = $scope.battery ? $scope.battery.vehicle_battery ? $scope.battery.vehicle_battery.customer : [] : [];
                     console.log($scope.customer);
@@ -434,12 +436,27 @@ app.component('batteryForm', {
         });
 
         $scope.searchVehicles = function (query) {
-            return new Promise(function (resolve, reject) {
-                VehicleSvc.options({ filter: { search: query } })
-                    .then(function (response) {
-                        resolve(response.data.options);
-                    });
-            });
+            // return new Promise(function (resolve, reject) {
+            //     VehicleSvc.options({ filter: { search: query } })
+            //         .then(function (response) {
+            //             resolve(response.data.options);
+            //         });
+            // });
+            if (query) {
+                return new Promise(function (resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getVehicleSearchList'], {
+                            key: query,
+                        }
+                        )
+                        .then(function (response) {
+                            resolve(response.data);
+                        });
+                });
+            } else {
+                return [];
+            }
         }
 
         $scope.vehicleSelected = function (vehicle) {
@@ -476,17 +493,33 @@ app.component('batteryForm', {
         }
 
         $scope.searchCustomer = function (query) {
-            return new Promise(function (resolve, reject) {
-                CustomerSvc.options({
-                    filter: {
-                        search: query
-                    }
-                })
-                    .then(function (response) {
-                        console.log(response);
-                        resolve(response.data.options);
-                    });
-            });
+            // return new Promise(function (resolve, reject) {
+            //     CustomerSvc.options({
+            //         filter: {
+            //             search: query
+            //         }
+            //     })
+            //         .then(function (response) {
+            //             console.log(response);
+            //             resolve(response.data.options);
+            //         });
+            // });
+            if (query) {
+                return new Promise(function (resolve, reject) {
+                    $http
+                        .post(
+                            search_parts_customer_url, {
+                            key: query,
+                        }
+                        )
+                        .then(function (response) {
+                            resolve(response.data);
+                        });
+                });
+            } else {
+                $scope.customer = [];
+                return [];
+            }
         }
 
         $scope.customerChanged = function (customer) {

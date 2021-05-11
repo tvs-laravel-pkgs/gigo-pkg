@@ -37,15 +37,23 @@
                         </div>
                         <div class="page-tab-form-top-left-info">
                             <span class="page-tab-form-top-left-info-content">
+                                <b>{{user_info.ecode}} / {{user_info.name}} | </b>
                                 <b>
                                     {{vehicle.registration_number}} |
                                 </b>
                                 <span>
-                                    {{customer.code}} | {{customer.name}}
+                                    <!-- {{customer.code}} | -->
+                                    {{customer.name}}
                                 </span>
                             </span>
                         </div>
                     </div><!-- Page Tab Form Top Left -->
+                    <div class="page-tab-form-top-right">
+                        <div class="page-tab-form-top-right-info">
+                            Outlet : {{user_info.outlet.code}} / {{user_info.outlet.ax_name ? user_info.outlet.ax_name :
+                            user_info.outlet.name }}
+                        </div>
+                    </div>
                 </div><!-- Page Tab Form Top -->
                 <div class="tab-form-wrap side-tab-open">
                     <div class="tab-form-header side-tab-open">
@@ -364,7 +372,7 @@
                                                                             md-items="option in searchCustomer($ctrl.customerSearchText)"
                                                                             md-selected-item="vehicle"
                                                                             md-search-text="$ctrl.customerSearchText"
-                                                                            md-selected-item-change="customerChanged(customer)"
+                                                                            md-selected-item-change="customerChanged(option)"
                                                                             md-item-text="customer.code"
                                                                             md-min-length="3"
                                                                             placeholder="Customer Code / Name"
@@ -372,8 +380,8 @@
                                                                             md-no-cache="true">
                                                                             <md-item-template>
                                                                                 <span>
-                                                                                    {{customer.name}} /
-                                                                                    {{customer.code}}
+                                                                                    {{option.name}} /
+                                                                                    {{option.code}}
                                                                                 </span>
                                                                             </md-item-template>
                                                                             <md-not-found>
