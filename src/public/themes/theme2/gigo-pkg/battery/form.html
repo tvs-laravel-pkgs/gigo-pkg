@@ -291,7 +291,7 @@
                                                                         <input type="text"
                                                                             class="form-control hr_reading"
                                                                             oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
-                                                                            maxlength="4" placeholder="Ex: 1000"
+                                                                            maxlength="5" placeholder="Ex: 1000"
                                                                             autocomplete="off" name="hr_reading"
                                                                             ng-model="vehicle.hr_reading"
                                                                             value="{{vehicle.hr_reading}}" />
@@ -723,7 +723,7 @@
                                                                             <input type="text" name="manufactured_date"
                                                                                 value="{{battery.vehicle_battery.manufactured_date}}"
                                                                                 class="form-control"
-                                                                                placeholder="Select Invoice Date" />
+                                                                                placeholder="Ex: 01-01-2020" />
                                                                             <div class="input-group-addon">
                                                                                 <img class="img-responsive"
                                                                                     src="./public/theme/img/content/calender-gray-icon.svg"

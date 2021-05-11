@@ -90,7 +90,8 @@ class ManualVehicleDeliveryController extends Controller
                 DB::raw('COALESCE(CONCAT(amc_policies.name,"/",amc_policies.type), "-") as amc_policies'),
                 'configs.name as status',
                 'outlets.code as outlet_code',
-                DB::raw('COALESCE(customers.name, "-") as customer_name'),
+                // DB::raw('COALESCE(customers.name, "-") as customer_name'),
+                DB::raw('CONCAT(customers.code, " / ",customers.name) as customer_name'),
                 'job_orders.vehicle_delivery_status_id',
                 DB::raw('IF(job_orders.vehicle_delivery_status_id IS NULL,"WIP",vehicle_delivery_statuses.name) as vehicle_status')
             )
@@ -382,7 +383,7 @@ class ManualVehicleDeliveryController extends Controller
         }
 
         $vehicle_inward = JobOrder::with(['manualDeliveryLabourInvoice',
-            'manualDeliveryPartsInvoice'])->select('regions.code as region_code', 'states.code as state_code', 'customers.code as customer_code', 'customers.name as customer_name', 'gate_logs.number as gate_in_number', 'gate_logs.gate_in_date', 'gate_logs.gate_out_date', 'vehicles.registration_number', 'vehicles.engine_number', 'vehicles.chassis_number', 'job_orders.inward_cancel_reason_id', 'billing_type.name as billing_type', 'job_orders.warranty_reason', 'inward_cancel.name as inward_cancel_reason_name', 'job_orders.inward_cancel_reason', 'job_orders.vehicle_payment_status', 'pending_reasons.name as pending_reason', 'jv_customers.code as jv_customer_code', 'jv_customers.name as jv_customer_name', 'job_orders.pending_remarks', 'users.ecode as user_code', 'users.name as user_name', 'job_orders.vehicle_delivery_request_remarks', 'job_orders.approved_remarks', 'job_orders.approved_date_time', 'outlets.code as outlet_code', 'outlets.name as outlet_name', 'outlets.ax_name', 'vehicle_delivery_statuses.name as vehicle_delivery_status', 'job_orders.id', 'job_orders.job_card_number', 'job_orders.labour_discount_amount', 'job_orders.part_discount_amount')
+            'manualDeliveryPartsInvoice'])->select('regions.code as region_code', 'states.code as state_code', 'customers.code as customer_code', 'customers.name as customer_name', 'gate_logs.number as gate_in_number', 'gate_logs.gate_in_date', 'gate_logs.gate_out_date', 'vehicles.registration_number', 'vehicles.engine_number', 'vehicles.chassis_number', 'job_orders.inward_cancel_reason_id', 'billing_type.name as billing_type', 'job_orders.warranty_reason', 'inward_cancel.name as inward_cancel_reason_name', 'job_orders.inward_cancel_reason', 'job_orders.vehicle_payment_status', 'pending_reasons.name as pending_reason', 'jv_customers.code as jv_customer_code', 'jv_customers.name as jv_customer_name', 'job_orders.pending_remarks', 'users.ecode as user_code', 'users.name as user_name', 'job_orders.vehicle_delivery_request_remarks', 'job_orders.approved_remarks', 'job_orders.approved_date_time', 'outlets.code as outlet_code', 'outlets.name as outlet_name', 'outlets.ax_name', 'vehicle_delivery_statuses.name as vehicle_delivery_status', 'job_orders.id', 'job_orders.job_card_number', 'job_orders.labour_discount_amount', 'job_orders.part_discount_amount', 'job_order_status.name as status')
             ->join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
             ->leftJoin('vehicles', 'job_orders.vehicle_id', 'vehicles.id')
             ->leftJoin('customers', 'customers.id', 'job_orders.customer_id')
@@ -395,7 +396,7 @@ class ManualVehicleDeliveryController extends Controller
             ->leftJoin('pending_reasons', 'pending_reasons.id', 'job_orders.pending_reason_id')
             ->leftJoin('users', 'users.id', 'job_orders.vehicle_delivery_requester_id')
             ->leftJoin('customers as jv_customers', 'jv_customers.id', 'job_orders.jv_customer_id')
-            ->join('configs', 'configs.id', 'job_orders.status_id')
+            ->join('configs as job_order_status', 'job_order_status.id', 'job_orders.status_id')
             ->join('outlets', 'outlets.id', 'job_orders.outlet_id')
             ->join('states', 'states.id', 'outlets.state_id')
             ->join('regions', 'regions.state_id', 'states.id')

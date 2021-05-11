@@ -5,7 +5,8 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/inward-vehicle/table-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                    <a href="#!/inward-vehicle/table-list" type="button" class="btn-back btn-img"><img
+                            class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
                     <h1 class="title"><b>Inward Vehicle</b></h1>
@@ -25,7 +26,8 @@
                     <div class="tab-form-body side-tab-open">
                         <div class="tab-content">
                             <!-- TAB PANEL -->
-                            <div class="tab-pane fade in active" id="vehicle_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane fade in active" id="vehicle_details" data-animation="fadeInUp"
+                                data-animation-delay="300">
                                 <div class="tab-pane-wrap">
                                     <div class="row">
                                         <div class="col-md-12">
@@ -75,7 +77,8 @@
                                                         </span>
                                                         <span class="view-col-value">
                                                             <b>
-                                                                {{job_order.vehicle.model.model_name}} /{{job_order.vehicle.model.model_number}}
+                                                                {{job_order.vehicle.model.model_name}}
+                                                                /{{job_order.vehicle.model.model_number}}
                                                             </b>
                                                         </span>
                                                     </li>
@@ -97,7 +100,8 @@
                                                             </b>
                                                         </span>
                                                     </li>
-                                                    <li class="view-col-3" ng-if="!job_order.vehicle.registration_number">
+                                                    <li class="view-col-3"
+                                                        ng-if="!job_order.vehicle.registration_number">
                                                         <span class="view-col-label">
                                                             Is Sold ?
                                                         </span>
@@ -110,7 +114,7 @@
                                                             </b>
                                                         </span>
                                                     </li>
-                                                    <li class="view-col-3" ng-if="job_order.vehicle.is_sold == 1 && !job_order.vehicle.registration_number">
+                                                    <li class="view-col-3" ng-if="job_order.vehicle.sold_date">
                                                         <span class="view-col-label">
                                                             Sold Date
                                                         </span>
@@ -119,7 +123,9 @@
                                                         </span>
                                                     </li>
                                                 </ul>
-                                                <button class="btn btn-secondary-dark btn-md btn-square" ng-click="showVehicleForm()" ng-if="job_order.is_customer_agreed!=1">Edit</button>
+                                                <button class="btn btn-secondary-dark btn-md btn-square"
+                                                    ng-click="showVehicleForm()"
+                                                    ng-if="job_order.is_customer_agreed!=1">Edit</button>
                                             </div>
                                             <input type="hidden" name="id" value="{{job_order.vehicle.id}}">
                                             <div class="row" ng-show="show_vehicle_form" id="vehicle_edit">
@@ -127,9 +133,12 @@
                                                     <div class="form-group">
                                                         <label>Registration Type <sup class="mandatory">*</sup></label>
                                                         <div class="common-radio-button type-4">
-                                                            <input type="radio" id="registered" name="is_registered" ng-model="job_order.vehicle.is_registered" ng-value="1" ng-checked="job_order.is_registered == 1">
+                                                            <input type="radio" id="registered" name="is_registered"
+                                                                ng-model="job_order.vehicle.is_registered" ng-value="1"
+                                                                ng-checked="job_order.is_registered == 1">
                                                             <label for="registered">Registered</label>
-                                                            <input type="radio" id="unregistered" name="is_registered" ng-model="job_order.vehicle.is_registered" ng-value="0">
+                                                            <input type="radio" id="unregistered" name="is_registered"
+                                                                ng-model="job_order.vehicle.is_registered" ng-value="0">
                                                             <label for="unregistered">Un Registered</label>
                                                         </div>
                                                     </div><!-- Feild -->
@@ -140,7 +149,12 @@
                                                             Registration Number
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <input type="text" class="form-control registration_number" minlength="8" maxlength="13" placeholder="Enter Registration No" autocomplete="off" ng-model="job_order.vehicle.registration_number" name="registration_number" oninput="this.value = this.value.toUpperCase()" />
+                                                        <input type="text" class="form-control registration_number"
+                                                            minlength="8" maxlength="13"
+                                                            placeholder="Enter Registration No" autocomplete="off"
+                                                            ng-model="job_order.vehicle.registration_number"
+                                                            name="registration_number"
+                                                            oninput="this.value = this.value.toUpperCase()" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3" ng-if="job_order.vehicle.is_registered == 0">
@@ -148,17 +162,24 @@
                                                         <label>
                                                             Trade Plate Number
                                                         </label>
-                                                        <md-select ng-model="job_order.gatein_trade_plate_number_id" placeholder="Select Trade Plate Number" data-md-container-class="selectdemoSelectHeader">
+                                                        <md-select ng-model="job_order.gatein_trade_plate_number_id"
+                                                            placeholder="Select Trade Plate Number"
+                                                            data-md-container-class="selectdemoSelectHeader">
                                                             <md-select-header class="demo-select-header">
-                                                                <input ng-model="searchNumber" type="search" placeholder="Search for a Trade Plate Number.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                                <input ng-model="searchNumber" type="search"
+                                                                    placeholder="Search for a Trade Plate Number.."
+                                                                    class="demo-header-searchbox md-text"
+                                                                    ng-keydown="$event.stopPropagation()">
                                                             </md-select-header>
                                                             <md-optgroup>
-                                                                <md-option ng-value="list.id" ng-repeat="list in extras.trade_plate_number_list | filter:searchNumber">
+                                                                <md-option ng-value="list.id"
+                                                                    ng-repeat="list in extras.trade_plate_number_list | filter:searchNumber">
                                                                     {{list.trade_plate_number}}
                                                                 </md-option>
                                                             </md-optgroup>
                                                         </md-select>
-                                                        <input type="hidden" name="trade_plate_number" value="{{job_order.gatein_trade_plate_number_id}}">
+                                                        <input type="hidden" name="trade_plate_number"
+                                                            value="{{job_order.gatein_trade_plate_number_id}}">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -167,17 +188,25 @@
                                                             Vehicle Model
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <md-autocomplete md-items="option in $ctrl.searchVehicleModel($ctrl.modelSearchText)" md-selected-item="job_order.vehicle.model" md-selected-item-change="selectedVehicleModel(job_order.vehicle.model.id)" md-search-text="$ctrl.modelSearchText" md-item-text="option.model_name" md-min-length="3" placeholder="Vehicle Model Name" md-autofocus>
+                                                        <md-autocomplete
+                                                            md-items="option in $ctrl.searchVehicleModel($ctrl.modelSearchText)"
+                                                            md-selected-item="job_order.vehicle.model"
+                                                            md-selected-item-change="selectedVehicleModel(job_order.vehicle.model.id)"
+                                                            md-search-text="$ctrl.modelSearchText"
+                                                            md-item-text="option.model_name" md-min-length="3"
+                                                            placeholder="Vehicle Model Name" md-autofocus>
                                                             <md-item-template>
                                                                 <span>
-                                                                    {{option.model_name}} /  {{option.number}}
+                                                                    {{option.model_name}} / {{option.number}}
                                                                 </span>
                                                             </md-item-template>
                                                             <md-not-found>
-                                                                No Vehicle Model matching "{{$ctrl.modelSearchText}}" were found.
+                                                                No Vehicle Model matching "{{$ctrl.modelSearchText}}"
+                                                                were found.
                                                             </md-not-found>
                                                         </md-autocomplete>
-                                                        <input type="hidden" name="model_id" value="{{job_order.vehicle.model.id}}">
+                                                        <input type="hidden" name="model_id"
+                                                            value="{{job_order.vehicle.model.id}}">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -186,7 +215,10 @@
                                                             Engine Number
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <input type="text" class="form-control" minlength="7" placeholder="Enter Engine No" autocomplete="off" ng-model="job_order.vehicle.engine_number" name="engine_number" />
+                                                        <input type="text" class="form-control" minlength="7"
+                                                            placeholder="Enter Engine No" autocomplete="off"
+                                                            ng-model="job_order.vehicle.engine_number"
+                                                            name="engine_number" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -195,21 +227,27 @@
                                                             Chassis / VIN Number
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <input type="text" class="form-control" minlength="8" maxlength="17" placeholder="Enter Chasis No" autocomplete="off" ng-model="job_order.vehicle.chassis_number" name="chassis_number" />
+                                                        <input type="text" class="form-control" minlength="8"
+                                                            maxlength="17" placeholder="Enter Chasis No"
+                                                            autocomplete="off"
+                                                            ng-model="job_order.vehicle.chassis_number"
+                                                            name="chassis_number" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3" ng-if="!job_order.vehicle.registration_number">
                                                     <div class="form-group">
                                                         <label>Is Sold ? <sup class="mandatory">*</sup></label>
                                                         <div class="common-radio-button type-4">
-                                                            <input type="radio" id="sold" name="is_sold" ng-model="$ctrl.is_sold" ng-value="1">
+                                                            <input type="radio" id="sold" name="is_sold"
+                                                                ng-model="$ctrl.is_sold" ng-value="1">
                                                             <label for="sold">Yes</label>
-                                                            <input type="radio" id="not_sold" name="is_sold" ng-model="$ctrl.is_sold" ng-value="0">
+                                                            <input type="radio" id="not_sold" name="is_sold"
+                                                                ng-model="$ctrl.is_sold" ng-value="0">
                                                             <label for="not_sold">No</label>
                                                         </div>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-3" ng-if="$ctrl.is_sold && !job_order.vehicle.registration_number">
+                                                <div class="col-md-3" ng-if="$ctrl.is_sold">
                                                     <div class="form-group">
                                                         <label>
                                                             Sold Date
@@ -217,10 +255,16 @@
                                                                 *
                                                             </sup>
                                                         </label>
-                                                        <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
-                                                            <input type="text" class="form-control" placeholder="Select Sold Date" ng-model="job_order.vehicle.sold_date" name="sold_date" />
+                                                        <div class="input-group date" data-provide="datepicker"
+                                                            data-date-end-date="0d">
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Select Sold Date"
+                                                                ng-model="job_order.vehicle.sold_date"
+                                                                name="sold_date" />
                                                             <div class="input-group-addon">
-                                                                <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                                                <img class="img-responsive"
+                                                                    src="./public/theme/img/content/calender-gray-icon.svg"
+                                                                    alt="Calendar Image" />
                                                             </div>
                                                         </div><!-- Input Group -->
                                                     </div><!-- Feild -->
@@ -230,10 +274,12 @@
                                         <div class="tab-pane-footer" ng-show="show_vehicle_detail">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <a type="button" class="btn btn-red" href="#!/inward-vehicle/table-list">
+                                                    <a type="button" class="btn btn-red"
+                                                        href="#!/inward-vehicle/table-list">
                                                         Save & Close
                                                     </a>
-                                                    <a type="button" class="btn btn-secondary-dark btn-min-wdth btn-nxt" href=".#!/inward-vehicle/customer-detail/{{job_order.id}}">
+                                                    <a type="button" class="btn btn-secondary-dark btn-min-wdth btn-nxt"
+                                                        href=".#!/inward-vehicle/customer-detail/{{job_order.id}}">
                                                         Next
                                                     </a>
                                                 </div>
@@ -245,8 +291,11 @@
                                                     <!-- <button type="submit" class="btn btn-red save" ng-click="onSubmit(1)">
                                                         Save & Close
                                                     </button> -->
-                                                    <input type="submit" name="save_close" ng-click="onSubmit(1)" class="btn btn-red submit" value=" Save & Close">
-                                                    <input type="submit" name="save_next" ng-click="onSubmit(0)" class="btn btn-secondary-dark btn-min-wdth btn-next" value=" Next">
+                                                    <input type="submit" name="save_close" ng-click="onSubmit(1)"
+                                                        class="btn btn-red submit" value=" Save & Close">
+                                                    <input type="submit" name="save_next" ng-click="onSubmit(0)"
+                                                        class="btn btn-secondary-dark btn-min-wdth btn-next"
+                                                        value=" Next">
                                                     <!-- <button type="submit" class="btn btn-secondary-dark btn-min-wdth btn-nxt next" ng-click="onSubmit(0)">
                                                         Next
                                                     </button> -->
@@ -264,11 +313,13 @@
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
 <!-- Modal -->
-<div class="modal modal-center fade" id="search_vehicle_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal modal-center fade" id="search_vehicle_modal" tabindex="-1" role="dialog"
+    aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-xs" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i
+                        class="icon ion-md-close"></i></button>
                 <h5 class="modal-title">Search Vehicle</h5>
             </div><!-- Modal Header -->
             <div class="modal-body">
@@ -276,13 +327,15 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <label>Registration Number <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter Registration Number" autocomplete="off" />
+                            <input type="text" class="form-control" placeholder="Enter Registration Number"
+                                autocomplete="off" />
                         </div><!-- Feild -->
                     </div><!-- Column -->
                     <div class="col-md-12">
                         <div class="form-group">
                             <label>Customer Code <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter Customer Code" autocomplete="off" />
+                            <input type="text" class="form-control" placeholder="Enter Customer Code"
+                                autocomplete="off" />
                         </div><!-- Feild -->
                     </div><!-- Column -->
                     <div class="col-md-12">
@@ -292,7 +345,8 @@
                         </div><!-- Feild -->
                     </div><!-- Column -->
                     <div class="col-md-12">
-                        <button type="button" class="btn btn-secondary-dark btn-square btn-block" data-dismiss="modal"><b>Submit</b></button>
+                        <button type="button" class="btn btn-secondary-dark btn-square btn-block"
+                            data-dismiss="modal"><b>Submit</b></button>
                     </div><!-- Column -->
                 </div><!-- Row -->
             </div><!-- Modal Body -->
