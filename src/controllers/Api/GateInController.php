@@ -1251,7 +1251,9 @@ class GateInController extends Controller
                             $vehicle->is_sold = 0;
                         }
                     }
-                    $vehicle->sold_date = date('Y-m-d', strtotime($vehicle_data['vehicle_sales_date']));
+                    if (isset($vehicle_data['vehicle_sales_date'])) {
+                        $vehicle->sold_date = date('Y-m-d', strtotime($vehicle_data['vehicle_sales_date']));
+                    }
                     $vehicle->save();
 
                     //Save Vehicle Owner
