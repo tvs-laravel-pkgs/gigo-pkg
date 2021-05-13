@@ -365,7 +365,7 @@ class VehicleInwardController extends Controller
             $job_order['total_due_amount'] = $total_invoice_amount - $total_received_amount;
 
             //Count Tax Type
-            $taxes = Tax::get();
+            $taxes = Tax::whereIn('id', [1, 2, 3])->get();
 
             //SCHEDULE MAINTENANCE
             $labour_amount = 0;
@@ -412,8 +412,8 @@ class VehicleInwardController extends Controller
                         $total_amount = 0;
                         if ($value->is_free_service != 1 && (in_array($value->split_order_type_id, $customer_paid_type_id) || !$value->split_order_type_id) && !$value->removal_reason_id) {
                             $tax_values = array();
+                            $tax_amount = 0;
                             if ($value->repairOrder->taxCode) {
-                                $tax_amount = 0;
                                 foreach ($value->repairOrder->taxCode->taxes as $tax_key => $tax) {
                                     $percentage_value = 0;
                                     if ($tax->type_id == $tax_type) {
@@ -428,7 +428,7 @@ class VehicleInwardController extends Controller
                             } else {
                                 $total_schedule_labour_amount += $value->amount;
                             }
-                            $total_schedule_without_tax_labour_amount += $value->amount;
+                            $total_schedule_without_tax_labour_amount += ($value->amount - $tax_amount);
                         } else {
                             $schedule_labour_details[$key]['amount'] = '0.00';
                         }
@@ -451,8 +451,8 @@ class VehicleInwardController extends Controller
                         $total_amount = 0;
                         if ($value->is_free_service != 1 && (in_array($value->split_order_type_id, $customer_paid_type_id) || !$value->split_order_type_id) && !$value->removal_reason_id) {
                             $tax_values = array();
+                            $tax_amount = 0;
                             if ($value->repairOrder->taxCode) {
-                                $tax_amount = 0;
                                 foreach ($value->repairOrder->taxCode->taxes as $tax_key => $tax) {
                                     $percentage_value = 0;
                                     if ($tax->type_id == $tax_type) {
@@ -467,7 +467,7 @@ class VehicleInwardController extends Controller
                             } else {
                                 $total_payable_labour_amount += $value->amount;
                             }
-                            $total_payable_without_tax_labour_amount += $value->amount;
+                            $total_payable_without_tax_labour_amount += ($value->amount - $tax_amount);
                         } else {
                             $additional_labour_details[$key]['amount'] = '0.00';
                         }
@@ -519,8 +519,8 @@ class VehicleInwardController extends Controller
                         $schedule_part_details[$key]['is_fixed_schedule'] = $value->is_fixed_schedule;
                         $total_amount = 0;
                         if ($value->is_free_service != 1 && (in_array($value->split_order_type_id, $customer_paid_type_id) || !$value->split_order_type_id) && !$value->removal_reason_id) {
+                            $tax_amount = 0;
                             if ($value->part->taxCode) {
-                                $tax_amount = 0;
                                 foreach ($value->part->taxCode->taxes as $tax_key => $tax) {
                                     $percentage_value = 0;
                                     if ($tax->type_id == $tax_type) {
@@ -530,12 +530,13 @@ class VehicleInwardController extends Controller
                                     $tax_amount += $percentage_value;
                                 }
                                 $total_schedule_part_tax += $tax_amount;
-                                $total_amount = $tax_amount + $value->amount;
+                                // $total_amount = $tax_amount + $value->amount;
+                                $total_amount = $value->amount;
                                 $total_schedule_part_amount += $total_amount;
                             } else {
                                 $total_schedule_part_amount += $value->amount;
                             }
-                            $total_schedule_without_tax_part_amount += $value->amount;
+                            $total_schedule_without_tax_part_amount += ($value->amount - $tax_amount);
                         } else {
                             $schedule_part_details[$key]['amount'] = '0.00';
                         }
@@ -553,8 +554,8 @@ class VehicleInwardController extends Controller
                         $additional_part_details[$key]['is_fixed_schedule'] = $value->is_fixed_schedule;
                         $total_amount = 0;
                         if ($value->is_free_service != 1 && (in_array($value->split_order_type_id, $customer_paid_type_id) || !$value->split_order_type_id) && !$value->removal_reason_id) {
+                            $tax_amount = 0;
                             if ($value->part->taxCode) {
-                                $tax_amount = 0;
                                 foreach ($value->part->taxCode->taxes as $tax_key => $tax) {
                                     $percentage_value = 0;
                                     if ($tax->type_id == $tax_type) {
@@ -564,12 +565,13 @@ class VehicleInwardController extends Controller
                                     $tax_amount += $percentage_value;
                                 }
                                 $total_payable_part_tax += $tax_amount;
-                                $total_amount = $tax_amount + $value->amount;
+                                // $total_amount = $tax_amount + $value->amount;
+                                $total_amount = $value->amount;
                                 $total_payable_part_amount += $total_amount;
                             } else {
                                 $total_payable_part_amount += $value->amount;
                             }
-                            $total_payable_without_tax_part_amount += $value->amount;
+                            $total_payable_without_tax_part_amount += ($value->amount - $tax_amount);
                         } else {
                             $additional_part_details[$key]['amount'] = '0.00';
                         }
@@ -2874,7 +2876,7 @@ class VehicleInwardController extends Controller
                         $tax_type = 1160; //Within State
                     }
 
-                    $taxes = Tax::get();
+                    $taxes = Tax::whereIn('id', [1, 2, 3])->get();
 
                     $estimate_id = JobOrderEstimate::where('job_order_id', $job_order->id)->where('status_id', 10071)->first();
                     if ($estimate_id) {
@@ -3298,7 +3300,7 @@ class VehicleInwardController extends Controller
                 $tax_type = 1160; //Within State
             }
 
-            $taxes = Tax::get();
+            $taxes = Tax::whereIn('id', [1, 2, 3])->get();
 
             if ($part->taxCode) {
                 foreach ($part->taxCode->taxes as $tax_key => $value) {
@@ -3609,7 +3611,7 @@ class VehicleInwardController extends Controller
                 $tax_type = 1160; //Within State
             }
 
-            $taxes = Tax::get();
+            $taxes = Tax::whereIn('id', [1, 2, 3])->get();
 
             if ($repair_order->taxCode) {
                 foreach ($repair_order->taxCode->taxes as $tax_key => $value) {
@@ -3704,7 +3706,7 @@ class VehicleInwardController extends Controller
             $tax_type = 1160; //Within State
         }
 
-        $taxes = Tax::get();
+        $taxes = Tax::whereIn('id', [1, 2, 3])->get();
 
         $parts_amount = 0;
         $labour_amount = 0;
@@ -3726,7 +3728,8 @@ class VehicleInwardController extends Controller
                         }
                     }
 
-                    $total_amount = $tax_amount + $labour->amount;
+                    // $total_amount = $tax_amount + $labour->amount;
+                    $total_amount = $labour->amount;
                     $total_amount = number_format((float) $total_amount, 2, '.', '');
                     $labour_amount += $total_amount;
                 }
@@ -3752,7 +3755,8 @@ class VehicleInwardController extends Controller
                         }
                     }
 
-                    $total_amount = $tax_amount + $parts->amount;
+                    // $total_amount = $tax_amount + $parts->amount;
+                    $total_amount = $parts->amount;
                     $total_amount = number_format((float) $total_amount, 2, '.', '');
                     $parts_amount += $total_amount;
                 }
@@ -5983,7 +5987,7 @@ class VehicleInwardController extends Controller
             $customer_approved_amount = $job_order->estimated_amount ? $job_order->estimated_amount : '0';
 
             //Count Tax Type
-            $taxes = Tax::get();
+            $taxes = Tax::whereIn('id', [1, 2, 3])->get();
 
             $oem_recomentaion_labour_amount = 0;
             $additional_rot_and_parts_labour_amount = 0;
@@ -6005,8 +6009,8 @@ class VehicleInwardController extends Controller
                     if (in_array($labour->split_order_type_id, $customer_paid_type_id) || !$labour->split_order_type_id) {
                         //SCHEDULE MAINTANENCE
                         if ($labour->is_recommended_by_oem == 1 && $labour->is_free_service != 1) {
+                            $tax_amount = 0;
                             if ($labour->repairOrder->taxCode) {
-                                $tax_amount = 0;
                                 $total_amount = 0;
                                 foreach ($labour->repairOrder->taxCode->taxes as $tax_key => $value) {
                                     $percentage_value = 0;
@@ -6018,16 +6022,17 @@ class VehicleInwardController extends Controller
                                 }
                                 $total_schedule_labour_tax += $tax_amount;
                                 $total_amount = $tax_amount + $labour->amount;
+                                // $total_amount = $labour->amount;
                                 $total_schedule_labour_amount += $total_amount;
                             } else {
                                 $total_schedule_labour_amount += $labour->amount;
                             }
-                            $total_schedule_labour_without_tax_amount += $labour->amount;
+                            $total_schedule_labour_without_tax_amount += ($labour->amount - $tax_amount);
                         }
                         //PAYABLE
                         if ($labour->is_recommended_by_oem == 0 && $labour->is_free_service != 1) {
+                            $tax_amount = 0;
                             if ($labour->repairOrder->taxCode) {
-                                $tax_amount = 0;
                                 $total_amount = 0;
                                 foreach ($labour->repairOrder->taxCode->taxes as $tax_key => $value) {
                                     $percentage_value = 0;
@@ -6038,12 +6043,13 @@ class VehicleInwardController extends Controller
                                     $tax_amount += $percentage_value;
                                 }
                                 $total_payable_labour_tax += $tax_amount;
-                                $total_amount = $tax_amount + $labour->amount;
+                                // $total_amount = $tax_amount + $labour->amount;
+                                $total_amount = $labour->amount;
                                 $total_payable_labour_amount += $total_amount;
                             } else {
                                 $total_payable_labour_amount += $labour->amount;
                             }
-                            $total_payable_labour_without_tax_amount += $labour->amount;
+                            $total_payable_labour_without_tax_amount += ($labour->amount - $tax_amount);
                         }
                     }
                 }
@@ -6062,8 +6068,8 @@ class VehicleInwardController extends Controller
                     if (in_array($parts->split_order_type_id, $customer_paid_type_id) || !$parts->split_order_type_id) {
                         //SCHEDULE MAINTANENCE
                         if ($parts->is_oem_recommended == 1 && $parts->is_free_service != 1) {
+                            $tax_amount = 0;
                             if ($parts->part->taxCode) {
-                                $tax_amount = 0;
                                 $total_amount = 0;
                                 foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
                                     $percentage_value = 0;
@@ -6074,16 +6080,17 @@ class VehicleInwardController extends Controller
                                     $tax_amount += $percentage_value;
                                 }
                                 $total_schedule_part_tax += $tax_amount;
-                                $total_amount = $tax_amount + $parts->amount;
+                                // $total_amount = $tax_amount + $parts->amount;
+                                $total_amount = $parts->amount;
                                 $total_schedule_part_amount += $total_amount;
                             } else {
                                 $total_schedule_part_amount += $parts->amount;
                             }
-                            $total_schedule_part_without_tax_amount += $parts->amount;
+                            $total_schedule_part_without_tax_amount += ($parts->amount - $tax_amount);
                         }
                         if ($parts->is_oem_recommended == 0 && $parts->is_free_service != 1) {
+                            $tax_amount = 0;
                             if ($parts->part->taxCode) {
-                                $tax_amount = 0;
                                 $total_amount = 0;
                                 foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
                                     $percentage_value = 0;
@@ -6094,12 +6101,13 @@ class VehicleInwardController extends Controller
                                     $tax_amount += $percentage_value;
                                 }
                                 $total_payable_part_tax += $tax_amount;
-                                $total_amount = $tax_amount + $parts->amount;
+                                // $total_amount = $tax_amount + $parts->amount;
+                                $total_amount = $parts->amount;
                                 $total_payable_part_amount += $total_amount;
                             } else {
                                 $total_payable_part_amount += $parts->amount;
                             }
-                            $total_payable_part_without_tax_amount += $parts->amount;
+                            $total_payable_part_without_tax_amount += ($parts->amount - $tax_amount);
                         }
                     }
                 }
@@ -6217,7 +6225,7 @@ class VehicleInwardController extends Controller
             }
 
             //CHECK ALL INWARD MANDATORY FORM ARE FILLED
-            $job_order = jobOrder::find($request->job_order_id);
+            $job_order = jobOrder::with(['vehicle'])->find($request->job_order_id);
 
             $inward_process_check = $job_order->inwardProcessChecks()
                 ->where('tab_id', '!=', 8706)
@@ -6269,6 +6277,28 @@ class VehicleInwardController extends Controller
                 ]);
             }
 
+            //Check Vehicle Model
+            if (!$job_order->vehicle->model_id) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => [
+                        'Please Update Vehicle Model',
+                    ],
+                ]);
+            }
+
+            //Check Customer
+            if (!$job_order->customer_id) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => [
+                        'Please Update Customer',
+                    ],
+                ]);
+            }
+
             $job_order->estimated_amount = $request->estimated_amount;
             $estimated_delivery_date = $request->est_delivery_date . ' ' . $request->est_delivery_time;
             $job_order->estimated_delivery_date = date('Y-m-d H:i:s', strtotime($estimated_delivery_date));
@@ -6302,6 +6332,9 @@ class VehicleInwardController extends Controller
                     }
                 }
             }
+
+            //Generate Estimation PDF
+            $generate_estimate_pdf = JobOrder::generateEstimatePDF($job_order->id);
 
             DB::commit();
 
@@ -7724,7 +7757,7 @@ class VehicleInwardController extends Controller
                 'parts.code',
                 'part_stocks.stock',
                 'part_stocks.mrp',
-                'part_stocks.cost_price'
+                'part_stocks.mrp as cost_price'
             )
                 ->leftJoin('part_stocks', function ($join) use ($outlet_id) {
                     $join->on('part_stocks.part_id', 'parts.id')

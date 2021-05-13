@@ -293,7 +293,7 @@ class JobCardController extends Controller
             }
 
             //Count Tax Type
-            $taxes = Tax::get();
+            $taxes = Tax::whereIn('id', [1, 2, 3])->get();
             $customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
             $parts_amount = 0;
             $labour_amount = 0;
@@ -862,7 +862,7 @@ class JobCardController extends Controller
             }
 
             //Count Tax Type
-            $taxes = Tax::get();
+            $taxes = Tax::whereIn('id', [1, 2, 3])->get();
 
             $labour_details = array();
             if ($job_card->jobOrder->jobOrderRepairOrders) {
@@ -1098,11 +1098,11 @@ class JobCardController extends Controller
         // dd($r->all());
         try {
 
-            $osl_work_ids = JobOrderRepairOrder::join('repair_orders', 'repair_orders.id', 'job_order_repair_orders.repair_order_id')->join('job_cards', 'job_cards.job_order_id', 'job_order_repair_orders.job_order_id')->where('repair_orders.is_editable', 1)->where('job_cards.id', $r->id)->pluck('job_order_repair_orders.id')->toArray();
+            //$osl_work_ids = JobOrderRepairOrder::join('repair_orders', 'repair_orders.id', 'job_order_repair_orders.repair_order_id')->join('job_cards', 'job_cards.job_order_id', 'job_order_repair_orders.job_order_id')->where('repair_orders.is_editable', 1)->where('job_cards.id', $r->id)->pluck('job_order_repair_orders.id')->toArray();
 
-            if (!$osl_work_ids) {
-                $osl_work_ids = [];
-            }
+            //if (!$osl_work_ids) {
+            $osl_work_ids = [];
+            //}
 
             //JOB CARD
             $job_card = JobCard::with([
@@ -3204,7 +3204,7 @@ class JobCardController extends Controller
         }
 
         //Count Tax Type
-        $taxes = Tax::get();
+        $taxes = Tax::whereIn('id', [1, 2, 3])->get();
 
         $oem_recomentaion_labour_amount = 0;
         $additional_rot_and_parts_labour_amount = 0;
@@ -3226,8 +3226,8 @@ class JobCardController extends Controller
                 if (in_array($labour->split_order_type_id, $customer_paid_type_id) || !$labour->split_order_type_id) {
                     //SCHEDULE MAINTANENCE
                     if ($labour->is_recommended_by_oem == 1 && $labour->is_free_service != 1) {
+                        $tax_amount = 0;
                         if ($labour->repairOrder->taxCode) {
-                            $tax_amount = 0;
                             $total_amount = 0;
                             foreach ($labour->repairOrder->taxCode->taxes as $tax_key => $value) {
                                 $percentage_value = 0;
@@ -3238,17 +3238,18 @@ class JobCardController extends Controller
                                 $tax_amount += $percentage_value;
                             }
                             $total_schedule_labour_tax += $tax_amount;
-                            $total_amount = $tax_amount + $labour->amount;
+                            // $total_amount = $tax_amount + $labour->amount;
+                            $total_amount = $labour->amount;
                             $total_schedule_labour_amount += $total_amount;
                         } else {
                             $total_schedule_labour_amount += $labour->amount;
                         }
-                        $total_schedule_labour_without_tax_amount += $labour->amount;
+                        $total_schedule_labour_without_tax_amount += ($labour->amount - $tax_amount);
                     }
                     //PAYABLE
                     if ($labour->is_recommended_by_oem == 0 && $labour->is_free_service != 1) {
+                        $tax_amount = 0;
                         if ($labour->repairOrder->taxCode) {
-                            $tax_amount = 0;
                             $total_amount = 0;
                             foreach ($labour->repairOrder->taxCode->taxes as $tax_key => $value) {
                                 $percentage_value = 0;
@@ -3259,12 +3260,13 @@ class JobCardController extends Controller
                                 $tax_amount += $percentage_value;
                             }
                             $total_payable_labour_tax += $tax_amount;
-                            $total_amount = $tax_amount + $labour->amount;
+                            // $total_amount = $tax_amount + $labour->amount;
+                            $total_amount = $labour->amount;
                             $total_payable_labour_amount += $total_amount;
                         } else {
                             $total_payable_labour_amount += $labour->amount;
                         }
-                        $total_payable_labour_without_tax_amount += $labour->amount;
+                        $total_payable_labour_without_tax_amount += ($labour->amount - $tax_amount);
                     }
                 }
             }
@@ -3283,8 +3285,8 @@ class JobCardController extends Controller
                 if (in_array($parts->split_order_type_id, $customer_paid_type_id) || !$parts->split_order_type_id) {
                     //SCHEDULE MAINTANENCE
                     if ($parts->is_oem_recommended == 1 && $parts->is_free_service != 1) {
+                        $tax_amount = 0;
                         if ($parts->part->taxCode) {
-                            $tax_amount = 0;
                             $total_amount = 0;
                             foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
                                 $percentage_value = 0;
@@ -3295,16 +3297,17 @@ class JobCardController extends Controller
                                 $tax_amount += $percentage_value;
                             }
                             $total_schedule_part_tax += $tax_amount;
-                            $total_amount = $tax_amount + $parts->amount;
+                            // $total_amount = $tax_amount + $parts->amount;
+                            $total_amount = $parts->amount;
                             $total_schedule_part_amount += $total_amount;
                         } else {
                             $total_schedule_part_amount += $parts->amount;
                         }
-                        $total_schedule_part_without_tax_amount += $parts->amount;
+                        $total_schedule_part_without_tax_amount += ($parts->amount - $tax_amount);
                     }
                     if ($parts->is_oem_recommended == 0 && $parts->is_free_service != 1) {
+                        $tax_amount = 0;
                         if ($parts->part->taxCode) {
-                            $tax_amount = 0;
                             $total_amount = 0;
                             foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
                                 $percentage_value = 0;
@@ -3315,12 +3318,13 @@ class JobCardController extends Controller
                                 $tax_amount += $percentage_value;
                             }
                             $total_payable_part_tax += $tax_amount;
-                            $total_amount = $tax_amount + $parts->amount;
+                            // $total_amount = $tax_amount + $parts->amount;
+                            $total_amount = $parts->amount;
                             $total_payable_part_amount += $total_amount;
                         } else {
                             $total_payable_part_amount += $parts->amount;
                         }
-                        $total_payable_part_without_tax_amount += $parts->amount;
+                        $total_payable_part_without_tax_amount += ($parts->amount - $tax_amount);
                     }
                 }
             }
@@ -3568,7 +3572,7 @@ class JobCardController extends Controller
             $tax_type = 1160; //Within State
         }
 
-        $taxes = Tax::get();
+        $taxes = Tax::whereIn('id', [1, 2, 3])->get();
 
         $parts_amount = 0;
         $labour_amount = 0;
@@ -3932,21 +3936,21 @@ class JobCardController extends Controller
             $job_card->updated_at = Carbon::now();
             $job_card->save();
 
-            $estimate_file_name = $job_card->id . '_revised_estimate.pdf';
-            $directoryPath = storage_path('app/public/gigo/pdf/' . $estimate_file_name);
-            if (!file_exists($directoryPath)) {
+            // $estimate_file_name = $job_card->id . '_revised_estimate.pdf';
+            // $directoryPath = storage_path('app/public/gigo/pdf/' . $estimate_file_name);
+            // if (!file_exists($directoryPath)) {
 
-                //Generate Revised Estimate PDF
-                $generate_estimate_pdf = JobCard::generateRevisedEstimatePDF($job_card->id);
+            //Generate Revised Estimate PDF
+            $generate_estimate_pdf = JobCard::generateRevisedEstimatePDF($job_card->id);
 
-                if (!$generate_estimate_pdf) {
-                    return response()->json([
-                        'success' => false,
-                        'error' => 'Validation Error',
-                        'errors' => ['Something went on Server.Please Try again later!!'],
-                    ]);
-                }
+            if (!$generate_estimate_pdf) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => ['Something went on Server.Please Try again later!!'],
+                ]);
             }
+            // }
 
             if ($request->type == 2) {
 
@@ -5547,7 +5551,7 @@ class JobCardController extends Controller
             }
 
             $job_card['creation_date'] = date('d/m/Y', strtotime($job_card->created_at));
-            $taxes = Tax::get();
+            $taxes = Tax::whereIn('id', [1, 2, 3])->get();
 
             $parts_amount = 0;
             $labour_amount = 0;
@@ -5566,7 +5570,7 @@ class JobCardController extends Controller
                 $tax_type = 1160; //Within State
             }
             //Count Tax Type
-            $taxes = Tax::get();
+            $taxes = Tax::whereIn('id', [1, 2, 3])->get();
 
             $unassigned_labour_count = 0;
             $unassigned_part_count = 0;
@@ -5580,7 +5584,8 @@ class JobCardController extends Controller
                     $labour_details[$key]['repair_order_id'] = $labour->repairOrder->id;
                     $labour_details[$key]['name'] = $labour->repairOrder->code . ' | ' . $labour->repairOrder->name;
                     $labour_details[$key]['hsn_code'] = $labour->repairOrder->taxCode ? $labour->repairOrder->taxCode->code : '-';
-                    $labour_details[$key]['qty'] = $labour->qty;
+                    // $labour_details[$key]['qty'] = $labour->qty;
+                    $labour_details[$key]['qty'] = 1;
                     $labour_details[$key]['amount'] = $labour->amount;
                     $labour_details[$key]['is_free_service'] = $labour->is_free_service;
                     $labour_details[$key]['split_order_type_id'] = $labour->split_order_type_id;
@@ -5608,6 +5613,7 @@ class JobCardController extends Controller
                     $total_amount = number_format((float) $total_amount, 2, '.', '');
 
                     $labour_details[$key]['tax_amount'] = number_format((float) $tax_amount, 2, '.', '');
+                    $labour_details[$key]['amount'] = $total_amount;
                     $labour_details[$key]['total_amount'] = $total_amount;
 
                     if ($labour->split_order_type_id == null) {
@@ -5640,16 +5646,39 @@ class JobCardController extends Controller
                         // $part_details[$key]['qty'] = $parts->qty;
                         $part_details[$key]['qty'] = $total_qty;
                         $part_details[$key]['rate'] = $parts->rate;
+                        $part_details[$key]['mrp'] = $parts->rate;
+                        $part_details[$key]['price'] = $parts->rate;
                         $part_details[$key]['amount'] = number_format((float) $billing_parts_amount, 2, '.', '');
                         $part_details[$key]['is_free_service'] = $parts->is_free_service;
                         $part_details[$key]['split_order_type_id'] = $parts->split_order_type_id;
+
+                        $tax_percent = 0;
+                        $price = $parts->rate;
+
+                        if ($parts->part->taxCode) {
+                            foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
+                                if ($value->type_id == $tax_type) {
+                                    $tax_percent += $value->pivot->percentage;
+                                }
+                            }
+
+                            $tax_percent = (100 + $tax_percent) / 100;
+
+                            $price = $parts->rate / $tax_percent;
+                            $price = number_format((float) $price, 2, '.', '');
+                        }
+                        $part_details[$key]['price'] = $price;
+
+                        $total_price = $price * $parts->qty;
+                        $part_details[$key]['taxable_amount'] = $total_price;
+
                         $tax_amount = 0;
                         $tax_values = array();
                         if ($parts->part->taxCode) {
                             foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
                                 $percentage_value = 0;
                                 if ($value->type_id == $tax_type) {
-                                    $percentage_value = ($billing_parts_amount * $value->pivot->percentage) / 100;
+                                    $percentage_value = ($total_price * $value->pivot->percentage) / 100;
                                     $percentage_value = number_format((float) $percentage_value, 2, '.', '');
                                 }
                                 $tax_values[$tax_key]['tax_value'] = $percentage_value;
@@ -5663,7 +5692,8 @@ class JobCardController extends Controller
 
                         $part_details[$key]['tax_values'] = $tax_values;
 
-                        $total_amount = $tax_amount + $billing_parts_amount;
+                        // $total_amount = $tax_amount + $billing_parts_amount;
+                        $total_amount = $billing_parts_amount;
                         $total_amount = number_format((float) $total_amount, 2, '.', '');
 
                         $part_details[$key]['total_amount'] = $total_amount;
@@ -5898,7 +5928,7 @@ class JobCardController extends Controller
             }
 
             //Count Tax Type
-            $taxes = Tax::get();
+            $taxes = Tax::whereIn('id', [1, 2, 3])->get();
 
             $labour_details = array();
             if ($job_card->jobOrder->jobOrderRepairOrders) {
@@ -5912,7 +5942,8 @@ class JobCardController extends Controller
                         $labour_details[$key]['repair_order_id'] = $labour->repairOrder->id;
                         $labour_details[$key]['name'] = $labour->repairOrder->code . ' | ' . $labour->repairOrder->name;
                         $labour_details[$key]['hsn_code'] = $labour->repairOrder->taxCode ? $labour->repairOrder->taxCode->code : '-';
-                        $labour_details[$key]['qty'] = $labour->qty;
+                        // $labour_details[$key]['qty'] = $labour->qty;
+                        $labour_details[$key]['qty'] = 1;
                         $labour_details[$key]['amount'] = $labour->amount;
                         $labour_details[$key]['is_free_service'] = $labour->is_free_service;
                         $labour_details[$key]['split_order_type_id'] = $labour->split_order_type_id;
@@ -6011,7 +6042,7 @@ class JobCardController extends Controller
                     //Check Parts Issued or Not
                     $issued_qty = JobOrderIssuedPart::where('job_order_part_id', $parts->id)->sum('issued_qty');
 
-                    //Check Parts Retunred or Not
+                    //Check Parts Returned or Not
                     $returned_qty = JobOrderReturnedPart::where('job_order_part_id', $parts->id)->sum('returned_qty');
 
                     $total_qty = $issued_qty - $returned_qty;
@@ -6019,31 +6050,55 @@ class JobCardController extends Controller
                     if ($total_qty > 0) {
                         $billing_parts_amount = 0;
                         $billing_parts_amount = $total_qty * $parts->rate;
+
+                        $part_sub_total = 0;
+                        $total_amount = 0;
+                        $part_details[$key]['id'] = $parts->id;
+                        $part_details[$key]['part_id'] = $parts->part->id;
+                        $part_details[$key]['name'] = $parts->part->code . ' | ' . $parts->part->name;
+                        $part_details[$key]['hsn_code'] = $parts->part->taxCode ? $parts->part->taxCode->code : '-';
+                        // $part_details[$key]['qty'] = $parts->qty;
+                        $part_details[$key]['qty'] = $total_qty;
+                        $part_details[$key]['mrp'] = $parts->rate;
+                        $part_details[$key]['price'] = $parts->rate;
+
+                        // $part_details[$key]['rate'] = $parts->rate;
+                        // $part_details[$key]['amount'] = $parts->amount;
+                        $part_details[$key]['amount'] = number_format((float) $billing_parts_amount, 2, '.', '');
+                        $part_details[$key]['is_free_service'] = $parts->is_free_service;
+                        $part_details[$key]['split_order_type_id'] = $parts->split_order_type_id;
+                        $tax_amount = 0;
+                        $part_details[$key]['tax_code'] = $parts->part->taxCode;
+
+                        $tax_percent = 0;
+                        $price = $parts->rate;
+
+                        if ($parts->part->taxCode) {
+                            foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
+                                if ($value->type_id == $tax_type) {
+                                    $tax_percent += $value->pivot->percentage;
+                                }
+                            }
+
+                            $tax_percent = (100 + $tax_percent) / 100;
+
+                            $price = $parts->rate / $tax_percent;
+                            $price = number_format((float) $price, 2, '.', '');
+                        }
+                        $part_details[$key]['price'] = $price;
+                        $total_price = $price * $parts->qty;
+                        $total_price = number_format((float) $total_price, 2, '.', '');
+                        $part_details[$key]['taxable_amount'] = $total_price;
+
+                        $tax_values = array();
+
                         if (in_array($parts->split_order_type_id, $customer_paid_type_id)) {
-                            $part_sub_total = 0;
-                            $total_amount = 0;
-                            $part_details[$key]['id'] = $parts->id;
-                            $part_details[$key]['part_id'] = $parts->part->id;
-                            $part_details[$key]['name'] = $parts->part->code . ' | ' . $parts->part->name;
-                            $part_details[$key]['hsn_code'] = $parts->part->taxCode ? $parts->part->taxCode->code : '-';
-                            // $part_details[$key]['qty'] = $parts->qty;
-                            $part_details[$key]['qty'] = $total_qty;
-                            $part_details[$key]['rate'] = $parts->rate;
-                            // $part_details[$key]['amount'] = $parts->amount;
-                            $part_details[$key]['amount'] = number_format((float) $billing_parts_amount, 2, '.', '');
-                            $part_details[$key]['is_free_service'] = $parts->is_free_service;
-                            $part_details[$key]['split_order_type_id'] = $parts->split_order_type_id;
-                            $tax_amount = 0;
-                            $part_details[$key]['tax_code'] = $parts->part->taxCode;
-
-                            $tax_values = array();
-
                             if ($parts->is_free_service != 1) {
                                 if ($parts->part->taxCode) {
                                     foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
                                         $percentage_value = 0;
                                         if ($value->type_id == $tax_type) {
-                                            $percentage_value = ($billing_parts_amount * $value->pivot->percentage) / 100;
+                                            $percentage_value = ($total_price * $value->pivot->percentage) / 100;
                                             $percentage_value = number_format((float) $percentage_value, 2, '.', '');
                                         }
                                         $tax_values[$tax_key]['tax_value'] = $percentage_value;
@@ -6054,7 +6109,8 @@ class JobCardController extends Controller
                                         $tax_values[$i]['tax_value'] = 0.00;
                                     }
                                 }
-                                $total_amount = $tax_amount + $billing_parts_amount;
+                                // $total_amount = $tax_amount + $billing_parts_amount;
+                                $total_amount = $billing_parts_amount;
                                 $total_amount = number_format((float) $total_amount, 2, '.', '');
 
                                 $part_details[$key]['tax_values'] = $tax_values;
@@ -6076,27 +6132,11 @@ class JobCardController extends Controller
                             $part_details[$key]['tax_values'] = $tax_values;
 
                         } else {
-                            $part_sub_total = 0;
-                            $total_amount = 0;
-                            $part_details[$key]['id'] = $parts->id;
-                            $part_details[$key]['part_id'] = $parts->part->id;
-                            $part_details[$key]['name'] = $parts->part->code . ' | ' . $parts->part->name;
-                            $part_details[$key]['hsn_code'] = $parts->part->taxCode ? $parts->part->taxCode->code : '-';
-                            // $part_details[$key]['qty'] = $parts->qty;
-                            $part_details[$key]['qty'] = $total_qty;
-                            $part_details[$key]['rate'] = $parts->rate;
-                            // $part_details[$key]['amount'] = $parts->amount;
-                            $part_details[$key]['amount'] = number_format((float) $billing_parts_amount, 2, '.', '');
-                            $part_details[$key]['is_free_service'] = $parts->is_free_service;
-                            $part_details[$key]['split_order_type_id'] = $parts->split_order_type_id;
-                            $tax_amount = 0;
-                            $part_details[$key]['tax_code'] = $parts->part->taxCode;
-                            $tax_values = array();
                             if ($parts->part->taxCode) {
                                 foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
                                     $percentage_value = 0;
                                     if ($value->type_id == $tax_type) {
-                                        $percentage_value = ($billing_parts_amount * $value->pivot->percentage) / 100;
+                                        $percentage_value = ($total_price * $value->pivot->percentage) / 100;
                                         $percentage_value = number_format((float) $percentage_value, 2, '.', '');
                                     }
                                     $tax_values[$tax_key]['tax_value'] = $percentage_value;
@@ -6119,7 +6159,6 @@ class JobCardController extends Controller
                             $parts_total_amount += $total_amount;
                         }
                     }
-
                 }
                 $job_card['parts_total_amount'] = $parts_total_amount;
             }

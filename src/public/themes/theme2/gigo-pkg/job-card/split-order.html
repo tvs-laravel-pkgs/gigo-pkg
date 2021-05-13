@@ -5,7 +5,8 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/job-card/table-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                    <a href="#!/job-card/table-list" type="button" class="btn-back btn-img"><img class="img-responsive"
+                            src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
                     <h1 class="title"><b>Split Order</b></h1>
@@ -22,7 +23,8 @@
                 <jobcard-tabs ng-init="active_tab = 'split-order'"></jobcard-tabs>
                 <div class="tab-form-body">
                     <div class="tab-content">
-                        <div class="tab-pane fade in active" id="split-order" data-animation="fadeInUp" data-animation-delay="300">
+                        <div class="tab-pane fade in active" id="split-order" data-animation="fadeInUp"
+                            data-animation-delay="300">
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -32,77 +34,113 @@
                                         <div class="panel-group" id="accordion">
                                             <div class="panel panel-default type-3" ng-if="unassigned_total_count > 0">
                                                 <div class="panel-heading">
-                                                    <a class="panel-title in unassigned_tab" data-toggle="collapse" data-parent="#accordion" data-target="#unassigned_items">
+                                                    <a class="panel-title in unassigned_tab" data-toggle="collapse"
+                                                        data-parent="#accordion" data-target="#unassigned_items">
                                                         Unassigned Items - {{unassigned_total_count}} Items
                                                         <span class="arrow"></span>
                                                         <span class="title-right">
-                                                            <img class="img-responsive rupee-icon" src="./public/theme/img/content/rupee-blue.svg" alt="Rupee" />
+                                                            <img class="img-responsive rupee-icon"
+                                                                src="./public/theme/img/content/rupee-blue.svg"
+                                                                alt="Rupee" />
                                                             {{unassigned_total_amount}}
                                                         </span>
                                                     </a>
                                                 </div>
-                                                <div id="unassigned_items" class="panel-collapse collapse in" ng-if="unassigned_total_count > 0">
+                                                <div id="unassigned_items" class="panel-collapse collapse in"
+                                                    ng-if="unassigned_total_count > 0">
                                                     <div class="panel-body">
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="table-responsive">
-                                                                    <table id="table1" class="table split-order-table table-form childgrid">
+                                                                    <table id="table1"
+                                                                        class="table split-order-table table-form childgrid">
                                                                         <thead>
                                                                             <tr>
-                                                                                <th class="action" ng-if="job_card.status_id == 8231">Action</th>
+                                                                                <th class="action"
+                                                                                    ng-if="job_card.status_id == 8231">
+                                                                                    Action</th>
                                                                                 <th>Item Type</th>
                                                                                 <th>Free Service</th>
                                                                                 <th>Item</th>
                                                                                 <th>Qty</th>
-                                                                                <th class="text-right">Rate</th>
-                                                                                <th class="text-right">Amount</th>
-                                                                                <th class="text-right" ng-repeat="(tax_key,tax) in extras.taxes">{{tax.name}}</th>
+                                                                                <th class="text-right">MRP</th>
+                                                                                <th class="text-right">Price</th>
+                                                                                <th class="text-right"
+                                                                                    ng-repeat="(tax_key,tax) in extras.taxes">
+                                                                                    {{tax.name}}</th>
                                                                                 <th class="text-right">Total Tax</th>
                                                                                 <th class="text-right">Total Amount</th>
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody class="connectedSortable">
-                                                                            <tr data-itemid="labour.id" data-split_id="split_order_type.id" ng-if="labour.split_order_type_id == null" ng-repeat="(labour_key,labour) in labour_details">
-                                                                                <td class="action width-100" ng-if="job_card.status_id == 8231">
-                                                                                    <a href="" ng-click="splitOrderLabourChange(labour.id,0,'',split_order_type.id)">
-                                                                                        <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
+                                                                            <tr data-itemid="labour.id"
+                                                                                data-split_id="split_order_type.id"
+                                                                                ng-if="labour.split_order_type_id == null"
+                                                                                ng-repeat="(labour_key,labour) in labour_details">
+                                                                                <td class="action width-100"
+                                                                                    ng-if="job_card.status_id == 8231">
+                                                                                    <a href=""
+                                                                                        ng-click="splitOrderLabourChange(labour.id,0,'',split_order_type.id)">
+                                                                                        <img class="img-responsive"
+                                                                                            src="./public/theme/img/table/add-hover.svg"
+                                                                                            alt="Edit" />
                                                                                     </a>
                                                                                 </td>
                                                                                 <td>Labour</td>
                                                                                 <td ng-if="labour.is_free_service == 1">
                                                                                     <p class="text-danger">Yes</p>
                                                                                 </td>
-                                                                                <td ng-if="labour.is_free_service == 0 || labour.is_free_service == NULL">
+                                                                                <td
+                                                                                    ng-if="labour.is_free_service == 0 || labour.is_free_service == NULL">
                                                                                     <p class="text-success">No</p>
                                                                                 </td>
                                                                                 <td>{{labour.name}}</td>
                                                                                 <td>{{labour.qty}}</td>
-                                                                                <td class="text-right">{{labour.amount}}</td>
-                                                                                <td class="text-right">{{labour.amount}}</td>
-                                                                                <td class="text-right" ng-repeat="(tax_index,tax_value) in labour.tax_values">{{tax_value.tax_value}}</td>
-                                                                                <td class="text-right">{{labour.tax_amount}}</td>
-                                                                                <td class="text-right">{{labour.total_amount}}</td>
+                                                                                <td class="text-right">{{labour.amount}}
+                                                                                </td>
+                                                                                <td class="text-right">{{labour.amount}}
+                                                                                </td>
+                                                                                <td class="text-right"
+                                                                                    ng-repeat="(tax_index,tax_value) in labour.tax_values">
+                                                                                    {{tax_value.tax_value}}</td>
+                                                                                <td class="text-right">
+                                                                                    {{labour.tax_amount}}</td>
+                                                                                <td class="text-right">
+                                                                                    {{labour.total_amount}}</td>
                                                                             </tr>
-                                                                            <tr data-itemid="part.id" data-split_id="split_order_type.id" ng-if="part.split_order_type_id == null" ng-repeat="(part_key,part) in part_details">
-                                                                                <td class="action width-100" ng-if="job_card.status_id == 8231">
-                                                                                    <a href="" ng-click="splitOrderPartChange(part.id,0,'',split_order_type.id)">
-                                                                                        <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
+                                                                            <tr data-itemid="part.id"
+                                                                                data-split_id="split_order_type.id"
+                                                                                ng-if="part.split_order_type_id == null"
+                                                                                ng-repeat="(part_key,part) in part_details">
+                                                                                <td class="action width-100"
+                                                                                    ng-if="job_card.status_id == 8231">
+                                                                                    <a href=""
+                                                                                        ng-click="splitOrderPartChange(part.id,0,'',split_order_type.id)">
+                                                                                        <img class="img-responsive"
+                                                                                            src="./public/theme/img/table/add-hover.svg"
+                                                                                            alt="Edit" />
                                                                                     </a>
                                                                                 </td>
                                                                                 <td>Part</td>
                                                                                 <td ng-if="part.is_free_service == 1">
                                                                                     <p class="text-danger">Yes</p>
                                                                                 </td>
-                                                                                <td ng-if="part.is_free_service == 0 || part.is_free_service == NULL">
+                                                                                <td
+                                                                                    ng-if="part.is_free_service == 0 || part.is_free_service == NULL">
                                                                                     <p class="text-success">No</p>
                                                                                 </td>
                                                                                 <td>{{part.name}}</td>
                                                                                 <td>{{part.qty}}</td>
-                                                                                <td class="text-right">{{part.rate}}</td>
-                                                                                <td class="text-right">{{part.amount}}</td>
-                                                                                <td class="text-right" ng-repeat="(tax_index,tax_value) in part.tax_values">{{tax_value.tax_value}}</td>
-                                                                                <td class="text-right">{{part.tax_amount}}</td>
-                                                                                <td class="text-right">{{part.total_amount}}</td>
+                                                                                <td class="text-right">{{part.mrp}}</td>
+                                                                                <td class="text-right">{{part.price}}
+                                                                                </td>
+                                                                                <td class="text-right"
+                                                                                    ng-repeat="(tax_index,tax_value) in part.tax_values">
+                                                                                    {{tax_value.tax_value}}</td>
+                                                                                <td class="text-right">
+                                                                                    {{part.tax_amount}}</td>
+                                                                                <td class="text-right">
+                                                                                    {{part.total_amount}}</td>
                                                                             </tr>
                                                                         </tbody>
                                                                     </table>
@@ -112,49 +150,73 @@
                                                     </div><!-- Panel Body -->
                                                 </div><!-- Panel Collapse -->
                                             </div><!-- Panel -->
-                                            <div class="panel panel-default type-3" ng-repeat="(key,split_order_type) in extras.split_order_types" ng-if="split_order_type.total_items > 0">
+                                            <div class="panel panel-default type-3"
+                                                ng-repeat="(key,split_order_type) in extras.split_order_types"
+                                                ng-if="split_order_type.total_items > 0">
                                                 <div class="panel-heading">
-                                                    <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#{{split_order_type.id}}">
-                                                        {{split_order_type.code}} - {{split_order_type.name}} - {{split_order_type.total_items}} {{split_order_type.total_items > 1 ? 'items' : 'item'}}
+                                                    <a class="panel-title" data-toggle="collapse"
+                                                        data-parent="#accordion" data-target="#{{split_order_type.id}}">
+                                                        {{split_order_type.code}} - {{split_order_type.name}} -
+                                                        {{split_order_type.total_items}} {{split_order_type.total_items
+                                                        > 1 ? 'items' : 'item'}}
                                                         <span class="arrow"></span>
-                                                        <span class="title-right" ng-if="split_order_type.paid_by_id == 10013">
-                                                            <img class="img-responsive rupee-icon" src="./public/theme/img/content/rupee-blue.svg" alt="Rupee" />
+                                                        <span class="title-right"
+                                                            ng-if="split_order_type.paid_by_id == 10013">
+                                                            <img class="img-responsive rupee-icon"
+                                                                src="./public/theme/img/content/rupee-blue.svg"
+                                                                alt="Rupee" />
                                                             {{split_order_type.customer_total_amount | number:2}}
                                                         </span>
-                                                        <span class="title-right" ng-if="split_order_type.paid_by_id != 10013">
-                                                            <img class="img-responsive rupee-icon" src="./public/theme/img/content/rupee-blue.svg" alt="Rupee" />
+                                                        <span class="title-right"
+                                                            ng-if="split_order_type.paid_by_id != 10013">
+                                                            <img class="img-responsive rupee-icon"
+                                                                src="./public/theme/img/content/rupee-blue.svg"
+                                                                alt="Rupee" />
                                                             {{split_order_type.other_total_amount | number:2}}
                                                         </span>
                                                     </a>
                                                 </div>
-                                                <div class="panel-collapse collapse split_order_panel_{{key}}" id="{{split_order_type.id}}" data-animation="fadeInUp" data-animation-delay="300">
+                                                <div class="panel-collapse collapse split_order_panel_{{key}}"
+                                                    id="{{split_order_type.id}}" data-animation="fadeInUp"
+                                                    data-animation-delay="300">
                                                     <div class="panel-body">
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="table-responsive">
                                                                     <div id="table{{key}}" class="bitacoratable">
-                                                                        <table id="table{{key}}" class="table split-order-table table-form childgrid">
+                                                                        <table id="table{{key}}"
+                                                                            class="table split-order-table table-form childgrid">
                                                                             <thead>
                                                                                 <tr>
                                                                                     <!-- $ctrl.hasPermission('inward-job-card-tab-split-order-paid-edit') -->
-                                                                                    <th ng-if="(split_order_type.paid_by_id ==10013 ? $ctrl.hasPermission('inward-job-card-tab-split-order-paid-edit') ? true:false : true) && job_card.status_id == 8231" class="action">Action</th>
+                                                                                    <th ng-if="(split_order_type.paid_by_id ==10013 ? $ctrl.hasPermission('inward-job-card-tab-split-order-paid-edit') ? true:false : true) && job_card.status_id == 8231"
+                                                                                        class="action">Action</th>
                                                                                     <!-- <th ng-if="split_order_type.paid_by_id !=10013 && job_card.status_id == 8231" class="action">Action</th> -->
                                                                                     <th>Item Type</th>
                                                                                     <th>Free Service</th>
                                                                                     <th>Item</th>
                                                                                     <th>Qty</th>
-                                                                                    <th class="text-right">Rate</th>
-                                                                                    <th class="text-right">Amount</th>
-                                                                                    <th class="text-right" ng-repeat="(tax_key,tax) in extras.taxes">{{tax.name}}</th>
-                                                                                    <th class="text-right">Total Tax</th>
-                                                                                    <th class="text-right">Total Amount</th>
+                                                                                    <th class="text-right">MRP</th>
+                                                                                    <th class="text-right">Price</th>
+                                                                                    <th class="text-right"
+                                                                                        ng-repeat="(tax_key,tax) in extras.taxes">
+                                                                                        {{tax.name}}</th>
+                                                                                    <th class="text-right">Total Tax
+                                                                                    </th>
+                                                                                    <th class="text-right">Total Amount
+                                                                                    </th>
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody class="connectedSortable">
-                                                                                <tr ng-if="labour.split_order_type_id == split_order_type.id" ng-repeat="(labour_key,labour) in labour_details">
-                                                                                    <td class="action width-100" ng-if="(split_order_type.paid_by_id ==10013 ? $ctrl.hasPermission('inward-job-card-tab-split-order-paid-edit') ? true:false : true) && job_card.status_id == 8231">
-                                                                                        <a href="" ng-click="splitOrderLabourChange(labour.id,1,key,split_order_type.id)">
-                                                                                            <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
+                                                                                <tr ng-if="labour.split_order_type_id == split_order_type.id"
+                                                                                    ng-repeat="(labour_key,labour) in labour_details">
+                                                                                    <td class="action width-100"
+                                                                                        ng-if="(split_order_type.paid_by_id ==10013 ? $ctrl.hasPermission('inward-job-card-tab-split-order-paid-edit') ? true:false : true) && job_card.status_id == 8231">
+                                                                                        <a href=""
+                                                                                            ng-click="splitOrderLabourChange(labour.id,1,key,split_order_type.id)">
+                                                                                            <img class="img-responsive"
+                                                                                                src="./public/theme/img/table/add-hover.svg"
+                                                                                                alt="Edit" />
                                                                                         </a>
                                                                                     </td>
                                                                                     <!-- <td class="action width-100" ng-if="split_order_type.paid_by_id !=10013 && job_card.status_id == 8231">
@@ -163,24 +225,37 @@
                                                                                         </a>
                                                                                     </td> -->
                                                                                     <td>Labour</td>
-                                                                                    <td ng-if="labour.is_free_service == 1">
+                                                                                    <td
+                                                                                        ng-if="labour.is_free_service == 1">
                                                                                         <p class="text-danger">Yes</p>
                                                                                     </td>
-                                                                                    <td ng-if="labour.is_free_service == 0 || labour.is_free_service == NULL">
+                                                                                    <td
+                                                                                        ng-if="labour.is_free_service == 0 || labour.is_free_service == NULL">
                                                                                         <p class="text-success">No</p>
                                                                                     </td>
                                                                                     <td>{{labour.name}}</td>
                                                                                     <td>{{labour.qty}}</td>
-                                                                                    <td class="text-right">{{labour.amount}}</td>
-                                                                                    <td class="text-right">{{labour.amount}}</td>
-                                                                                    <td class="text-right" ng-repeat="(tax_index,tax_value) in labour.tax_values">{{tax_value.tax_value}}</td>
-                                                                                    <td class="text-right">{{labour.tax_amount}}</td>
-                                                                                    <td class="text-right">{{labour.total_amount}}</td>
+                                                                                    <td class="text-right">
+                                                                                        {{labour.amount}}</td>
+                                                                                    <td class="text-right">
+                                                                                        -</td>
+                                                                                    <td class="text-right"
+                                                                                        ng-repeat="(tax_index,tax_value) in labour.tax_values">
+                                                                                        {{tax_value.tax_value}}</td>
+                                                                                    <td class="text-right">
+                                                                                        {{labour.tax_amount}}</td>
+                                                                                    <td class="text-right">
+                                                                                        {{labour.total_amount}}</td>
                                                                                 </tr>
-                                                                                <tr ng-if="part.split_order_type_id == split_order_type.id" ng-repeat="(part_key,part) in part_details">
-                                                                                    <td class="action width-100" ng-if="(split_order_type.paid_by_id ==10013 ? $ctrl.hasPermission('inward-job-card-tab-split-order-paid-edit') ? true:false : true) && job_card.status_id == 8231">
-                                                                                        <a href="" ng-click="splitOrderPartChange(part.id,1,key,split_order_type.id)">
-                                                                                            <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
+                                                                                <tr ng-if="part.split_order_type_id == split_order_type.id"
+                                                                                    ng-repeat="(part_key,part) in part_details">
+                                                                                    <td class="action width-100"
+                                                                                        ng-if="(split_order_type.paid_by_id ==10013 ? $ctrl.hasPermission('inward-job-card-tab-split-order-paid-edit') ? true:false : true) && job_card.status_id == 8231">
+                                                                                        <a href=""
+                                                                                            ng-click="splitOrderPartChange(part.id,1,key,split_order_type.id)">
+                                                                                            <img class="img-responsive"
+                                                                                                src="./public/theme/img/table/add-hover.svg"
+                                                                                                alt="Edit" />
                                                                                         </a>
                                                                                     </td>
                                                                                     <!-- <td class="action width-100" ng-if="split_order_type.paid_by_id !=10013 && job_card.status_id == 8231">
@@ -189,19 +264,27 @@
                                                                                         </a>
                                                                                     </td> -->
                                                                                     <td>Part</td>
-                                                                                    <td ng-if="part.is_free_service == 1">
+                                                                                    <td
+                                                                                        ng-if="part.is_free_service == 1">
                                                                                         <p class="text-danger">Yes</p>
                                                                                     </td>
-                                                                                    <td ng-if="part.is_free_service == 0 || part.is_free_service == NULL">
+                                                                                    <td
+                                                                                        ng-if="part.is_free_service == 0 || part.is_free_service == NULL">
                                                                                         <p class="text-success">No</p>
                                                                                     </td>
                                                                                     <td>{{part.name}}</td>
                                                                                     <td>{{part.qty}}</td>
-                                                                                    <td class="text-right">{{part.rate}}</td>
-                                                                                    <td class="text-right">{{part.amount}}</td>
-                                                                                    <td class="text-right" ng-repeat="(tax_index,tax_value) in part.tax_values">{{tax_value.tax_value}}</td>
-                                                                                    <td class="text-right">{{part.tax_amount}}</td>
-                                                                                    <td class="text-right">{{part.total_amount}}</td>
+                                                                                    <td class="text-right">{{part.mrp}}
+                                                                                    </td>
+                                                                                    <td class="text-right">
+                                                                                        {{part.price}}</td>
+                                                                                    <td class="text-right"
+                                                                                        ng-repeat="(tax_index,tax_value) in part.tax_values">
+                                                                                        {{tax_value.tax_value}}</td>
+                                                                                    <td class="text-right">
+                                                                                        {{part.tax_amount}}</td>
+                                                                                    <td class="text-right">
+                                                                                        {{part.total_amount}}</td>
                                                                                 </tr>
                                                                             </tbody>
                                                                         </table>
@@ -216,7 +299,9 @@
                                     </div><!-- Column -->
                                     <div class="col-md-12">
                                         <div class="text-center pt-10">
-                                            <a class="btn btn-red" data-toggle="modal" ng-if="job_card.status_id == 8231" data-target="#confirm_finish_work">Mark Split Order Finalized</a>
+                                            <a class="btn btn-red" data-toggle="modal"
+                                                ng-if="job_card.status_id == 8231"
+                                                data-target="#confirm_finish_work">Mark Split Order Finalized</a>
                                         </div>
                                         <div class="mb-20"></div>
                                     </div>
@@ -245,36 +330,47 @@
     </div>
 </div>
 
-<div class="modal fade filter" id="split_order_change"  data-keyboard="false"  data-backdrop="static">
+<div class="modal fade filter" id="split_order_change" data-keyboard="false" data-backdrop="static">
     <!-- <div class="modal-dialog modal-xs"> -->
     <!-- <div class="modal-dialog"> -->
     <div class="modal-dialog" ng-class="{'modal-xs': split_order_claimable == 0 } ">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close ripple" ng-click='split_order_modal_close()' aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <button type="button" class="close ripple" ng-click='split_order_modal_close()' aria-label="Close"><i
+                        class="icon ion-md-close"></i></button>
                 <h5 class="modal-title">Split Order Update</h5>
             </div>
             <div class="modal-body">
                 <div class="modal-form">
                     <form id="split_order_form">
                         <input type="hidden" id="labour_id" name="labour_id" value="" />
-                            <input type="hidden" id="part_id" name="part_id" value="" />
-                            <input type="hidden" id="type" name="type" value="{{type}}" />
+                        <input type="hidden" id="part_id" name="part_id" value="" />
+                        <input type="hidden" id="type" name="type" value="{{type}}" />
                         <div class="row">
                             <!-- <div class="col-md-12"> -->
                             <!-- <div class="col-md-6"> -->
-                            <div ng-class="{'col-md-12': split_order_claimable == 0, 'col-md-6':split_order_claimable == 1 } ">
+                            <div
+                                ng-class="{'col-md-12': split_order_claimable == 0, 'col-md-6':split_order_claimable == 1 } ">
                                 <div class="form-group">
                                     <label>Split Order Type<sup class="mandatory">*</sup></label>
-                                    <md-select ng-model="split_order" md-on-close="clearSearchType()" data-md-container-class="selectdemoSelectHeader" ng-change='splitOrderChange(split_order.is_claimable)' placeholder="Select Split Order Type">
+                                    <md-select ng-model="split_order" md-on-close="clearSearchType()"
+                                        data-md-container-class="selectdemoSelectHeader"
+                                        ng-change='splitOrderChange(split_order.is_claimable)'
+                                        placeholder="Select Split Order Type">
                                         <md-select-header class="demo-select-header">
-                                            <input ng-model="searchType" type="search" placeholder="Search Split Order Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                            <input ng-model="searchType" type="search"
+                                                placeholder="Search Split Order Type"
+                                                class="demo-header-searchbox md-text"
+                                                ng-keydown="$event.stopPropagation()">
                                         </md-select-header>
                                         <md-optgroup>
-                                            <md-option ng-value="split_order_type" ng-repeat="split_order_type in split_order_types | filter:searchType">{{split_order_type.code}} / {{split_order_type.name}}</md-option>
+                                            <md-option ng-value="split_order_type"
+                                                ng-repeat="split_order_type in split_order_types | filter:searchType">
+                                                {{split_order_type.code}} / {{split_order_type.name}}</md-option>
                                         </md-optgroup>
                                     </md-select>
-                                    <input type="hidden" class="form-control required" id="split_order_type_id" name="split_order_type_id" value="{{split_order.id}}" />
+                                    <input type="hidden" class="form-control required" id="split_order_type_id"
+                                        name="split_order_type_id" value="{{split_order.id}}" />
                                 </div>
                             </div><!-- Column -->
                             <div class="col-md-6" ng-if="split_order_claimable ==1">
@@ -283,7 +379,12 @@
                                         Complaint code
                                         <sup class="mandatory">*</sup>
                                     </label>
-                                    <md-autocomplete md-no-cache="true" md-selected-item="job_order_repair_order.complaint" md-search-text="complaintSearchKey" md-items="complaint in searchCompaints(complaintSearchKey)" md-item-text="complaint.code+' / '+complaint.name" md-min-length="3" md-escape-options="clear" placeholder="Ex. 01C4" md-input-id="complaint_ac">
+                                    <md-autocomplete md-no-cache="true"
+                                        md-selected-item="job_order_repair_order.complaint"
+                                        md-search-text="complaintSearchKey"
+                                        md-items="complaint in searchCompaints(complaintSearchKey)"
+                                        md-item-text="complaint.code+' / '+complaint.name" md-min-length="3"
+                                        md-escape-options="clear" placeholder="Ex. 01C4" md-input-id="complaint_ac">
                                         <md-item-template>
                                             <span>
                                                 {{complaint.code+' / '+complaint.name}}
@@ -293,7 +394,8 @@
                                             No complaints matching "{{complaintSearchKey}}" were found.
                                         </md-not-found>
                                     </md-autocomplete>
-                                    <input type="hidden" class="required" name="complaint_id" value="{{job_order_repair_order.complaint.id}}">
+                                    <input type="hidden" class="required" name="complaint_id"
+                                        value="{{job_order_repair_order.complaint.id}}">
                                 </div><!-- Feild -->
                             </div><!-- Column -->
                             <div class="col-md-6" ng-if="split_order_claimable ==1">
@@ -302,7 +404,10 @@
                                         Fault code
                                         <sup class="mandatory">*</sup>
                                     </label>
-                                    <md-autocomplete md-selected-item="job_order_repair_order.fault" md-search-text="faultSearchKey" md-items="fault in searchFaults(faultSearchKey)" md-item-text="fault.code+' / '+fault.name" md-min-length="1" md-escape-options="clear" placeholder="Ex. AA" md-input-id="fault_ac">
+                                    <md-autocomplete md-selected-item="job_order_repair_order.fault"
+                                        md-search-text="faultSearchKey" md-items="fault in searchFaults(faultSearchKey)"
+                                        md-item-text="fault.code+' / '+fault.name" md-min-length="1"
+                                        md-escape-options="clear" placeholder="Ex. AA" md-input-id="fault_ac">
                                         <md-item-template>
                                             <span>
                                                 {{fault.code+' / '+fault.name}}
@@ -312,16 +417,19 @@
                                             No faults matching "{{faultSearchKey}}" were found.
                                         </md-not-found>
                                     </md-autocomplete>
-                                    <input type="hidden" class="required" name="fault_id" value="{{job_order_repair_order.fault.id}}">
+                                    <input type="hidden" class="required" name="fault_id"
+                                        value="{{job_order_repair_order.fault.id}}">
                                 </div><!-- Feild -->
                             </div><!-- Column -->
                         </div>
                         <div class="row">
                             <div class="col-md-12 text-center mb-15">
-                                <button type="button"  ng-click='split_order_modal_close()' class="btn btn-primary btn-bordered cancel_modal_btn">
+                                <button type="button" ng-click='split_order_modal_close()'
+                                    class="btn btn-primary btn-bordered cancel_modal_btn">
                                     Cancel
                                 </button>
-                                <button type="submit" class="btn btn-bordered submit"  ng-click="splitOrderSave();">Submit</button>
+                                <button type="submit" class="btn btn-bordered submit"
+                                    ng-click="splitOrderSave();">Submit</button>
                                 <!-- <button type="submit" class="btn btn-secondary-dark btn-square btn-block submit" ng-click="splitOrderSave();"><b>Submit</b></button> -->
                             </div><!-- Column -->
                         </div><!-- Row -->

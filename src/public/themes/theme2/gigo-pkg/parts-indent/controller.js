@@ -1,6 +1,6 @@
 app.component('partsIndentList', {
     templateUrl: parts_indent_list_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $scope.loading = true;
         $('#parts_indent_table').focus();
         var self = this;
@@ -30,10 +30,10 @@ app.component('partsIndentList', {
             },
             pageLength: 10,
             processing: true,
-            stateSaveCallback: function(settings, data) {
+            stateSaveCallback: function (settings, data) {
                 localStorage.setItem('CDataTables_' + settings.sInstance, JSON.stringify(data));
             },
-            stateLoadCallback: function(settings) {
+            stateLoadCallback: function (settings) {
                 var state_save_val = JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
                 if (state_save_val) {
                     self.search_key = state_save_val.search.search;
@@ -47,7 +47,7 @@ app.component('partsIndentList', {
                 url: laravel_routes['getPartsindentList'],
                 type: "GET",
                 dataType: "json",
-                data: function(d) {
+                data: function (d) {
                     d.job_order_no = $('#job_order_no').val();
                     d.job_order_date = $('#job_order_date').val();
                     d.job_card_no = $('#job_card_no').val();
@@ -74,47 +74,47 @@ app.component('partsIndentList', {
                 { data: 'outlet_name', name: 'outlets.code', searchable: true },
                 { data: 'status', searchable: false },
             ],
-            "infoCallback": function(settings, start, end, max, total, pre) {
+            "infoCallback": function (settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)
                 $('.foot_info').html('Showing ' + start + ' to ' + end + ' of ' + max + ' entries')
             },
-            rowCallback: function(row, data) {
+            rowCallback: function (row, data) {
                 $(row).addClass('highlight-row');
             }
         });
         $('.dataTables_length select').select2();
 
-        $scope.clear_search = function() {
+        $scope.clear_search = function () {
             self.search_key = '';
             $('#parts_indent_table').DataTable().search('').draw();
         }
-        $('.refresh_table').on("click", function() {
+        $('.refresh_table').on("click", function () {
             $('#parts_indent_table').DataTable().ajax.reload();
         });
 
         var dataTables = $('#parts_indent_table').dataTable();
-        $scope.searchPartIndent = function() {
+        $scope.searchPartIndent = function () {
             dataTables.fnFilter(self.search_key);
         }
 
         //FOR FILTER
         $http.get(
             laravel_routes['getPartsIndentFilter']
-        ).then(function(response) {
+        ).then(function (response) {
             self.extras = response.data.extras;
         });
 
         //GET CUSTOMER LIST
-        self.searchCustomer = function(query) {
+        self.searchCustomer = function (query) {
             if (query) {
-                return new Promise(function(resolve, reject) {
+                return new Promise(function (resolve, reject) {
                     $http
                         .post(
                             laravel_routes['getCustomerSearchList'], {
-                                key: query,
-                            }
+                            key: query,
+                        }
                         )
-                        .then(function(response) {
+                        .then(function (response) {
                             resolve(response.data);
                         });
                     //reject(response);
@@ -125,16 +125,16 @@ app.component('partsIndentList', {
         }
 
         //GET OUTLET LIST
-        self.searchOutlet = function(query) {
+        self.searchOutlet = function (query) {
             if (query) {
-                return new Promise(function(resolve, reject) {
+                return new Promise(function (resolve, reject) {
                     $http
                         .post(
                             laravel_routes['getOutletSearchList'], {
-                                key: query,
-                            }
+                            key: query,
+                        }
                         )
-                        .then(function(response) {
+                        .then(function (response) {
                             resolve(response.data);
                         });
                     //reject(response);
@@ -143,35 +143,35 @@ app.component('partsIndentList', {
                 return [];
             }
         }
-        $element.find('input').on('keydown', function(ev) {
+        $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
         });
-        $scope.clearSearchTerm = function() {
+        $scope.clearSearchTerm = function () {
             $scope.searchTerm = '';
             $scope.searchTerm1 = '';
             $scope.searchTerm2 = '';
             $scope.searchTerm3 = '';
         };
         /* Modal Md Select Hide */
-        $('.modal').bind('click', function(event) {
+        $('.modal').bind('click', function (event) {
             if ($('.md-select-menu-container').hasClass('md-active')) {
                 $mdSelect.hide();
             }
         });
-        $scope.selectedCustomer = function(id) {
+        $scope.selectedCustomer = function (id) {
             $('#customer_id').val(id);
         }
-        $scope.selectedOutlet = function(id) {
+        $scope.selectedOutlet = function (id) {
             $('#outlet_id').val(id);
         }
-        $scope.onSelectedStatus = function(id) {
+        $scope.onSelectedStatus = function (id) {
             $('#status_id').val(id);
         }
-        $scope.applyFilter = function() {
+        $scope.applyFilter = function () {
             dataTables.fnFilter();
             $('#indent_parts_filter').modal('hide');
         }
-        $scope.reset_filter = function() {
+        $scope.reset_filter = function () {
             $("#job_card_no").val('');
             $("#job_card_date").val('');
             $("#job_order_no").val('');
@@ -190,7 +190,7 @@ app.component('partsIndentList', {
 //------------------------------------------------------------------------------------------------------------------------
 app.component('partsIndentVehicleView', {
     templateUrl: parts_indent_view_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
         $("input:text:visible:first").focus();
         self.hasPermission = HelperService.hasPermission;
@@ -205,19 +205,19 @@ app.component('partsIndentVehicleView', {
 
         $scope.job_order_id = $routeParams.job_order_id;
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $rootScope.loading = true;
             $.ajax({
-                    url: base_url + '/api/part-indent/get-vehicle-detail',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id,
-                    },
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
-                .done(function(res) {
+                url: base_url + '/api/part-indent/get-vehicle-detail',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id,
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -260,7 +260,7 @@ app.component('partsIndentVehicleView', {
                     $scope.extras = res.extras;
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
@@ -271,7 +271,7 @@ app.component('partsIndentVehicleView', {
 
 app.component('partsIndentCustomerView', {
     templateUrl: parts_indent_customer_view_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
         $("input:text:visible:first").focus();
         self.hasPermission = HelperService.hasPermission;
@@ -286,19 +286,19 @@ app.component('partsIndentCustomerView', {
 
         $scope.job_order_id = $routeParams.job_order_id;
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $rootScope.loading = true;
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/get-customer-detail',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id
-                    },
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
-                .done(function(res) {
+                url: base_url + '/api/vehicle-inward/get-customer-detail',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
+                .done(function (res) {
                     $rootScope.loading = false;
                     if (!res.success) {
                         showErrorNoty(res);
@@ -350,7 +350,7 @@ app.component('partsIndentCustomerView', {
 
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     $rootScope.loading = false;
                     custom_noty('error', 'Something went wrong at server');
                 });
@@ -362,7 +362,7 @@ app.component('partsIndentCustomerView', {
 
 app.component('partsIndentRepairOrderView', {
     templateUrl: parts_indent_repair_order_view_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
         $("input:text:visible:first").focus();
         self.hasPermission = HelperService.hasPermission;
@@ -377,19 +377,19 @@ app.component('partsIndentRepairOrderView', {
 
         $scope.job_order_id = $routeParams.job_order_id;
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $rootScope.loading = true;
             $.ajax({
-                    url: base_url + '/api/part-indent/get-repair-orders',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id
-                    },
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
-                .done(function(res) {
+                url: base_url + '/api/part-indent/get-repair-orders',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
+                .done(function (res) {
                     $rootScope.loading = false;
                     if (!res.success) {
                         showErrorNoty(res);
@@ -415,7 +415,7 @@ app.component('partsIndentRepairOrderView', {
                     console.log(res);
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     $rootScope.loading = false;
                     custom_noty('error', 'Something went wrong at server');
                 });
@@ -427,8 +427,8 @@ app.component('partsIndentRepairOrderView', {
 
 app.component('partsIndentPartsView', {
     templateUrl: parts_indent_parts_view_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, PartSvc, SplitOrderTypeSvc, RepairOrderSvc, $mdSelect) {
-        $element.find('input').on('keydown', function(ev) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, PartSvc, SplitOrderTypeSvc, RepairOrderSvc, $mdSelect) {
+        $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
         });
         var self = this;
@@ -441,7 +441,7 @@ app.component('partsIndentPartsView', {
 
         $scope.job_order_id = $routeParams.job_order_id;
 
-        $scope.init = function() {
+        $scope.init = function () {
             $rootScope.loading = true;
 
             let promises = {
@@ -451,7 +451,7 @@ app.component('partsIndentPartsView', {
 
             $scope.options = {};
             $q.all(promises)
-                .then(function(responses) {
+                .then(function (responses) {
                     $scope.options.split_order_types = responses.split_order_type_options.data.options;
                     // $scope.options.repair_orders = responses.repair_order_options.data.options;
                     $rootScope.loading = false;
@@ -460,7 +460,7 @@ app.component('partsIndentPartsView', {
         $scope.init();
 
         /* Modal Md Select Hide */
-        $('.modal').bind('click', function(event) {
+        $('.modal').bind('click', function (event) {
             if ($('.md-select-menu-container').hasClass('md-active')) {
                 $mdSelect.hide();
             }
@@ -469,18 +469,18 @@ app.component('partsIndentPartsView', {
         self.part_type = 1;
 
         //FETCH DATA
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $.ajax({
-                    url: base_url + '/api/inward-part-indent/get-view-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id
-                    },
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
-                .done(function(res) {
+                url: base_url + '/api/inward-part-indent/get-view-data',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -519,13 +519,13 @@ app.component('partsIndentPartsView', {
 
                     self.repair_order_ids = [];
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
         $scope.fetchData();
 
-        $scope.sendConfirm = function(type_id) {
+        $scope.sendConfirm = function (type_id) {
             if (type_id == 4) {
                 var id = $scope.job_order.job_card.id;
             } else {
@@ -535,14 +535,14 @@ app.component('partsIndentPartsView', {
             if (id) {
                 $('.send_confirm').button('loading');
                 $.ajax({
-                        url: base_url + '/api/vehicle-inward/stock-incharge/request/parts',
-                        method: "POST",
-                        data: {
-                            id: id,
-                            type_id: type_id,
-                        },
-                    })
-                    .done(function(res) {
+                    url: base_url + '/api/vehicle-inward/stock-incharge/request/parts',
+                    method: "POST",
+                    data: {
+                        id: id,
+                        type_id: type_id,
+                    },
+                })
+                    .done(function (res) {
                         $('.send_confirm').button('reset');
                         if (!res.success) {
                             showErrorNoty(res);
@@ -555,31 +555,31 @@ app.component('partsIndentPartsView', {
                         $('.modal-backdrop').remove();
                         $scope.fetchData();
                     })
-                    .fail(function(xhr) {
+                    .fail(function (xhr) {
                         $('.send_confirm').button('reset');
                     });
             }
         }
 
-        $('.btn-nxt').on("click", function() {
+        $('.btn-nxt').on("click", function () {
             $('.cndn-tabs li.active').next().children('a').trigger("click");
             tabPaneFooter();
         });
-        $('.btn-prev').on("click", function() {
+        $('.btn-prev').on("click", function () {
             $('.cndn-tabs li.active').prev().children('a').trigger("click");
             tabPaneFooter();
         });
-        $('.btn-pills').on("click", function() {
+        $('.btn-pills').on("click", function () {
             tabPaneFooter();
         });
-        $scope.btnNxt = function() {}
-        $scope.prev = function() {}
+        $scope.btnNxt = function () { }
+        $scope.prev = function () { }
 
         /* Dropdown Arrow Function */
         arrowDropdown();
 
         /* Work Tooltip */
-        $(document).on('mouseover', ".work-tooltip", function() {
+        $(document).on('mouseover', ".work-tooltip", function () {
             var $this = $(this);
             if (this.offsetWidth <= this.scrollWidth && !$this.attr('title')) {
                 var $this_content = $this.children(".work_tooltip_hide").html();
@@ -591,7 +591,7 @@ app.component('partsIndentPartsView', {
                 $this.tooltip('show');
             }
         });
-        $scope.showReturnPartForm = function(index, part) {
+        $scope.showReturnPartForm = function (index, part) {
             console.log(index, part);
             if (part != undefined) {
                 $scope.parts_indent.return_part = {};
@@ -606,7 +606,7 @@ app.component('partsIndentPartsView', {
             $('#return_part_form_modal').modal('show');
         }
 
-        $scope.showPartForm = function(part) {
+        $scope.showPartForm = function (part) {
             // console.log(part);
             self.repair_order_ids = [];
             $scope.part_mrp = 0;
@@ -619,14 +619,14 @@ app.component('partsIndentPartsView', {
                 $scope.part_mrp = part.rate;
                 $scope.part_id = part.id;
 
-                angular.forEach(part.repair_order, function(part, key) {
+                angular.forEach(part.repair_order, function (part, key) {
                     self.repair_order_ids.push(part.id)
                 });
                 $scope.repair_orders = part.repair_order;
                 if (part.split_order_type_id != null) {
                     $split_id = part.split_order_type_id;
                     SplitOrderTypeSvc.read($split_id)
-                        .then(function(response) {
+                        .then(function (response) {
                             $scope.parts_indent.split_order_type = response.data.split_order_type;
                         });
                 }
@@ -640,14 +640,14 @@ app.component('partsIndentPartsView', {
                     //         // $scope.calculatePartAmount();
                     //     });
                     PartSvc.getFormData({ outletId: $scope.job_order.outlet_id, partId: part.id })
-                        .then(function(response) {
+                        .then(function (response) {
                             // $scope.warranty_job_order_request.job_order.outlet.business = response.data.business;
                             $scope.parts_indent.part = response.data.part;
                             $scope.parts_indent.part.qty = part.qty;
                             $scope.parts_indent.part.job_order_part_id = $job_order_part_id;
                             $scope.parts_indent.repair_order_parts = $scope.repair_orders;
                             // $scope.calculatePartAmount();
-                        }).catch(function(error) {
+                        }).catch(function (error) {
                             console.log(error);
                         });
                 }
@@ -656,7 +656,7 @@ app.component('partsIndentPartsView', {
             $('#part_form_modal').modal('show');
         }
 
-        $scope.showRemarks = function(part) {
+        $scope.showRemarks = function (part) {
             console.log(part);
             $scope.job_order_part_id = part.job_order_part_id;
             $scope.user_id = part.user_id;
@@ -675,17 +675,17 @@ app.component('partsIndentPartsView', {
                         required: true,
                     },
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(not_issued_return_form)[0]);
                     $('.submit').button('loading');
                     $.ajax({
-                            url: base_url + '/api/inward-part-indent/save-return-part',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
-                        .done(function(res) {
+                        url: base_url + '/api/inward-part-indent/save-return-part',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
+                        .done(function (res) {
                             if (!res.success) {
                                 $('.submit').button('reset');
                                 showErrorNoty(res);
@@ -698,7 +698,7 @@ app.component('partsIndentPartsView', {
                             $('.modal-backdrop').remove();
                             $scope.fetchData();
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             $('.submit').button('reset');
                             custom_noty('error', 'Something went wrong at server');
                         });
@@ -707,15 +707,15 @@ app.component('partsIndentPartsView', {
             $('#return_part_view_modal').modal('show');
         }
 
-        $scope.searchParts = function(query) {
-            return new Promise(function(resolve, reject) {
+        $scope.searchParts = function (query) {
+            return new Promise(function (resolve, reject) {
                 PartSvc.options({ filter: { search: query } })
-                    .then(function(response) {
+                    .then(function (response) {
                         resolve(response.data.options);
                     });
             });
         }
-        $scope.partSelected = function(part) {
+        $scope.partSelected = function (part) {
             $qty = 1;
             if (!part) {
                 return;
@@ -733,13 +733,13 @@ app.component('partsIndentPartsView', {
             //             $scope.parts_indent.part.mrp = $scope.part_mrp;
             //         }
 
-            //         $scope.parts_indent.part.total_amount = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
+            //         $scope.parts_indent.part.total_amount = response.data.part.part_stock ? response.data.part.part_stock.mrp : '0';
             //         $scope.available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
             //         $scope.parts_indent.part.qty = $qty;
             //         $scope.calculatePartAmount();
             //     });
             PartSvc.getFormData({ outletId: $scope.job_order.outlet_id, partId: part.id })
-                .then(function(response) {
+                .then(function (response) {
                     // $scope.parts_indent.part.mrp = response.data.part.part_stock ? (response.data.part.part_stock.stock != 0 ? response.data.part.part_stock.mrp : (response.data.part.job_order_parts.length != 0 ? response.data.part.job_order_parts[0].rate : '0')) : '0';
                     // $scope.parts_indent.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.stock > 0 ? response.data.part.part_stock.mrp : '0' : '0';
 
@@ -750,9 +750,8 @@ app.component('partsIndentPartsView', {
                         $scope.parts_indent.part.mrp = 0;
                         $scope.mrp_change = 1;
                     }
-                    else
-                    {
-                        $scope.parts_indent.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
+                    else {
+                        $scope.parts_indent.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.mrp : '0';
                         $scope.mrp_change = 0;
                     }
 
@@ -760,16 +759,16 @@ app.component('partsIndentPartsView', {
                         $scope.parts_indent.part.mrp = $scope.part_mrp;
                     }
 
-                    $scope.parts_indent.part.total_amount = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
+                    $scope.parts_indent.part.total_amount = response.data.part.part_stock ? response.data.part.part_stock.mrp : '0';
                     $scope.available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
                     $scope.parts_indent.part.qty = $qty;
                     $scope.calculatePartAmount();
-                }).catch(function(error) {
+                }).catch(function (error) {
                     console.log(error);
                 });
 
         }
-        $scope.calculatePartAmount = function() {
+        $scope.calculatePartAmount = function () {
             if (!$scope.parts_indent.part.pivot) {
                 $scope.parts_indent.part.pivot = {};
             }
@@ -778,9 +777,9 @@ app.component('partsIndentPartsView', {
             $scope.parts_indent.part.pivot.amount = $scope.parts_indent.part.total_amount;
             $scope.calculatePartTotal();
         }
-        $scope.calculatePartTotal = function() {
+        $scope.calculatePartTotal = function () {
             $total_amount = 0;
-            angular.forEach($scope.part_details, function(part, key) {
+            angular.forEach($scope.part_details, function (part, key) {
                 if (part.removal_reason_id == null || part.removal_reason_id == undefined) {
                     $total_amount += parseFloat(part.amount);
                 }
@@ -804,10 +803,10 @@ app.component('partsIndentPartsView', {
             messages: {
 
             },
-            invalidHandler: function(event, validator) {
+            invalidHandler: function (event, validator) {
                 custom_noty('error', 'You have errors, Kindly check all fields');
             },
-            submitHandler: function(form) {
+            submitHandler: function (form) {
 
                 /*if ($scope.parts_indent.split_order_type) {
 
@@ -833,13 +832,13 @@ app.component('partsIndentPartsView', {
                 $('.submit').button('loading');
 
                 $.ajax({
-                        url: base_url + '/api/vehicle-inward/add-part/save',
-                        method: "POST",
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                    })
-                    .done(function(res) {
+                    url: base_url + '/api/vehicle-inward/add-part/save',
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                })
+                    .done(function (res) {
                         if (!res.success) {
                             $('.submit').button('reset');
                             showErrorNoty(res);
@@ -854,7 +853,7 @@ app.component('partsIndentPartsView', {
                         $('.modal-backdrop').remove();
                         $scope.fetchData();
                     })
-                    .fail(function(xhr) {
+                    .fail(function (xhr) {
                         $('.submit').button('reset');
                         custom_noty('error', 'Something went wrong at server');
                     });
@@ -867,11 +866,11 @@ app.component('partsIndentPartsView', {
             }
         });
 
-        $scope.selectingRepairOrder = function(val) {
+        $scope.selectingRepairOrder = function (val) {
             console.log(val);
             if (val) {
                 list = [];
-                angular.forEach($scope.parts_indent.repair_order_parts, function(value, key) {
+                angular.forEach($scope.parts_indent.repair_order_parts, function (value, key) {
                     // angular.forEach($scope.parts_indent.repair_order, function(value, key) {
                     list.push(value.id);
                 });
@@ -900,20 +899,20 @@ app.component('partsIndentPartsView', {
             messages: {
 
             },
-            invalidHandler: function(event, validator) {
+            invalidHandler: function (event, validator) {
                 custom_noty('error', 'You have errors, Kindly fix');
             },
-            submitHandler: function(form) {
+            submitHandler: function (form) {
                 let formData = new FormData($(return_part_form)[0]);
                 $('.submit').button('loading');
                 $.ajax({
-                        url: base_url + '/api/inward-part-indent/save-return-part',
-                        method: "POST",
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                    })
-                    .done(function(res) {
+                    url: base_url + '/api/inward-part-indent/save-return-part',
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                })
+                    .done(function (res) {
                         if (!res.success) {
                             $('.submit').button('reset');
                             showErrorNoty(res);
@@ -929,27 +928,27 @@ app.component('partsIndentPartsView', {
                         // $location.path('/inward-parts-indent/view/' + $scope.job_order_id);
                         $scope.$apply();
                     })
-                    .fail(function(xhr) {
+                    .fail(function (xhr) {
                         $('.submit').button('reset');
                         custom_noty('error', 'Something went wrong at server');
                     });
             }
         });
-        $scope.removeLog = function(index, log) {
+        $scope.removeLog = function (index, log) {
             console.log(log);
             $('#delete_log').modal('show');
             $('#log_id').val(log.job_order_part_increment_id);
             $('#log_type').val(log.transaction_type);
 
         }
-        $scope.removeFloatingLog = function(index, log) {
+        $scope.removeFloatingLog = function (index, log) {
             console.log(log);
             $('#delete_log').modal('show');
             $('#log_id').val(log.id);
             $('#log_type').val('Float');
         }
 
-        $scope.deleteConfirm = function() {
+        $scope.deleteConfirm = function () {
             $id = $('#log_id').val();
             $type = $('#log_type').val();
 
@@ -957,13 +956,13 @@ app.component('partsIndentPartsView', {
             formData.append('id', $id);
             formData.append('type', $type);
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/part-logs/delete',
-                    method: "POST",
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                })
-                .done(function(res) {
+                url: base_url + '/api/vehicle-inward/part-logs/delete',
+                method: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+            })
+                .done(function (res) {
                     if (!res.success) {
                         $rootScope.loading = false;
                         showErrorNoty(res);
@@ -975,14 +974,14 @@ app.component('partsIndentPartsView', {
                     $scope.fetchData();
                     custom_noty('success', res.message);
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     $rootScope.loading = false;
                     $scope.button_action(id, 2);
                     custom_noty('error', 'Something went wrong at server');
                 });
 
         }
-        $scope.removePart = function(index, id, type) {
+        $scope.removePart = function (index, id, type) {
             console.log(id);
             if (id == undefined) {
                 $scope.part_details.splice(index, 1);
@@ -995,12 +994,12 @@ app.component('partsIndentPartsView', {
                 $scope.laboutPartsDelete(index, id, type);
             }
         }
-        $scope.laboutPartsDelete = function(index, id, type) {
+        $scope.laboutPartsDelete = function (index, id, type) {
             $('#delete_labour_parts').modal('show');
             $('#labour_parts_id').val(id);
             $('#payable_type').val(type);
 
-            $scope.saveLabourPartDeleteForm = function() {
+            $scope.saveLabourPartDeleteForm = function () {
                 var delete_form_id = '#labour_parts_remove';
                 var v = jQuery(delete_form_id).validate({
                     ignore: '',
@@ -1012,7 +1011,7 @@ app.component('partsIndentPartsView', {
                             required: true,
                         },
                     },
-                    errorPlacement: function(error, element) {
+                    errorPlacement: function (error, element) {
                         if (element.attr("name") == "removal_reason_id") {
                             error.appendTo('#errorDeleteReasonRequired');
                             return;
@@ -1020,18 +1019,18 @@ app.component('partsIndentPartsView', {
                             error.insertAfter(element);
                         }
                     },
-                    submitHandler: function(form) {
+                    submitHandler: function (form) {
                         let formData = new FormData($(delete_form_id)[0]);
                         $rootScope.loading = true;
                         $.ajax({
-                                url: base_url + '/api/vehicle-inward/labour-parts/delete',
-                                // url: base_url + '/api/vehicle-inward/labour-parts-delete/update',
-                                method: "POST",
-                                data: formData,
-                                processData: false,
-                                contentType: false,
-                            })
-                            .done(function(res) {
+                            url: base_url + '/api/vehicle-inward/labour-parts/delete',
+                            // url: base_url + '/api/vehicle-inward/labour-parts-delete/update',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                            .done(function (res) {
                                 if (!res.success) {
                                     $rootScope.loading = false;
                                     showErrorNoty(res);
@@ -1043,7 +1042,7 @@ app.component('partsIndentPartsView', {
                                 $scope.fetchData();
                                 custom_noty('success', res.message);
                             })
-                            .fail(function(xhr) {
+                            .fail(function (xhr) {
                                 $rootScope.loading = false;
                                 $scope.button_action(id, 2);
                                 custom_noty('error', 'Something went wrong at server');
@@ -1053,7 +1052,7 @@ app.component('partsIndentPartsView', {
 
             }
         }
-        $scope.button_action = function(id, type) {
+        $scope.button_action = function (id, type) {
             if (type == 1) {
                 if (id == 1) {
                     $('.submit').button('loading');
@@ -1077,7 +1076,7 @@ app.component('partsIndentPartsView', {
 
 app.component('partsIndentIssuePartForm', {
     templateUrl: parts_indent_issue_part_form_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, PartSvc, VendorSvc) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, PartSvc, VendorSvc) {
 
         var self = this;
         self.hasPermission = HelperService.hasPermission;
@@ -1089,23 +1088,23 @@ app.component('partsIndentIssuePartForm', {
         $scope.issue_part = {};
         self.part_type = 1;
 
-        $element.find('input').on('keydown', function(ev) {
+        $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
         });
 
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $.ajax({
-                    url: base_url + '/api/inward-part-indent/get-issue-part-form-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id,
-                        issue_part_id: $routeParams.id
-                    },
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
-                .done(function(res) {
+                url: base_url + '/api/inward-part-indent/get-issue-part-form-data',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id,
+                    issue_part_id: $routeParams.id
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -1140,19 +1139,19 @@ app.component('partsIndentIssuePartForm', {
                     self.mrp = 0;
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
         $scope.fetchData();
 
-        $scope.saveIssueForm = function() {
+        $scope.saveIssueForm = function () {
             var form = '#issue_part_form';
             var v = jQuery(form).validate({
                 ignore: '',
                 rules: {
                     'job_order_part_id': {
-                        required: function(element) {
+                        required: function (element) {
                             if (self.part_type == '1') {
                                 return true;
                             }
@@ -1218,21 +1217,21 @@ app.component('partsIndentIssuePartForm', {
                 messages: {
 
                 },
-                invalidHandler: function(event, validator) {
+                invalidHandler: function (event, validator) {
                     custom_noty('error', 'You have errors, Kindly fix');
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(form)[0]);
                     $('.submit').button('loading');
 
                     $.ajax({
-                            url: base_url + '/api/inward-part-indent/save-issued-part',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
-                        .done(function(res) {
+                        url: base_url + '/api/inward-part-indent/save-issued-part',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
+                        .done(function (res) {
                             $('.submit').button('reset');
                             if (!res.success) {
                                 $('.submit').button('reset');
@@ -1244,7 +1243,7 @@ app.component('partsIndentIssuePartForm', {
 
                             $scope.$apply();
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             $('.submit').button('reset');
                             custom_noty('error', 'Something went wrong at server');
                         });
@@ -1252,25 +1251,25 @@ app.component('partsIndentIssuePartForm', {
             });
         }
 
-        $scope.searchVendor = function(query) {
-            return new Promise(function(resolve, reject) {
+        $scope.searchVendor = function (query) {
+            return new Promise(function (resolve, reject) {
                 VendorSvc.options({ filter: { search: query } })
-                    .then(function(response) {
+                    .then(function (response) {
                         resolve(response.data.options);
                     });
             });
         }
-        $scope.calculateTotal = function() {
+        $scope.calculateTotal = function () {
             if ($scope.issue_part.quantity != '' && $scope.issue_part.unit_price != '') {
                 $scope.issue_part.total = parseInt($scope.issue_part.quantity) * parseFloat($scope.issue_part.unit_price);
             }
         }
-        $scope.calculateTax = function() {
+        $scope.calculateTax = function () {
             $scope.issue_part.tax_amount = parseFloat($scope.issue_part.total) * (parseFloat($scope.issue_part.tax_percentage) / 100);
             $scope.issue_part.total_amount = parseFloat($scope.issue_part.total) + parseFloat($scope.issue_part.tax_amount);
             $scope.issue_part.po_amount = $scope.issue_part.total_amount;
         }
-        $scope.checkAvailability = function() {
+        $scope.checkAvailability = function () {
             // console.log($scope.available_quantity, $scope.issued_part.issued_qty);
             if ($scope.available_quantity == undefined) {
                 custom_noty('error', 'Please Select Part');
@@ -1282,7 +1281,7 @@ app.component('partsIndentIssuePartForm', {
                 }
             }
         }
-        $scope.issuedPartSelected = function(part, type) {
+        $scope.issuedPartSelected = function (part, type) {
             if (part) {
 
                 $part_code = part.code;
@@ -1299,18 +1298,18 @@ app.component('partsIndentIssuePartForm', {
                 // }
 
                 $.ajax({
-                        url: base_url + '/api/part-indent/get-part-form-data',
-                        method: "POST",
-                        data: {
-                            code: part.code,
-                            job_order_id: $routeParams.job_order_id,
-                            job_order_part_id: part.job_order_part_id,
-                        },
-                        beforeSend: function(xhr) {
-                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                        },
-                    })
-                    .done(function(res) {
+                    url: base_url + '/api/part-indent/get-part-form-data',
+                    method: "POST",
+                    data: {
+                        code: part.code,
+                        job_order_id: $routeParams.job_order_id,
+                        job_order_part_id: part.job_order_part_id,
+                    },
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                    .done(function (res) {
                         if (!res.success) {
                             showErrorNoty(res);
                             return;
@@ -1339,13 +1338,13 @@ app.component('partsIndentIssuePartForm', {
 
                         $scope.$apply();
                     })
-                    .fail(function(xhr) {
+                    .fail(function (xhr) {
                         custom_noty('error', 'Something went wrong at server');
                     });
             }
         }
 
-        $(document).on("wheel", "input[type=number]", function(e) {
+        $(document).on("wheel", "input[type=number]", function (e) {
             $(this).blur();
         });
     }
@@ -1353,7 +1352,7 @@ app.component('partsIndentIssuePartForm', {
 
 app.component('partsIndentIssueBulkPartForm', {
     templateUrl: parts_indent_issue_bulk_part_form_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, PartSvc, VendorSvc) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, PartSvc, VendorSvc) {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         self.angular_routes = angular_routes;
@@ -1364,22 +1363,22 @@ app.component('partsIndentIssueBulkPartForm', {
         $scope.issue_part = {};
         self.part_type = 1;
 
-        $element.find('input').on('keydown', function(ev) {
+        $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
         });
 
-        $scope.fetchData = function() {
+        $scope.fetchData = function () {
             $.ajax({
-                    url: base_url + '/api/inward-part-indent/bulk-form-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id,
-                    },
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
-                .done(function(res) {
+                url: base_url + '/api/inward-part-indent/bulk-form-data',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id,
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
+                .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -1391,16 +1390,16 @@ app.component('partsIndentIssueBulkPartForm', {
 
                     $scope.$apply();
                 })
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
         $scope.fetchData();
 
-        $(document).on('click', '.select_all_parts', function() {
+        $(document).on('click', '.select_all_parts', function () {
             if (event.target.checked == true) {
                 $('.partcheckbox').prop('checked', true);
-                $.each($('.partcheckbox:checked'), function() {
+                $.each($('.partcheckbox:checked'), function () {
                     $scope.checkCheckbox($(this).val());
                     $('.parts_details_table tbody tr #in_' + $(this).val()).removeClass('ng-hide');
                     $('.parts_details_table tbody tr #checked_' + $(this).val()).val('1');
@@ -1409,7 +1408,7 @@ app.component('partsIndentIssueBulkPartForm', {
                 });
             } else {
                 $('.partcheckbox').prop('checked', false);
-                $.each($('.partcheckbox'), function() {
+                $.each($('.partcheckbox'), function () {
                     $('.parts_details_table tbody tr #in_' + $(this).val()).addClass('ng-hide');
                     $('.parts_details_table tbody tr #in_' + $(this).val() + '-error').remove();
                     $('.parts_details_table tbody tr #in_' + $(this).val()).removeClass('error');
@@ -1422,7 +1421,7 @@ app.component('partsIndentIssueBulkPartForm', {
         });
 
 
-        $scope.checkCheckbox = function(id) {
+        $scope.checkCheckbox = function (id) {
             checkval = $('#check' + id).is(":checked");
             if (checkval == true) {
                 $("#in_" + id).removeClass('ng-hide');
@@ -1439,7 +1438,7 @@ app.component('partsIndentIssueBulkPartForm', {
             }
         }
 
-        $scope.saveIssueForm = function() {
+        $scope.saveIssueForm = function () {
             var form = '#issue_bulk_part_form';
             var v = jQuery(form).validate({
                 ignore: '',
@@ -1451,21 +1450,21 @@ app.component('partsIndentIssueBulkPartForm', {
                 messages: {
 
                 },
-                invalidHandler: function(event, validator) {
+                invalidHandler: function (event, validator) {
                     custom_noty('error', 'You have errors, Kindly fix');
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(form)[0]);
                     $('.submit').button('loading');
 
                     $.ajax({
-                            url: base_url + '/api/inward-part-indent/save-issued-part',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
-                        .done(function(res) {
+                        url: base_url + '/api/inward-part-indent/save-issued-part',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
+                        .done(function (res) {
                             $('.submit').button('reset');
                             if (!res.success) {
                                 $('.submit').button('reset');
@@ -1477,7 +1476,7 @@ app.component('partsIndentIssueBulkPartForm', {
 
                             $scope.$apply();
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             $('.submit').button('reset');
                             custom_noty('error', 'Something went wrong at server');
                         });
@@ -1485,25 +1484,25 @@ app.component('partsIndentIssueBulkPartForm', {
             });
         }
 
-        $scope.searchVendor = function(query) {
-            return new Promise(function(resolve, reject) {
+        $scope.searchVendor = function (query) {
+            return new Promise(function (resolve, reject) {
                 VendorSvc.options({ filter: { search: query } })
-                    .then(function(response) {
+                    .then(function (response) {
                         resolve(response.data.options);
                     });
             });
         }
-        $scope.calculateTotal = function() {
+        $scope.calculateTotal = function () {
             if ($scope.issue_part.quantity != '' && $scope.issue_part.unit_price != '') {
                 $scope.issue_part.total = parseInt($scope.issue_part.quantity) * parseFloat($scope.issue_part.unit_price);
             }
         }
-        $scope.calculateTax = function() {
+        $scope.calculateTax = function () {
             $scope.issue_part.tax_amount = parseFloat($scope.issue_part.total) * (parseFloat($scope.issue_part.tax_percentage) / 100);
             $scope.issue_part.total_amount = parseFloat($scope.issue_part.total) + parseFloat($scope.issue_part.tax_amount);
             $scope.issue_part.po_amount = $scope.issue_part.total_amount;
         }
-        $scope.checkAvailability = function() {
+        $scope.checkAvailability = function () {
             // console.log($scope.available_quantity, $scope.issued_part.issued_qty);
             if ($scope.available_quantity == undefined) {
                 custom_noty('error', 'Please Select Part');
@@ -1515,23 +1514,23 @@ app.component('partsIndentIssueBulkPartForm', {
                 }
             }
         }
-        $scope.issuedPartSelected = function(part) {
+        $scope.issuedPartSelected = function (part) {
             console.log(part);
             alert(part.job_order_part_id);
             if (part) {
                 $.ajax({
-                        url: base_url + '/api/inward-part-indent/get-part-detail-pias',
-                        method: "POST",
-                        data: {
-                            code: part.code,
-                            job_order_id: $routeParams.job_order_id,
-                            job_order_part_id: part.job_order_part_id,
-                        },
-                        beforeSend: function(xhr) {
-                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                        },
-                    })
-                    .done(function(res) {
+                    url: base_url + '/api/inward-part-indent/get-part-detail-pias',
+                    method: "POST",
+                    data: {
+                        code: part.code,
+                        job_order_id: $routeParams.job_order_id,
+                        job_order_part_id: part.job_order_part_id,
+                    },
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                    .done(function (res) {
                         if (!res.success) {
                             showErrorNoty(res);
                             return;
@@ -1559,7 +1558,7 @@ app.component('partsIndentIssueBulkPartForm', {
 
                         $scope.$apply();
                     })
-                    .fail(function(xhr) {
+                    .fail(function (xhr) {
                         custom_noty('error', 'Something went wrong at server');
                     });
             }
@@ -1749,7 +1748,7 @@ app.component('partsIndentIssueBulkPartForm', {
 //------------------------------------------------------------------------------------------------------------------------
 app.component('partsIndentEditParts', {
     templateUrl: parts_indent_edit_parts_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
@@ -1766,13 +1765,13 @@ app.component('partsIndentEditParts', {
 
         $http.get(
             laravel_routes['getPartsIndentPartsData'], {
-                params: {
-                    job_card_id: $routeParams.job_card_id,
-                    job_order_issued_part_id: $routeParams.job_order_issued_part_id,
+            params: {
+                job_card_id: $routeParams.job_card_id,
+                job_order_issued_part_id: $routeParams.job_order_issued_part_id,
 
-                }
             }
-        ).then(function(response) {
+        }
+        ).then(function (response) {
             // console.log(response);
             self.job_card = response.data.job_card;
             self.extras = response.data.extras;
@@ -1783,14 +1782,14 @@ app.component('partsIndentEditParts', {
             $scope.onSelectedpartcode(self.job_order_issued_part.job_order_part.id);
         });
 
-        $scope.onSelectedpartcode = function(job_order_part_id) {
+        $scope.onSelectedpartcode = function (job_order_part_id) {
             if (job_order_part_id) {
                 $http.post(
-                        laravel_routes['getPartDetails'], {
-                            job_order_part_id: job_order_part_id,
-                        }
-                    )
-                    .then(function(response) {
+                    laravel_routes['getPartDetails'], {
+                    job_order_part_id: job_order_part_id,
+                }
+                )
+                    .then(function (response) {
                         if (!response.data.success) {
                             $scope.add_part = [];
                             showErrorNoty(response.data);
@@ -1820,7 +1819,7 @@ app.component('partsIndentEditParts', {
         }
 
         //Save Form Data 
-        $scope.submitPart = function() {
+        $scope.submitPart = function () {
             var form_id = '#part_add';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -1839,20 +1838,20 @@ app.component('partsIndentEditParts', {
                     },
 
                 },
-                invalidHandler: function(event, validator) {
+                invalidHandler: function (event, validator) {
                     custom_noty('error', 'You have errors, Please check');
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     let formData = new FormData($(form_id)[0]);
                     $('.submit').button('loading');
                     $.ajax({
-                            url: laravel_routes['savePartsindent'],
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
-                        .done(function(res) {
+                        url: laravel_routes['savePartsindent'],
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
+                        .done(function (res) {
                             if (!res.success) {
                                 $('.submit').button('reset');
                                 showErrorNoty(res);
@@ -1863,7 +1862,7 @@ app.component('partsIndentEditParts', {
                             $location.path('/job-card/part-indent/' + $routeParams.job_card_id);
                             $scope.$apply();
                         })
-                        .fail(function(xhr) {
+                        .fail(function (xhr) {
                             $('.submit').button('reset');
                             custom_noty('error', 'Something went wrong at server');
                         });
@@ -1877,12 +1876,12 @@ app.component('partsIndentEditParts', {
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 
-app.directive('partIndentHeader', function() {
+app.directive('partIndentHeader', function () {
     return {
         templateUrl: part_indent_header_template_url,
-        controller: function() {
+        controller: function () {
             /* Work Tooltip */
-            $(document).on('mouseover', ".work-tooltip", function() {
+            $(document).on('mouseover', ".work-tooltip", function () {
                 var $this = $(this);
                 if (!$this.attr('title')) {
                     console.log('true');
@@ -1900,10 +1899,10 @@ app.directive('partIndentHeader', function() {
 });
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
-app.directive('partIndentTabs', function() {
+app.directive('partIndentTabs', function () {
     return {
         templateUrl: part_indent_tabs_template_url,
-        controller: function() {}
+        controller: function () { }
     }
 });
 //------------------------------------------------------------------------------------------------------------------------

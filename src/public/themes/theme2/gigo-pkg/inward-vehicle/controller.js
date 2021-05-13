@@ -32,24 +32,24 @@ app.component('inwardVehicleCardList', {
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/get',
-                    method: "POST",
-                    data: {
-                        service_advisor_id: self.user.id,
-                        search_key: self.search_key,
-                        gate_in_date: self.gate_in_date,
-                        reg_no: self.reg_no,
-                        membership: self.membership,
-                        gate_in_no: self.gate_in_no,
-                        customer_id: self.customer_id,
-                        model_id: self.model_id,
-                        registration_type: self.registration_type,
-                        status_id: self.status_id,
-                    },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
+                url: base_url + '/api/vehicle-inward/get',
+                method: "POST",
+                data: {
+                    service_advisor_id: self.user.id,
+                    search_key: self.search_key,
+                    gate_in_date: self.gate_in_date,
+                    reg_no: self.reg_no,
+                    membership: self.membership,
+                    gate_in_no: self.gate_in_no,
+                    customer_id: self.customer_id,
+                    model_id: self.model_id,
+                    registration_type: self.registration_type,
+                    status_id: self.status_id,
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
                 .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
@@ -111,8 +111,8 @@ app.component('inwardVehicleCardList', {
                     $http
                         .post(
                             laravel_routes['getCustomerSearchList'], {
-                                key: query,
-                            }
+                            key: query,
+                        }
                         )
                         .then(function (response) {
                             resolve(response.data);
@@ -130,8 +130,8 @@ app.component('inwardVehicleCardList', {
                     $http
                         .post(
                             laravel_routes['getVehicleModelSearchList'], {
-                                key: query,
-                            }
+                            key: query,
+                        }
                         )
                         .then(function (response) {
                             resolve(response.data);
@@ -269,47 +269,47 @@ app.component('inwardVehicleTableList', {
             },
 
             columns: [{
-                    data: 'action',
-                    class: 'action',
-                    name: 'action',
-                    searchable: false
-                },
-                {
-                    data: 'date',
-                    searchable: false
-                },
-                {
-                    data: 'outlet_code',
-                    name: 'outlets.code'
-                },
-                {
-                    data: 'registration_type',
-                    name: 'registration_type'
-                },
-                {
-                    data: 'registration_number',
-                    name: 'vehicles.registration_number'
-                },
-                {
-                    data: 'customer_name',
-                    name: 'customers.name'
-                },
-                {
-                    data: 'model_number',
-                    name: 'models.model_number'
-                },
-                {
-                    data: 'amc_policies',
-                    name: 'amc_policies.name'
-                },
-                {
-                    data: 'number',
-                    name: 'gate_logs.number'
-                },
-                {
-                    data: 'status',
-                    name: 'configs.name'
-                },
+                data: 'action',
+                class: 'action',
+                name: 'action',
+                searchable: false
+            },
+            {
+                data: 'date',
+                searchable: false
+            },
+            {
+                data: 'outlet_code',
+                name: 'outlets.code'
+            },
+            {
+                data: 'registration_type',
+                name: 'registration_type'
+            },
+            {
+                data: 'registration_number',
+                name: 'vehicles.registration_number'
+            },
+            {
+                data: 'customer_name',
+                name: 'customers.name'
+            },
+            {
+                data: 'model_number',
+                name: 'models.model_number'
+            },
+            {
+                data: 'amc_policies',
+                name: 'amc_policies.name'
+            },
+            {
+                data: 'number',
+                name: 'gate_logs.number'
+            },
+            {
+                data: 'status',
+                name: 'configs.name'
+            },
 
             ],
             "infoCallback": function (settings, start, end, max, total, pre) {
@@ -357,8 +357,8 @@ app.component('inwardVehicleTableList', {
                     $http
                         .post(
                             laravel_routes['getCustomerSearchList'], {
-                                key: query,
-                            }
+                            key: query,
+                        }
                         )
                         .then(function (response) {
                             resolve(response.data);
@@ -376,8 +376,8 @@ app.component('inwardVehicleTableList', {
                     $http
                         .post(
                             laravel_routes['getVehicleModelSearchList'], {
-                                key: query,
-                            }
+                            key: query,
+                        }
                         )
                         .then(function (response) {
                             resolve(response.data);
@@ -485,15 +485,15 @@ app.component('inwardVehicleView', {
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/get-view-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id
-                    },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
+                url: base_url + '/api/vehicle-inward/get-view-data',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
                 .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
@@ -565,8 +565,8 @@ app.component('inwardVehicleView', {
         $('.btn-pills').on("click", function () {
             tabPaneFooter();
         });
-        $scope.btnNxt = function () {}
-        $scope.prev = function () {}
+        $scope.btnNxt = function () { }
+        $scope.prev = function () { }
 
         /* Dropdown Arrow Function */
         arrowDropdown();
@@ -588,12 +588,12 @@ app.component('inwardVehicleView', {
                 let formData = new FormData($(form_id)[0]);
                 $('.submit').button('loading');
                 $.ajax({
-                        url: laravel_routes['saveJobOrder'],
-                        method: "POST",
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                    })
+                    url: laravel_routes['saveJobOrder'],
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                })
                     .done(function (res) {
                         if (res.success == true) {
                             custom_noty('success', res.message);
@@ -640,15 +640,15 @@ app.component('inwardVehicleView', {
                     let formData = new FormData($(form_id)[0]);
                     $scope.button_action(id, 1);
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/cancel',
-                            method: "POST",
-                            data: formData,
-                            beforeSend: function (xhr) {
-                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                            },
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/vehicle-inward/cancel',
+                        method: "POST",
+                        data: formData,
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
@@ -710,16 +710,16 @@ app.component('inwardVehicleVehicleDetail', {
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/get-vehicle-detail',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id,
-                        service_advisor_id: self.user.id
-                    },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
+                url: base_url + '/api/vehicle-inward/get-vehicle-detail',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id,
+                    service_advisor_id: self.user.id
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
                 .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
@@ -787,8 +787,8 @@ app.component('inwardVehicleVehicleDetail', {
                     $http
                         .post(
                             laravel_routes['getVehicleModelSearchList'], {
-                                key: query,
-                            }
+                            key: query,
+                        }
                         )
                         .then(function (response) {
                             resolve(response.data);
@@ -872,12 +872,12 @@ app.component('inwardVehicleVehicleDetail', {
                     let formData = new FormData($(form_id)[0]);
                     $scope.button_action(id, 1);
                     $.ajax({
-                            url: base_url + '/api/vehicle/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/vehicle/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
@@ -961,15 +961,15 @@ app.component('inwardVehicleCustomerDetail', {
         $scope.fetchData = function () {
             $rootScope.loading = true;
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/get-customer-detail',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id
-                    },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
+                url: base_url + '/api/vehicle-inward/get-customer-detail',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
                 .done(function (res) {
                     $rootScope.loading = false;
                     if (!res.success) {
@@ -1113,12 +1113,12 @@ app.component('inwardVehicleCustomerDetail', {
                     $rootScope.loading = true;
                     $scope.button_action(id, 1);
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/save-customer-detail',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/vehicle-inward/save-customer-detail',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
@@ -1148,10 +1148,10 @@ app.component('inwardVehicleCustomerDetail', {
         $scope.searchCustomer = function (query) {
             return new Promise(function (resolve, reject) {
                 CustomerSvc.options({
-                        filter: {
-                            search: query
-                        }
-                    })
+                    filter: {
+                        search: query
+                    }
+                })
                     .then(function (response) {
                         resolve(response.data.options);
                     });
@@ -1160,7 +1160,7 @@ app.component('inwardVehicleCustomerDetail', {
 
         $scope.customerChanged = function (customer) {
             $scope.customer = {};
-           
+
             CustomerSvc.read(customer.id)
                 .then(function (response) {
                     console.log(response);
@@ -1198,8 +1198,8 @@ app.component('inwardVehicleCustomerDetail', {
                     $http
                         .post(
                             laravel_routes['getCitySearchList'], {
-                                key: query,
-                            }
+                            key: query,
+                        }
                         )
                         .then(function (response) {
                             resolve(response.data);
@@ -1213,12 +1213,12 @@ app.component('inwardVehicleCustomerDetail', {
 
         $scope.countryChanged = function (country_id) {
             $.ajax({
-                    url: base_url + '/api/state/get-drop-down-List',
-                    method: "POST",
-                    data: {
-                        country_id: country_id,
-                    },
-                })
+                url: base_url + '/api/state/get-drop-down-List',
+                method: "POST",
+                data: {
+                    country_id: country_id,
+                },
+            })
                 .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
@@ -1230,11 +1230,11 @@ app.component('inwardVehicleCustomerDetail', {
                     // if ($scope.type_id == 2) {
                     //     self.state = $scope.job_order.state;
                     // } else {
-                        if (!$scope.customer) {
-                            self.state = $scope.job_order.state;
-                        } else {
-                            self.state = $scope.customer.address.state;
-                        }
+                    if (!$scope.customer) {
+                        self.state = $scope.job_order.state;
+                    } else {
+                        self.state = $scope.customer.address.state;
+                    }
                     // }
 
                     $scope.$apply();
@@ -1323,12 +1323,12 @@ app.component('inwardVehiclePhotos', {
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/vehicle/photos/get-form-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id
-                    },
-                })
+                url: base_url + '/api/vehicle-inward/vehicle/photos/get-form-data',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id
+                },
+            })
                 .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
@@ -1411,12 +1411,12 @@ app.component('inwardVehiclePhotos', {
                     $rootScope.loading = true;
                     $scope.button_action(id, 1);
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/vehicle/photos/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/vehicle-inward/vehicle/photos/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
@@ -1518,12 +1518,12 @@ app.component('inwardVehicleOrderDetailForm', {
         $scope.fetchData = function () {
             $rootScope.loading = true;
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/order-detail/get-form-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id
-                    },
-                })
+                url: base_url + '/api/vehicle-inward/order-detail/get-form-data',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id
+                },
+            })
                 .done(function (res) {
                     $rootScope.loading = false;
                     if (!res.success) {
@@ -1690,12 +1690,12 @@ app.component('inwardVehicleOrderDetailForm', {
                     $rootScope.loading = true;
                     $scope.button_action(id, 1);
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/order-detail/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/vehicle-inward/order-detail/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
@@ -1786,12 +1786,12 @@ app.component('inwardVehicleInventoryDetailForm', {
         $scope.fetchData = function () {
             $rootScope.loading = true;
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/inventory/get-form-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id
-                    },
-                })
+                url: base_url + '/api/vehicle-inward/inventory/get-form-data',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id
+                },
+            })
                 .done(function (res) {
                     $rootScope.loading = false;
                     if (!res.success) {
@@ -1847,12 +1847,12 @@ app.component('inwardVehicleInventoryDetailForm', {
                     $rootScope.loading = true;
                     $scope.button_action(id, 1);
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/inventory/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/vehicle-inward/inventory/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
@@ -1945,15 +1945,15 @@ app.component('inwardVehicleVocDetailForm', {
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/voc/get-form-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id
-                    },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
+                url: base_url + '/api/vehicle-inward/voc/get-form-data',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
                 .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
@@ -2032,12 +2032,12 @@ app.component('inwardVehicleVocDetailForm', {
                     $rootScope.loading = true;
                     $scope.button_action(id, 1);
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/voc/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/vehicle-inward/voc/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
@@ -2135,15 +2135,15 @@ app.component('inwardVehicleRoadTestDetailForm', {
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/road-test-observation/get-form-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id
-                    },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
+                url: base_url + '/api/vehicle-inward/road-test-observation/get-form-data',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
                 .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
@@ -2223,12 +2223,12 @@ app.component('inwardVehicleRoadTestDetailForm', {
                     let formData = new FormData($(form_id)[0]);
                     $scope.button_action(id, 1);
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/road-test-observation/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/vehicle-inward/road-test-observation/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
@@ -2305,15 +2305,15 @@ app.component('inwardVehicleExpertDiagnosisDetailForm', {
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/expert-diagnosis-report/get-form-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id
-                    },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
+                url: base_url + '/api/vehicle-inward/expert-diagnosis-report/get-form-data',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
                 .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
@@ -2364,15 +2364,15 @@ app.component('inwardVehicleExpertDiagnosisDetailForm', {
                     let formData = new FormData($(form_id)[0]);
                     $scope.button_action(id, 1);
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/expert-diagnosis-report/save',
-                            method: "POST",
-                            data: formData,
-                            beforeSend: function (xhr) {
-                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                            },
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/vehicle-inward/expert-diagnosis-report/save',
+                        method: "POST",
+                        data: formData,
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
@@ -2452,15 +2452,15 @@ app.component('inwardVehicleInspectionDetailForm', {
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/vehicle-inspection/get-form-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id
-                    },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
+                url: base_url + '/api/vehicle-inward/vehicle-inspection/get-form-data',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
                 .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
@@ -2496,15 +2496,15 @@ app.component('inwardVehicleInspectionDetailForm', {
                     let formData = new FormData($(form_id)[0]);
                     $scope.button_action(id, 1);
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/vehicle-inspection/save',
-                            method: "POST",
-                            data: formData,
-                            beforeSend: function (xhr) {
-                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                            },
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/vehicle-inward/vehicle-inspection/save',
+                        method: "POST",
+                        data: formData,
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
@@ -2597,15 +2597,15 @@ app.component('inwardVehicleDmsCheckListForm', {
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/dms-checklist/get-form-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id
-                    },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
+                url: base_url + '/api/vehicle-inward/dms-checklist/get-form-data',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
                 .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
@@ -2776,15 +2776,15 @@ app.component('inwardVehicleDmsCheckListForm', {
                     let formData = new FormData($(form_id)[0]);
                     $scope.button_action(id, 1);
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/dms-checklist/save',
-                            method: "POST",
-                            data: formData,
-                            beforeSend: function (xhr) {
-                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                            },
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/vehicle-inward/dms-checklist/save',
+                        method: "POST",
+                        data: formData,
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
@@ -2874,15 +2874,15 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/schedule-maintenance/get-form-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id
-                    },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
+                url: base_url + '/api/vehicle-inward/schedule-maintenance/get-form-data',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
                 .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
@@ -2994,12 +2994,12 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                     let formData = new FormData($(form_id)[0]);
                     $('.save_labour').button('loading');
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/add-repair-order/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/vehicle-inward/add-repair-order/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             if (!res.success) {
                                 $('.save_labour').button('reset');
@@ -3041,12 +3041,12 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                     let formData = new FormData($(form_id)[0]);
                     $('.save_part').button('loading');
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/add-part/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/vehicle-inward/add-part/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             if (!res.success) {
                                 $('.save_part').button('reset');
@@ -3176,10 +3176,10 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
         $scope.searchRepairOrders = function (query) {
             return new Promise(function (resolve, reject) {
                 RepairOrderSvc.options({
-                        filter: {
-                            search: query
-                        }
-                    })
+                    filter: {
+                        search: query
+                    }
+                })
                     .then(function (response) {
                         resolve(response.data.options);
                     });
@@ -3188,10 +3188,10 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
         $scope.searchParts = function (query) {
             return new Promise(function (resolve, reject) {
                 PartSvc.options({
-                        filter: {
-                            search: query
-                        }
-                    })
+                    filter: {
+                        search: query
+                    }
+                })
                     .then(function (response) {
                         resolve(response.data.options);
                     });
@@ -3217,15 +3217,15 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             //         }
             //         // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? (response.data.part.part_stock.stock != 0 ? response.data.part.part_stock.mrp : (response.data.part.job_order_parts.length != 0 ? response.data.part.job_order_parts[0].rate : '0')) : '0';
             //         // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock.stock != 0 ? response.data.part.part_stock.mrp : part.job_order_parts[0].rate;
-            //         $scope.schedule_maintainance_part.part.total_amount = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
+            //         $scope.schedule_maintainance_part.part.total_amount = response.data.part.part_stock ? response.data.part.part_stock.mrp : '0';
             //         $scope.available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
             //         $scope.schedule_maintainance_part.part.qty = $qty;
             //         $scope.calculatePartAmount();
             //     });
             PartSvc.getFormData({
-                    outletId: $scope.job_order.outlet_id,
-                    partId: part.id
-                })
+                outletId: $scope.job_order.outlet_id,
+                partId: part.id
+            })
                 .then(function (response) {
                     console.log(response);
 
@@ -3236,7 +3236,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                         $scope.schedule_maintainance_part.part.mrp = 0;
                         $scope.mrp_change = 1;
                     } else {
-                        $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
+                        $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.mrp : '0';
                         $scope.mrp_change = 0;
                     }
 
@@ -3247,7 +3247,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                     }
                     // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? (response.data.part.part_stock.stock != 0 ? response.data.part.part_stock.mrp : (response.data.part.job_order_parts.length != 0 ? response.data.part.job_order_parts[0].rate : '0')) : '0';
                     // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock.stock != 0 ? response.data.part.part_stock.mrp : part.job_order_parts[0].rate;
-                    $scope.schedule_maintainance_part.part.total_amount = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
+                    $scope.schedule_maintainance_part.part.total_amount = response.data.part.part_stock ? response.data.part.part_stock.mrp : '0';
                     $scope.available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
                     $scope.schedule_maintainance_part.part.qty = $qty;
                     $scope.calculatePartAmount();
@@ -3346,9 +3346,9 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                     //         $scope.calculatePartAmount();
                     //     });
                     PartSvc.getFormData({
-                            outletId: $scope.job_order.outlet_id,
-                            partId: part.part_id
-                        })
+                        outletId: $scope.job_order.outlet_id,
+                        partId: part.part_id
+                    })
                         .then(function (response) {
                             $scope.schedule_maintainance_part.part = response.data.part;
                             $scope.schedule_maintainance_part.part.qty = part.qty;
@@ -3529,12 +3529,12 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                         let formData = new FormData($(delete_form_id)[0]);
                         $rootScope.loading = true;
                         $.ajax({
-                                url: base_url + '/api/vehicle-inward/labour-parts/delete',
-                                method: "POST",
-                                data: formData,
-                                processData: false,
-                                contentType: false,
-                            })
+                            url: base_url + '/api/vehicle-inward/labour-parts/delete',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
                             .done(function (res) {
                                 if (!res.success) {
                                     $rootScope.loading = false;
@@ -3598,12 +3598,12 @@ app.component('inwardVehiclePayableLabourPartForm', {
         $scope.fetchData = function () {
             $rootScope.loading = true;
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/addtional-rot-part/get-form-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id
-                    },
-                })
+                url: base_url + '/api/vehicle-inward/addtional-rot-part/get-form-data',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id
+                },
+            })
                 .done(function (res) {
                     $rootScope.loading = false;
                     if (!res.success) {
@@ -3705,12 +3705,12 @@ app.component('inwardVehiclePayableLabourPartForm', {
                     let formData = new FormData($(form_id)[0]);
                     $('.save_labour').button('loading');
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/add-repair-order/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/vehicle-inward/add-repair-order/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             if (!res.success) {
                                 $('.save_labour').button('reset');
@@ -3752,12 +3752,12 @@ app.component('inwardVehiclePayableLabourPartForm', {
                     let formData = new FormData($(form_id)[0]);
                     $('.save_part').button('loading');
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/add-part/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/vehicle-inward/add-part/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             if (!res.success) {
                                 $('.save_part').button('reset');
@@ -3802,10 +3802,10 @@ app.component('inwardVehiclePayableLabourPartForm', {
         $scope.searchRepairOrders = function (query) {
             return new Promise(function (resolve, reject) {
                 RepairOrderSvc.options({
-                        filter: {
-                            search: query
-                        }
-                    })
+                    filter: {
+                        search: query
+                    }
+                })
                     .then(function (response) {
                         resolve(response.data.options);
                     });
@@ -3814,10 +3814,10 @@ app.component('inwardVehiclePayableLabourPartForm', {
         $scope.searchParts = function (query) {
             return new Promise(function (resolve, reject) {
                 PartSvc.options({
-                        filter: {
-                            search: query
-                        }
-                    })
+                    filter: {
+                        search: query
+                    }
+                })
                     .then(function (response) {
                         resolve(response.data.options);
                     });
@@ -3842,15 +3842,15 @@ app.component('inwardVehiclePayableLabourPartForm', {
             //         }
             //         // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? (response.data.part.part_stock.stock != 0 ? response.data.part.part_stock.mrp : (response.data.part.job_order_parts.length != 0 ? response.data.part.job_order_parts[0].rate : '0')) : '0';
             //         // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock.stock != '0.00' ? response.data.part.part_stock.mrp : part.job_order_parts[0].rate;
-            //         $scope.schedule_maintainance_part.part.total_amount = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
+            //         $scope.schedule_maintainance_part.part.total_amount = response.data.part.part_stock ? response.data.part.part_stock.mrp : '0';
             //         $scope.available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
             //         $scope.schedule_maintainance_part.part.qty = $qty;
             //         $scope.calculatePartAmount();
             //     });
             PartSvc.getFormData({
-                    outletId: $scope.job_order.outlet_id,
-                    partId: part.id
-                })
+                outletId: $scope.job_order.outlet_id,
+                partId: part.id
+            })
                 .then(function (response) {
                     console.log(response);
                     // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.stock > 0 ? response.data.part.part_stock.mrp : '0' : '0';
@@ -3862,7 +3862,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                         $scope.schedule_maintainance_part.part.mrp = 0;
                         $scope.mrp_change = 1;
                     } else {
-                        $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
+                        $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.mrp : '0';
                         $scope.mrp_change = 0;
                     }
 
@@ -3871,7 +3871,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                     }
                     // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? (response.data.part.part_stock.stock != 0 ? response.data.part.part_stock.mrp : (response.data.part.job_order_parts.length != 0 ? response.data.part.job_order_parts[0].rate : '0')) : '0';
                     // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock.stock != '0.00' ? response.data.part.part_stock.mrp : part.job_order_parts[0].rate;
-                    $scope.schedule_maintainance_part.part.total_amount = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
+                    $scope.schedule_maintainance_part.part.total_amount = response.data.part.part_stock ? response.data.part.part_stock.mrp : '0';
                     $scope.available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
                     $scope.schedule_maintainance_part.part.qty = $qty;
                     $scope.calculatePartAmount();
@@ -3970,9 +3970,9 @@ app.component('inwardVehiclePayableLabourPartForm', {
                     //         $scope.calculatePartAmount();
                     //     });
                     PartSvc.getFormData({
-                            outletId: $scope.job_order.outlet_id,
-                            partId: part.part_id
-                        })
+                        outletId: $scope.job_order.outlet_id,
+                        partId: part.part_id
+                    })
                         .then(function (response) {
                             $scope.schedule_maintainance_part.part = response.data.part;
                             $scope.schedule_maintainance_part.part.qty = part.qty;
@@ -4076,12 +4076,12 @@ app.component('inwardVehiclePayableLabourPartForm', {
                         $rootScope.loading = true;
                         // $scope.button_action(id, 1);
                         $.ajax({
-                                url: base_url + '/api/vehicle-inward/labour-parts/delete',
-                                method: "POST",
-                                data: formData,
-                                processData: false,
-                                contentType: false,
-                            })
+                            url: base_url + '/api/vehicle-inward/labour-parts/delete',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
                             .done(function (res) {
                                 // $scope.button_action(id, 2);
                                 if (!res.success) {
@@ -4140,13 +4140,13 @@ app.component('inwardVehiclePayableLabourPartForm', {
             if (job_order_id) {
                 $('.send_confirm').button('loading');
                 $.ajax({
-                        url: base_url + '/api/vehicle-inward/stock-incharge/request/parts',
-                        method: "POST",
-                        data: {
-                            id: job_order_id,
-                            type_id: 1,
-                        },
-                    })
+                    url: base_url + '/api/vehicle-inward/stock-incharge/request/parts',
+                    method: "POST",
+                    data: {
+                        id: job_order_id,
+                        type_id: 1,
+                    },
+                })
                     .done(function (res) {
                         $('.send_confirm').button('reset');
                         if (!res.success) {
@@ -4201,12 +4201,12 @@ app.component('inwardVehiclePayableAddPartForm', {
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/part-list/get',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id
-                    },
-                })
+                url: base_url + '/api/vehicle-inward/part-list/get',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id
+                },
+            })
                 .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
@@ -4238,8 +4238,8 @@ app.component('inwardVehiclePayableAddPartForm', {
                     $http
                         .post(
                             laravel_routes['getPartSearchList'], {
-                                key: query,
-                            }
+                            key: query,
+                        }
                         )
                         .then(function (response) {
                             resolve(response.data);
@@ -4253,13 +4253,13 @@ app.component('inwardVehiclePayableAddPartForm', {
 
         $scope.getJobOrderPartFormData = function (job_order_part_id) {
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/job_order-part/get-form-data',
-                    method: "POST",
-                    data: {
-                        id: job_order_part_id,
-                        job_order_id: $routeParams.job_order_id
-                    },
-                })
+                url: base_url + '/api/vehicle-inward/job_order-part/get-form-data',
+                method: "POST",
+                data: {
+                    id: job_order_part_id,
+                    job_order_id: $routeParams.job_order_id
+                },
+            })
                 .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
@@ -4291,13 +4291,13 @@ app.component('inwardVehiclePayableAddPartForm', {
                 return;
             }
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/part/get-form-data',
-                    method: "POST",
-                    data: {
-                        id: part_id,
-                        job_order_id: $routeParams.job_order_id
-                    },
-                })
+                url: base_url + '/api/vehicle-inward/part/get-form-data',
+                method: "POST",
+                data: {
+                    id: part_id,
+                    job_order_id: $routeParams.job_order_id
+                },
+            })
                 .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
@@ -4350,12 +4350,12 @@ app.component('inwardVehiclePayableAddPartForm', {
                     let formData = new FormData($(form_id)[0]);
                     $('.submit').button('loading');
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/add-part/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/vehicle-inward/add-part/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             if (!res.success) {
                                 $('.submit').button('reset');
@@ -4416,12 +4416,12 @@ app.component('inwardVehiclePayableAddLabourForm', {
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/repair-order-type-list/get',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id
-                    },
-                })
+                url: base_url + '/api/vehicle-inward/repair-order-type-list/get',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id
+                },
+            })
                 .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
@@ -4449,12 +4449,12 @@ app.component('inwardVehiclePayableAddLabourForm', {
         //GET JOB ORDER ROT FORM DATA
         $scope.getJobOrderRotFormData = function (job_order_repair_order_id) {
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/job-order-repair-order/get-form-data',
-                    method: "POST",
-                    data: {
-                        id: job_order_repair_order_id
-                    },
-                })
+                url: base_url + '/api/vehicle-inward/job-order-repair-order/get-form-data',
+                method: "POST",
+                data: {
+                    id: job_order_repair_order_id
+                },
+            })
                 .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
@@ -4477,12 +4477,12 @@ app.component('inwardVehiclePayableAddLabourForm', {
         //GET ROT LIST BASE ON ROT TYPE
         $scope.fetchRotData = function (id) {
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/get-repair-order-list/get',
-                    method: "POST",
-                    data: {
-                        id: id
-                    },
-                })
+                url: base_url + '/api/vehicle-inward/get-repair-order-list/get',
+                method: "POST",
+                data: {
+                    id: id
+                },
+            })
                 .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
@@ -4500,12 +4500,12 @@ app.component('inwardVehiclePayableAddLabourForm', {
         //GET ROT FORM DATA BASED ON SELECTED ROT
         $scope.getRotFormData = function (repair_order_id) {
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/repair-order/get-form-data',
-                    method: "POST",
-                    data: {
-                        id: repair_order_id
-                    },
-                })
+                url: base_url + '/api/vehicle-inward/repair-order/get-form-data',
+                method: "POST",
+                data: {
+                    id: repair_order_id
+                },
+            })
                 .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
@@ -4541,12 +4541,12 @@ app.component('inwardVehiclePayableAddLabourForm', {
                     let formData = new FormData($(form_id)[0]);
                     $('.submit').button('loading');
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/add-repair-order/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/vehicle-inward/add-repair-order/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             if (!res.success) {
                                 $('.submit').button('reset');
@@ -4600,15 +4600,15 @@ app.component('inwardVehicleEstimateForm', {
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/estimate/get-form-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id
-                    },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
+                url: base_url + '/api/vehicle-inward/estimate/get-form-data',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
                 .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
@@ -4687,15 +4687,15 @@ app.component('inwardVehicleEstimateForm', {
                     let formData = new FormData($(form_id)[0]);
                     // $scope.button_action(id, 1);
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/estimate/save',
-                            method: "POST",
-                            data: formData,
-                            beforeSend: function (xhr) {
-                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                            },
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/vehicle-inward/estimate/save',
+                        method: "POST",
+                        data: formData,
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             // $scope.button_action(id, 2);
                             if (!res.success) {
@@ -4846,15 +4846,15 @@ app.component('inwardVehicleEstimateForm', {
                     let formData = new FormData($(form_id)[0]);
                     $('.submit_confirm').button('loading');
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/verify/otp',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                            beforeSend: function (xhr) {
-                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                            },
-                        })
+                        url: base_url + '/api/vehicle-inward/verify/otp',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                    })
                         .done(function (res) {
                             console.log(res);
                             if (!res.success) {
@@ -4945,15 +4945,15 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/estimation-denied/get-form-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id
-                    },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
+                url: base_url + '/api/vehicle-inward/estimation-denied/get-form-data',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
                 .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
@@ -5026,12 +5026,12 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
                     $rootScope.loading = true;
                     $scope.button_action(id, 1);
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/estimation-denied/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/vehicle-inward/estimation-denied/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
@@ -5111,15 +5111,15 @@ app.component('inwardVehicleCustomerConfirmationForm', {
         $scope.fetchData = function () {
             $rootScope.loading = true;
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/customer-confirmation/get-form-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id
-                    },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
+                url: base_url + '/api/vehicle-inward/customer-confirmation/get-form-data',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
                 .done(function (res) {
                     $rootScope.loading = false;
                     if (!res.success) {
@@ -5252,15 +5252,15 @@ app.component('inwardVehicleCustomerConfirmationForm', {
                     $('.submit').button('loading');
                     $('.btn-prev').bind('click', false);
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/customer-confirmation/save',
-                            method: "POST",
-                            data: formData,
-                            beforeSend: function (xhr) {
-                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                            },
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/vehicle-inward/customer-confirmation/save',
+                        method: "POST",
+                        data: formData,
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             $('.btn-prev').unbind('click', false);
                             $('.submit').button('reset');
@@ -5295,15 +5295,15 @@ app.component('inwardVehicleCustomerConfirmationForm', {
                     // console.log(formData);
                     $('.initiate_job').button('loading');
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/initiate-job/save',
-                            method: "POST",
-                            data: formData,
-                            beforeSend: function (xhr) {
-                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                            },
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/vehicle-inward/initiate-job/save',
+                        method: "POST",
+                        data: formData,
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             if (!res.success) {
                                 $('.initiate_job').button('reset');
@@ -5356,15 +5356,15 @@ app.component('inwardVehicleUpdatejcForm', {
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/update-jc/get-form-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id
-                    },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
+                url: base_url + '/api/vehicle-inward/update-jc/get-form-data',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
                 .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
@@ -5397,7 +5397,7 @@ app.component('inwardVehicleUpdatejcForm', {
         $('.btn-pills').on("click", function () {
             tabPaneFooter();
         });
-        $scope.btnNxt = function () {}
+        $scope.btnNxt = function () { }
 
         //Save Form Data 
         $scope.saveJobCard = function (id) {
@@ -5437,15 +5437,15 @@ app.component('inwardVehicleUpdatejcForm', {
                     let formData = new FormData($(form_id)[0]);
                     $('.save_close').button('loading');
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/job-card/save',
-                            method: "POST",
-                            data: formData,
-                            beforeSend: function (xhr) {
-                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                            },
-                            processData: false,
-                            contentType: false,
-                        })
+                        url: base_url + '/api/vehicle-inward/job-card/save',
+                        method: "POST",
+                        data: formData,
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                        processData: false,
+                        contentType: false,
+                    })
                         .done(function (res) {
                             $('.save_close').button('reset');
                             if (!res.success) {
@@ -5515,15 +5515,15 @@ app.component('inwardVehicleUpdatejcForm', {
                 let formData = new FormData($(approve_behalf_customer_confirm)[0]);
                 $('.submit_confirm').button('loading');
                 $.ajax({
-                        url: base_url + '/api/vehicle-inward/verify/otp',
-                        method: "POST",
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        beforeSend: function (xhr) {
-                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                        },
-                    })
+                    url: base_url + '/api/vehicle-inward/verify/otp',
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
                     .done(function (res) {
                         console.log(res);
                         if (!res.success) {
@@ -5580,15 +5580,15 @@ app.component('jobOrderView', {
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
-                    url: base_url + '/api/job-order/view',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.gate_log_id
-                    },
-                    // beforeSend: function(xhr) {
-                    //     xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    // },
-                })
+                url: base_url + '/api/job-order/view',
+                method: "POST",
+                data: {
+                    id: $routeParams.gate_log_id
+                },
+                // beforeSend: function(xhr) {
+                //     xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                // },
+            })
                 .done(function (res) {
                     if (!res.success) {
                         showErrorNoty(res);
@@ -5644,12 +5644,12 @@ app.component('jobOrderView', {
                 let formData = new FormData($(form_id)[0]);
                 $('.submit').button('loading');
                 $.ajax({
-                        url: laravel_routes['saveJobOrder'],
-                        method: "POST",
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                    })
+                    url: laravel_routes['saveJobOrder'],
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                })
                     .done(function (res) {
                         if (res.success == true) {
                             custom_noty('success', res.message);
@@ -5707,7 +5707,7 @@ app.directive('jobOrderHeader', function () {
 app.directive('inwardTabs', function () {
     return {
         templateUrl: inward_tabs_template_url,
-        controller: function () {}
+        controller: function () { }
     }
 });
 //------------------------------------------------------------------------------------------------------------------------
@@ -5715,7 +5715,7 @@ app.directive('inwardTabs', function () {
 app.directive('inwardViewTabs', function () {
     return {
         templateUrl: inward_view_tabs_template_url,
-        controller: function () {}
+        controller: function () { }
     }
 });
 //------------------------------------------------------------------------------------------------------------------------

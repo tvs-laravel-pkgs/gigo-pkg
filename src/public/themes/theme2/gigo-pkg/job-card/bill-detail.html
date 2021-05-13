@@ -5,7 +5,8 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/job-card/table-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                    <a href="#!/job-card/table-list" type="button" class="btn-back btn-img"><img class="img-responsive"
+                            src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
                     <h1 class="title"><b>Bill Details</b></h1>
@@ -22,7 +23,8 @@
                 <jobcard-tabs ng-init="active_tab = 'bill-detail'"></jobcard-tabs>
                 <div class="tab-form-body">
                     <div class="tab-content">
-                        <div class="tab-pane fade in active" id="bill-detail" data-animation="fadeInUp" data-animation-delay="300">
+                        <div class="tab-pane fade in active" id="bill-detail" data-animation="fadeInUp"
+                            data-animation-delay="300">
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -30,19 +32,28 @@
                                             Bill Detail
                                         </h5>
                                         <!-- <div class="page-form pb-80 "> -->
-                                        <div class="panel panel-default type-3 split_order_tab_{{key}}" ng-repeat="(key,split_order_type) in extras.split_order_types" ng-show="split_order_type.total_items > 0">
+                                        <div class="panel panel-default type-3 split_order_tab_{{key}}"
+                                            ng-repeat="(key,split_order_type) in extras.split_order_types"
+                                            ng-show="split_order_type.total_items > 0">
                                             <div class="panel-heading">
-                                                <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#{{split_order_type.id}}">
-                                                    {{split_order_type.code}} - {{split_order_type.name}} - {{split_order_type.total_items}} {{split_order_type.total_items > 1 ? 'items' : 'item'}}
+                                                <a class="panel-title" data-toggle="collapse" data-parent="#accordion"
+                                                    data-target="#{{split_order_type.id}}">
+                                                    {{split_order_type.code}} - {{split_order_type.name}} -
+                                                    {{split_order_type.total_items}} {{split_order_type.total_items > 1
+                                                    ? 'items' : 'item'}}
                                                     <span class="arrow"></span>
                                                     <span class="title-right">
-                                                        <img class="img-responsive rupee-icon" src="./public/theme/img/content/rupee-blue.svg" alt="Rupee" />
+                                                        <img class="img-responsive rupee-icon"
+                                                            src="./public/theme/img/content/rupee-blue.svg"
+                                                            alt="Rupee" />
                                                         <!-- <span class="amount_{{key}}"></span> -->
                                                         {{split_order_type.grand_total | number:2}}
                                                     </span>
                                                 </a>
                                             </div>
-                                            <div class="panel-collapse collapse split_order_panel_{{key}}" id="{{split_order_type.id}}" data-animation="fadeInUp" data-animation-delay="300">
+                                            <div class="panel-collapse collapse split_order_panel_{{key}}"
+                                                id="{{split_order_type.id}}" data-animation="fadeInUp"
+                                                data-animation-delay="300">
                                                 <div class="panel-body">
                                                     <div class="row">
                                                         <div class="col-md-12">
@@ -54,7 +65,10 @@
                                                             <span class="info">Bill No : {{job_card.dealer_specific_bill_no ? job_card.dealer_specific_bill_no : '--'}} | Billed Date : 13/04/2020</span> -->
                                                                 <div class="bill-btn">
                                                                     <!-- <a href="#!/gigo-pkg/job-card/bill-detail-update/{{job_card.id}}" class="btn btn-secondary-dark btn-square btn-sm">Update Bill Details</a> -->
-                                                                    <a href="{{job_card_solit_order_bill_details}}" class="btn btn-red btn-square btn-sm" ng-click="billDetailPDF(split_order_type.id)" target="_blank">Download PDF</a>
+                                                                    <a href="{{job_card_solit_order_bill_details}}"
+                                                                        class="btn btn-red btn-square btn-sm"
+                                                                        ng-click="billDetailPDF(split_order_type.id)"
+                                                                        target="_blank">Download PDF</a>
                                                                 </div>
                                                             </div>
                                                         </div><!-- Column -->
@@ -101,7 +115,8 @@
                                                                                 </b>
                                                                             </td>
                                                                             <td>
-                                                                                {{job_card.job_order.type ? job_card.job_order.type.name : '--'}}
+                                                                                {{job_card.job_order.type ?
+                                                                                job_card.job_order.type.name : '--'}}
                                                                             </td>
                                                                         </tr>
                                                                         <tr>
@@ -119,7 +134,9 @@
                                                                                 </b>
                                                                             </td>
                                                                             <td>
-                                                                                {{job_card.job_order.service_type ? job_card.job_order.service_type.name : '--'}}
+                                                                                {{job_card.job_order.service_type ?
+                                                                                job_card.job_order.service_type.name :
+                                                                                '--'}}
                                                                             </td>
                                                                         </tr>
                                                                         <tr>
@@ -137,7 +154,8 @@
                                                                                 </b>
                                                                             </td>
                                                                             <td>
-                                                                                {{job_card.job_order.km_reading_type_id == 8041 ? 'Hr' : 'KM'}}
+                                                                                {{job_card.job_order.km_reading_type_id
+                                                                                == 8041 ? 'Hr' : 'KM'}}
                                                                             </td>
                                                                             <td>
                                                                                 <b>
@@ -145,7 +163,9 @@
                                                                                 </b>
                                                                             </td>
                                                                             <td>
-                                                                                {{job_card.job_order.km_reading_type_id == 8041 ? job_card.job_order.hr_reading : job_card.job_order.km_reading}}
+                                                                                {{job_card.job_order.km_reading_type_id
+                                                                                == 8041 ? job_card.job_order.hr_reading
+                                                                                : job_card.job_order.km_reading}}
                                                                             </td>
                                                                         </tr>
                                                                         <tr>
@@ -160,7 +180,8 @@
                                                                         </tr>
                                                                         <tr>
                                                                             <td colspan="4" class="bg-white">
-                                                                                <table class="table table-form jc-view-bill-table">
+                                                                                <table
+                                                                                    class="table table-form jc-view-bill-table">
                                                                                     <thead>
                                                                                         <tr>
                                                                                             <th>Labour Details</th>
@@ -170,40 +191,59 @@
                                                                                             <th>Labour Value</th>
                                                                                             <th>Discount</th>
                                                                                             <th>Taxable Amount</th>
-                                                                                            <th ng-repeat="(key,tax) in extras.taxes">{{tax.name}}</th>
+                                                                                            <th
+                                                                                                ng-repeat="(key,tax) in extras.taxes">
+                                                                                                {{tax.name}}</th>
                                                                                             <th>Total Price</th>
                                                                                         </tr>
                                                                                     </thead>
                                                                                     <tbody>
-                                                                                        <tr ng-if="labour.split_order_type_id == split_order_type.id" ng-repeat="(labour_key,labour) in labour_details">
+                                                                                        <tr ng-if="labour.split_order_type_id == split_order_type.id"
+                                                                                            ng-repeat="(labour_key,labour) in labour_details">
                                                                                             <td>{{labour.name}}</td>
                                                                                             <!-- <td>{{labour.is_free_service}}</td> -->
-                                                                                            <td>{{labour.tax_code.code}}</td>
+                                                                                            <td>{{labour.tax_code.code}}
+                                                                                            </td>
                                                                                             <td>{{labour.qty}}</td>
-                                                                                            <td class="text-right">{{labour.amount}}</td>
-                                                                                            <td class="text-right">0.00</td>
-                                                                                            <td class="text-right">{{labour.tax_amount}}</td>
-                                                                                            <td class="text-right" ng-repeat="(tax_index,tax_value) in labour.tax_values">{{tax_value.tax_value}}</td>
-                                                                                            <td class="text-right">{{labour.total_amount}}</td>
+                                                                                            <td class="text-right">
+                                                                                                {{labour.amount}}</td>
+                                                                                            <td class="text-right">0.00
+                                                                                            </td>
+                                                                                            <td class="text-right">
+                                                                                                {{labour.tax_amount}}
+                                                                                            </td>
+                                                                                            <td class="text-right"
+                                                                                                ng-repeat="(tax_index,tax_value) in labour.tax_values">
+                                                                                                {{tax_value.tax_value}}
+                                                                                            </td>
+                                                                                            <td class="text-right">
+                                                                                                {{labour.total_amount}}
+                                                                                            </td>
                                                                                         </tr>
                                                                                     </tbody>
-                                                                                    <tfoot class="subtotal_tfoot_labour_{{key}}">
+                                                                                    <tfoot
+                                                                                        class="subtotal_tfoot_labour_{{key}}">
                                                                                         <tr class="labour_sub_total">
                                                                                             <td colspan="8">
                                                                                                 Sub Total
                                                                                             </td>
                                                                                             <td colspan="2">
-                                                                                                <span class="labour_sub_total_{{key}}"></span>
+                                                                                                <span
+                                                                                                    class="labour_sub_total_{{key}}"></span>
                                                                                             </td>
                                                                                         </tr>
                                                                                     </tfoot>
-                                                                                    <tfoot class="nodata_tfoot_labour_{{key}}">
+                                                                                    <tfoot
+                                                                                        class="nodata_tfoot_labour_{{key}}">
                                                                                         <tr>
-                                                                                            <td style="text-align: center;" colspan="10">No Data Found</td>
+                                                                                            <td style="text-align: center;"
+                                                                                                colspan="10">No Data
+                                                                                                Found</td>
                                                                                         </tr>
                                                                                     </tfoot>
                                                                                 </table>
-                                                                                <table class="table table-form jc-view-bill-table mb-0">
+                                                                                <table
+                                                                                    class="table table-form jc-view-bill-table mb-0">
                                                                                     <thead>
                                                                                         <tr>
                                                                                             <th>Parts Details</th>
@@ -214,55 +254,85 @@
                                                                                             <th>Price</th>
                                                                                             <th>Discount</th>
                                                                                             <th>Taxable Amount</th>
-                                                                                            <th ng-repeat="(key,tax) in extras.taxes">{{tax.name}}</th>
+                                                                                            <th
+                                                                                                ng-repeat="(key,tax) in extras.taxes">
+                                                                                                {{tax.name}}</th>
                                                                                             <th>Total Price</th>
                                                                                         </tr>
                                                                                     </thead>
                                                                                     <tbody>
-                                                                                        <tr ng-if="part.split_order_type_id == split_order_type.id" ng-repeat="(part_key,part) in part_details">
+                                                                                        <tr ng-if="part.split_order_type_id == split_order_type.id"
+                                                                                            ng-repeat="(part_key,part) in part_details">
                                                                                             <td>{{part.name}}</td>
-                                                                                            <td>{{part.tax_code.code}}</td>
+                                                                                            <td>{{part.tax_code.code}}
+                                                                                            </td>
                                                                                             <!-- <td>{{part.is_free_service}}</td> -->
                                                                                             <td>{{part.qty}}</td>
-                                                                                            <td class="text-right">{{part.rate}}</td>
-                                                                                            <td class="text-right">{{part.amount}}</td>
-                                                                                            <td class="text-right">0.00</td>
-                                                                                            <td class="text-right">{{part.tax_amount}}</td>
-                                                                                            <td class="text-right" ng-repeat="(tax_index,tax_value) in part.tax_values">{{tax_value.tax_value}}</td>
-                                                                                            <td class="text-right">{{part.total_amount}}</td>
+                                                                                            <td class="text-right">
+                                                                                                {{part.mrp}}</td>
+                                                                                            <td class="text-right">
+                                                                                                {{part.price}}</td>
+                                                                                            <td class="text-right">0.00
+                                                                                            </td>
+                                                                                            <td class="text-right">
+                                                                                                {{part.taxable_amount}}
+                                                                                            </td>
+                                                                                            <td class="text-right"
+                                                                                                ng-repeat="(tax_index,tax_value) in part.tax_values">
+                                                                                                {{tax_value.tax_value}}
+                                                                                            </td>
+                                                                                            <td class="text-right">
+                                                                                                {{part.total_amount}}
+                                                                                            </td>
                                                                                         </tr>
                                                                                     </tbody>
-                                                                                    <tfoot class="subtotal_tfoot_part_{{key}}">
+                                                                                    <tfoot
+                                                                                        class="subtotal_tfoot_part_{{key}}">
                                                                                         <tr class="part_sub_total">
                                                                                             <td colspan="9">
                                                                                                 Sub Total
                                                                                             </td>
                                                                                             <td colspan="2">
-                                                                                                <span class="part_sub_total_{{key}}"></span>
+                                                                                                <span
+                                                                                                    class="part_sub_total_{{key}}"></span>
                                                                                             </td>
                                                                                         </tr>
                                                                                     </tfoot>
-                                                                                    <tfoot class="nodata_tfoot_part_{{key}}">
+                                                                                    <tfoot
+                                                                                        class="nodata_tfoot_part_{{key}}">
                                                                                         <tr>
-                                                                                            <td style="text-align: center;" colspan="11">No Data Found</td>
+                                                                                            <td style="text-align: center;"
+                                                                                                colspan="11">No Data
+                                                                                                Found</td>
                                                                                         </tr>
                                                                                     </tfoot>
                                                                                 </table>
                                                                                 <span class="bill-total">
                                                                                     <span class="info">
                                                                                         Grand Total
-                                                                                        <span class="amount"> <img class="img-responsive rupee-icon img-inline" src="./public/theme/img/content/rupee-blue.svg" alt="Rupee" /> {{split_order_type.grand_total | number:2}}</span>
+                                                                                        <span class="amount"> <img
+                                                                                                class="img-responsive rupee-icon img-inline"
+                                                                                                src="./public/theme/img/content/rupee-blue.svg"
+                                                                                                alt="Rupee" />
+                                                                                            {{split_order_type.grand_total
+                                                                                            | number:2}}</span>
                                                                                     </span>
                                                                                 </span>
                                                                             </td>
                                                                         </tr>
                                                                     </tbody>
                                                                 </table>
-                                                                <div class="text-center pt-40" ng-if="split_order_type.paid_by_id ==10013 && (job_card.status_id==8224 || job_card.status_id==8225)">
+                                                                <div class="text-center pt-40"
+                                                                    ng-if="split_order_type.paid_by_id ==10013 && (job_card.status_id==8224 || job_card.status_id==8225)">
                                                                     <!-- <div class="text-center pt-40"> -->
-                                                                    <input type="hidden" name="labour_total_amount" id="labour_total_amount_{{key}}" value="">
-                                                                    <input type="hidden" name="part_total_amount" id="part_total_amount_{{key}}" value="">
-                                                                    <a class="btn btn-red" data-toggle="modal" data-target="#confirmation_modal" ng-click="senfForApproval(key)">Create Customer Draft Invoice</a>
+                                                                    <input type="hidden" name="labour_total_amount"
+                                                                        id="labour_total_amount_{{key}}" value="">
+                                                                    <input type="hidden" name="part_total_amount"
+                                                                        id="part_total_amount_{{key}}" value="">
+                                                                    <a class="btn btn-red" data-toggle="modal"
+                                                                        data-target="#confirmation_modal"
+                                                                        ng-click="senfForApproval(key)">Create Customer
+                                                                        Draft Invoice</a>
                                                                     <br><br>
                                                                 </div>
                                                             </div><!-- Table Responsive -->
