@@ -946,8 +946,8 @@ class JobOrder extends BaseModel
                     }
                 }
 
-                // $total_amount = $tax_amount + $labour->amount;
-                $total_amount = $labour->amount;
+                $total_amount = $tax_amount + $labour->amount;
+                // $total_amount = $labour->amount;
                 $total_amount = number_format((float) $total_amount, 2, '.', '');
                 $labour_amount += $total_amount;
                 $labour_details[$key]['total_amount'] = number_format($total_amount, 2);

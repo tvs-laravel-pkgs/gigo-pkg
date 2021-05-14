@@ -428,7 +428,8 @@ class VehicleInwardController extends Controller
                             } else {
                                 $total_schedule_labour_amount += $value->amount;
                             }
-                            $total_schedule_without_tax_labour_amount += ($value->amount - $tax_amount);
+                            // $total_schedule_without_tax_labour_amount += ($value->amount - $tax_amount);
+                            $total_schedule_without_tax_labour_amount += $value->amount;
                         } else {
                             $schedule_labour_details[$key]['amount'] = '0.00';
                         }
@@ -467,7 +468,8 @@ class VehicleInwardController extends Controller
                             } else {
                                 $total_payable_labour_amount += $value->amount;
                             }
-                            $total_payable_without_tax_labour_amount += ($value->amount - $tax_amount);
+                            // $total_payable_without_tax_labour_amount += ($value->amount - $tax_amount);
+                            $total_payable_without_tax_labour_amount += $value->amount;
                         } else {
                             $additional_labour_details[$key]['amount'] = '0.00';
                         }

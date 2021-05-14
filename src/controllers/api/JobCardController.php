@@ -235,6 +235,7 @@ class JobCardController extends Controller
         }
     }
 
+    //Update JC form data
     public function getUpdateJcFormData(Request $r)
     {
         try {
@@ -402,6 +403,7 @@ class JobCardController extends Controller
         }
     }
 
+    //Save Jobcard data
     public function saveJobCard(Request $request)
     {
         // dd($request->all());
@@ -578,6 +580,7 @@ class JobCardController extends Controller
         }
     }
 
+    //Bay Save
     public function saveBay(Request $request)
     {
         // dd($request->all());
@@ -703,7 +706,7 @@ class JobCardController extends Controller
         }
     }
 
-    //BAY VIEW
+    //PDF View
     public function getPdf(Request $r)
     {
         // dd($r->all());
@@ -1562,6 +1565,7 @@ class JobCardController extends Controller
         }
     }
 
+    //Labour Review form data
     public function getLabourReviewData(Request $request)
     {
         // dd($request->all());
@@ -3133,6 +3137,7 @@ class JobCardController extends Controller
 
     }
 
+    //Estimate form data
     public function getEstimate(Request $request)
     {
 
@@ -3238,13 +3243,14 @@ class JobCardController extends Controller
                                 $tax_amount += $percentage_value;
                             }
                             $total_schedule_labour_tax += $tax_amount;
-                            // $total_amount = $tax_amount + $labour->amount;
-                            $total_amount = $labour->amount;
+                            $total_amount = $tax_amount + $labour->amount;
+                            // $total_amount = $labour->amount;
                             $total_schedule_labour_amount += $total_amount;
                         } else {
                             $total_schedule_labour_amount += $labour->amount;
                         }
-                        $total_schedule_labour_without_tax_amount += ($labour->amount - $tax_amount);
+                        // $total_schedule_labour_without_tax_amount += ($labour->amount - $tax_amount);
+                        $total_schedule_labour_without_tax_amount += $labour->amount;
                     }
                     //PAYABLE
                     if ($labour->is_recommended_by_oem == 0 && $labour->is_free_service != 1) {
@@ -3260,13 +3266,14 @@ class JobCardController extends Controller
                                 $tax_amount += $percentage_value;
                             }
                             $total_payable_labour_tax += $tax_amount;
-                            // $total_amount = $tax_amount + $labour->amount;
-                            $total_amount = $labour->amount;
+                            $total_amount = $tax_amount + $labour->amount;
+                            // $total_amount = $labour->amount;
                             $total_payable_labour_amount += $total_amount;
                         } else {
                             $total_payable_labour_amount += $labour->amount;
                         }
-                        $total_payable_labour_without_tax_amount += ($labour->amount - $tax_amount);
+                        // $total_payable_labour_without_tax_amount += ($labour->amount - $tax_amount);
+                        $total_payable_labour_without_tax_amount += $labour->amount;
                     }
                 }
             }
@@ -4866,6 +4873,7 @@ class JobCardController extends Controller
     }
 
     //JOB CARD GATE PASS VIEW
+    //OSL or Material gate pass
     public function viewMeterialGatePass(Request $request)
     {
         // dd($request->all());
@@ -5514,6 +5522,7 @@ class JobCardController extends Controller
         }
     }
 
+    //Split Order
     public function viewSplitOrderDetails(Request $request)
     {
         // dd($request->all());
@@ -5753,6 +5762,7 @@ class JobCardController extends Controller
         }
     }
 
+    //Update Split Order
     public function splitOrderUpdate(Request $request)
     {
         // dd($request->all());
@@ -5876,6 +5886,7 @@ class JobCardController extends Controller
         }
     }
 
+    //Bill Details - Split Order wise view
     public function viewBillDetails(Request $request)
     {
         // dd($request->all());
