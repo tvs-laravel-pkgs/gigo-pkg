@@ -234,6 +234,8 @@ app.component('gateLogForm', {
         self.gate_log = {};
         self.is_registered = 1;
         self.search_type = 1;
+        self.service_type = 1;
+        self.aggregate_type = 1;
         $scope.reading_type_status = 2;
 
         //for md-select search
@@ -286,6 +288,8 @@ app.component('gateLogForm', {
             $('input[type=search]').addClass('vehicleSearchBox');
             $(".vehicleSearchBox").attr("maxlength", 17);
             $('.vehicleSearchBox').css('text-transform', 'uppercase');
+            $scope.btnNxt = function () { }
+            $scope.prev = function () { }
         }, 1000);
 
         //GET VEHICLE LIST
@@ -424,13 +428,36 @@ app.component('gateLogForm', {
             ignore: '',
             rules: {
                 'vehicle_photo': {
-                    required: true,
+                    required: function (element) {
+                        if (self.aggregate_type == '1') {
+                            return true;
+                        }
+                        return false;
+                    },
                 },
                 'km_reading_photo': {
-                    required: true,
+                    required: function (element) {
+                        if (self.aggregate_type == '1') {
+                            return true;
+                        }
+                        return false;
+                    },
                 },
                 'driver_photo': {
-                    required: true,
+                    required: function (element) {
+                        if (self.aggregate_type == '1') {
+                            return true;
+                        }
+                        return false;
+                    },
+                },
+                'part_photo': {
+                    required: function (element) {
+                        if (self.aggregate_type == '0') {
+                            return true;
+                        }
+                        return false;
+                    },
                 },
                 // 'chassis_photo': {
                 //     required: true,

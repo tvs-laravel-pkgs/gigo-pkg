@@ -21,8 +21,10 @@
                 <div class="tab-page-header">
                     <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300">
                         <ul class="nav nav-pills editDetails-tabs">
-                            <li class="active"><a class="btn-pills" data-target="#basic-information" role="tab" data-toggle="tab" aria-expanded="true">Vehicle Information</a></li>
-                            <li><a data-target="#inventory" role="tab" data-toggle="tab" aria-expanded="true" class="btn-pills">Inventory</a></li>
+                            <li class="active"><a class="btn-pills" data-target="#basic-information" role="tab"
+                                    data-toggle="tab" aria-expanded="true">Vehicle Information</a></li>
+                            <li ng-if="$ctrl.aggregate_type == 1"><a data-target="#inventory" role="tab"
+                                    data-toggle="tab" aria-expanded="true" class="btn-pills">Inventory</a></li>
                         </ul>
                     </div><!-- Filters -->
                 </div><!-- Tab Page Wrap Header -->
@@ -36,87 +38,203 @@
                                         <div class="tab-page-body">
                                             <div class="tab-content">
                                                 <!-- TAB PANEL -->
-                                                <div class="tab-pane fade in active" id="basic-information" data-animation="fadeInUp" data-animation-delay="300">
+                                                <div class="tab-pane fade in active" id="basic-information"
+                                                    data-animation="fadeInUp" data-animation-delay="300">
                                                     <div class="row">
                                                         <div class="col-md-12">
                                                             <div class="form-page">
                                                                 <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label>Service Type <sup
+                                                                                    class="mandatory">*</sup></label>
+                                                                            <div class="common-radio-button type-4">
+                                                                                <input type="radio" id="vehicle_service"
+                                                                                    name="service_type"
+                                                                                    ng-model="$ctrl.service_type"
+                                                                                    ng-value="1"
+                                                                                    ng-click="serviceType(1)">
+                                                                                <label
+                                                                                    for="vehicle_service">Vehicle</label>
+                                                                                <input type="radio"
+                                                                                    id="aggregate_service"
+                                                                                    name="service_type"
+                                                                                    ng-model="$ctrl.service_type"
+                                                                                    ng-value="0"
+                                                                                    ng-click="serviceType(2)">
+                                                                                <label
+                                                                                    for="aggregate_service">Aggregate</label>
+                                                                            </div>
+                                                                        </div><!-- Feild -->
+                                                                    </div>
+                                                                    <div class="col-md-6"
+                                                                        ng-if="$ctrl.service_type != 1">
+                                                                        <div class="form-group">
+                                                                            <label>Aggregate Type <sup
+                                                                                    class="mandatory">*</sup></label>
+                                                                            <div class="common-radio-button type-4">
+                                                                                <input type="radio"
+                                                                                    id="vehicle_aggregate_service"
+                                                                                    name="aggregate_type"
+                                                                                    ng-model="$ctrl.aggregate_type"
+                                                                                    ng-value="1"
+                                                                                    ng-click="serviceType(1)">
+                                                                                <label
+                                                                                    for="vehicle_aggregate_service">Vehicle</label>
+                                                                                <input type="radio"
+                                                                                    id="part_aggregate_service"
+                                                                                    name="aggregate_type"
+                                                                                    ng-model="$ctrl.aggregate_type"
+                                                                                    ng-value="0"
+                                                                                    ng-click="serviceType(2)">
+                                                                                <label
+                                                                                    for="part_aggregate_service">Parts</label>
+                                                                            </div>
+                                                                        </div><!-- Feild -->
+                                                                    </div>
+                                                                    <div class="col-md-12"></div>
                                                                     <div class="col-md-8 col-lg-6">
                                                                         <h6 class="mb-20"><b>Photos</b></h6>
                                                                         <div class="input-text">
                                                                             <ul class="gatein-img-list">
-                                                                                <!-- <li class="gatein-img-list-item vehicle-img">
-                                                                                    <input type="file" name="vehicle_photo" class="vehicle_photo image_uploadify" accept=".png, .jpg, .jpeg" />
-                                                                                </li>
-                                                                                <li class="gatein-img-list-item km-img">
-                                                                                    <input type="file" name="km_reading_photo" class="km_reading_photo image_uploadify" accept=".png, .jpg, .jpeg" />
-                                                                                </li>
-                                                                                <li class="gatein-img-list-item driver-img">
-                                                                                    <input type="file" name="driver_photo" class="driver_photo image_uploadify" accept=".png, .jpg, .jpeg" />
-                                                                                </li>
-                                                                                <li class="gatein-img-list-item chassis-img">
-                                                                                    <input type="file" name="chassis_photo" class="chassis_photo image_uploadify" accept=".png, .jpg, .jpeg" />
-                                                                                </li> -->
-                                                                                <li class="gatein-img-list-item vehicle-img">
-                                                                                    <div class="grey-box-attachment-wrap type-2">
-                                                                                        <div class="grey-box-attachment-feild">
+                                                                                <li ng-show="$ctrl.aggregate_type == 1"
+                                                                                    class="gatein-img-list-item vehicle-img">
+                                                                                    <div
+                                                                                        class="grey-box-attachment-wrap type-2">
+                                                                                        <div
+                                                                                            class="grey-box-attachment-feild">
                                                                                             <div class="file-loading">
-                                                                                                <input type="file" name="vehicle_photo" class="bootstrap-single-file-input" watch-options="true" accept=".png, .jpg, .jpeg">
+                                                                                                <input type="file"
+                                                                                                    name="vehicle_photo"
+                                                                                                    class="bootstrap-single-file-input"
+                                                                                                    watch-options="true"
+                                                                                                    accept=".png, .jpg, .jpeg">
                                                                                             </div><!-- File Loading -->
-                                                                                        </div><!-- Grey Box Attachment Feild -->
-                                                                                    </div><!-- Grey Box Attachment Wrap -->
+                                                                                        </div>
+                                                                                        <!-- Grey Box Attachment Feild -->
+                                                                                    </div>
+                                                                                    <!-- Grey Box Attachment Wrap -->
                                                                                 </li>
-                                                                                <li class="gatein-img-list-item km-img">
-                                                                                    <div class="grey-box-attachment-wrap type-2">
-                                                                                        <div class="grey-box-attachment-feild">
+                                                                                <li ng-show="$ctrl.aggregate_type == 1"
+                                                                                    class="gatein-img-list-item km-img">
+                                                                                    <div
+                                                                                        class="grey-box-attachment-wrap type-2">
+                                                                                        <div
+                                                                                            class="grey-box-attachment-feild">
                                                                                             <div class="file-loading">
-                                                                                                <input type="file" name="km_reading_photo" class="bootstrap-single-file-input" watch-options="true" accept=".png, .jpg, .jpeg">
+                                                                                                <input type="file"
+                                                                                                    name="km_reading_photo"
+                                                                                                    class="bootstrap-single-file-input"
+                                                                                                    watch-options="true"
+                                                                                                    accept=".png, .jpg, .jpeg">
                                                                                             </div><!-- File Loading -->
-                                                                                        </div><!-- Grey Box Attachment Feild -->
-                                                                                    </div><!-- Grey Box Attachment Wrap -->
+                                                                                        </div>
+                                                                                        <!-- Grey Box Attachment Feild -->
+                                                                                    </div>
+                                                                                    <!-- Grey Box Attachment Wrap -->
                                                                                 </li>
-                                                                                <li class="gatein-img-list-item driver-img">
-                                                                                    <div class="grey-box-attachment-wrap type-2">
-                                                                                        <div class="grey-box-attachment-feild">
+                                                                                <li ng-show="$ctrl.aggregate_type == 1"
+                                                                                    class="gatein-img-list-item driver-img">
+                                                                                    <div
+                                                                                        class="grey-box-attachment-wrap type-2">
+                                                                                        <div
+                                                                                            class="grey-box-attachment-feild">
                                                                                             <div class="file-loading">
-                                                                                                <input type="file" name="driver_photo" class="bootstrap-single-file-input" watch-options="true" accept=".png, .jpg, .jpeg">
+                                                                                                <input type="file"
+                                                                                                    name="driver_photo"
+                                                                                                    class="bootstrap-single-file-input"
+                                                                                                    watch-options="true"
+                                                                                                    accept=".png, .jpg, .jpeg">
                                                                                             </div><!-- File Loading -->
-                                                                                        </div><!-- Grey Box Attachment Feild -->
-                                                                                    </div><!-- Grey Box Attachment Wrap -->
+                                                                                        </div>
+                                                                                        <!-- Grey Box Attachment Feild -->
+                                                                                    </div>
+                                                                                    <!-- Grey Box Attachment Wrap -->
                                                                                 </li>
-                                                                                <li class="gatein-img-list-item chassis-img">
-                                                                                    <div class="grey-box-attachment-wrap type-2">
-                                                                                        <div class="grey-box-attachment-feild">
+                                                                                <li ng-show="$ctrl.aggregate_type == 1"
+                                                                                    class="gatein-img-list-item chassis-img">
+                                                                                    <div
+                                                                                        class="grey-box-attachment-wrap type-2">
+                                                                                        <div
+                                                                                            class="grey-box-attachment-feild">
                                                                                             <div class="file-loading">
-                                                                                                <input type="file" name="chassis_photo" class="bootstrap-single-file-input" watch-options="true" accept=".png, .jpg, .jpeg">
+                                                                                                <input type="file"
+                                                                                                    name="chassis_photo"
+                                                                                                    class="bootstrap-single-file-input"
+                                                                                                    watch-options="true"
+                                                                                                    accept=".png, .jpg, .jpeg">
                                                                                             </div><!-- File Loading -->
-                                                                                        </div><!-- Grey Box Attachment Feild -->
-                                                                                    </div><!-- Grey Box Attachment Wrap -->
+                                                                                        </div>
+                                                                                        <!-- Grey Box Attachment Feild -->
+                                                                                    </div>
+                                                                                    <!-- Grey Box Attachment Wrap -->
+                                                                                </li>
+                                                                                <li ng-show="$ctrl.aggregate_type != 1"
+                                                                                    class="gatein-img-list-item part-img">
+                                                                                    <div
+                                                                                        class="grey-box-attachment-wrap type-2">
+                                                                                        <div
+                                                                                            class="grey-box-attachment-feild">
+                                                                                            <div class="file-loading">
+                                                                                                <input type="file"
+                                                                                                    name="part_photo"
+                                                                                                    class="bootstrap-single-file-input"
+                                                                                                    watch-options="true"
+                                                                                                    accept=".png, .jpg, .jpeg">
+                                                                                            </div><!-- File Loading -->
+                                                                                        </div>
+                                                                                        <!-- Grey Box Attachment Feild -->
+                                                                                    </div>
+                                                                                    <!-- Grey Box Attachment Wrap -->
                                                                                 </li>
                                                                             </ul>
                                                                         </div><!-- Field -->
                                                                     </div><!-- Column -->
-                                                                    <div class="col-md-4 col-lg-6">
+                                                                    <div class="col-md-4 col-lg-6"
+                                                                        ng-if="$ctrl.aggregate_type == 1">
                                                                         <div class="search-type-padd-top">
                                                                             <div class="form-group">
-                                                                                <label>Search Type <sup class="mandatory">*</sup></label>
+                                                                                <label>Search Type <sup
+                                                                                        class="mandatory">*</sup></label>
                                                                                 <div class="common-radio-button type-4">
-                                                                                    <input type="radio" id="search_type_existing" name="search_type" ng-model="$ctrl.search_type" ng-value="1" ng-click="SearchType(1)">
-                                                                                    <label for="search_type_existing">Existing</label>
-                                                                                    <input type="radio" id="search_type_new" name="search_type" ng-model="$ctrl.search_type" ng-value="0" ng-click="SearchType(2)">
-                                                                                    <label for="search_type_new">New</label>
+                                                                                    <input type="radio"
+                                                                                        id="search_type_existing"
+                                                                                        name="search_type"
+                                                                                        ng-model="$ctrl.search_type"
+                                                                                        ng-value="1"
+                                                                                        ng-click="SearchType(1)">
+                                                                                    <label
+                                                                                        for="search_type_existing">Existing</label>
+                                                                                    <input type="radio"
+                                                                                        id="search_type_new"
+                                                                                        name="search_type"
+                                                                                        ng-model="$ctrl.search_type"
+                                                                                        ng-value="0"
+                                                                                        ng-click="SearchType(2)">
+                                                                                    <label
+                                                                                        for="search_type_new">New</label>
                                                                                 </div>
                                                                             </div><!-- Feild -->
                                                                         </div>
                                                                     </div>
                                                                 </div><!-- Row -->
                                                                 <div class="row">
-                                                                    <div class="col-md-4 col-lg-3" ng-show="$ctrl.search_type == 1">
+                                                                    <div class="col-md-4 col-lg-3"
+                                                                        ng-show="$ctrl.search_type == 1 && $ctrl.aggregate_type == 1">
                                                                         <div class="form-group">
                                                                             <label>
                                                                                 Search by Reg/Chassis/Engine No
                                                                             </label>
-                                                                            <md-autocomplete md-items="option in $ctrl.searchVehicle(option.vehicle_search)" md-selected-item="vehicle.name" md-selected-item-change="getSelectedVehicle(index,vehicle.name)" md-search-text="option.vehicle_search" md-item-text="$ctrl.getVehicle(option)" md-min-length="4" md-input-minlength="4" md-input-maxlength="17" placeholder="Search by Reg,Chassis,Engine No" class="customer_group_id">
+                                                                            <md-autocomplete
+                                                                                md-items="option in $ctrl.searchVehicle(option.vehicle_search)"
+                                                                                md-selected-item="vehicle.name"
+                                                                                md-selected-item-change="getSelectedVehicle(index,vehicle.name)"
+                                                                                md-search-text="option.vehicle_search"
+                                                                                md-item-text="$ctrl.getVehicle(option)"
+                                                                                md-min-length="4" md-input-minlength="4"
+                                                                                md-input-maxlength="17"
+                                                                                placeholder="Search by Reg,Chassis,Engine No"
+                                                                                class="customer_group_id">
                                                                                 <md-item-template>
                                                                                     <span>
                                                                                         {{option.registration_number}} /
@@ -125,50 +243,85 @@
                                                                                     </span>
                                                                                 </md-item-template>
                                                                                 <md-not-found>
-                                                                                    No Registration Number Found "{{$ctrl.vehicle_search}}" were found.
+                                                                                    No Registration Number Found
+                                                                                    "{{$ctrl.vehicle_search}}" were
+                                                                                    found.
                                                                                 </md-not-found>
                                                                             </md-autocomplete>
-                                                                            <input type="hidden" id="vehicle_id" name="vehicle_id" value="{{vehicle.name.id}}">
+                                                                            <input type="hidden" id="vehicle_id"
+                                                                                name="vehicle_id"
+                                                                                value="{{vehicle.name.id}}">
                                                                         </div><!-- Feild -->
                                                                     </div><!-- Column -->
-                                                                    <div class="col-md-4 col-lg-3">
+                                                                    <div class="col-md-4 col-lg-3"
+                                                                        ng-if="$ctrl.aggregate_type == 1">
                                                                         <div class="form-group">
-                                                                            <label>Registration Type <sup class="mandatory">*</sup></label>
+                                                                            <label>Registration Type <sup
+                                                                                    class="mandatory">*</sup></label>
                                                                             <div class="common-radio-button type-4">
-                                                                                <input type="radio" id="registered" name="is_registered" ng-model="$ctrl.is_registered" ng-value="1">
-                                                                                <label for="registered">Registered</label>
-                                                                                <input type="radio" id="unregistered" name="is_registered" ng-model="$ctrl.is_registered" ng-value="0">
-                                                                                <label for="unregistered">Un Registered</label>
+                                                                                <input type="radio" id="registered"
+                                                                                    name="is_registered"
+                                                                                    ng-model="$ctrl.is_registered"
+                                                                                    ng-value="1">
+                                                                                <label
+                                                                                    for="registered">Registered</label>
+                                                                                <input type="radio" id="unregistered"
+                                                                                    name="is_registered"
+                                                                                    ng-model="$ctrl.is_registered"
+                                                                                    ng-value="0">
+                                                                                <label for="unregistered">Un
+                                                                                    Registered</label>
                                                                             </div>
                                                                         </div><!-- Feild -->
                                                                     </div><!-- Column -->
-                                                                    <div class="col-md-4 col-lg-3" ng-if="$ctrl.is_registered == 1">
+                                                                    <div class="col-md-4 col-lg-3"
+                                                                        ng-if="$ctrl.is_registered == 1 && $ctrl.aggregate_type == 1">
                                                                         <div class="form-group">
                                                                             <label>
                                                                                 Vehicle Registration Number
                                                                                 <sup class="mandatory">*</sup></label>
-                                                                            <input type="text" class="form-control registration_number" minlength="12" maxlength="13" id="registration_number" placeholder="Enter Vehicle Registration Number" value="" autocomplete="off" name="registration_number" oninput="this.value = this.value.toUpperCase()" />
+                                                                            <input type="text"
+                                                                                class="form-control registration_number"
+                                                                                minlength="12" maxlength="13"
+                                                                                id="registration_number"
+                                                                                placeholder="Enter Vehicle Registration Number"
+                                                                                value="" autocomplete="off"
+                                                                                name="registration_number"
+                                                                                oninput="this.value = this.value.toUpperCase()" />
                                                                         </div><!-- Feild -->
                                                                     </div><!-- Column -->
-                                                                    <div class="col-md-4 col-lg-3" ng-if="$ctrl.is_registered == 0">
+                                                                    <div class="col-md-4 col-lg-3"
+                                                                        ng-if="$ctrl.is_registered == 0 && $ctrl.aggregate_type == 1">
                                                                         <div class="form-group">
                                                                             <label>
                                                                                 Trade Plate Number
                                                                             </label>
-                                                                            <md-select ng-model="road_test_trade_plate_number_id" placeholder="Select Trade Plate Number" data-md-container-class="selectdemoSelectHeader">
-                                                                                <md-select-header class="demo-select-header">
-                                                                                    <input ng-model="searchNumber" type="search" placeholder="Search for a Trade Plate Number.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                                            <md-select
+                                                                                ng-model="road_test_trade_plate_number_id"
+                                                                                placeholder="Select Trade Plate Number"
+                                                                                data-md-container-class="selectdemoSelectHeader">
+                                                                                <md-select-header
+                                                                                    class="demo-select-header">
+                                                                                    <input ng-model="searchNumber"
+                                                                                        type="search"
+                                                                                        placeholder="Search for a Trade Plate Number.."
+                                                                                        class="demo-header-searchbox md-text"
+                                                                                        ng-keydown="$event.stopPropagation()">
                                                                                 </md-select-header>
                                                                                 <md-optgroup>
-                                                                                    <md-option ng-value="list.id" ng-repeat="list in extras.trade_plate_number_list | filter:searchNumber">
+                                                                                    <md-option ng-value="list.id"
+                                                                                        ng-repeat="list in extras.trade_plate_number_list | filter:searchNumber">
                                                                                         {{list.trade_plate_number}}
                                                                                     </md-option>
                                                                                 </md-optgroup>
                                                                             </md-select>
-                                                                            <input type="hidden" name="trade_plate_number" value="{{road_test_trade_plate_number_id}}">
+                                                                            <input type="hidden"
+                                                                                name="trade_plate_number"
+                                                                                value="{{road_test_trade_plate_number_id}}">
                                                                         </div><!-- Feild -->
                                                                     </div><!-- Column -->
-                                                                    <div class="col-md-4 col-lg-3" ng-if="$ctrl.search_type == 0">
+                                                                    <div class="col-md-4 col-lg-3"
+                                                                        ng-if="$ctrl.search_type == 0 && $ctrl.aggregate_type == 1">
                                                                         <div class="form-group">
                                                                             <label>
                                                                                 Chassis / Engine Number
@@ -176,52 +329,88 @@
                                                                                     *
                                                                                 </sup>
                                                                             </label>
-                                                                            <md-select ng-model="$ctrl.gatein_entry_type_id" placeholder="Chassis / Engine Number" data-md-container-class="selectdemoSelectHeader">
-                                                                                <md-select-header class="demo-select-header">
-                                                                                    <input ng-model="searchEntryType" type="search" placeholder="Select Chassis / Engine Number" class="demo-header-searchbox md-text">
+                                                                            <md-select
+                                                                                ng-model="$ctrl.gatein_entry_type_id"
+                                                                                placeholder="Chassis / Engine Number"
+                                                                                data-md-container-class="selectdemoSelectHeader">
+                                                                                <md-select-header
+                                                                                    class="demo-select-header">
+                                                                                    <input ng-model="searchEntryType"
+                                                                                        type="search"
+                                                                                        placeholder="Select Chassis / Engine Number"
+                                                                                        class="demo-header-searchbox md-text">
                                                                                 </md-select-header>
                                                                                 <md-optgroup>
-                                                                                    <md-option ng-value="1"> Chassis Number </md-option>
-                                                                                    <md-option ng-value="2"> Engine Number </md-option>
+                                                                                    <md-option ng-value="1"> Chassis
+                                                                                        Number </md-option>
+                                                                                    <md-option ng-value="2"> Engine
+                                                                                        Number </md-option>
                                                                                 </md-optgroup>
                                                                             </md-select>
-                                                                            <input type="hidden" name="gatein_entry_type_id" value="{{$ctrl.gatein_entry_type_id}}" class="required">
+                                                                            <input type="hidden"
+                                                                                name="gatein_entry_type_id"
+                                                                                value="{{$ctrl.gatein_entry_type_id}}"
+                                                                                class="required">
                                                                         </div><!-- Feild -->
                                                                     </div><!-- Column -->
-                                                                    <div class="col-md-4 col-lg-3" ng-if="$ctrl.gatein_entry_type_id == 1 && $ctrl.search_type == 0">
+                                                                    <div class="col-md-4 col-lg-3"
+                                                                        ng-if="$ctrl.gatein_entry_type_id == 1 && $ctrl.search_type == 0 && $ctrl.aggregate_type == 1">
                                                                         <div class="form-group">
                                                                             <label>
                                                                                 Chassis Number
                                                                                 <sup class="mandatory">*</sup>
                                                                             </label>
-                                                                            <input type="text" class="form-control chassis_number" minlength="10" maxlength="17" placeholder="Enter Chassis Number" autocomplete="off" id="chassis_number" name="chassis_number" />
+                                                                            <input type="text"
+                                                                                class="form-control chassis_number"
+                                                                                minlength="10" maxlength="17"
+                                                                                placeholder="Enter Chassis Number"
+                                                                                autocomplete="off" id="chassis_number"
+                                                                                name="chassis_number" />
                                                                         </div><!-- Feild -->
                                                                     </div><!-- Column -->
-                                                                    <div class="col-md-4 col-lg-3" ng-if="$ctrl.gatein_entry_type_id == 2 && $ctrl.search_type == 0">
+                                                                    <div class="col-md-4 col-lg-3"
+                                                                        ng-if="$ctrl.gatein_entry_type_id == 2 && $ctrl.search_type == 0 && $ctrl.aggregate_type == 1">
                                                                         <div class="form-group">
                                                                             <label>
                                                                                 Engine Number
                                                                                 <sup class="mandatory">*</sup>
                                                                             </label>
-                                                                            <input type="text" class="form-control engine_number" minlength="10" maxlength="20" placeholder="Enter Engine Number" autocomplete="off" id="engine_number" name="engine_number" />
+                                                                            <input type="text"
+                                                                                class="form-control engine_number"
+                                                                                minlength="10" maxlength="20"
+                                                                                placeholder="Enter Engine Number"
+                                                                                autocomplete="off" id="engine_number"
+                                                                                name="engine_number" />
                                                                         </div><!-- Feild -->
                                                                     </div><!-- Column -->
-                                                                    <div class="col-md-4 col-lg-3" ng-if="$ctrl.search_type == 1">
+                                                                    <div class="col-md-4 col-lg-3"
+                                                                        ng-if="$ctrl.search_type == 1 && $ctrl.aggregate_type == 1">
                                                                         <div class="form-group">
                                                                             <label>
                                                                                 Chassis Number
                                                                                 <sup class="mandatory">*</sup>
                                                                             </label>
-                                                                            <input type="text" class="form-control chassis_number" minlength="10" maxlength="17" placeholder="Enter Chassis Number" autocomplete="off" id="chassis_number" name="chassis_number" />
+                                                                            <input type="text"
+                                                                                class="form-control chassis_number"
+                                                                                minlength="10" maxlength="17"
+                                                                                placeholder="Enter Chassis Number"
+                                                                                autocomplete="off" id="chassis_number"
+                                                                                name="chassis_number" />
                                                                         </div><!-- Feild -->
                                                                     </div><!-- Column -->
-                                                                    <div class="col-md-4 col-lg-3" ng-if="$ctrl.search_type == 1">
+                                                                    <div class="col-md-4 col-lg-3"
+                                                                        ng-if="$ctrl.search_type == 1 && $ctrl.aggregate_type == 1">
                                                                         <div class="form-group">
                                                                             <label>
                                                                                 Engine Number
                                                                                 <sup class="mandatory">*</sup>
                                                                             </label>
-                                                                            <input type="text" class="form-control engine_number" minlength="10" maxlength="20" placeholder="Enter Engine Number" autocomplete="off" id="engine_number" name="engine_number" />
+                                                                            <input type="text"
+                                                                                class="form-control engine_number"
+                                                                                minlength="10" maxlength="20"
+                                                                                placeholder="Enter Engine Number"
+                                                                                autocomplete="off" id="engine_number"
+                                                                                name="engine_number" />
                                                                         </div><!-- Feild -->
                                                                     </div><!-- Column -->
                                                                     <!--<div class="col-md-4 col-lg-3">
@@ -233,7 +422,8 @@
                                                                             <input type="text" class="form-control" minlength="17" maxlength="17" placeholder="Enter VIN No" autocomplete="off" name="vin_number" />
                                                                         </div>
                                                                     </div> -->
-                                                                    <div class="col-md-4 col-lg-3">
+                                                                    <div class="col-md-4 col-lg-3"
+                                                                        ng-if="$ctrl.aggregate_type == 1">
                                                                         <div class="form-group">
                                                                             <label>
                                                                                 Reading Type
@@ -241,33 +431,69 @@
                                                                                     *
                                                                                 </sup>
                                                                             </label>
-                                                                            <md-select ng-model="$ctrl.reading_type_id" placeholder="Select Reading Type" data-md-container-class="selectdemoSelectHeader" ng-disabled="reading_type_status == 1">
-                                                                                <md-select-header class="demo-select-header">
-                                                                                    <input ng-model="searchReadingType" type="search" placeholder="Search for a Reading Type.." class="demo-header-searchbox md-text">
+                                                                            <md-select ng-model="$ctrl.reading_type_id"
+                                                                                placeholder="Select Reading Type"
+                                                                                data-md-container-class="selectdemoSelectHeader"
+                                                                                ng-disabled="reading_type_status == 1">
+                                                                                <md-select-header
+                                                                                    class="demo-select-header">
+                                                                                    <input ng-model="searchReadingType"
+                                                                                        type="search"
+                                                                                        placeholder="Search for a Reading Type.."
+                                                                                        class="demo-header-searchbox md-text">
                                                                                 </md-select-header>
                                                                                 <md-optgroup>
-                                                                                    <md-option ng-value="option.id" ng-repeat="option in extras.reading_type_list | filter:searchReadingType">
+                                                                                    <md-option ng-value="option.id"
+                                                                                        ng-repeat="option in extras.reading_type_list | filter:searchReadingType">
                                                                                         {{option.name}}
                                                                                     </md-option>
                                                                                 </md-optgroup>
                                                                             </md-select>
-                                                                            <input type="hidden" name="km_reading_type_id" value="{{$ctrl.reading_type_id}}" class="required">
+                                                                            <input type="hidden"
+                                                                                name="km_reading_type_id"
+                                                                                value="{{$ctrl.reading_type_id}}"
+                                                                                class="required">
                                                                         </div><!-- Feild -->
                                                                     </div><!-- Column -->
-                                                                    <div class="col-md-4 col-lg-3" ng-if="$ctrl.reading_type_id == 8040">
+                                                                    <div class="col-md-4 col-lg-3"
+                                                                        ng-if="$ctrl.reading_type_id == 8040 && $ctrl.aggregate_type == 1">
                                                                         <div class="form-group">
                                                                             <label>
                                                                                 KM Reading
                                                                                 <sup class="mandatory">*</sup></label>
-                                                                            <input type="text" class="form-control km_reading" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="6" placeholder="Enter KM Reading" value="" autocomplete="off" name="km_reading" />
+                                                                            <input type="text"
+                                                                                class="form-control km_reading"
+                                                                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                                                                maxlength="6"
+                                                                                placeholder="Enter KM Reading" value=""
+                                                                                autocomplete="off" name="km_reading" />
                                                                         </div><!-- Feild -->
                                                                     </div><!-- Column -->
-                                                                    <div class="col-md-4 col-lg-3" ng-if="$ctrl.reading_type_id == 8041">
+                                                                    <div class="col-md-4 col-lg-3"
+                                                                        ng-if="$ctrl.reading_type_id == 8041 && $ctrl.aggregate_type == 1">
                                                                         <div class="form-group">
                                                                             <label>
                                                                                 HR Reading
                                                                                 <sup class="mandatory">*</sup></label>
-                                                                            <input type="text" class="form-control hr_reading" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="4" placeholder="Enter HR Reading" value="" autocomplete="off" name="hr_reading" />
+                                                                            <input type="text"
+                                                                                class="form-control hr_reading"
+                                                                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                                                                maxlength="5"
+                                                                                placeholder="Enter HR Reading" value=""
+                                                                                autocomplete="off" name="hr_reading" />
+                                                                        </div><!-- Feild -->
+                                                                    </div><!-- Column -->
+                                                                    <div class="col-md-4 col-lg-3"
+                                                                        ng-if="$ctrl.aggregate_type == 0">
+                                                                        <div class="form-group">
+                                                                            <label>
+                                                                                Aggregate Number
+                                                                                <sup class="mandatory">*</sup></label>
+                                                                            <input type="text" readonly
+                                                                                class="form-control"
+                                                                                value="{{extras.aggregate_number}}"
+                                                                                autocomplete="off"
+                                                                                name="aggregate_number" />
                                                                         </div><!-- Feild -->
                                                                     </div><!-- Column -->
                                                                     <div class="col-md-4 col-lg-3">
@@ -275,7 +501,11 @@
                                                                             <label>
                                                                                 Driver Name
                                                                             </label>
-                                                                            <input type="text" class="form-control driver_name" placeholder="Enter Driver Name" value="" autocomplete="off" id="driver_name" name="driver_name" />
+                                                                            <input type="text"
+                                                                                class="form-control driver_name"
+                                                                                placeholder="Enter Driver Name" value=""
+                                                                                autocomplete="off" id="driver_name"
+                                                                                name="driver_name" />
                                                                         </div><!-- Feild -->
                                                                     </div><!-- Column -->
                                                                     <div class="col-md-4 col-lg-3">
@@ -283,7 +513,14 @@
                                                                             <label>
                                                                                 Driver Mobile
                                                                             </label>
-                                                                            <input type="text" class="form-control driver_mobile_number" minlength="10" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter Driver Name" value="" autocomplete="off" name="driver_mobile_number" id="driver_mobile_number" />
+                                                                            <input type="text"
+                                                                                class="form-control driver_mobile_number"
+                                                                                minlength="10" maxlength="10"
+                                                                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                                                                placeholder="Ex: 9912312312" value=""
+                                                                                autocomplete="off"
+                                                                                name="driver_mobile_number"
+                                                                                id="driver_mobile_number" />
                                                                         </div><!-- Form Group -->
                                                                     </div><!-- Column -->
                                                                     <div class="col-md-4 col-lg-3">
@@ -291,7 +528,9 @@
                                                                             <label>
                                                                                 Remarks
                                                                             </label>
-                                                                            <textarea class="form-control" rows="2" placeholder="Enter Remarks" name="gate_in_remarks"></textarea>
+                                                                            <textarea class="form-control" rows="2"
+                                                                                placeholder="Enter Remarks"
+                                                                                name="gate_in_remarks"></textarea>
                                                                         </div><!-- Feild -->
                                                                     </div><!-- Column -->
                                                                 </div><!-- Row -->
@@ -299,54 +538,101 @@
                                                             <div class="tab-pane-footer">
                                                                 <div class="row">
                                                                     <div class="col-md-12">
-                                                                        <button class="btn btn-primary btn-nxt" type='button'>Next</button>
+                                                                        <button ng-if="$ctrl.aggregate_type == 1"
+                                                                            class="btn btn-primary btn-nxt"
+                                                                            type='button'>Next</button>
+                                                                        <button ng-if="$ctrl.aggregate_type != 1"
+                                                                            type="submit" id="submit"
+                                                                            class="btn btn-primary save">Submit
+                                                                        </button>
                                                                     </div>
                                                                 </div>
                                                             </div><!-- Tab Footer -->
                                                         </div><!-- Column -->
                                                     </div><!-- Row -->
                                                 </div><!-- Tabe Pane -->
-                                                <div class="tab-pane fade" id="inventory" data-animation="fadeInUp" data-animation-delay="300">
+                                                <div class="tab-pane fade" id="inventory" data-animation="fadeInUp"
+                                                    data-animation-delay="300">
                                                     <div class="row">
                                                         <div class="col-md-12">
                                                             <div class="form-page">
                                                                 <div class="row">
-                                                                    <h5 class="color-primary mb-10"><b>Inventory Details</b></h5>
+                                                                    <h5 class="color-primary mb-10"><b>Inventory
+                                                                            Details</b></h5>
                                                                     <hr class="hr-15"><!-- Separater -->
                                                                     <div class="checklist-form-wrap">
                                                                         <ul class="checklist-form-ul">
-                                                                            <li ng-repeat="(index,inventory) in extras.inventory_type_list" ng-if="inventory.field_type_id==11">
+                                                                            <li ng-repeat="(index,inventory) in extras.inventory_type_list"
+                                                                                ng-if="inventory.field_type_id==11">
                                                                                 <div class="checklist-form-item-wrap">
                                                                                     <div class="checklist-form-item">
-                                                                                        <input type="checkbox" id="checkbox_{{inventory.id}}" ng-model="chkselct[inventory.id]" name="vehicle_inventory_items[{{index}}][inventory_item_id]" value="{{inventory.id}}" ng-checked="inventory.checked" ng-click="showDiv(inventory.id)" class="inventory_items" />
-                                                                                        <label for="checkbox_{{inventory.id}}">{{inventory.name}}</label>
-                                                                                        <input ng-show="inventory.checked" id="remarks_div_{{inventory.id}}" type="text" name="vehicle_inventory_items[{{index}}][remarks]" value="{{inventory.remarks}}" class="checklist-form-item-control remarks" placeholder="Enter Remarks if any" autocomplete="off" />
-                                                                                        <input type="hidden" id="is_available_{{inventory.id}}" name="vehicle_inventory_items[{{index}}][is_available]" value="{{inventory.is_available == 1 ? '1' : '0' }}" />
+                                                                                        <input type="checkbox"
+                                                                                            id="checkbox_{{inventory.id}}"
+                                                                                            ng-model="chkselct[inventory.id]"
+                                                                                            name="vehicle_inventory_items[{{index}}][inventory_item_id]"
+                                                                                            value="{{inventory.id}}"
+                                                                                            ng-checked="inventory.checked"
+                                                                                            ng-click="showDiv(inventory.id)"
+                                                                                            class="inventory_items" />
+                                                                                        <label
+                                                                                            for="checkbox_{{inventory.id}}">{{inventory.name}}</label>
+                                                                                        <input
+                                                                                            ng-show="inventory.checked"
+                                                                                            id="remarks_div_{{inventory.id}}"
+                                                                                            type="text"
+                                                                                            name="vehicle_inventory_items[{{index}}][remarks]"
+                                                                                            value="{{inventory.remarks}}"
+                                                                                            class="checklist-form-item-control remarks"
+                                                                                            placeholder="Enter Remarks if any"
+                                                                                            autocomplete="off" />
+                                                                                        <input type="hidden"
+                                                                                            id="is_available_{{inventory.id}}"
+                                                                                            name="vehicle_inventory_items[{{index}}][is_available]"
+                                                                                            value="{{inventory.is_available == 1 ? '1' : '0' }}" />
                                                                                     </div>
                                                                                 </div>
                                                                             </li>
                                                                         </ul>
                                                                     </div>
                                                                     <div class="mb-30"></div><!-- Space -->
-                                                                    <div class="row" ng-repeat="(index,inventory) in extras.inventory_type_list" ng-if="inventory.field_type_id==12">
+                                                                    <div class="row"
+                                                                        ng-repeat="(index,inventory) in extras.inventory_type_list"
+                                                                        ng-if="inventory.field_type_id==12">
                                                                         <div class="col-md-6">
                                                                             <div class="form-group">
                                                                                 <label>{{inventory.name}}</label>
                                                                                 <div class="slider-container">
-                                                                                    <input type="hidden" name="vehicle_inventory_items[{{index}}][inventory_item_id]" value="{{inventory.id}}" />
-                                                                                    <input type="hidden" name="vehicle_inventory_items[{{index}}][is_available]" value="1" />
-                                                                                    <input type="range" min="0" max="100" id="slide_val_{{index}}" class="slider" name="vehicle_inventory_items[{{index}}][remarks]" value="{{inventory.remarks}}" oninput="document.getElementById('range_val').value = this.value" />
+                                                                                    <input type="hidden"
+                                                                                        name="vehicle_inventory_items[{{index}}][inventory_item_id]"
+                                                                                        value="{{inventory.id}}" />
+                                                                                    <input type="hidden"
+                                                                                        name="vehicle_inventory_items[{{index}}][is_available]"
+                                                                                        value="1" />
+                                                                                    <input type="range" min="0"
+                                                                                        max="100"
+                                                                                        id="slide_val_{{index}}"
+                                                                                        class="slider"
+                                                                                        name="vehicle_inventory_items[{{index}}][remarks]"
+                                                                                        value="{{inventory.remarks}}"
+                                                                                        oninput="document.getElementById('range_val').value = this.value" />
                                                                                     <!-- <input type="range" min="0" max="100" id="slide_val" class="slider" name="vehicle_inventory_items[{{index}}][remarks]" value="{{inventory.remarks}}" oninput="document.getElementById('range_val').innerHTML = this.value" /> -->
                                                                                     <!-- <label id="range_val">{{inventory.remarks}}</label> -->
                                                                                     <input type="hidden" id="range_val">
-                                                                                    <div class="slider-lower-fill"></div>
-                                                                                    <div class="slider-upper-fill"></div>
+                                                                                    <div class="slider-lower-fill">
+                                                                                    </div>
+                                                                                    <div class="slider-upper-fill">
+                                                                                    </div>
                                                                                     <div class="grid">
-                                                                                        <span class="first grid-item">E</span>
-                                                                                        <span class="middle grid-item"></span>
-                                                                                        <span class="middle grid-item">1/2</span>
-                                                                                        <span class="middle grid-item"></span>
-                                                                                        <span class="last grid-item">F</span>
+                                                                                        <span
+                                                                                            class="first grid-item">E</span>
+                                                                                        <span
+                                                                                            class="middle grid-item"></span>
+                                                                                        <span
+                                                                                            class="middle grid-item">1/2</span>
+                                                                                        <span
+                                                                                            class="middle grid-item"></span>
+                                                                                        <span
+                                                                                            class="last grid-item">F</span>
                                                                                     </div>
                                                                                 </div><!-- Slider -->
                                                                             </div><!-- Feild -->
@@ -358,8 +644,10 @@
                                                             <div class="tab-pane-footer">
                                                                 <div class="row">
                                                                     <div class="col-md-12">
-                                                                        <button type="button" class="btn btn-primary btn-prev">Previous</button>
-                                                                        <button type="submit" id="submit" class="btn btn-primary save">Submit
+                                                                        <button type="button"
+                                                                            class="btn btn-primary btn-prev">Previous</button>
+                                                                        <button type="submit" id="submit"
+                                                                            class="btn btn-primary save">Submit
                                                                         </button>
                                                                     </div>
                                                                 </div>
@@ -380,7 +668,8 @@
     </div><!-- Row -->
 </div><!-- Content Wrap -->
 <script src="./public/theme/js/imageuploadify-gatein.min.js"></script>
-<div class="modal modal-success alert-modal fade" id="confirm_notification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-keyboard="false" data-backdrop="static">
+<div class="modal modal-success alert-modal fade" id="confirm_notification" tabindex="-1" role="dialog"
+    aria-labelledby="myModalLabel" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-body text-center">
@@ -400,7 +689,8 @@
                 <br ng-if="gate_log.floating_message !=0">
                 <p class="info data" ng-if="gate_log.floating_message !=0">{{gate_log.floating_message}}</p>
                 <div class="mt-30 mb-30">
-                    <button ng-click="reloadPage()" type="button" class="btn btn-success btn-square btn-block"><b>Done</b></button>
+                    <button ng-click="reloadPage()" type="button"
+                        class="btn btn-success btn-square btn-block"><b>Done</b></button>
                 </div><!-- Button -->
             </div><!-- Modal Body -->
         </div><!-- Modal Content -->

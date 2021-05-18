@@ -50,7 +50,8 @@ class GateInController extends Controller
     public function getFormData()
     {
         try {
-
+            // dd(Auth::user()->outlet()->first());
+            $outlet = Auth::user()->outlet()->first();
             $params['field_type_id'] = [11, 12];
 
             $extras = [
@@ -61,6 +62,7 @@ class GateInController extends Controller
                 'inventory_type_list' => VehicleInventoryItem::getInventoryList($job_order_id = null, $params),
                 'trade_plate_number_list' => TradePlateNumber::join('outlets', 'outlets.id', 'trade_plate_numbers.outlet_id')->select('trade_plate_numbers.id', DB::RAW('CONCAT(outlets.code," / ",trade_plate_numbers.trade_plate_number) as trade_plate_number'))->get(),
                 'upload_image_ratio' => 80,
+                'aggregate_number' => 'AG-' . $outlet->code,
             ];
             return response()->json([
                 'success' => true,
@@ -83,147 +85,6 @@ class GateInController extends Controller
         // dd($request->all());
         DB::beginTransaction();
         try {
-            //REMOVE WHITE SPACE BETWEEN REGISTRATION NUMBER
-            $request->registration_number = str_replace(' ', '', $request->registration_number);
-
-            //REGISTRATION NUMBER VALIDATION
-            $error = '';
-            if ($request->registration_number) {
-                $regis_number = $request->registration_number;
-                $registration_no_count = strlen($request->registration_number);
-                if ($registration_no_count < 8) {
-                    return response()->json([
-                        'success' => false,
-                        'error' => 'Validation Error',
-                        'errors' => [
-                            'The registration number must be at least 8 characters.',
-                        ],
-                    ]);
-                } else {
-                    $registration_number = explode('-', $request->registration_number);
-
-                    if (count($registration_number) > 2) {
-                        $valid_reg_number = 1;
-                        if (!preg_match('/^[A-Z]+$/', $registration_number[0]) || !preg_match('/^[0-9]+$/', $registration_number[1])) {
-                            $valid_reg_number = 0;
-                        }
-
-                        if (count($registration_number) > 3) {
-                            if (!preg_match('/^[A-Z]+$/', $registration_number[2]) || strlen($registration_number[3]) != 4 || !preg_match('/^[0-9]+$/', $registration_number[3])) {
-                                $valid_reg_number = 0;
-                            }
-                        } else {
-                            if (!preg_match('/^[0-9]+$/', $registration_number[2]) || strlen($registration_number[2]) != 4) {
-                                $valid_reg_number = 0;
-                            }
-                        }
-                    } else {
-                        $valid_reg_number = 0;
-                    }
-
-                    if ($valid_reg_number == 0) {
-                        return response()->json([
-                            'success' => false,
-                            'error' => 'Validation Error',
-                            'errors' => [
-                                "Please enter valid registration number!",
-                            ],
-                        ]);
-                    }
-                }
-            } else {
-                $regis_number = '-';
-            }
-
-            //REMOVE - INBETWEEN REGISTRATION NUMBER
-            $request['registration_number'] = $request->registration_number ? str_replace('-', '', $request->registration_number) : null;
-
-            if (!$request->chassis_number && !$request->engine_number) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Validation Error',
-                    'errors' => [
-                        "Please enter Chassis / Engine number!",
-                    ],
-                ]);
-            }
-
-            $validator = Validator::make($request->all(), [
-                'vehicle_photo' => [
-                    'required',
-                    'mimes:jpeg,jpg,png',
-                    // 'max:3072',
-                ],
-                'km_reading_photo' => [
-                    'required',
-                    'mimes:jpeg,jpg,png',
-                    // 'max:3072',
-                ],
-                'driver_photo' => [
-                    'required',
-                    'mimes:jpeg,jpg,png',
-                    // 'max:3072',
-                ],
-                // 'chassis_photo' => [
-                //     'required',
-                //     'mimes:jpeg,jpg,png',
-                //     // 'max:3072',
-                // ],
-                'is_registered' => [
-                    'required',
-                    'integer',
-                ],
-                'registration_number' => [
-                    'required_if:is_registered,==,1',
-                    'max:13',
-                ],
-                'km_reading_type_id' => [
-                    'required',
-                    'integer',
-                    'exists:configs,id',
-                ],
-                'km_reading' => [
-                    'required_if:km_reading_type_id,==,8040',
-                    'numeric',
-                ],
-                'hr_reading' => [
-                    'required_if:km_reading_type_id,==,8041',
-                    'numeric',
-                ],
-                'driver_name' => [
-                    'nullable',
-                    'min:3',
-                    'max:64',
-                    'string',
-                ],
-                'driver_mobile_number' => [
-                    'nullable',
-                    'min:10',
-                    'max:10',
-                    'string',
-                ],
-                'gate_in_remarks' => [
-                    'nullable',
-                    'max:191',
-                    'string',
-                ],
-                'vehicle_inventory_items.*.is_available' => [
-                    'required',
-                    'numeric',
-                ],
-                'vehicle_inventory_items.*.remarks' => [
-                    'nullable',
-                    'string',
-                ],
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Validation Error',
-                    'errors' => $validator->errors()->all(),
-                ]);
-            }
 
             //Check Driver & Security Signature
             if ($request->web == 'website') {
@@ -236,139 +97,16 @@ class GateInController extends Controller
                 //     ],
                 // ]);
             } else {
-                // $validator = Validator::make($request->all(), [
-                //     'security_signature' => [
-                //         'required',
-                //         'mimes:jpeg,jpg',
-                //     ],
-                //     'driver_signature' => [
-                //         'required',
-                //         'mimes:jpeg,jpg',
-                //     ],
-                // ]);
-            }
-
-            if ($request->search_type == 1 && $request->vehicle_id) {
-                //Exisiting
-                $vehicle = Vehicle::find($request->vehicle_id);
-                $vehicle_form_filled = 1;
-                if ($vehicle->currentOwner) {
-                    $customer_form_filled = 1;
-                    $vehicle->status_id = 8142; //COMPLETED
-                } else {
-                    $customer_form_filled = 0;
-                    $vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
-                }
-                $vehicle->registration_number = $request->registration_number ? str_replace([' ', '-'], '', $request->registration_number) : null;
-                $vehicle->chassis_number = $request->chassis_number;
-                $vehicle->engine_number = $request->engine_number;
-                $vehicle->driver_name = $request->driver_name;
-                $vehicle->driver_mobile_number = $request->driver_mobile_number;
-                $vehicle->updated_by_id = Auth::user()->id;
-                $vehicle->updated_at = Carbon::now();
-
-                $vehicle_form_filled = 1;
-                if ($vehicle->currentOwner) {
-                    $customer_form_filled = 1;
-                    $vehicle->status_id = 8142; //COMPLETED
-                } else {
-                    $customer_form_filled = 0;
-                    $vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
-                }
-
-                $vehicle->save();
-            } else {
-                $registration_number = $request->registration_number ? str_replace([' ', '-'], '', $request->registration_number) : null;
-                //New
-                if ($registration_number) {
-                    $vehicle = Vehicle::where([
-                        'company_id' => Auth::user()->company_id,
-                        'registration_number' => $registration_number,
-                    ])->first();
-
-                    if (!$vehicle) {
-                        //Chassis Number
-                        if ($request->chassis_number) {
-                            $vehicle = Vehicle::firstOrNew([
-                                'company_id' => Auth::user()->company_id,
-                                'chassis_number' => $request->chassis_number,
-                            ]);
-                        }
-                        //Engine Number
-                        else {
-                            $vehicle = Vehicle::firstOrNew([
-                                'company_id' => Auth::user()->company_id,
-                                'engine_number' => $request->engine_number,
-                            ]);
-                        }
-                    }
-                } else {
-                    //Chassis Number
-                    if ($request->chassis_number) {
-                        $vehicle = Vehicle::firstOrNew([
-                            'company_id' => Auth::user()->company_id,
-                            'chassis_number' => $request->chassis_number,
-                        ]);
-                    }
-                    //Engine Number
-                    else {
-                        $vehicle = Vehicle::firstOrNew([
-                            'company_id' => Auth::user()->company_id,
-                            'engine_number' => $request->engine_number,
-                        ]);
-                    }
-                }
-
-                //NEW
-                if (!$vehicle->exists) {
-                    $vehicle_form_filled = 0;
-                    $customer_form_filled = 0;
-                    $vehicle->status_id = 8140; //NEW
-                    $vehicle->company_id = Auth::user()->company_id;
-                    $vehicle->created_by_id = Auth::user()->id;
-                } else {
-                    $vehicle_form_filled = 1;
-                    if ($vehicle->currentOwner) {
-                        $customer_form_filled = 1;
-                        $vehicle->status_id = 8142; //COMPLETED
-                    } else {
-                        $customer_form_filled = 0;
-                        $vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
-                    }
-                    $vehicle->updated_by_id = Auth::user()->id;
-                }
-
-                $vehicle->fill($request->all());
-                $vehicle->registration_number = $registration_number;
-                $vehicle->save();
-                $request->vehicle_id = $vehicle->id;
-            }
-
-            //Check Floating GatePass
-            $floating_gate_pass = FloatingGatePass::join('job_cards', 'job_cards.id', 'floating_stock_logs.job_card_id')->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')->where('floating_stock_logs.status_id', 11161)->where('job_orders.vehicle_id', $vehicle->id)->first();
-            if ($floating_gate_pass) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Validation Error',
-                    'errors' => [
-                        'Floating Parts Gate Out not completed on this Vehicle!',
+                $validator = Validator::make($request->all(), [
+                    'security_signature' => [
+                        'required',
+                        'mimes:jpeg,jpg',
+                    ],
+                    'driver_signature' => [
+                        'required',
+                        'mimes:jpeg,jpg',
                     ],
                 ]);
-            }
-
-            //CHECK VEHICLE PREVIOUS JOBCARD STATUS
-            $previous_job_order = JobOrder::where('vehicle_id', $vehicle->id)->orderBy('id', 'DESC')->first();
-
-            if ($previous_job_order) {
-                if ($previous_job_order->status_id != 8470 && $previous_job_order->status_id != 8476 && $previous_job_order->status_id != 8467 && $previous_job_order->status_id != 8468 && $previous_job_order->status_id != '') {
-                    return response()->json([
-                        'success' => false,
-                        'error' => 'Validation Error',
-                        'errors' => [
-                            'Previous Job Order not completed on this Vehicle!',
-                        ],
-                    ]);
-                }
             }
 
             if (date('m') > 3) {
@@ -385,83 +123,89 @@ class GateInController extends Controller
                     'success' => false,
                     'error' => 'Validation Error',
                     'errors' => [
-                        'Fiancial Year Not Found',
+                        'Financial Year Not Found',
                     ],
                 ]);
             }
+
             //GET BRANCH/OUTLET
             $branch = Outlet::where('id', Auth::user()->employee->outlet_id)->first();
-
-            //Check Floating GatePass
-            $floating_gate_pass = FloatingGatePass::join('job_cards', 'job_cards.id', 'floating_stock_logs.job_card_id')->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')->where('floating_stock_logs.status_id', 11162)->where('job_orders.vehicle_id', $vehicle->id)->select('job_orders.id as job_order_id', 'job_orders.outlet_id')->first();
-
-            $request['vehicle_id'] = $vehicle->id;
-
-            $generate_number_status = 0;
-            if ($floating_gate_pass && $floating_gate_pass->job_order_id) {
-                $job_order = JobOrder::find($floating_gate_pass->job_order_id);
-
-                if ($job_order && ($job_order->outlet_id != Auth::user()->employee->outlet_id)) {
-                    $job_order = new JobOrder;
-                    $job_order->company_id = Auth::user()->company_id;
-                    $job_order->number = rand();
-                    $job_order->vehicle_id = $vehicle->id;
-                    $job_order->outlet_id = Auth::user()->employee->outlet_id;
-                    if ($vehicle->currentOwner) {
-                        $job_order->customer_id = $vehicle->currentOwner->customer_id;
-                    }
-                    $job_order->save();
-                    $generate_number_status = 1;
-                }
-            } else {
-                //Get vehicle recent service date
-                // $job_order = JobOrder::where('vehicle_id', $vehicle->id)->orderBy('id', 'DESC')->first();
-                $job_card_status = 1; // Create New
-                // if ($job_order) {
-                //     $previous_job_date = $job_order->created_at;
-
-                //     $job_card_reopen_date = Entity::where('entity_type_id', 35)->select('name')->first();
-                //     if ($job_card_reopen_date) {
-                //         $job_card_reopen_date = date("d-m-Y h:i A", strtotime('+' . $job_card_reopen_date->name . ' days', strtotime($job_order->created_at)));
-                //     } else {
-                //         $job_card_reopen_date = date("d-m-Y h:i A", strtotime('+60 days', strtotime($job_order->created_at)));
-                //     }
-
-                //     $job_card_reopen_date = date('Ymdhi', strtotime($job_card_reopen_date));
-
-                //     $current_date = date('Ymdhi');
-
-                //     if ($job_card_reopen_date > $current_date) {
-                //         $job_card_status = 2; // Reopen Last JobOrder
-                //     } else {
-                //         $job_card_status = 1; // Create New JobOrder
-                //     }
-                // }
-
-                if ($job_card_status == 1) {
-                    $job_order = new JobOrder;
-                    $job_order->company_id = Auth::user()->company_id;
-                    $job_order->number = rand();
-                    $job_order->vehicle_id = $vehicle->id;
-                    $job_order->outlet_id = Auth::user()->employee->outlet_id;
-                    if ($vehicle->currentOwner) {
-                        $job_order->customer_id = $vehicle->currentOwner->customer_id;
-                    }
-                    $job_order->save();
-
-                    $generate_number_status = 1;
-                }
+            if (!$branch) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => [
+                        'Outlet Not Found',
+                    ],
+                ]);
             }
 
-            if ($generate_number_status == 1) {
+            if (isset($request->aggregate_type) && $request->aggregate_type == 0) {
+                $vehicle_type = 0;
+                $generate_number_status = 0;
+                $regis_number = '-';
+
+                $validator = Validator::make($request->all(), [
+                    'part_photo' => [
+                        'required',
+                        'mimes:jpeg,jpg,png',
+                        // 'max:3072',
+                    ],
+                    'driver_name' => [
+                        'required',
+                        'min:3',
+                        'max:64',
+                        'string',
+                    ],
+                    'driver_mobile_number' => [
+                        'required',
+                        'min:10',
+                        'max:10',
+                        'string',
+                    ],
+                    'gate_in_remarks' => [
+                        'nullable',
+                        'max:191',
+                        'string',
+                    ],
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => $validator->errors()->all(),
+                    ]);
+                }
+
+                $vehicle = Vehicle::firstOrNew(['company_id' => Auth::user()->company_id, 'vehicle_type' => 2, 'aggregate_number' => $request->aggregate_number]);
+                if ($vehicle->exisits) {
+                    $vehicle->updated_by_id = Auth::user()->id;
+                    $vehicle->updated_at = Carbon::now();
+                } else {
+                    $vehicle->created_by_id = Auth::user()->id;
+                    $vehicle->created_at = Carbon::now();
+                }
+                $vehicle->save();
+
+                // dd($vehicle->id);
+                $job_order = new JobOrder;
+                $job_order->company_id = Auth::user()->company_id;
+                $job_order->number = rand(100, 1000);
+                $job_order->job_order_type = 2;
+                $job_order->vehicle_id = $vehicle->id;
+                $job_order->outlet_id = Auth::user()->employee->outlet_id;
+
+                $job_order->save();
+
                 //GENERATE JOB ORDER NUMBER
-                $generateJONumber = SerialNumberGroup::generateNumber(21, $financial_year->id, $branch->state_id, $branch->id);
+                $generateJONumber = SerialNumberGroup::generateNumber(156, $financial_year->id, $branch->state_id, $branch->id);
                 if (!$generateJONumber['success']) {
                     return response()->json([
                         'success' => false,
                         'error' => 'Validation Error',
                         'errors' => [
-                            'No Job Order Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
+                            'Aggregate Job Order Serial number not found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
                         ],
                     ]);
                 }
@@ -487,10 +231,430 @@ class GateInController extends Controller
                 }
 
                 $job_order->number = $generateJONumber['number'];
+                $job_order->created_by_id = Auth::user()->id;
+                $job_order->created_at = Carbon::now();
+
                 $job_order->save();
+            } else {
+                $vehicle_type = 1;
+                //REMOVE WHITE SPACE BETWEEN REGISTRATION NUMBER
+                $request->registration_number = str_replace(' ', '', $request->registration_number);
+
+                //REGISTRATION NUMBER VALIDATION
+                $error = '';
+                if ($request->registration_number) {
+                    $regis_number = $request->registration_number;
+                    $registration_no_count = strlen($request->registration_number);
+                    if ($registration_no_count < 8) {
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'Validation Error',
+                            'errors' => [
+                                'The registration number must be at least 8 characters.',
+                            ],
+                        ]);
+                    } else {
+                        $registration_number = explode('-', $request->registration_number);
+
+                        if (count($registration_number) > 2) {
+                            $valid_reg_number = 1;
+                            if (!preg_match('/^[A-Z]+$/', $registration_number[0]) || !preg_match('/^[0-9]+$/', $registration_number[1])) {
+                                $valid_reg_number = 0;
+                            }
+
+                            if (count($registration_number) > 3) {
+                                if (!preg_match('/^[A-Z]+$/', $registration_number[2]) || strlen($registration_number[3]) != 4 || !preg_match('/^[0-9]+$/', $registration_number[3])) {
+                                    $valid_reg_number = 0;
+                                }
+                            } else {
+                                if (!preg_match('/^[0-9]+$/', $registration_number[2]) || strlen($registration_number[2]) != 4) {
+                                    $valid_reg_number = 0;
+                                }
+                            }
+                        } else {
+                            $valid_reg_number = 0;
+                        }
+
+                        if ($valid_reg_number == 0) {
+                            return response()->json([
+                                'success' => false,
+                                'error' => 'Validation Error',
+                                'errors' => [
+                                    "Please enter valid registration number!",
+                                ],
+                            ]);
+                        }
+                    }
+                } else {
+                    $regis_number = '-';
+                }
+
+                //REMOVE - INBETWEEN REGISTRATION NUMBER
+                $request['registration_number'] = $request->registration_number ? str_replace('-', '', $request->registration_number) : null;
+
+                if (!$request->chassis_number && !$request->engine_number) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => [
+                            "Please enter Chassis / Engine number!",
+                        ],
+                    ]);
+                }
+
+                $validator = Validator::make($request->all(), [
+                    'vehicle_photo' => [
+                        'required',
+                        'mimes:jpeg,jpg,png',
+                        // 'max:3072',
+                    ],
+                    'km_reading_photo' => [
+                        'required',
+                        'mimes:jpeg,jpg,png',
+                        // 'max:3072',
+                    ],
+                    'driver_photo' => [
+                        'required',
+                        'mimes:jpeg,jpg,png',
+                        // 'max:3072',
+                    ],
+                    // 'chassis_photo' => [
+                    //     'required',
+                    //     'mimes:jpeg,jpg,png',
+                    //     // 'max:3072',
+                    // ],
+                    'is_registered' => [
+                        'required',
+                        'integer',
+                    ],
+                    'registration_number' => [
+                        'required_if:is_registered,==,1',
+                        'max:13',
+                    ],
+                    'km_reading_type_id' => [
+                        'required',
+                        'integer',
+                        'exists:configs,id',
+                    ],
+                    'km_reading' => [
+                        'required_if:km_reading_type_id,==,8040',
+                        'numeric',
+                    ],
+                    'hr_reading' => [
+                        'required_if:km_reading_type_id,==,8041',
+                        'numeric',
+                    ],
+                    'driver_name' => [
+                        'nullable',
+                        'min:3',
+                        'max:64',
+                        'string',
+                    ],
+                    'driver_mobile_number' => [
+                        'nullable',
+                        'min:10',
+                        'max:10',
+                        'string',
+                    ],
+                    'gate_in_remarks' => [
+                        'nullable',
+                        'max:191',
+                        'string',
+                    ],
+                    'vehicle_inventory_items.*.is_available' => [
+                        'required',
+                        'numeric',
+                    ],
+                    'vehicle_inventory_items.*.remarks' => [
+                        'nullable',
+                        'string',
+                    ],
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => $validator->errors()->all(),
+                    ]);
+                }
+
+                if ($request->search_type == 1 && $request->vehicle_id) {
+                    //Exisiting
+                    $vehicle = Vehicle::find($request->vehicle_id);
+                    $vehicle_form_filled = 1;
+                    if ($vehicle->currentOwner) {
+                        $customer_form_filled = 1;
+                        $vehicle->status_id = 8142; //COMPLETED
+                    } else {
+                        $customer_form_filled = 0;
+                        $vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
+                    }
+                    $vehicle->registration_number = $request->registration_number ? str_replace([' ', '-'], '', $request->registration_number) : null;
+                    $vehicle->chassis_number = $request->chassis_number;
+                    $vehicle->engine_number = $request->engine_number;
+                    $vehicle->driver_name = $request->driver_name;
+                    $vehicle->driver_mobile_number = $request->driver_mobile_number;
+                    $vehicle->updated_by_id = Auth::user()->id;
+                    $vehicle->updated_at = Carbon::now();
+
+                    $vehicle_form_filled = 1;
+                    if ($vehicle->currentOwner) {
+                        $customer_form_filled = 1;
+                        $vehicle->status_id = 8142; //COMPLETED
+                    } else {
+                        $customer_form_filled = 0;
+                        $vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
+                    }
+
+                    $vehicle->save();
+                } else {
+                    $registration_number = $request->registration_number ? str_replace([' ', '-'], '', $request->registration_number) : null;
+                    //New
+                    if ($registration_number) {
+                        $vehicle = Vehicle::where([
+                            'company_id' => Auth::user()->company_id,
+                            'registration_number' => $registration_number,
+                        ])->first();
+
+                        if (!$vehicle) {
+                            //Chassis Number
+                            if ($request->chassis_number) {
+                                $vehicle = Vehicle::firstOrNew([
+                                    'company_id' => Auth::user()->company_id,
+                                    'chassis_number' => $request->chassis_number,
+                                ]);
+                            }
+                            //Engine Number
+                            else {
+                                $vehicle = Vehicle::firstOrNew([
+                                    'company_id' => Auth::user()->company_id,
+                                    'engine_number' => $request->engine_number,
+                                ]);
+                            }
+                        }
+                    } else {
+                        //Chassis Number
+                        if ($request->chassis_number) {
+                            $vehicle = Vehicle::firstOrNew([
+                                'company_id' => Auth::user()->company_id,
+                                'chassis_number' => $request->chassis_number,
+                            ]);
+                        }
+                        //Engine Number
+                        else {
+                            $vehicle = Vehicle::firstOrNew([
+                                'company_id' => Auth::user()->company_id,
+                                'engine_number' => $request->engine_number,
+                            ]);
+                        }
+                    }
+
+                    //NEW
+                    if (!$vehicle->exists) {
+                        $vehicle_form_filled = 0;
+                        $customer_form_filled = 0;
+                        $vehicle->status_id = 8140; //NEW
+                        $vehicle->company_id = Auth::user()->company_id;
+                        $vehicle->created_by_id = Auth::user()->id;
+                        $vehicle->created_at = Carbon::now();
+                    } else {
+                        $vehicle_form_filled = 1;
+                        if ($vehicle->currentOwner) {
+                            $customer_form_filled = 1;
+                            $vehicle->status_id = 8142; //COMPLETED
+                        } else {
+                            $customer_form_filled = 0;
+                            $vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
+                        }
+                        $vehicle->updated_by_id = Auth::user()->id;
+                        $vehicle->updated_at = Carbon::now();
+                    }
+
+                    $vehicle->fill($request->all());
+                    $vehicle->registration_number = $registration_number;
+                    $vehicle->save();
+                    $request->vehicle_id = $vehicle->id;
+                }
+
+                //Check Floating GatePass
+                $floating_gate_pass = FloatingGatePass::join('job_cards', 'job_cards.id', 'floating_stock_logs.job_card_id')->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')->where('floating_stock_logs.status_id', 11161)->where('job_orders.vehicle_id', $vehicle->id)->first();
+                if ($floating_gate_pass) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => [
+                            'Floating Parts Gate Out not completed on this Vehicle!',
+                        ],
+                    ]);
+                }
+
+                //CHECK VEHICLE PREVIOUS JOBCARD STATUS
+                $previous_job_order = JobOrder::join('outlets', 'outlets.id', 'job_orders.outlet_id')->where('vehicle_id', $vehicle->id)->select('job_orders.status_id', 'outlets.ax_name', 'outlets.code')->orderBy('job_orders.id', 'DESC')->first();
+
+                if ($previous_job_order) {
+                    if ($previous_job_order->status_id != 8470 && $previous_job_order->status_id != 8476 && $previous_job_order->status_id != 8467 && $previous_job_order->status_id != 8468 && $previous_job_order->status_id != '') {
+                        $outlet = $previous_job_order->ax_name ? $previous_job_order->ax_name : $previous_job_order->code;
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'Validation Error',
+                            'errors' => [
+                                'Previous Job Order is not completed in the ' . $outlet . ' outlet!',
+                            ],
+                        ]);
+                    }
+                }
+
+                //Check Floating GatePass
+                $floating_gate_pass = FloatingGatePass::join('job_cards', 'job_cards.id', 'floating_stock_logs.job_card_id')->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')->where('floating_stock_logs.status_id', 11162)->where('job_orders.vehicle_id', $vehicle->id)->select('job_orders.id as job_order_id', 'job_orders.outlet_id')->first();
+
+                $request['vehicle_id'] = $vehicle->id;
+
+                $generate_number_status = 0;
+                if ($floating_gate_pass && $floating_gate_pass->job_order_id) {
+                    $job_order = JobOrder::find($floating_gate_pass->job_order_id);
+
+                    if ($job_order && ($job_order->outlet_id != Auth::user()->employee->outlet_id)) {
+                        $job_order = new JobOrder;
+                        $job_order->company_id = Auth::user()->company_id;
+                        $job_order->number = rand();
+                        $job_order->vehicle_id = $vehicle->id;
+                        $job_order->outlet_id = Auth::user()->employee->outlet_id;
+                        if ($vehicle->currentOwner) {
+                            $job_order->customer_id = $vehicle->currentOwner->customer_id;
+                        }
+                        $job_order->created_by_id = Auth::user()->id;
+                        $job_order->created_at = Carbon::now();
+
+                        $job_order->save();
+                        $generate_number_status = 1;
+                    }
+                } else {
+                    //Get vehicle recent service date
+                    // $job_order = JobOrder::where('vehicle_id', $vehicle->id)->orderBy('id', 'DESC')->first();
+                    $job_card_status = 1; // Create New
+                    // if ($job_order) {
+                    //     $previous_job_date = $job_order->created_at;
+
+                    //     $job_card_reopen_date = Entity::where('entity_type_id', 35)->select('name')->first();
+                    //     if ($job_card_reopen_date) {
+                    //         $job_card_reopen_date = date("d-m-Y h:i A", strtotime('+' . $job_card_reopen_date->name . ' days', strtotime($job_order->created_at)));
+                    //     } else {
+                    //         $job_card_reopen_date = date("d-m-Y h:i A", strtotime('+60 days', strtotime($job_order->created_at)));
+                    //     }
+
+                    //     $job_card_reopen_date = date('Ymdhi', strtotime($job_card_reopen_date));
+
+                    //     $current_date = date('Ymdhi');
+
+                    //     if ($job_card_reopen_date > $current_date) {
+                    //         $job_card_status = 2; // Reopen Last JobOrder
+                    //     } else {
+                    //         $job_card_status = 1; // Create New JobOrder
+                    //     }
+                    // }
+
+                    if ($job_card_status == 1) {
+                        $job_order = new JobOrder;
+                        $job_order->company_id = Auth::user()->company_id;
+                        $job_order->number = rand();
+                        $job_order->vehicle_id = $vehicle->id;
+                        $job_order->outlet_id = Auth::user()->employee->outlet_id;
+                        if ($vehicle->currentOwner) {
+                            $job_order->customer_id = $vehicle->currentOwner->customer_id;
+                        }
+                        $job_order->created_by_id = Auth::user()->id;
+                        $job_order->created_at = Carbon::now();
+
+                        $job_order->save();
+
+                        $generate_number_status = 1;
+                    }
+                }
+
+                if (isset($request->aggregate_type) && $request->aggregate_type == 1) {
+                    if ($generate_number_status == 1) {
+                        //GENERATE JOB ORDER NUMBER
+                        $generateJONumber = SerialNumberGroup::generateNumber(156, $financial_year->id, $branch->state_id, $branch->id);
+                        if (!$generateJONumber['success']) {
+                            return response()->json([
+                                'success' => false,
+                                'error' => 'Validation Error',
+                                'errors' => [
+                                    'Aggregate Job Order Serial number not found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
+                                ],
+                            ]);
+                        }
+
+                        $error_messages_2 = [
+                            'number.required' => 'Serial number is required',
+                            'number.unique' => 'Serial number is already taken',
+                        ];
+
+                        $validator_2 = Validator::make($generateJONumber, [
+                            'number' => [
+                                'required',
+                                'unique:job_orders,number,' . $job_order->id . ',id,company_id,' . Auth::user()->company_id,
+                            ],
+                        ], $error_messages_2);
+
+                        if ($validator_2->fails()) {
+                            return response()->json([
+                                'success' => false,
+                                'error' => 'Validation Error',
+                                'errors' => $validator_2->errors()->all(),
+                            ]);
+                        }
+
+                        $job_order->number = $generateJONumber['number'];
+                    }
+
+                    $job_order->job_order_type = 2;
+                    $job_order->save();
+
+                    $vehicle->vehicle_type = 2;
+                    $vehicle->save();
+                } else {
+                    if ($generate_number_status == 1) {
+                        //GENERATE JOB ORDER NUMBER
+                        $generateJONumber = SerialNumberGroup::generateNumber(21, $financial_year->id, $branch->state_id, $branch->id);
+                        if (!$generateJONumber['success']) {
+                            return response()->json([
+                                'success' => false,
+                                'error' => 'Validation Error',
+                                'errors' => [
+                                    'No Job Order Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
+                                ],
+                            ]);
+                        }
+
+                        $error_messages_2 = [
+                            'number.required' => 'Serial number is required',
+                            'number.unique' => 'Serial number is already taken',
+                        ];
+
+                        $validator_2 = Validator::make($generateJONumber, [
+                            'number' => [
+                                'required',
+                                'unique:job_orders,number,' . $job_order->id . ',id,company_id,' . Auth::user()->company_id,
+                            ],
+                        ], $error_messages_2);
+
+                        if ($validator_2->fails()) {
+                            return response()->json([
+                                'success' => false,
+                                'error' => 'Validation Error',
+                                'errors' => $validator_2->errors()->all(),
+                            ]);
+                        }
+
+                        $job_order->number = $generateJONumber['number'];
+                        $job_order->save();
+                    }
+                }
+                $job_order->fill($request->all());
             }
 
-            $job_order->fill($request->all());
             $job_order->gatein_trade_plate_number_id = $request->trade_plate_number ? $request->trade_plate_number : null;
             $job_order->service_advisor_id = null;
             $job_order->status_id = 8460; //Ready for Inward
@@ -505,6 +669,8 @@ class GateInController extends Controller
             $gate_log->gate_in_date = Carbon::now();
             $gate_log->status_id = 8120; //GATE IN COMPLETED
             $gate_log->outlet_id = Auth::user()->employee->outlet_id;
+            $gate_log->created_by_id = Auth::user()->id;
+            $gate_log->created_at = Carbon::now();
             $gate_log->save();
 
             //GENERATE GATE IN VEHICLE NUMBER
@@ -581,6 +747,15 @@ class GateInController extends Controller
                 saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
             }
 
+            //SAVE PART PHOTO
+            if (!empty($request->chassis_photo)) {
+                $attachment = $request->chassis_photo;
+                $entity_id = $gate_log->id;
+                $attachment_of_id = 225; //GATE LOG
+                $attachment_type_id = 11800; //PART PHOTO
+                saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
+            }
+
             if ($generate_number_status == 1) {
                 //INWARD PROCESS CHECK
                 $inward_mandatory_tabs = Config::getDropDownList([
@@ -643,16 +818,21 @@ class GateInController extends Controller
                     $number = $vehicle->chassis_number;
                     $soap_number = $vehicle->chassis_number;
                     $gate_in_data['label'] = 'Chassis No';
-                } else {
+                } elseif ($vehicle->engine_number) {
                     $gate_in_data['registration_number'] = $vehicle->engine_number;
                     $number = $vehicle->engine_number;
                     $gate_in_data['label'] = 'Engine No';
                     $soap_number = $vehicle->engine_number;
+                } else {
+                    $gate_in_data['registration_number'] = $vehicle->aggregate_number;
+                    $number = $vehicle->aggregate_number;
+                    $gate_in_data['label'] = 'Aggregate No';
+                    $soap_number = $vehicle->aggregate_number;
                 }
             }
 
             //Check Customer Mapped this vehicle or not
-            if (!$vehicle->currentOwner) {
+            if (!$vehicle->currentOwner && $vehicle_type == 1) {
                 // dd($vehicle);
                 if ($vehicle->registration_number) {
                     $key = str_replace([' ', '-'], '', $vehicle->registration_number);
@@ -712,110 +892,114 @@ class GateInController extends Controller
                 }
             }
 
-            if ($vehicle->chassis_number) {
-                $soap_number = $vehicle->chassis_number;
-            } elseif ($vehicle->engine_number) {
-                $soap_number = $vehicle->engine_number;
-            } else {
-                $soap_number = $vehicle->registration_number;
-            }
+            //Get Vehicle Membership
+            if ($vehicle_type == 1) {
+                if ($vehicle->chassis_number) {
+                    $soap_number = $vehicle->chassis_number;
+                } elseif ($vehicle->engine_number) {
+                    $soap_number = $vehicle->engine_number;
+                } else {
+                    $soap_number = $vehicle->registration_number;
+                }
 
-            $membership_data = $this->getSoap->GetTVSONEVehicleDetails($soap_number);
-            // dd($membership_data);
-            //Save API Response
-            $api_log = new ApiLog;
-            $api_log->type_id = 11780;
-            $api_log->entity_number = $soap_number;
-            $api_log->entity_id = $vehicle->id;
-            $api_log->url = 'https: //tvsapp.tvs.in/tvsone/tvsoneapi/WebService1.asmx?wsdl';
-            $api_log->src_data = 'https: //tvsapp.tvs.in/tvsone/tvsoneapi/WebService1.asmx?wsdl';
-            $api_log->response_data = json_encode(array($membership_data));
-            $api_log->user_id = Auth::user()->id;
-            $api_log->status_id = isset($membership_data) ? $membership_data['success'] == 'true' ? 11271 : 11272 : 11272;
-            $api_log->errors = null;
-            $api_log->created_by_id = Auth::user()->id;
-            $api_log->save();
+                $membership_data = $this->getSoap->GetTVSONEVehicleDetails($soap_number);
+                // dd($membership_data);
+                //Save API Response
+                $api_log = new ApiLog;
+                $api_log->type_id = 11780;
+                $api_log->entity_number = $soap_number;
+                $api_log->entity_id = $vehicle->id;
+                $api_log->url = 'https: //tvsapp.tvs.in/tvsone/tvsoneapi/WebService1.asmx?wsdl';
+                $api_log->src_data = 'https: //tvsapp.tvs.in/tvsone/tvsoneapi/WebService1.asmx?wsdl';
+                $api_log->response_data = json_encode(array($membership_data));
+                $api_log->user_id = Auth::user()->id;
+                $api_log->status_id = isset($membership_data) ? $membership_data['success'] == 'true' ? 11271 : 11272 : 11272;
+                $api_log->errors = null;
+                $api_log->created_by_id = Auth::user()->id;
+                $api_log->save();
 
-            if ($membership_data && $membership_data['success'] == 'true') {
-                // dump($membership_data);
-                $amc_customer_id = null;
-                if ($membership_data['tvs_one_customer_code']) {
-                    $amc_customer = AmcCustomer::firstOrNew(['tvs_one_customer_code' => $membership_data['tvs_one_customer_code']]);
+                if ($membership_data && $membership_data['success'] == 'true') {
+                    // dump($membership_data);
+                    $amc_customer_id = null;
+                    if ($membership_data['tvs_one_customer_code']) {
+                        $amc_customer = AmcCustomer::firstOrNew(['tvs_one_customer_code' => $membership_data['tvs_one_customer_code']]);
 
-                    if (!$amc_customer->customer_id) {
-                        $customer = Customer::where('code', ltrim($membership_data['al_dms_code'], '0'))->first();
-                        if ($customer) {
-                            $amc_customer->customer_id = $customer->id;
+                        if (!$amc_customer->customer_id) {
+                            $customer = Customer::where('code', ltrim($membership_data['al_dms_code'], '0'))->first();
+                            if ($customer) {
+                                $amc_customer->customer_id = $customer->id;
+                            }
                         }
-                    }
 
-                    if ($amc_customer->exists) {
-                        $amc_customer->updated_by_id = Auth::user()->id;
-                        $amc_customer->updated_at = Carbon::now();
-                    } else {
-                        $amc_customer->created_by_id = Auth::user()->id;
-                        $amc_customer->created_at = Carbon::now();
-                        $amc_customer->updated_at = null;
-                    }
+                        if ($amc_customer->exists) {
+                            $amc_customer->updated_by_id = Auth::user()->id;
+                            $amc_customer->updated_at = Carbon::now();
+                        } else {
+                            $amc_customer->created_by_id = Auth::user()->id;
+                            $amc_customer->created_at = Carbon::now();
+                            $amc_customer->updated_at = null;
+                        }
 
-                    $amc_customer->save();
+                        $amc_customer->save();
 
-                    $amc_customer_id = $amc_customer->id;
+                        $amc_customer_id = $amc_customer->id;
 
-                    //Save Aggregate Coupons
-                    if ($membership_data['aggregate_coupon']) {
-                        $aggregate_coupons = explode(',', $membership_data['aggregate_coupon']);
-                        if (count($aggregate_coupons) > 0) {
-                            foreach ($aggregate_coupons as $aggregate_coupon) {
-                                $coupon = AmcAggregateCoupon::firstOrNew(['coupon_code' => str_replace(' ', '', $aggregate_coupon)]);
-                                if ($coupon->exists) {
-                                    $coupon->updated_by_id = Auth::user()->id;
-                                    $coupon->updated_at = Carbon::now();
-                                } else {
-                                    $coupon->created_by_id = Auth::user()->id;
-                                    $coupon->created_at = Carbon::now();
-                                    $coupon->updated_at = null;
-                                    $coupon->status_id = 1;
+                        //Save Aggregate Coupons
+                        if ($membership_data['aggregate_coupon']) {
+                            $aggregate_coupons = explode(',', $membership_data['aggregate_coupon']);
+                            if (count($aggregate_coupons) > 0) {
+                                foreach ($aggregate_coupons as $aggregate_coupon) {
+                                    $coupon = AmcAggregateCoupon::firstOrNew(['coupon_code' => str_replace(' ', '', $aggregate_coupon)]);
+                                    if ($coupon->exists) {
+                                        $coupon->updated_by_id = Auth::user()->id;
+                                        $coupon->updated_at = Carbon::now();
+                                    } else {
+                                        $coupon->created_by_id = Auth::user()->id;
+                                        $coupon->created_at = Carbon::now();
+                                        $coupon->updated_at = null;
+                                        $coupon->status_id = 1;
+                                    }
+                                    $coupon->amc_customer_id = $amc_customer->id;
+                                    $coupon->save();
                                 }
-                                $coupon->amc_customer_id = $amc_customer->id;
-                                $coupon->save();
                             }
                         }
                     }
-                }
 
-                $amc_policy = AmcPolicy::firstOrNew(['company_id' => Auth::user()->company_id, 'name' => $membership_data['membership_name'], 'type' => $membership_data['membership_type']]);
-                if ($amc_policy->exists) {
-                    $amc_policy->updated_by_id = Auth::user()->id;
-                    $amc_policy->updated_at = Carbon::now();
+                    $amc_policy = AmcPolicy::firstOrNew(['company_id' => Auth::user()->company_id, 'name' => $membership_data['membership_name'], 'type' => $membership_data['membership_type']]);
+                    if ($amc_policy->exists) {
+                        $amc_policy->updated_by_id = Auth::user()->id;
+                        $amc_policy->updated_at = Carbon::now();
+                    } else {
+                        $amc_policy->created_by_id = Auth::user()->id;
+                        $amc_policy->created_at = Carbon::now();
+                    }
+                    $amc_policy->save();
+
+                    $amc_member = AmcMember::firstOrNew(['company_id' => Auth::user()->company_id, 'entity_type_id' => 11180, 'vehicle_id' => $vehicle->id, 'policy_id' => $amc_policy->id, 'number' => $membership_data['membership_number']]);
+
+                    if ($amc_member->exists) {
+                        $amc_member->updated_by_id = Auth::user()->id;
+                        $amc_member->updated_at = Carbon::now();
+                    } else {
+                        $amc_member->created_by_id = Auth::user()->id;
+                        $amc_member->created_at = Carbon::now();
+                    }
+
+                    $amc_member->start_date = date('Y-m-d', strtotime($membership_data['start_date']));
+                    $amc_member->expiry_date = date('Y-m-d', strtotime($membership_data['end_date']));
+                    $amc_member->amc_customer_id = $amc_customer_id;
+
+                    $amc_member->save();
+
+                    $job_order->service_policy_id = $amc_member->id;
+                    $job_order->save();
+
+                    $membership_message = '. TVS Membership Number is ' . $membership_data['membership_number'] . ' - TVS';
                 } else {
-                    $amc_policy->created_by_id = Auth::user()->id;
-                    $amc_policy->created_at = Carbon::now();
-                }
-                $amc_policy->save();
-
-                $amc_member = AmcMember::firstOrNew(['company_id' => Auth::user()->company_id, 'entity_type_id' => 11180, 'vehicle_id' => $vehicle->id, 'policy_id' => $amc_policy->id, 'number' => $membership_data['membership_number']]);
-
-                if ($amc_member->exists) {
-                    $amc_member->updated_by_id = Auth::user()->id;
-                    $amc_member->updated_at = Carbon::now();
-                } else {
-                    $amc_member->created_by_id = Auth::user()->id;
-                    $amc_member->created_at = Carbon::now();
+                    $membership_message = ' - TVS';
                 }
 
-                $amc_member->start_date = date('Y-m-d', strtotime($membership_data['start_date']));
-                $amc_member->expiry_date = date('Y-m-d', strtotime($membership_data['end_date']));
-                $amc_member->amc_customer_id = $amc_customer_id;
-
-                $amc_member->save();
-
-                $job_order->service_policy_id = $amc_member->id;
-                $job_order->save();
-
-                $membership_message = '. TVS Membership Number is ' . $membership_data['membership_number'] . ' - TVS';
-            } else {
-                $membership_message = ' - TVS';
             }
 
             $url = url('/') . '/vehicle/track/' . $job_order->id;
@@ -937,7 +1121,11 @@ class GateInController extends Controller
 
             $gate_in_data['number'] = $gate_log->number;
 
-            $message = 'Greetings from TVS & Sons! Your vehicle ' . $number . ' has arrived in TVS Service Center - ' . Auth::user()->employee->outlet->ax_name . ' at ' . date('d-m-Y h:i A') . $membership_message;
+            if ($vehicle_type == 1) {
+                $message = 'Greetings from TVS & Sons! Your vehicle ' . $number . ' has arrived in TVS Service Center - ' . Auth::user()->employee->outlet->ax_name . ' at ' . date('d-m-Y h:i A') . $membership_message;
+            } else {
+                $message = 'Greetings from TVS & Sons! Your Part has arrived in TVS Service Center - ' . Auth::user()->employee->outlet->ax_name . ' at ' . date('d-m-Y h:i A');
+            }
 
             //Send SMS to Driver
             if (preg_match('/^\d{10}$/', $request->driver_mobile_number)) {
