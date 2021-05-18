@@ -282,10 +282,11 @@ app.component('inwardVehicleTableList', {
                 data: 'outlet_code',
                 name: 'outlets.code'
             },
-            {
-                data: 'registration_type',
-                name: 'registration_type'
-            },
+            { data: 'service_type', searchable: false },
+            // {
+            //     data: 'registration_type',
+            //     name: 'registration_type'
+            // },
             {
                 data: 'registration_number',
                 name: 'vehicles.registration_number'
@@ -541,6 +542,12 @@ app.component('inwardVehicleView', {
                     $scope.manual_job_order_pdf = res.job_order.manual_job_order_pdf;
                     $scope.revised_estimate_url = base_url + '/gigo-pkg/pdf/job-order/revised-estimate/' + $scope.job_order.id;
 
+                    if (res.job_order.vehicle.engine_number || res.job_order.vehicle.chassis_number) {
+                        self.aggregate_type = 1;
+                    } else {
+                        self.aggregate_type = 0;
+                    }
+
                     $scope.$apply();
 
                     //Scrollable Tabs
@@ -706,6 +713,9 @@ app.component('inwardVehicleVehicleDetail', {
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
 
+        self.service_type = 1;
+        self.aggregate_type = 1;
+
         $scope.job_order_id = $routeParams.job_order_id;
         //FETCH DATA
         $scope.fetchData = function () {
@@ -745,7 +755,16 @@ app.component('inwardVehicleVehicleDetail', {
                         $scope.show_vehicle_form = true;
                     }
                     $scope.extras = res.extras;
+
                     $scope.$apply();
+
+                    self.service_type = res.job_order.job_order_type == 1 ? 1 : 0;
+                    if (res.job_order.vehicle.engine_number || res.job_order.vehicle.chassis_number) {
+                        self.aggregate_type = 1;
+                    } else {
+                        self.aggregate_type = 0;
+                    }
+
                 })
                 .fail(function (xhr) {
                     custom_noty('error', 'Something went wrong at server');
@@ -901,6 +920,11 @@ app.component('inwardVehicleVehicleDetail', {
             });
         }
 
+        $scope.serviceType = function (type) {
+            if (type == 1) {
+                self.aggregate_type = 1;
+            }
+        }
 
         $scope.showVehicleForm = function () {
             $scope.show_vehicle_detail = false;

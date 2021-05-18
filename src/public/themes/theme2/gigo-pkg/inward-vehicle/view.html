@@ -1,8 +1,8 @@
 <!-- Content Wrap -->
 <style type="text/css">
-.strikethrough {
-    text-decoration: line-through;
-}
+    .strikethrough {
+        text-decoration: line-through;
+    }
 </style>
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
@@ -10,7 +10,8 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/inward-vehicle/table-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                    <a href="#!/inward-vehicle/table-list" type="button" class="btn-back btn-img"><img
+                            class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
                     <h1 class="title"><b>Inward Vehicle</b></h1>
@@ -36,7 +37,8 @@
                     <div class="page-tab-form-top-left-info">
                         <span class="page-tab-form-top-left-info-content">
                             <b>
-                                {{job_order.vehicle.registration_number}}
+                                {{job_order.vehicle.registration_number ? job_order.vehicle.registration_number :
+                                job_order.vehicle.aggregate_number}}
                             </b>
                             <!-- <a class="page-tab-form-top-left-info-link" data-toggle="modal" data-target="#search_vehicle_modal" style="margin-left: 0;">
                                     <img class="img-responsive" src="./public/theme/img/content/edit.svg" alt="Edit" />
@@ -64,32 +66,38 @@
                         <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300">
                             <ul class="nav nav-pills scroll-tabs cndn-tabs">
                                 <li ng-if="$ctrl.hasPermission('inward-job-card-tab-gate-in-details')" class="active">
-                                    <a class="filter active" data-target="#gatein_details" data-toggle="tab" aria-expanded="true">
+                                    <a class="filter active" data-target="#gatein_details" data-toggle="tab"
+                                        aria-expanded="true">
                                         Gate In Details
                                     </a>
                                 </li>
                                 <li ng-if="$ctrl.hasPermission('inward-job-card-tab-vehicle-details-view')">
-                                    <a class="filter" data-target="#vehicle_details" data-toggle="tab" aria-expanded="true">
+                                    <a class="filter" data-target="#vehicle_details" data-toggle="tab"
+                                        aria-expanded="true">
                                         Vehicle Details
                                     </a>
                                 </li>
                                 <li ng-if="$ctrl.hasPermission('inward-job-card-tab-customer-details-view')">
-                                    <a data-target="#customer_details" data-toggle="tab" aria-expanded="true" class="filter">
+                                    <a data-target="#customer_details" data-toggle="tab" aria-expanded="true"
+                                        class="filter">
                                         Customer Details
                                     </a>
                                 </li>
                                 <li ng-if="$ctrl.hasPermission('inward-job-card-tab-vehicle-details-view')">
-                                    <a data-target="#vehicle_photos" data-toggle="tab" aria-expanded="true" class="filter">
+                                    <a data-target="#vehicle_photos" data-toggle="tab" aria-expanded="true"
+                                        class="filter">
                                         Vehicle Photos
                                     </a>
                                 </li>
                                 <li ng-if="$ctrl.hasPermission('inward-job-card-tab-order-details-view')">
-                                    <a data-target="#order_details" data-toggle="tab" aria-expanded="true" class="filter">
+                                    <a data-target="#order_details" data-toggle="tab" aria-expanded="true"
+                                        class="filter">
                                         Order Details
                                     </a>
                                 </li>
                                 <li ng-if="$ctrl.hasPermission('inward-job-card-tab-inventory-view')">
-                                    <a data-target="#inventory_details" data-toggle="tab" aria-expanded="true" class="filter">
+                                    <a data-target="#inventory_details" data-toggle="tab" aria-expanded="true"
+                                        class="filter">
                                         Inventory
                                     </a>
                                 </li>
@@ -99,16 +107,19 @@
                                     </a>
                                 </li>
                                 <li ng-if="$ctrl.hasPermission('inward-job-card-tab-road-test-view')">
-                                    <a data-target="#road_test_details" data-toggle="tab" aria-expanded="true" class="filter">
+                                    <a data-target="#road_test_details" data-toggle="tab" aria-expanded="true"
+                                        class="filter">
                                         Road Test
                                     </a>
                                 </li>
                                 <li ng-if="$ctrl.hasPermission('inward-job-card-tab-expert-diagnosis-report-view')">
-                                    <a data-target="#expert_diagnosis_details" data-toggle="tab" aria-expanded="true" class="filter">Expert Diagnosis
+                                    <a data-target="#expert_diagnosis_details" data-toggle="tab" aria-expanded="true"
+                                        class="filter">Expert Diagnosis
                                     </a>
                                 </li>
                                 <li ng-if="$ctrl.hasPermission('inward-job-card-tab-vehicle-inspection-report-view')">
-                                    <a data-target="#vehicle_inspection_details" data-toggle="tab" aria-expanded="true" class="filter">
+                                    <a data-target="#vehicle_inspection_details" data-toggle="tab" aria-expanded="true"
+                                        class="filter">
                                         Vehicle Inspection Report
                                     </a>
                                 </li>
@@ -118,32 +129,41 @@
                                     </a>
                                 </li>
                                 <li ng-if="$ctrl.hasPermission('inward-job-card-tab-scheduled-maintenance-view')">
-                                    <a data-target="#maintenance_details" data-toggle="tab" aria-expanded="true" class="filter">
+                                    <a data-target="#maintenance_details" data-toggle="tab" aria-expanded="true"
+                                        class="filter">
                                         Scheduled Maintenance
                                     </a>
                                 </li>
                                 <li ng-if="$ctrl.hasPermission('inward-job-card-tab-other-labour-parts-view')">
-                                    <a data-target="#payable_details" data-toggle="tab" aria-expanded="true" class="filter">
+                                    <a data-target="#payable_details" data-toggle="tab" aria-expanded="true"
+                                        class="filter">
                                         Additional Labour & Parts
                                     </a>
                                 </li>
-                                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-estimate-view') && (job_order.status_id != 8472)">
-                                    <a data-target="#estimate_details" data-toggle="tab" aria-expanded="true" class="filter">
+                                <li
+                                    ng-if="$ctrl.hasPermission('inward-job-card-tab-estimate-view') && (job_order.status_id != 8472)">
+                                    <a data-target="#estimate_details" data-toggle="tab" aria-expanded="true"
+                                        class="filter">
                                         Estimate
                                     </a>
                                 </li>
-                                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-estimation-status-view') && (job_order.is_customer_agreed == 0 || (job_order.is_customer_agreed == 1 && job_order.is_customer_approved == 1))">
-                                    <a data-target="#status_details" data-toggle="tab" aria-expanded="true" class="filter">
+                                <li
+                                    ng-if="$ctrl.hasPermission('inward-job-card-tab-estimation-status-view') && (job_order.is_customer_agreed == 0 || (job_order.is_customer_agreed == 1 && job_order.is_customer_approved == 1))">
+                                    <a data-target="#status_details" data-toggle="tab" aria-expanded="true"
+                                        class="filter">
                                         Estimation Status
                                     </a>
                                 </li>
-                                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-pdf') && (job_order.status_id == 8461 || job_order.status_id == 8468 || job_order.status_id == 8470)">
+                                <li
+                                    ng-if="$ctrl.hasPermission('inward-job-card-tab-pdf') && (job_order.status_id == 8461 || job_order.status_id == 8468 || job_order.status_id == 8470)">
                                     <a data-target="#inward_pdf" data-toggle="tab" aria-expanded="true" class="filter">
                                         PDF
                                     </a>
                                 </li>
-                                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-vehicle-details-view') && (job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8476) && extras.inward_cancel_status == 0">
-                                    <a data-target="#cancel_inward" data-toggle="tab" aria-expanded="true" class="filter">
+                                <li
+                                    ng-if="$ctrl.hasPermission('inward-job-card-tab-vehicle-details-view') && (job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8476) && extras.inward_cancel_status == 0">
+                                    <a data-target="#cancel_inward" data-toggle="tab" aria-expanded="true"
+                                        class="filter">
                                         Inward Cancel
                                     </a>
                                 </li>
@@ -154,7 +174,8 @@
                 <div class="tab-form-body side-tab-open">
                     <div class="tab-content">
                         <!-- TAB PANEL -->
-                        <div class="tab-pane fade in active" id="gatein_details" data-animation="fadeInUp" data-animation-delay="300">
+                        <div class="tab-pane fade in active" id="gatein_details" data-animation="fadeInUp"
+                            data-animation-delay="300">
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -191,22 +212,45 @@
                                                         <table class="table-info">
                                                             <tbody>
                                                                 <tr>
-                                                                    <td class="text-center">Vehicle Image</td>
-                                                                    <td></td>
-                                                                    <td class="text-center">KM Image</td>
-                                                                    <td></td>
-                                                                    <td class="text-center">Driver Image</td>
-                                                                    <td></td>
-                                                                    <td class="text-center">Chassis Image</td>
+                                                                    <td ng-if="job_order.job_order_type == 1"
+                                                                        class="text-center">Vehicle Image</td>
+                                                                    <td ng-if="job_order.job_order_type == 1"></td>
+                                                                    <td ng-if="job_order.job_order_type == 1"
+                                                                        class="text-center">KM Image</td>
+                                                                    <td ng-if="job_order.job_order_type == 1"></td>
+                                                                    <td ng-if="job_order.job_order_type == 1"
+                                                                        class="text-center">Driver Image</td>
+                                                                    <td ng-if="job_order.job_order_type == 1"></td>
+                                                                    <td ng-if="job_order.job_order_type == 1"
+                                                                        class="text-center">Chassis Image</td>
+                                                                    <td ng-if="job_order.job_order_type == 2"
+                                                                        class="text-center">Part Image</td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td><img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.vehicle_attachment.name}}" alt="Vehicle Image" /></td>
-                                                                    <td></td>
-                                                                    <td><img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.km_attachment.name}}" alt="KM" /></td>
-                                                                    <td>&nbsp;&nbsp;</td>
-                                                                    <td><img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.driver_attachment.name}}" alt="Driver Image" /></td>
-                                                                    <td></td>
-                                                                    <td><img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.chassis_attachment.name}}" alt="Chassis Image" /></td>
+                                                                    <td ng-if="job_order.job_order_type == 1"><img
+                                                                            class="img-responsive"
+                                                                            src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.vehicle_attachment.name}}"
+                                                                            alt="Vehicle Image" /></td>
+                                                                    <td ng-if="job_order.job_order_type == 1"></td>
+                                                                    <td ng-if="job_order.job_order_type == 1"><img
+                                                                            class="img-responsive"
+                                                                            src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.km_attachment.name}}"
+                                                                            alt="KM" /></td>
+                                                                    <td ng-if="job_order.job_order_type == 1">
+                                                                        &nbsp;&nbsp;</td>
+                                                                    <td ng-if="job_order.job_order_type == 1"><img
+                                                                            class="img-responsive"
+                                                                            src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.driver_attachment.name}}"
+                                                                            alt="Driver Image" /></td>
+                                                                    <td ng-if="job_order.job_order_type == 1"></td>
+                                                                    <td ng-if="job_order.job_order_type == 1"><img
+                                                                            class="img-responsive"
+                                                                            src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.chassis_attachment.name}}"
+                                                                            alt="Chassis Image" /></td>
+                                                                    <td ng-if="job_order.job_order_type == 2"><img
+                                                                            class="img-responsive"
+                                                                            src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.part_attachment.name}}"
+                                                                            alt="Part Image" /></td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>
@@ -219,20 +263,46 @@
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}" class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
+                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}"
+                                                    class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job
+                                                    card</a>
                                             </div>
                                         </div>
                                     </div><!-- Tab Footer -->
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
-                        <div class="tab-pane fade" id="vehicle_details" data-animation="fadeInUp" data-animation-delay="300">
+                        <div class="tab-pane fade" id="vehicle_details" data-animation="fadeInUp"
+                            data-animation-delay="300">
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <h5 class="color-primary mb-10"><b>Vehicle Details</b></h5>
                                         <ul class="view-row mb-no">
                                             <li class="view-col-3">
+                                                <span class="view-col-label">
+                                                    Service Type
+                                                </span>
+                                                <span class="view-data-list-value">
+                                                    <b ng-if="job_order.job_order_type == 1">
+                                                        Vehicle Service
+                                                    </b>
+                                                    <b ng-if="job_order.job_order_type == 2">
+                                                        Aggregate Service
+                                                    </b>
+                                                </span>
+                                            </li>
+                                            <li class="view-col-3" ng-if="job_order.vehicle.vehicle_type == 2">
+                                                <span class="view-col-label">
+                                                    Aggregate Service Number
+                                                </span>
+                                                <span class="view-data-list-value">
+                                                    <b>
+                                                        {{job_order.number}}
+                                                    </b>
+                                                </span>
+                                            </li>
+                                            <li class="view-col-3" ng-if="$ctrl.aggregate_type == 1">
                                                 <span class="view-col-label">
                                                     Registration Type
                                                 </span>
@@ -245,7 +315,8 @@
                                                     </b>
                                                 </span>
                                             </li>
-                                            <li class="view-col-3" ng-if="job_order.vehicle.is_registered == 1">
+                                            <li class="view-col-3"
+                                                ng-if="job_order.vehicle.is_registered == 1 && $ctrl.aggregate_type == 1">
                                                 <span class="view-col-label">
                                                     Registration No
                                                 </span>
@@ -255,17 +326,18 @@
                                                     </b>
                                                 </span>
                                             </li>
-                                            <li class="view-col-3">
+                                            <li class="view-col-3" ng-if="$ctrl.aggregate_type == 1">
                                                 <span class="view-col-label">
                                                     Vehicle Model
                                                 </span>
                                                 <span class="view-col-value">
                                                     <b>
-                                                        {{job_order.vehicle.model.model_name}} /{{job_order.vehicle.model.model_number}}
+                                                        {{job_order.vehicle.model.model_name}}
+                                                        /{{job_order.vehicle.model.model_number}}
                                                     </b>
                                                 </span>
                                             </li>
-                                            <li class="view-col-3">
+                                            <li class="view-col-3" ng-if="$ctrl.aggregate_type == 1">
                                                 <span class="view-col-label">
                                                     Engine Number
                                                 </span>
@@ -273,7 +345,7 @@
                                                     {{job_order.vehicle.engine_number}}
                                                 </span>
                                             </li>
-                                            <li class="view-col-3">
+                                            <li class="view-col-3" ng-if="$ctrl.aggregate_type == 1">
                                                 <span class="view-col-label">
                                                     Chassis / VIN Number
                                                 </span>
@@ -283,7 +355,7 @@
                                                     </b>
                                                 </span>
                                             </li>
-                                            <li class="view-col-3">
+                                            <li class="view-col-3" ng-if="$ctrl.aggregate_type == 1">
                                                 <span class="view-col-label">
                                                     Is Sold ?
                                                 </span>
@@ -308,7 +380,9 @@
                                         <!-- <button class="btn btn-secondary-dark btn-md btn-square" >
                                                 Edit
                                             </button> -->
-                                        <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/vehicle-detail/{{job_order_id}}/1" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-vehicle-details-edit')">
+                                        <a class="btn btn-secondary-dark btn-md btn-square"
+                                            href=".#!/inward-vehicle/vehicle-detail/{{job_order_id}}/1"
+                                            ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-vehicle-details-edit')">
                                             Edit
                                         </a>
                                         <!-- <a type="button" class="btn btn-red" ng-click="showVehicleForm()">
@@ -320,14 +394,17 @@
                                             <div class="col-md-12">
                                                 <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                 <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}" class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
+                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}"
+                                                    class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job
+                                                    card</a>
                                             </div>
                                         </div>
                                     </div><!-- Tab Footer -->
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
-                        <div class="tab-pane fade" id="customer_details" data-animation="fadeInUp" data-animation-delay="300">
+                        <div class="tab-pane fade" id="customer_details" data-animation="fadeInUp"
+                            data-animation-delay="300">
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -416,16 +493,21 @@
                                                 </span>
                                                 <span class="view-data-list-value mandatory">
                                                     <b>
-                                                        <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" /> {{job_order.total_due_amount | number:2}}
+                                                        <img class="img-responsive img-inline"
+                                                            src="./public/theme/img/table/cndn/table-rupee.svg"
+                                                            alt="Rupee" /> {{job_order.total_due_amount | number:2}}
                                                     </b>
                                                 </span>
                                             </li>
                                         </ul>
                                         <!-- <button class="btn btn-secondary-dark btn-md btn-square">Edit</button> -->
-                                        <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/customer-detail/{{job_order_id}}/1" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-customer-details-edit')">
+                                        <a class="btn btn-secondary-dark btn-md btn-square"
+                                            href=".#!/inward-vehicle/customer-detail/{{job_order_id}}/1"
+                                            ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-customer-details-edit')">
                                             Edit
                                         </a>
-                                        <button class="btn btn-bordered btn-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 ">
+                                        <button class="btn btn-bordered btn-dark btn-md btn-square"
+                                            ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 ">
                                             <a href=".#!/inward-vehicle/customer-detail/{{job_order_id}}/2">
                                                 Add New Owner
                                             </a>
@@ -436,14 +518,17 @@
                                             <div class="col-md-12">
                                                 <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                 <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}" class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
+                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}"
+                                                    class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job
+                                                    card</a>
                                             </div>
                                         </div>
                                     </div><!-- Tab Footer -->
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
-                        <div class="tab-pane fade" id="vehicle_photos" data-animation="fadeInUp" data-animation-delay="300">
+                        <div class="tab-pane fade" id="vehicle_photos" data-animation="fadeInUp"
+                            data-animation-delay="300">
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -465,20 +550,36 @@
                                                                     <td class="text-center">Right Side</td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td class="text-center"><img class="img-responsive" ng-if="job_order.front_side_attachment" src="storage/app/public/gigo/job_order/attachments/{{job_order.front_side_attachment.name}}" alt="Vehicle Image" />
-                                                                        <span ng-if="!job_order.front_side_attachment">-</span>
+                                                                    <td class="text-center"><img class="img-responsive"
+                                                                            ng-if="job_order.front_side_attachment"
+                                                                            src="storage/app/public/gigo/job_order/attachments/{{job_order.front_side_attachment.name}}"
+                                                                            alt="Vehicle Image" />
+                                                                        <span
+                                                                            ng-if="!job_order.front_side_attachment">-</span>
                                                                     </td>
                                                                     <td></td>
-                                                                    <td class="text-center"><img class="img-responsive" ng-if="job_order.back_side_attachment" src="storage/app/public/gigo/job_order/attachments/{{job_order.back_side_attachment.name}}" alt="Vehicle Image" />
-                                                                        <span ng-if="!job_order.back_side_attachment">-</span>
+                                                                    <td class="text-center"><img class="img-responsive"
+                                                                            ng-if="job_order.back_side_attachment"
+                                                                            src="storage/app/public/gigo/job_order/attachments/{{job_order.back_side_attachment.name}}"
+                                                                            alt="Vehicle Image" />
+                                                                        <span
+                                                                            ng-if="!job_order.back_side_attachment">-</span>
                                                                     </td>
                                                                     <td>&nbsp;&nbsp;</td>
-                                                                    <td class="text-center"><img class="img-responsive" ng-if="job_order.left_side_attachment" src="storage/app/public/gigo/job_order/attachments/{{job_order.left_side_attachment.name}}" alt="Vehicle Image" />
-                                                                        <span ng-if="!job_order.left_side_attachment">-</span>
+                                                                    <td class="text-center"><img class="img-responsive"
+                                                                            ng-if="job_order.left_side_attachment"
+                                                                            src="storage/app/public/gigo/job_order/attachments/{{job_order.left_side_attachment.name}}"
+                                                                            alt="Vehicle Image" />
+                                                                        <span
+                                                                            ng-if="!job_order.left_side_attachment">-</span>
                                                                     </td>
                                                                     <td></td>
-                                                                    <td class="text-center"><img class="img-responsive" ng-if="job_order.right_side_attachment" src="storage/app/public/gigo/job_order/attachments/{{job_order.right_side_attachment.name}}" alt="Vehicle Image" />
-                                                                        <span ng-if="!job_order.right_side_attachment">-</span>
+                                                                    <td class="text-center"><img class="img-responsive"
+                                                                            ng-if="job_order.right_side_attachment"
+                                                                            src="storage/app/public/gigo/job_order/attachments/{{job_order.right_side_attachment.name}}"
+                                                                            alt="Vehicle Image" />
+                                                                        <span
+                                                                            ng-if="!job_order.right_side_attachment">-</span>
                                                                     </td>
                                                                 </tr>
                                                             </tbody>
@@ -490,7 +591,9 @@
                                                         <table class="table-info">
                                                             <tbody>
                                                                 <tr>
-                                                                    <td colspan="{{job_order.other_vehicle_attachment.length}}" class="text-center">Additional Vehicle Images</td>
+                                                                    <td colspan="{{job_order.other_vehicle_attachment.length}}"
+                                                                        class="text-center">Additional Vehicle Images
+                                                                    </td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>
@@ -498,12 +601,18 @@
                                                             <tbody>
                                                                 <tr>
                                                                     <td>
-                                                                        <div class="gatein-img-list" ng-if="job_order.other_vehicle_attachment.length > 0">
-                                                                            <div class="gatein-img-list-item attach-photo-view" ng-repeat="(key,other_vehicle_attachment) in job_order.other_vehicle_attachment">
-                                                                                <img title="{{other_vehicle_attachment.name}}" class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{other_vehicle_attachment.name}}" alt="Vehicle Image">
+                                                                        <div class="gatein-img-list"
+                                                                            ng-if="job_order.other_vehicle_attachment.length > 0">
+                                                                            <div class="gatein-img-list-item attach-photo-view"
+                                                                                ng-repeat="(key,other_vehicle_attachment) in job_order.other_vehicle_attachment">
+                                                                                <img title="{{other_vehicle_attachment.name}}"
+                                                                                    class="img-responsive"
+                                                                                    src="storage/app/public/gigo/job_order/attachments/{{other_vehicle_attachment.name}}"
+                                                                                    alt="Vehicle Image">
                                                                             </div>
                                                                         </div>
-                                                                        <div class="gatein-img-list" ng-if="job_order.other_vehicle_attachment.length == 0">
+                                                                        <div class="gatein-img-list"
+                                                                            ng-if="job_order.other_vehicle_attachment.length == 0">
                                                                             -
                                                                         </div>
                                                                     </td>
@@ -526,14 +635,17 @@
                                             <div class="col-md-12">
                                                 <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                 <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}" class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
+                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}"
+                                                    class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job
+                                                    card</a>
                                             </div>
                                         </div>
                                     </div><!-- Tab Footer -->
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
-                        <div class="tab-pane fade" id="order_details" data-animation="fadeInUp" data-animation-delay="300">
+                        <div class="tab-pane fade" id="order_details" data-animation="fadeInUp"
+                            data-animation-delay="300">
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -542,7 +654,8 @@
                                         <div class="panel-group" id="accordion">
                                             <div class="panel panel-default type-3">
                                                 <div class="panel-heading">
-                                                    <a class="panel-title in" data-toggle="collapse" data-parent="#accordion" data-target="#collapse1">
+                                                    <a class="panel-title in" data-toggle="collapse"
+                                                        data-parent="#accordion" data-target="#collapse1">
                                                         Driver Details
                                                         <span class="arrow"></span>
                                                     </a>
@@ -573,7 +686,9 @@
                                                                 </li>
                                                             </ul>
                                                         </div><!-- View Data -->
-                                                        <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-order-details-edit')">
+                                                        <a class="btn btn-secondary-dark btn-md btn-square"
+                                                            href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}"
+                                                            ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-order-details-edit')">
                                                             Edit
                                                         </a>
                                                     </div><!-- Panel Body -->
@@ -581,7 +696,8 @@
                                             </div><!-- Panel -->
                                             <div class="panel panel-default type-3">
                                                 <div class="panel-heading">
-                                                    <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse2">
+                                                    <a class="panel-title" data-toggle="collapse"
+                                                        data-parent="#accordion" data-target="#collapse2">
                                                         Job Order Details
                                                         <span class="arrow"></span>
                                                     </a>
@@ -619,7 +735,8 @@
                                                                         </b>
                                                                     </span>
                                                                 </li>
-                                                                <li class="view-col-3" ng-if="job_order.km_reading_type.id == 8040">
+                                                                <li class="view-col-3"
+                                                                    ng-if="job_order.km_reading_type.id == 8040">
                                                                     <span class="view-col-label">
                                                                         KM Reading
                                                                     </span>
@@ -629,7 +746,8 @@
                                                                         </b>
                                                                     </span>
                                                                 </li>
-                                                                <li class="view-col-3" ng-if="job_order.km_reading_type.id == 8041">
+                                                                <li class="view-col-3"
+                                                                    ng-if="job_order.km_reading_type.id == 8041">
                                                                     <span class="view-col-label">
                                                                         HR Reading
                                                                     </span>
@@ -649,7 +767,8 @@
                                                                         </b>
                                                                     </span>
                                                                 </li>
-                                                                <li class="view-col-3" ng-if="job_order.is_appointment == 1">
+                                                                <li class="view-col-3"
+                                                                    ng-if="job_order.is_appointment == 1">
                                                                     <span class="view-col-label">
                                                                         Is Appointment ?
                                                                     </span>
@@ -659,7 +778,8 @@
                                                                         </b>
                                                                     </span>
                                                                 </li>
-                                                                <li class="view-col-3" ng-if="job_order.is_appointment != 1">
+                                                                <li class="view-col-3"
+                                                                    ng-if="job_order.is_appointment != 1">
                                                                     <span class="view-col-label">
                                                                         Is Appointment ?
                                                                     </span>
@@ -669,7 +789,8 @@
                                                                         </b>
                                                                     </span>
                                                                 </li>
-                                                                <li class="view-col-3" ng-if="job_order.is_appointment == 1">
+                                                                <li class="view-col-3"
+                                                                    ng-if="job_order.is_appointment == 1">
                                                                     <span class="view-col-label">
                                                                         CRE Name
                                                                     </span>
@@ -679,7 +800,8 @@
                                                                         </b>
                                                                     </span>
                                                                 </li>
-                                                                <li class="view-col-3" ng-if="job_order.is_appointment == 1">
+                                                                <li class="view-col-3"
+                                                                    ng-if="job_order.is_appointment == 1">
                                                                     <span class="view-col-label">
                                                                         Call Date
                                                                     </span>
@@ -691,7 +813,9 @@
                                                                 </li>
                                                             </ul>
                                                         </div><!-- View Data -->
-                                                        <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-order-details-edit')">
+                                                        <a class="btn btn-secondary-dark btn-md btn-square"
+                                                            href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}"
+                                                            ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-order-details-edit')">
                                                             Edit
                                                         </a>
                                                     </div><!-- Panel Body -->
@@ -699,13 +823,15 @@
                                             </div><!-- Panel -->
                                             <div class="panel panel-default type-3">
                                                 <div class="panel-heading">
-                                                    <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse3">
+                                                    <a class="panel-title" data-toggle="collapse"
+                                                        data-parent="#accordion" data-target="#collapse3">
                                                         Previous Job Card Details
                                                         <span class="arrow"></span>
                                                     </a>
                                                 </div>
                                                 <div id="collapse3" class="panel-collapse collapse">
-                                                    <div class="panel-body" ng-if="job_order.vehicle.last_job_order && job_order.vehicle.last_job_order.job_card">
+                                                    <div class="panel-body"
+                                                        ng-if="job_order.vehicle.last_job_order && job_order.vehicle.last_job_order.job_card">
                                                         <div class="view-details mb-no">
                                                             <ul class="view-row pb-none">
                                                                 <li class="view-col-3">
@@ -745,19 +871,24 @@
                                                             </ul>
                                                         </div><!-- View Data -->
                                                         <!-- <a href=".#!/job-card/view/{{job_order.vehicle.last_job_order.job_card.id}}" class="btn btn-secondary-dark btn-md btn-square">View</a> -->
-                                                        <a href=".#!/job-card/bay-view/{{job_order.vehicle.last_job_order.job_card.id}}" target="_blank" class="btn btn-secondary-dark btn-md btn-square">View</a>
-                                                        <a href=".#!/vehicle/view/{{job_order.vehicle.id}}" class="btn btn-secondary-dark btn-md btn-square">
+                                                        <a href=".#!/job-card/bay-view/{{job_order.vehicle.last_job_order.job_card.id}}"
+                                                            target="_blank"
+                                                            class="btn btn-secondary-dark btn-md btn-square">View</a>
+                                                        <a href=".#!/vehicle/view/{{job_order.vehicle.id}}"
+                                                            class="btn btn-secondary-dark btn-md btn-square">
                                                             View History
                                                         </a>
                                                     </div><!-- Panel Body -->
-                                                    <div class="panel-body" ng-if="!job_order.vehicle.last_job_order || !job_order.vehicle.last_job_order.job_card">
+                                                    <div class="panel-body"
+                                                        ng-if="!job_order.vehicle.last_job_order || !job_order.vehicle.last_job_order.job_card">
                                                         No Previous Job Card Details Found
                                                     </div><!-- Panel Body -->
                                                 </div><!-- Panel Collapse -->
                                             </div><!-- Panel -->
                                             <div class="panel panel-default type-3">
                                                 <div class="panel-heading">
-                                                    <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse4">
+                                                    <a class="panel-title" data-toggle="collapse"
+                                                        data-parent="#accordion" data-target="#collapse4">
                                                         Documents
                                                         <span class="arrow"></span>
                                                     </a>
@@ -799,17 +930,30 @@
                                                                         <td class="text-center">RC Book</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <td><img ng-if="job_order.driver_license_attachment" class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.driver_license_attachment.name}}" alt="Driver License" ng-if="job_order.driver_license_attachment"></td>
+                                                                        <td><img ng-if="job_order.driver_license_attachment"
+                                                                                class="img-responsive"
+                                                                                src="storage/app/public/gigo/job_order/attachments/{{job_order.driver_license_attachment.name}}"
+                                                                                alt="Driver License"
+                                                                                ng-if="job_order.driver_license_attachment">
+                                                                        </td>
                                                                         <td></td>
-                                                                        <td><img ng-if="job_order.insurance_attachment" class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.insurance_attachment.name}}" alt="Insurance" /></td>
+                                                                        <td><img ng-if="job_order.insurance_attachment"
+                                                                                class="img-responsive"
+                                                                                src="storage/app/public/gigo/job_order/attachments/{{job_order.insurance_attachment.name}}"
+                                                                                alt="Insurance" /></td>
                                                                         <td>&nbsp;&nbsp;</td>
-                                                                        <td><img ng-if="job_order.rc_book_attachment" class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.rc_book_attachment.name}}" alt="RC Book" /></td>
+                                                                        <td><img ng-if="job_order.rc_book_attachment"
+                                                                                class="img-responsive"
+                                                                                src="storage/app/public/gigo/job_order/attachments/{{job_order.rc_book_attachment.name}}"
+                                                                                alt="RC Book" /></td>
                                                                     </tr>
                                                                 </tbody>
                                                             </table>
                                                         </div>
                                                         <div class="mb-10"></div><!-- Spacing -->
-                                                        <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-order-details-edit')">
+                                                        <a class="btn btn-secondary-dark btn-md btn-square"
+                                                            href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}"
+                                                            ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-order-details-edit')">
                                                             Edit
                                                         </a>
                                                     </div><!-- Panel Body -->
@@ -822,14 +966,17 @@
                                             <div class="col-md-12">
                                                 <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                 <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}" class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
+                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}"
+                                                    class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job
+                                                    card</a>
                                             </div><!-- Column -->
                                         </div><!-- Row -->
                                     </div><!-- Tab Footer -->
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
-                        <div class="tab-pane fade" id="inventory_details" data-animation="fadeInUp" data-animation-delay="300">
+                        <div class="tab-pane fade" id="inventory_details" data-animation="fadeInUp"
+                            data-animation-delay="300">
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -837,12 +984,15 @@
                                         <hr class="hr-15"><!-- Separater -->
                                         <div class="checklist-form-wrap">
                                             <ul class="checklist-form-ul">
-                                                <li ng-repeat="(key, vehicle_inventory_item) in inventory_list" ng-if="vehicle_inventory_item.field_type_id==11">
-                                                    <div class="checklist-item-wrap" ng-class="{'pad-big active':vehicle_inventory_item.checked ==true} ">
+                                                <li ng-repeat="(key, vehicle_inventory_item) in inventory_list"
+                                                    ng-if="vehicle_inventory_item.field_type_id==11">
+                                                    <div class="checklist-item-wrap"
+                                                        ng-class="{'pad-big active':vehicle_inventory_item.checked ==true} ">
                                                         <div class="checklist-item-value">
                                                             {{vehicle_inventory_item.name}}
                                                         </div>
-                                                        <div class="checklist-item-value-sm" ng-if="vehicle_inventory_item.checked==true">
+                                                        <div class="checklist-item-value-sm"
+                                                            ng-if="vehicle_inventory_item.checked==true">
                                                             {{vehicle_inventory_item.remarks}}
                                                         </div>
                                                     </div>
@@ -850,12 +1000,14 @@
                                             </ul>
                                         </div>
                                         <div class="mb-30"></div><!-- Space -->
-                                        <div class="row" ng-repeat="(index,vehicle_inventory_item) in inventory_list" ng-if="vehicle_inventory_item.field_type_id==12">
+                                        <div class="row" ng-repeat="(index,vehicle_inventory_item) in inventory_list"
+                                            ng-if="vehicle_inventory_item.field_type_id==12">
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label>{{vehicle_inventory_item.name}}</label>
                                                     <div class="slider-container in-view">
-                                                        <div class="slider-lower-fill" style="width: {{vehicle_inventory_item.remarks}}%;"></div>
+                                                        <div class="slider-lower-fill"
+                                                            style="width: {{vehicle_inventory_item.remarks}}%;"></div>
                                                         <div class="slider-upper-fill"></div>
                                                         <div class="grid">
                                                             <span class="first grid-item">E</span>
@@ -880,28 +1032,33 @@
                                             <div class="col-md-12">
                                                 <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                 <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}" class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
+                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}"
+                                                    class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job
+                                                    card</a>
                                             </div>
                                         </div>
                                     </div><!-- Tab Footer -->
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
-                        <div class="tab-pane fade" id="voc_details" data-animation="fadeInUp" data-animation-delay="300">
+                        <div class="tab-pane fade" id="voc_details" data-animation="fadeInUp"
+                            data-animation-delay="300">
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <h5 class="color-primary mb-10"><b>Voice of Customer</b></h5>
                                         <hr class="hr-15"><!-- Separater -->
                                         <span ng-if="job_order.customer_voices.length == 0">No Data Found</span>
-                                        <ul class="checklist-form-ul" ng-repeat="(key, customer_voice) in job_order.customer_voices">
+                                        <ul class="checklist-form-ul"
+                                            ng-repeat="(key, customer_voice) in job_order.customer_voices">
                                             <li>
                                                 <div class="checklist-form-item-wrap">
                                                     <div class="checklist-form-content">
                                                         <div class="checklist-form-content-title">
                                                             {{customer_voice.name}}
                                                         </div>
-                                                        <div class="checklist-form-content-subtitle" ng-if="customer_voice.pivot.details">
+                                                        <div class="checklist-form-content-subtitle"
+                                                            ng-if="customer_voice.pivot.details">
                                                             {{customer_voice.pivot.details}}
                                                         </div>
                                                     </div>
@@ -909,21 +1066,26 @@
                                             </li>
                                         </ul>
                                         <hr class="hr-15"><!-- Separater -->
-                                        <a href=".#!/inward-vehicle/voc-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-capture-voc-edit')">Edit</a>
+                                        <a href=".#!/inward-vehicle/voc-detail/form/{{job_order_id}}"
+                                            class="btn btn-secondary-dark btn-md btn-square"
+                                            ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-capture-voc-edit')">Edit</a>
                                     </div><!-- Column -->
                                     <div class="tab-pane-footer">
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                 <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}" class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
+                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}"
+                                                    class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job
+                                                    card</a>
                                             </div>
                                         </div>
                                     </div><!-- Tab Footer -->
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
-                        <div class="tab-pane fade" id="road_test_details" data-animation="fadeInUp" data-animation-delay="300">
+                        <div class="tab-pane fade" id="road_test_details" data-animation="fadeInUp"
+                            data-animation-delay="300">
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -936,7 +1098,8 @@
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
-                                                            {{job_order.is_road_test_required==1 ? "Required" : "Not Required"}}
+                                                            {{job_order.is_road_test_required==1 ? "Required" : "Not
+                                                            Required"}}
                                                         </b></span>
                                                 </li>
                                                 <li class="view-col-3" ng-if="job_order.is_road_test_required==1">
@@ -949,7 +1112,8 @@
                                                         </b>
                                                     </span>
                                                 </li>
-                                                <li class="view-col-3" ng-if="job_order.is_road_test_required==1 && job_order.road_test_done_by_id==8101">
+                                                <li class="view-col-3"
+                                                    ng-if="job_order.is_road_test_required==1 && job_order.road_test_done_by_id==8101">
                                                     <span class="view-col-label">
                                                         Trade Plate Number
                                                     </span>
@@ -959,7 +1123,8 @@
                                                         </b>
                                                     </span>
                                                 </li>
-                                                <li class="view-col-3" ng-if="job_order.is_road_test_required==1 && job_order.road_test_done_by_id==8101">
+                                                <li class="view-col-3"
+                                                    ng-if="job_order.is_road_test_required==1 && job_order.road_test_done_by_id==8101">
                                                     <span class="view-col-label">
                                                         Driver Name
                                                     </span>
@@ -969,7 +1134,8 @@
                                                         </b>
                                                     </span>
                                                 </li>
-                                                <li class="view-col-3" ng-if="job_order.is_road_test_required==1 && job_order.road_test_done_by_id!=8101">
+                                                <li class="view-col-3"
+                                                    ng-if="job_order.is_road_test_required==1 && job_order.road_test_done_by_id!=8101">
                                                     <span class="view-col-label">
                                                         Driver Name
                                                     </span>
@@ -991,21 +1157,26 @@
                                                 </li>
                                             </ul>
                                         </div><!-- View Data -->
-                                        <a href=".#!/inward-vehicle/road-test-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-road-test-edit') ">Edit</a>
+                                        <a href=".#!/inward-vehicle/road-test-detail/form/{{job_order_id}}"
+                                            class="btn btn-secondary-dark btn-md btn-square"
+                                            ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-road-test-edit') ">Edit</a>
                                     </div><!-- Column -->
                                     <div class="tab-pane-footer">
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                 <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}" class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
+                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}"
+                                                    class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job
+                                                    card</a>
                                             </div>
                                         </div>
                                     </div><!-- Tab Footer -->
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
-                        <div class="tab-pane fade" id="expert_diagnosis_details" data-animation="fadeInUp" data-animation-delay="300">
+                        <div class="tab-pane fade" id="expert_diagnosis_details" data-animation="fadeInUp"
+                            data-animation-delay="300">
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -1049,23 +1220,29 @@
                                             <div class="col-md-12">
                                                 <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                 <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}" class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
+                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}"
+                                                    class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job
+                                                    card</a>
                                             </div>
                                         </div>
                                     </div><!-- Tab Footer -->
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
-                        <div class="tab-pane fade" id="vehicle_inspection_details" data-animation="fadeInUp" data-animation-delay="300">
+                        <div class="tab-pane fade" id="vehicle_inspection_details" data-animation="fadeInUp"
+                            data-animation-delay="300">
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <h5 class="color-primary mb-10"><b>Vehicle Inspection Report</b></h5>
                                         <hr class="hr-15"><!-- Separater -->
-                                        <div class="panel-group" id="accordion_1" ng-if="vehicle_inspection_item_groups.length > 0">
-                                            <div class="panel panel-default type-3" ng-repeat="(index, vehicle_inspection_item_group) in vehicle_inspection_item_groups">
+                                        <div class="panel-group" id="accordion_1"
+                                            ng-if="vehicle_inspection_item_groups.length > 0">
+                                            <div class="panel panel-default type-3"
+                                                ng-repeat="(index, vehicle_inspection_item_group) in vehicle_inspection_item_groups">
                                                 <div class="panel-heading">
-                                                    <a class="panel-title in" data-toggle="collapse" data-parent="#accordion_1" data-target="#collapse_{{index}}">
+                                                    <a class="panel-title in" data-toggle="collapse"
+                                                        data-parent="#accordion_1" data-target="#collapse_{{index}}">
                                                         {{vehicle_inspection_item_group.name}}
                                                         <span class="arrow"></span>
                                                     </a>
@@ -1074,14 +1251,18 @@
                                                     <div class="panel-body">
                                                         <div class="color-list-wrap">
                                                             <ul class="color-list-ul">
-                                                                <li ng-repeat="(key, vehicle_inspection_item) in vehicle_inspection_item_group.vehicle_inspection_items">
-                                                                    <div class="color-list-item green" ng-if="vehicle_inspection_item.status_id == 8020">
+                                                                <li
+                                                                    ng-repeat="(key, vehicle_inspection_item) in vehicle_inspection_item_group.vehicle_inspection_items">
+                                                                    <div class="color-list-item green"
+                                                                        ng-if="vehicle_inspection_item.status_id == 8020">
                                                                         {{vehicle_inspection_item.name}}
                                                                     </div><!-- Color List Item -->
-                                                                    <div class="color-list-item yellow" ng-if="vehicle_inspection_item.status_id == 8021">
+                                                                    <div class="color-list-item yellow"
+                                                                        ng-if="vehicle_inspection_item.status_id == 8021">
                                                                         {{vehicle_inspection_item.name}}
                                                                     </div><!-- Color List Item -->
-                                                                    <div class="color-list-item red" ng-if="vehicle_inspection_item.status_id == 8022">
+                                                                    <div class="color-list-item red"
+                                                                        ng-if="vehicle_inspection_item.status_id == 8022">
                                                                         {{vehicle_inspection_item.name}}
                                                                     </div><!-- Color List Item -->
                                                                 </li>
@@ -1099,14 +1280,17 @@
                                             <div class="col-md-12">
                                                 <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                 <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}" class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
+                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}"
+                                                    class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job
+                                                    card</a>
                                             </div>
                                         </div>
                                     </div><!-- Tab Footer -->
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
-                        <div class="tab-pane fade" id="dms_details" data-animation="fadeInUp" data-animation-delay="300">
+                        <div class="tab-pane fade" id="dms_details" data-animation="fadeInUp"
+                            data-animation-delay="300">
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -1143,7 +1327,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4" ng-if="$ctrl.amc_status == 0 && $ctrl.warrany_status == 1">
+                                            <div class="col-md-4"
+                                                ng-if="$ctrl.amc_status == 0 && $ctrl.warrany_status == 1">
                                                 <div class="gatein-img-list">
                                                     <div class="attach-form-wrap">
                                                         <p class="color-secondary-dark">
@@ -1158,7 +1343,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4" ng-if="$ctrl.amc_status == 1 && $ctrl.warrany_status == 1">
+                                            <div class="col-md-4"
+                                                ng-if="$ctrl.amc_status == 1 && $ctrl.warrany_status == 1">
                                                 <div class="gatein-img-list">
                                                     <div class="attach-form-wrap">
                                                         <p class="color-secondary-dark">
@@ -1176,7 +1362,9 @@
                                             <div class="col-md-4" ng-if="$ctrl.amc_status == 1">
                                                 <div class="gatein-img-list">
                                                     <div class="gatein-img-list-item attach-photo-view">
-                                                        <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.warrenty_policy_attachment.name}}" alt="Warranty">
+                                                        <img class="img-responsive"
+                                                            src="storage/app/public/gigo/job_order/attachments/{{job_order.warrenty_policy_attachment.name}}"
+                                                            alt="Warranty">
                                                     </div>
                                                     <div class="attach-form-wrap">
                                                         <p class="color-secondary-dark">
@@ -1185,7 +1373,8 @@
                                                             </b>
                                                         </p>
                                                         <p class="font-md">
-                                                            {{job_order.amc_starting_date}} to {{job_order.amc_ending_date}}
+                                                            {{job_order.amc_starting_date}} to
+                                                            {{job_order.amc_ending_date}}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -1193,7 +1382,9 @@
                                             <div class="col-md-4" ng-if="$ctrl.exwarrany_status == 1">
                                                 <div class="gatein-img-list">
                                                     <div class="gatein-img-list-item attach-photo-view">
-                                                        <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.e_w_p_attachment.name}}" alt="EWP">
+                                                        <img class="img-responsive"
+                                                            src="storage/app/public/gigo/job_order/attachments/{{job_order.e_w_p_attachment.name}}"
+                                                            alt="EWP">
                                                     </div>
                                                     <div class="attach-form-wrap">
                                                         <p class="color-secondary-dark">
@@ -1235,7 +1426,8 @@
                                                             </b>
                                                         </p>
                                                         <p class="font-md" ng-if="job_order.amc_member">
-                                                            <b>{{job_order.amc_member.amc_policy.name}}</b>-<b>{{job_order.amc_member.amc_policy.type}}</b> Eligible Upto <b>{{job_order.amc_member.expiry_date}}</b>
+                                                            <b>{{job_order.amc_member.amc_policy.name}}</b>-<b>{{job_order.amc_member.amc_policy.type}}</b>
+                                                            Eligible Upto <b>{{job_order.amc_member.expiry_date}}</b>
                                                         </p>
                                                         <p class="font-md" ng-if="!job_order.amc_member">
                                                             -
@@ -1245,16 +1437,22 @@
                                             </div><!-- Column -->
                                             <div class="col-md-4" ng-if="job_order.a_m_c_attachment.length > 0">
                                                 <div class="gatein-img-list">
-                                                    <div class="gatein-img-list-item attach-photo-view" ng-repeat="(key,a_m_c_attachment) in job_order.a_m_c_attachment">
-                                                        <img title="{{a_m_c_attachment.name}}" class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{a_m_c_attachment.name}}" alt="Memberships">
+                                                    <div class="gatein-img-list-item attach-photo-view"
+                                                        ng-repeat="(key,a_m_c_attachment) in job_order.a_m_c_attachment">
+                                                        <img title="{{a_m_c_attachment.name}}" class="img-responsive"
+                                                            src="storage/app/public/gigo/job_order/attachments/{{a_m_c_attachment.name}}"
+                                                            alt="Memberships">
                                                     </div>
                                                 </div>
                                             </div><!-- Column -->
                                         </div><!-- Row -->
                                         <hr class="hr-15"><!-- Separater -->
-                                        <h6 class="color-secondary-dark mb-10" ng-if="job_order.campaigns.length > 0"><b>Campaign Job Details</b></h6>
+                                        <h6 class="color-secondary-dark mb-10" ng-if="job_order.campaigns.length > 0">
+                                            <b>Campaign Job Details</b>
+                                        </h6>
                                         <div class="table-responsive">
-                                            <table class="table table-form jc-view-bill-table-wrap" ng-repeat="(index, campaign) in job_order.campaigns">
+                                            <table class="table table-form jc-view-bill-table-wrap"
+                                                ng-repeat="(index, campaign) in job_order.campaigns">
                                                 <thead>
                                                     <tr>
                                                         <th colspan="2">Claim Type : {{campaign.claim_type.name}}</th>
@@ -1312,7 +1510,8 @@
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
-                                                                    <tr ng-repeat="(index, campaign_labour) in campaign.campaign_labours">
+                                                                    <tr
+                                                                        ng-repeat="(index, campaign_labour) in campaign.campaign_labours">
                                                                         <td>{{campaign_labour.code}}</td>
                                                                         <td>{{campaign_labour.pivot.amount}}</td>
                                                                     </tr>
@@ -1332,7 +1531,8 @@
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
-                                                                    <tr ng-repeat="(index, campaign_part) in campaign.campaign_parts">
+                                                                    <tr
+                                                                        ng-repeat="(index, campaign_part) in campaign.campaign_parts">
                                                                         <td>{{campaign_part.code}}</td>
                                                                         <td>{{campaign_part.name}}</td>
                                                                     </tr>
@@ -1354,7 +1554,8 @@
                                                             </span>
                                                             <span class="view-data-list-value">
                                                                 <b>
-                                                                    {{job_order.is_campaign_carried == 1 ? "Yes" : "No"}}
+                                                                    {{job_order.is_campaign_carried == 1 ? "Yes" :
+                                                                    "No"}}
                                                                 </b></span>
                                                         </li>
                                                         <li class="view-col-8" ng-show="!job_order.is_campaign_carried">
@@ -1375,7 +1576,9 @@
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <div class="common-checkbox type-2">
-                                                        <input type="checkbox" id="check_verify" ng-value="1" ng-disabled="true" ng-checked="job_order.is_dms_verified == 1" />
+                                                        <input type="checkbox" id="check_verify" ng-value="1"
+                                                            ng-disabled="true"
+                                                            ng-checked="job_order.is_dms_verified == 1" />
                                                         <label for="check_verify">
                                                             <b>
                                                                 Verified in DBM/SAP Portal
@@ -1385,25 +1588,31 @@
                                                 </div><!-- Feild -->
                                             </div><!-- Column -->
                                         </div><!-- Row -->
-                                        <a href=".#!/inward-vehicle/dms-checklist/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-service-package-details-edit')">Edit</a>
+                                        <a href=".#!/inward-vehicle/dms-checklist/form/{{job_order_id}}"
+                                            class="btn btn-secondary-dark btn-md btn-square"
+                                            ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-service-package-details-edit')">Edit</a>
                                     </div><!-- Column -->
                                     <div class="tab-pane-footer">
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                 <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}" class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
+                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}"
+                                                    class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job
+                                                    card</a>
                                             </div>
                                         </div>
                                     </div><!-- Tab Footer -->
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
-                        <div class="tab-pane fade" id="maintenance_details" data-animation="fadeInUp" data-animation-delay="300">
+                        <div class="tab-pane fade" id="maintenance_details" data-animation="fadeInUp"
+                            data-animation-delay="300">
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12" ng-if="job_order.service_type_id">
-                                        <h5 class="color-primary mb-10"><b>Scheduled Maintenance ({{job_order.service_type.name}})</b></h5>
+                                        <h5 class="color-primary mb-10"><b>Scheduled Maintenance
+                                                ({{job_order.service_type.name}})</b></h5>
                                         <hr class="hr-15"><!-- Separater -->
                                         <div class="table-responsive">
                                             <table class="table table-dark-grey">
@@ -1436,7 +1645,11 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr class="ptb-12" ng-repeat="(index, labour_details) in schedule_maintenance.labour_details" id="tr_{{index}}" ng-class="labour_details.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="labour_details.removal_reason_id != '10021'">
+                                                    <tr class="ptb-12"
+                                                        ng-repeat="(index, labour_details) in schedule_maintenance.labour_details"
+                                                        id="tr_{{index}}"
+                                                        ng-class="labour_details.removal_reason_id == 10022 ? 'strikethrough' : ''"
+                                                        ng-if="labour_details.removal_reason_id != '10021'">
                                                         <td>{{labour_details.code ? labour_details.code : ''}}
                                                         </td>
                                                         <td>{{labour_details.name ? labour_details.name : ''}}</td>
@@ -1469,9 +1682,12 @@
                                                             </b>
                                                         </td>
                                                         <td class="wid-180 white-space  text-right">
-                                                            <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
+                                                            <img class="img-responsive img-inline"
+                                                                src="./public/theme/img/table/cndn/table-rupee.svg"
+                                                                alt="Rupee" />
                                                             <b>
-                                                                {{schedule_maintenance.without_tax_labour_amount | number:2}}
+                                                                {{schedule_maintenance.without_tax_labour_amount |
+                                                                number:2}}
                                                             </b>
                                                         </td>
                                                     </tr>
@@ -1510,7 +1726,11 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr class="ptb-12" ng-repeat="(index, part_details) in schedule_maintenance.part_details" id="tp_{{index}}" ng-class="part_details.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="part_details.removal_reason_id != '10021'">
+                                                    <tr class="ptb-12"
+                                                        ng-repeat="(index, part_details) in schedule_maintenance.part_details"
+                                                        id="tp_{{index}}"
+                                                        ng-class="part_details.removal_reason_id == 10022 ? 'strikethrough' : ''"
+                                                        ng-if="part_details.removal_reason_id != '10021'">
                                                         <td>
                                                             {{part_details.code}}
                                                         </td>
@@ -1546,9 +1766,12 @@
                                                             </b>
                                                         </td>
                                                         <td class="wid-180 white-space text-right">
-                                                            <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
+                                                            <img class="img-responsive img-inline"
+                                                                src="./public/theme/img/table/cndn/table-rupee.svg"
+                                                                alt="Rupee" />
                                                             <b>
-                                                                {{schedule_maintenance.without_tax_part_amount | number:2}}
+                                                                {{schedule_maintenance.without_tax_part_amount |
+                                                                number:2}}
                                                             </b>
                                                         </td>
                                                     </tr>
@@ -1567,9 +1790,12 @@
                                                                 </b>
                                                             </td>
                                                             <td class="wid-180 text-right">
-                                                                <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
+                                                                <img class="img-responsive img-inline"
+                                                                    src="./public/theme/img/table/cndn/table-rupee.svg"
+                                                                    alt="Rupee" />
                                                                 <b>
-                                                                    {{schedule_maintenance.without_tax_total_amount | number:2}}
+                                                                    {{schedule_maintenance.without_tax_total_amount |
+                                                                    number:2}}
                                                                 </b>
                                                             </td>
                                                         </tr>
@@ -1578,7 +1804,9 @@
                                             </div>
                                         </div><!-- Table Transparent Wrap -->
                                         <div class="mb-20"></div><!-- Spacing -->
-                                        <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8471) && $ctrl.hasPermission('inward-job-card-tab-scheduled-maintenance-edit')">Edit</a>
+                                        <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}"
+                                            class="btn btn-secondary-dark btn-md btn-square"
+                                            ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8471) && $ctrl.hasPermission('inward-job-card-tab-scheduled-maintenance-edit')">Edit</a>
                                     </div><!-- Column -->
                                     <div class="col-md-12" ng-if="!job_order.service_type_id">
                                         <h5 class="color-primary mb-10"><b>Scheduled Maintenance Not Available</b></h5>
@@ -1588,14 +1816,17 @@
                                             <div class="col-md-12">
                                                 <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                 <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}" class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
+                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}"
+                                                    class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job
+                                                    card</a>
                                             </div>
                                         </div>
                                     </div><!-- Tab Footer -->
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
-                        <div class="tab-pane fade" id="payable_details" data-animation="fadeInUp" data-animation-delay="300">
+                        <div class="tab-pane fade" id="payable_details" data-animation="fadeInUp"
+                            data-animation-delay="300">
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -1629,7 +1860,11 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr class="ptb-12" ng-repeat="(index,labour_detail) in payable_maintenance.labour_details" id="tr_{{index}}" ng-class="labour_detail.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="labour_detail.removal_reason_id != '10021'">
+                                                    <tr class="ptb-12"
+                                                        ng-repeat="(index,labour_detail) in payable_maintenance.labour_details"
+                                                        id="tr_{{index}}"
+                                                        ng-class="labour_detail.removal_reason_id == 10022 ? 'strikethrough' : ''"
+                                                        ng-if="labour_detail.removal_reason_id != '10021'">
                                                         <td>{{labour_detail.code ? labour_detail.code : ''}}
                                                         </td>
                                                         <td>{{labour_detail.name ? labour_detail.name : ''}}</td>
@@ -1656,9 +1891,12 @@
                                                             </b>
                                                         </td>
                                                         <td class="wid-100 white-space  text-right">
-                                                            <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
+                                                            <img class="img-responsive img-inline"
+                                                                src="./public/theme/img/table/cndn/table-rupee.svg"
+                                                                alt="Rupee" />
                                                             <b>
-                                                                {{payable_maintenance.without_tax_labour_amount | number:2}}
+                                                                {{payable_maintenance.without_tax_labour_amount |
+                                                                number:2}}
                                                             </b>
                                                         </td>
                                                     </tr>
@@ -1694,7 +1932,11 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr class="ptb-12" ng-repeat="(index,part_detail) in payable_maintenance.part_details" id="tp_{{index}}" ng-class="part_detail.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="part_detail.removal_reason_id != '10021'">
+                                                    <tr class="ptb-12"
+                                                        ng-repeat="(index,part_detail) in payable_maintenance.part_details"
+                                                        id="tp_{{index}}"
+                                                        ng-class="part_detail.removal_reason_id == 10022 ? 'strikethrough' : ''"
+                                                        ng-if="part_detail.removal_reason_id != '10021'">
                                                         <td>
                                                             {{part_detail.code}}
                                                         </td>
@@ -1724,9 +1966,12 @@
                                                             </b>
                                                         </td>
                                                         <td class="wid-100 white-space text-right">
-                                                            <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
+                                                            <img class="img-responsive img-inline"
+                                                                src="./public/theme/img/table/cndn/table-rupee.svg"
+                                                                alt="Rupee" />
                                                             <b>
-                                                                {{payable_maintenance.without_tax_part_amount | number:2}}
+                                                                {{payable_maintenance.without_tax_part_amount |
+                                                                number:2}}
                                                             </b>
                                                         </td>
                                                     </tr>
@@ -1745,9 +1990,12 @@
                                                                 </b>
                                                             </td>
                                                             <td class="wid-100 text-right">
-                                                                <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
+                                                                <img class="img-responsive img-inline"
+                                                                    src="./public/theme/img/table/cndn/table-rupee.svg"
+                                                                    alt="Rupee" />
                                                                 <b>
-                                                                    {{payable_maintenance.without_tax_total_amount | number:2}}
+                                                                    {{payable_maintenance.without_tax_total_amount |
+                                                                    number:2}}
                                                                 </b>
                                                             </td>
                                                         </tr>
@@ -1756,21 +2004,27 @@
                                             </div>
                                         </div><!-- Table Transparent Wrap -->
                                         <div class="mb-20"></div><!-- Spacing -->
-                                        <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8471) && $ctrl.hasPermission('inward-job-card-tab-other-labour-parts-edit')">Edit</a>
+                                        <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}"
+                                            class="btn btn-secondary-dark btn-md btn-square"
+                                            ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8471) && $ctrl.hasPermission('inward-job-card-tab-other-labour-parts-edit')">Edit</a>
                                     </div><!-- Column -->
                                     <div class="tab-pane-footer">
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt" ng-show="job_order.status_id != 8472">Next</a>
-                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}" class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
+                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt"
+                                                    ng-show="job_order.status_id != 8472">Next</a>
+                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}"
+                                                    class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job
+                                                    card</a>
                                             </div>
                                         </div>
                                     </div><!-- Tab Footer -->
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
-                        <div class="tab-pane fade" id="estimate_details" data-animation="fadeInUp" data-animation-delay="300">
+                        <div class="tab-pane fade" id="estimate_details" data-animation="fadeInUp"
+                            data-animation-delay="300">
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -1792,8 +2046,11 @@
                                                                                 Labour
                                                                             </span>
                                                                             <span class="three-box-value">
-                                                                                <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                {{schedule_maintenance.labour_amount | number:2}}
+                                                                                <img class="img-responsive img-inline"
+                                                                                    src="./public/theme/img/content/rupee-dark.svg"
+                                                                                    alt="Rupee" />
+                                                                                {{schedule_maintenance.labour_amount |
+                                                                                number:2}}
                                                                             </span>
                                                                         </div>
                                                                     </li>
@@ -1803,36 +2060,49 @@
                                                                                 Parts
                                                                             </span>
                                                                             <span class="three-box-value">
-                                                                                <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                {{schedule_maintenance.part_amount | number:2}}
+                                                                                <img class="img-responsive img-inline"
+                                                                                    src="./public/theme/img/content/rupee-dark.svg"
+                                                                                    alt="Rupee" />
+                                                                                {{schedule_maintenance.part_amount |
+                                                                                number:2}}
                                                                             </span>
                                                                         </div>
                                                                     </li>
                                                                     <li class="wid-50">
-                                                                        <div class="three-box-content bg-grey text-center">
+                                                                        <div
+                                                                            class="three-box-content bg-grey text-center">
                                                                             <span class="three-box-label">
                                                                                 Total Tax
                                                                             </span>
                                                                             <span class="three-box-value">
-                                                                                <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                {{schedule_maintenance.tax_amount | number:2}}
+                                                                                <img class="img-responsive img-inline"
+                                                                                    src="./public/theme/img/content/rupee-dark.svg"
+                                                                                    alt="Rupee" />
+                                                                                {{schedule_maintenance.tax_amount |
+                                                                                number:2}}
                                                                             </span>
                                                                         </div>
                                                                     </li>
                                                                     <li class="wid-50">
-                                                                        <div class="three-box-content bg-grey text-center">
+                                                                        <div
+                                                                            class="three-box-content bg-grey text-center">
                                                                             <span class="three-box-label">
                                                                                 Total
                                                                             </span>
                                                                             <span class="three-box-value">
-                                                                                <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                {{schedule_maintenance.total_amount | number:2}}
+                                                                                <img class="img-responsive img-inline"
+                                                                                    src="./public/theme/img/content/rupee-dark.svg"
+                                                                                    alt="Rupee" />
+                                                                                {{schedule_maintenance.total_amount |
+                                                                                number:2}}
                                                                             </span>
                                                                         </div>
                                                                     </li>
                                                                 </ul>
                                                                 <div class="text-center">
-                                                                    <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}" class="btn-link color-secondary-dark font-sm" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && $ctrl.hasPermission('inward-job-card-tab-scheduled-maintenance-edit')">
+                                                                    <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}"
+                                                                        class="btn-link color-secondary-dark font-sm"
+                                                                        ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && $ctrl.hasPermission('inward-job-card-tab-scheduled-maintenance-edit')">
                                                                         Edit
                                                                     </a>
                                                                 </div>
@@ -1852,8 +2122,11 @@
                                                                                 Labour
                                                                             </span>
                                                                             <span class="three-box-value">
-                                                                                <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                {{payable_maintenance.labour_amount | number:2}}
+                                                                                <img class="img-responsive img-inline"
+                                                                                    src="./public/theme/img/content/rupee-dark.svg"
+                                                                                    alt="Rupee" />
+                                                                                {{payable_maintenance.labour_amount |
+                                                                                number:2}}
                                                                             </span>
                                                                         </div>
                                                                     </li>
@@ -1863,36 +2136,49 @@
                                                                                 Parts
                                                                             </span>
                                                                             <span class="three-box-value">
-                                                                                <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                {{payable_maintenance.part_amount | number:2}}
+                                                                                <img class="img-responsive img-inline"
+                                                                                    src="./public/theme/img/content/rupee-dark.svg"
+                                                                                    alt="Rupee" />
+                                                                                {{payable_maintenance.part_amount |
+                                                                                number:2}}
                                                                             </span>
                                                                         </div>
                                                                     </li>
                                                                     <li class="wid-50">
-                                                                        <div class="three-box-content bg-grey text-center">
+                                                                        <div
+                                                                            class="three-box-content bg-grey text-center">
                                                                             <span class="three-box-label">
                                                                                 Total Tax
                                                                             </span>
                                                                             <span class="three-box-value">
-                                                                                <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                {{payable_maintenance.tax_amount | number:2}}
+                                                                                <img class="img-responsive img-inline"
+                                                                                    src="./public/theme/img/content/rupee-dark.svg"
+                                                                                    alt="Rupee" />
+                                                                                {{payable_maintenance.tax_amount |
+                                                                                number:2}}
                                                                             </span>
                                                                         </div>
                                                                     </li>
                                                                     <li class="wid-50">
-                                                                        <div class="three-box-content bg-grey text-center">
+                                                                        <div
+                                                                            class="three-box-content bg-grey text-center">
                                                                             <span class="three-box-label">
                                                                                 Total
                                                                             </span>
                                                                             <span class="three-box-value">
-                                                                                <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                {{payable_maintenance.total_amount | number:2}}
+                                                                                <img class="img-responsive img-inline"
+                                                                                    src="./public/theme/img/content/rupee-dark.svg"
+                                                                                    alt="Rupee" />
+                                                                                {{payable_maintenance.total_amount |
+                                                                                number:2}}
                                                                             </span>
                                                                         </div>
                                                                     </li>
                                                                 </ul>
                                                                 <div class="text-center">
-                                                                    <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}" class="btn-link color-secondary-dark font-sm" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-other-labour-parts-edit') ">
+                                                                    <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}"
+                                                                        class="btn-link color-secondary-dark font-sm"
+                                                                        ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-other-labour-parts-edit') ">
                                                                         Edit
                                                                     </a>
                                                                 </div>
@@ -1912,8 +2198,11 @@
                                                                                 Labour
                                                                             </span>
                                                                             <span class="three-box-value">
-                                                                                <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                {{total_estimate_labour_amount.labour_amount | number:2}}
+                                                                                <img class="img-responsive img-inline"
+                                                                                    src="./public/theme/img/content/rupee-dark.svg"
+                                                                                    alt="Rupee" />
+                                                                                {{total_estimate_labour_amount.labour_amount
+                                                                                | number:2}}
                                                                             </span>
                                                                         </div>
                                                                     </li>
@@ -1923,29 +2212,38 @@
                                                                                 Parts
                                                                             </span>
                                                                             <span class="three-box-value">
-                                                                                <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                {{total_estimate_part_amount.part_amount | number:2}}
+                                                                                <img class="img-responsive img-inline"
+                                                                                    src="./public/theme/img/content/rupee-dark.svg"
+                                                                                    alt="Rupee" />
+                                                                                {{total_estimate_part_amount.part_amount
+                                                                                | number:2}}
                                                                             </span>
                                                                         </div>
                                                                     </li>
                                                                     <li class="wid-50">
-                                                                        <div class="three-box-content bg-red text-center">
+                                                                        <div
+                                                                            class="three-box-content bg-red text-center">
                                                                             <span class="three-box-label">
                                                                                 Total Tax
                                                                             </span>
                                                                             <span class="three-box-value">
-                                                                                <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-white.svg" alt="Rupee" />
+                                                                                <img class="img-responsive img-inline"
+                                                                                    src="./public/theme/img/content/rupee-white.svg"
+                                                                                    alt="Rupee" />
                                                                                 {{total_tax_amount | number:2}}
                                                                             </span>
                                                                         </div>
                                                                     </li>
                                                                     <li class="wid-50">
-                                                                        <div class="three-box-content bg-red text-center">
+                                                                        <div
+                                                                            class="three-box-content bg-red text-center">
                                                                             <span class="three-box-label">
                                                                                 Total
                                                                             </span>
                                                                             <span class="three-box-value">
-                                                                                <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-white.svg" alt="Rupee" />
+                                                                                <img class="img-responsive img-inline"
+                                                                                    src="./public/theme/img/content/rupee-white.svg"
+                                                                                    alt="Rupee" />
                                                                                 {{total_estimate_amount | number:2}}
                                                                             </span>
                                                                         </div>
@@ -1986,7 +2284,8 @@
                                                     <span class="view-col-label">
                                                         Customer Agreed?
                                                     </span>
-                                                    <span class="view-data-list-value" ng-if="job_order.is_customer_agreed == 1">
+                                                    <span class="view-data-list-value"
+                                                        ng-if="job_order.is_customer_agreed == 1">
                                                         <b ng-if="job_order.is_customer_approved == 1">
                                                             Yes
                                                         </b>
@@ -1994,28 +2293,35 @@
                                                             Waiting for Customer Approval
                                                         </b>
                                                     </span>
-                                                    <span class="view-data-list-value" ng-if="job_order.is_customer_agreed != 1">
+                                                    <span class="view-data-list-value"
+                                                        ng-if="job_order.is_customer_agreed != 1">
                                                         <b>
                                                             No
                                                         </b></span>
                                                 </li>
                                             </ul>
                                         </div><!-- View Data -->
-                                        <a href=".#!/inward-vehicle/estimate/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8469) && $ctrl.hasPermission('inward-job-card-tab-estimate-edit')">Edit</a>
+                                        <a href=".#!/inward-vehicle/estimate/{{job_order_id}}"
+                                            class="btn btn-secondary-dark btn-md btn-square"
+                                            ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8469) && $ctrl.hasPermission('inward-job-card-tab-estimate-edit')">Edit</a>
                                     </div><!-- Column -->
                                     <div class="tab-pane-footer">
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt" ng-show="job_order.is_customer_agreed == 0 || (job_order.is_customer_agreed == 1 && job_order.is_customer_approved == 1)">Next</a>
-                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}" class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
+                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt"
+                                                    ng-show="job_order.is_customer_agreed == 0 || (job_order.is_customer_agreed == 1 && job_order.is_customer_approved == 1)">Next</a>
+                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}"
+                                                    class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job
+                                                    card</a>
                                             </div>
                                         </div>
                                     </div><!-- Tab Footer -->
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
-                        <div class="tab-pane fade" id="status_details" data-animation="fadeInUp" data-animation-delay="300" ng-if="job_order.is_customer_agreed == 1">
+                        <div class="tab-pane fade" id="status_details" data-animation="fadeInUp"
+                            data-animation-delay="300" ng-if="job_order.is_customer_agreed == 1">
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -2023,33 +2329,44 @@
                                         <hr class="hr-15"><!-- Separater -->
                                         <div class="photo-sign-wrap">
                                             <div class="photo-sign-item">
-                                                <img class="img-responsive img-profile" ng-if="job_order.customer_approval_attachment.length > 0" src="storage/app/public/gigo/job_order/{{job_order.customer_approval_attachment[0].name}}" alt="Customer Photo" />
+                                                <img class="img-responsive img-profile"
+                                                    ng-if="job_order.customer_approval_attachment.length > 0"
+                                                    src="storage/app/public/gigo/job_order/{{job_order.customer_approval_attachment[0].name}}"
+                                                    alt="Customer Photo" />
                                                 <div class="photo-sign-caption">Customer Photo</div>
                                             </div>
                                         </div><!-- Photo Sign Wrap -->
                                         <div class="mb-30"></div><!-- Spacing -->
                                         <div class="photo-sign-wrap">
                                             <div class="photo-sign-item bg-transparent">
-                                                <img class="img-responsive img-sign" ng-if="job_order.customer_e_sign.length > 0" src="storage/app/public/gigo/job_order/{{job_order.customer_e_sign[0].name}}" alt="Customer E Sign" />
+                                                <img class="img-responsive img-sign"
+                                                    ng-if="job_order.customer_e_sign.length > 0"
+                                                    src="storage/app/public/gigo/job_order/{{job_order.customer_e_sign[0].name}}"
+                                                    alt="Customer E Sign" />
                                                 <div class="photo-sign-caption">Customer E Sign</div>
                                             </div>
                                         </div><!-- Photo Sign Wrap -->
                                         <br>
-                                        <a href=".#!/inward-vehicle/customer-confirmation/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8474 || job_order.status_id == 8473) && $ctrl.hasPermission('inward-job-card-tab-estimate-edit')">Edit</a>
+                                        <a href=".#!/inward-vehicle/customer-confirmation/{{job_order_id}}"
+                                            class="btn btn-secondary-dark btn-md btn-square"
+                                            ng-if="(job_order.status_id == 8474 || job_order.status_id == 8473) && $ctrl.hasPermission('inward-job-card-tab-estimate-edit')">Edit</a>
                                     </div><!-- Column -->
                                     <div class="tab-pane-footer">
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                 <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}" class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
+                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}"
+                                                    class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job
+                                                    card</a>
                                             </div>
                                         </div>
                                     </div><!-- Tab Footer -->
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
-                        <div class="tab-pane fade" id="status_details" data-animation="fadeInUp" data-animation-delay="300" ng-if="job_order.is_customer_agreed != 1">
+                        <div class="tab-pane fade" id="status_details" data-animation="fadeInUp"
+                            data-animation-delay="300" ng-if="job_order.is_customer_agreed != 1">
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -2077,7 +2394,9 @@
                                                 </li>
                                             </ul>
                                         </div><!-- View Data -->
-                                        <a href=".#!/inward-vehicle/estimation-denied/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-estimation-status-edit')">Edit</a>
+                                        <a href=".#!/inward-vehicle/estimation-denied/form/{{job_order_id}}"
+                                            class="btn btn-secondary-dark btn-md btn-square"
+                                            ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-estimation-status-edit')">Edit</a>
                                     </div><!-- Column -->
                                     <div class="tab-pane-footer">
                                         <div class="row">
@@ -2099,73 +2418,97 @@
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <ul class="checklist-form-ul">
-                                                    <li ng-if="job_order.status_id == 8470 && job_order.is_customer_agreed != 1 && job_order.is_customer_approved != 1">
+                                                    <li
+                                                        ng-if="job_order.status_id == 8470 && job_order.is_customer_agreed != 1 && job_order.is_customer_approved != 1">
                                                         <div class="checklist-item-wrap pad-big">
                                                             <div class="checklist-item-value">
                                                                 Covering Letter
                                                             </div>
-                                                            <div class="checklist-item-value-sm" ng-if="covering_letter_pdf">
-                                                                <a target="_blank" href="{{covering_letter_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <div class="checklist-item-value-sm"
+                                                                ng-if="covering_letter_pdf">
+                                                                <a target="_blank" href="{{covering_letter_pdf}}"
+                                                                    class="btn btn-secondary-dark btn-square btn-block"
+                                                                    href="#">PDF</a>
                                                             </div>
                                                         </div>
                                                     </li>
-                                                    <li ng-if="job_order.status_id == 8470 && job_order.is_customer_agreed != 1 && job_order.is_customer_approved != 1">
+                                                    <li
+                                                        ng-if="job_order.status_id == 8470 && job_order.is_customer_agreed != 1 && job_order.is_customer_approved != 1">
                                                         <div class="checklist-item-wrap pad-big">
                                                             <div class="checklist-item-value">
                                                                 Gatepass
                                                             </div>
                                                             <div class="checklist-item-value-sm" ng-if="gate_pass_pdf">
-                                                                <a target="_blank" href="{{gate_pass_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                                <a target="_blank" href="{{gate_pass_pdf}}"
+                                                                    class="btn btn-secondary-dark btn-square btn-block"
+                                                                    href="#">PDF</a>
                                                             </div>
                                                         </div>
                                                     </li>
-                                                    <li ng-if="job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468 ">
+                                                    <li
+                                                        ng-if="job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468 ">
                                                         <div class="checklist-item-wrap pad-big">
                                                             <div class="checklist-item-value">
                                                                 Estimate
                                                             </div>
                                                             <div class="checklist-item-value-sm" ng-if="estimate_pdf">
-                                                                <a target="_blank" href="{{estimate_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                                <a target="_blank" href="{{estimate_pdf}}"
+                                                                    class="btn btn-secondary-dark btn-square btn-block"
+                                                                    href="#">PDF</a>
                                                             </div>
                                                         </div>
                                                     </li>
-                                                    <li ng-if="(job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468) && total_estimate > 1">
+                                                    <li
+                                                        ng-if="(job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468) && total_estimate > 1">
                                                         <div class="checklist-item-wrap pad-big">
                                                             <div class="checklist-item-value">
                                                                 Revised Estimate
                                                             </div>
-                                                            <div class="checklist-item-value-sm" ng-if="!revised_estimate_pdf">
-                                                                <a target="_blank" href="{{revised_estimate_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <div class="checklist-item-value-sm"
+                                                                ng-if="!revised_estimate_pdf">
+                                                                <a target="_blank" href="{{revised_estimate_url}}"
+                                                                    class="btn btn-secondary-dark btn-square btn-block"
+                                                                    href="#">PDF</a>
                                                             </div>
                                                         </div>
                                                     </li>
-                                                    <li ng-if="(job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468) && inspection_pdf">
+                                                    <li
+                                                        ng-if="(job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468) && inspection_pdf">
                                                         <div class="checklist-item-wrap pad-big">
                                                             <div class="checklist-item-value">
                                                                 Inspection
                                                             </div>
                                                             <div class="checklist-item-value-sm" ng-if="inspection_pdf">
-                                                                <a target="_blank" href="{{inspection_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                                <a target="_blank" href="{{inspection_pdf}}"
+                                                                    class="btn btn-secondary-dark btn-square btn-block"
+                                                                    href="#">PDF</a>
                                                             </div>
                                                         </div>
                                                     </li>
-                                                    <li ng-if="job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468 ">
+                                                    <li
+                                                        ng-if="job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468 ">
                                                         <div class="checklist-item-wrap pad-big">
                                                             <div class="checklist-item-value">
                                                                 Inventory
                                                             </div>
                                                             <div class="checklist-item-value-sm" ng-if="inventory_pdf">
-                                                                <a target="_blank" href="{{inventory_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                                <a target="_blank" href="{{inventory_pdf}}"
+                                                                    class="btn btn-secondary-dark btn-square btn-block"
+                                                                    href="#">PDF</a>
                                                             </div>
                                                         </div>
                                                     </li>
-                                                    <li ng-if="job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468 ">
+                                                    <li
+                                                        ng-if="job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468 ">
                                                         <div class="checklist-item-wrap pad-big">
                                                             <div class="checklist-item-value">
                                                                 Manual Job Order
                                                             </div>
-                                                            <div class="checklist-item-value-sm" ng-if="manual_job_order_pdf">
-                                                                <a target="_blank" href="{{manual_job_order_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <div class="checklist-item-value-sm"
+                                                                ng-if="manual_job_order_pdf">
+                                                                <a target="_blank" href="{{manual_job_order_pdf}}"
+                                                                    class="btn btn-secondary-dark btn-square btn-block"
+                                                                    href="#">PDF</a>
                                                             </div>
                                                         </div>
                                                     </li>
@@ -2177,14 +2520,17 @@
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}" class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
+                                                <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}"
+                                                    class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job
+                                                    card</a>
                                             </div>
                                         </div>
                                     </div><!-- Tab Footer -->
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div>
-                        <div class="tab-pane fade" id="cancel_inward" data-animation="fadeInUp" data-animation-delay="300">
+                        <div class="tab-pane fade" id="cancel_inward" data-animation="fadeInUp"
+                            data-animation-delay="300">
                             <div class="tab-pane-wrap">
                                 <div class="row" ng-if="job_order.status_id == 8476">
                                     <div class="col-md-12">
@@ -2233,9 +2579,11 @@
                                                             Cancel Inward ?
                                                         </label>
                                                         <div class="common-radio-button type-4">
-                                                            <input type="radio" id="sold" name="inward_cancel" ng-model="$ctrl.inward_cancel" ng-value="1">
+                                                            <input type="radio" id="sold" name="inward_cancel"
+                                                                ng-model="$ctrl.inward_cancel" ng-value="1">
                                                             <label for="sold">Yes</label>
-                                                            <input type="radio" id="not_sold" name="inward_cancel" ng-model="$ctrl.inward_cancel" ng-value="0">
+                                                            <input type="radio" id="not_sold" name="inward_cancel"
+                                                                ng-model="$ctrl.inward_cancel" ng-value="0">
                                                             <label for="not_sold">No</label>
                                                         </div>
                                                     </div><!-- Feild -->
@@ -2243,7 +2591,9 @@
                                                 <div class="col-md-6" ng-if="$ctrl.inward_cancel">
                                                     <div class="form-group">
                                                         <label>Reason for cancel<sup class="mandatory">*</sup></label>
-                                                        <textarea class="form-control" name="inward_cancel_reason" rows="4" placeholder="Enter Reason">{{job_order.inward_cancel_reason}}</textarea>
+                                                        <textarea class="form-control" name="inward_cancel_reason"
+                                                            rows="4"
+                                                            placeholder="Enter Reason">{{job_order.inward_cancel_reason}}</textarea>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
@@ -2252,7 +2602,8 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <button type="submit" ng-click="saveInwardCancel(1)" ng-if="$ctrl.inward_cancel" class="btn btn-red submit">
+                                                    <button type="submit" ng-click="saveInwardCancel(1)"
+                                                        ng-if="$ctrl.inward_cancel" class="btn btn-red submit">
                                                         Save
                                                     </button>
                                                 </div>

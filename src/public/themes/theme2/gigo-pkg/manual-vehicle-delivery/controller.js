@@ -81,6 +81,7 @@ app.component('manualVehicleDeliveryList', {
                 data: 'outlet_code',
                 name: 'outlets.code'
             },
+            { data: 'service_type', searchable: false },
             // {
             //     data: 'registration_type',
             //     name: 'registration_type'

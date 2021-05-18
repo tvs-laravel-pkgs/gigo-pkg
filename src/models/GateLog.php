@@ -3,23 +3,20 @@
 namespace Abs\GigoPkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
+use Abs\SerialNumberPkg\SerialNumberGroup;
 use App\Company;
 use App\Config;
+use App\Customer;
+use App\FinancialYear;
 use App\Outlet;
 use App\Vehicle;
-use App\VehicleModel;
-use App\FinancialYear;
-use App\Customer;
 use App\VehicleDeliveryStatus;
-use Abs\SerialNumberPkg\SerialNumberGroup;
+use App\VehicleModel;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use PHPExcel_IOFactory;
-use PHPExcel_Shared_Date;
 use PHPExcel_Style_NumberFormat;
 use Validator;
-use Carbon\Carbon;
-use DB;
 
 class GateLog extends Model
 {
@@ -129,6 +126,11 @@ class GateLog extends Model
     public function chassisAttachment()
     {
         return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 225)->where('attachment_type_id', 236);
+    }
+
+    public function partAttachment()
+    {
+        return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 225)->where('attachment_type_id', 11800);
     }
 
     public function company()
@@ -287,12 +289,12 @@ class GateLog extends Model
             if ($vehicle) {
                 if ($import_record[$mandatory_columns['KM Reading Type']->excel_column_name] == 'KM') {
                     $vehicle->km_reading_type_id = 8040;
-					$vehicle->km_reading = $import_record[$mandatory_columns['KM/Hrs Reading']->excel_column_name];
-                    $vehicle->hr_reading = NULL;
+                    $vehicle->km_reading = $import_record[$mandatory_columns['KM/Hrs Reading']->excel_column_name];
+                    $vehicle->hr_reading = null;
                 } else {
                     $vehicle->km_reading_type_id = 8041;
-					$vehicle->hr_reading = $import_record[$mandatory_columns['KM/Hrs Reading']->excel_column_name];
-                    $vehicle->km_reading = NULL;
+                    $vehicle->hr_reading = $import_record[$mandatory_columns['KM/Hrs Reading']->excel_column_name];
+                    $vehicle->km_reading = null;
                 }
                 $vehicle->save();
             }
@@ -307,8 +309,8 @@ class GateLog extends Model
                 $customer = Customer::where('code', ltrim($import_record[$mandatory_columns['Customer Code']->excel_column_name], '0'))->first();
                 if ($customer) {
 
-					$vehicle->customer_id = $customer->id;
-					$vehicle->is_sold = 1;
+                    $vehicle->customer_id = $customer->id;
+                    $vehicle->is_sold = 1;
 
                     $vehicle_owner = VehicleOwner::firstornew(['vehicle_id' => $vehicle->id, 'customer_id' => $customer->id]);
 
@@ -331,61 +333,58 @@ class GateLog extends Model
                         $vehicle_owner->from_date = Carbon::now();
                         $vehicle_owner->created_at = Carbon::now();
                     }
-					$vehicle_owner->save();
-					
-					$vehicle->save();
+                    $vehicle_owner->save();
+
+                    $vehicle->save();
                 }
             }
-		}
-		
-		//Check Driver 
-		if (!empty($import_record[$mandatory_columns['Driver Name']->excel_column_name])) {
-			if($vehicle)
-			{
-				$vehicle->driver_name = $import_record[$mandatory_columns['Driver Name']->excel_column_name];
-				$vehicle->save();
-			}
-		}
-		if (!empty($import_record[$mandatory_columns['Driver Mobile Number']->excel_column_name])) {
-			if($vehicle)
-			{
-				$vehicle->driver_mobile_number = $import_record[$mandatory_columns['Driver Mobile Number']->excel_column_name];
-				$vehicle->save();
-			}
         }
 
-		//Check GateIn time
+        //Check Driver
+        if (!empty($import_record[$mandatory_columns['Driver Name']->excel_column_name])) {
+            if ($vehicle) {
+                $vehicle->driver_name = $import_record[$mandatory_columns['Driver Name']->excel_column_name];
+                $vehicle->save();
+            }
+        }
+        if (!empty($import_record[$mandatory_columns['Driver Mobile Number']->excel_column_name])) {
+            if ($vehicle) {
+                $vehicle->driver_mobile_number = $import_record[$mandatory_columns['Driver Mobile Number']->excel_column_name];
+                $vehicle->save();
+            }
+        }
+
+        //Check GateIn time
         if (empty($import_record[$mandatory_columns['Gate In Date & Time']->excel_column_name])) {
             $record_errors[] = 'Gate In Date & Time is empty';
             $skip = true;
         } else {
-			$gate_in_date = PHPExcel_Style_NumberFormat::toFormattedString($import_record[$mandatory_columns['Gate In Date & Time']->excel_column_name], PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDD2);
+            $gate_in_date = PHPExcel_Style_NumberFormat::toFormattedString($import_record[$mandatory_columns['Gate In Date & Time']->excel_column_name], PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDD2);
 
-			$gate_in_time = PHPExcel_Style_NumberFormat::toFormattedString($import_record[$mandatory_columns['Gate In Date & Time']->excel_column_name], PHPExcel_Style_NumberFormat::FORMAT_DATE_TIME4);
+            $gate_in_time = PHPExcel_Style_NumberFormat::toFormattedString($import_record[$mandatory_columns['Gate In Date & Time']->excel_column_name], PHPExcel_Style_NumberFormat::FORMAT_DATE_TIME4);
 
-			$data['gate_in_date_time'] = $gate_in_date .' '. $gate_in_time;
-		}
+            $data['gate_in_date_time'] = $gate_in_date . ' ' . $gate_in_time;
+        }
 
-		if($vehicle)
-		{
-			//CHECK VEHICLE PREVIOUS JOBCARD STATUS
-			$previous_job_order = JobOrder::where('vehicle_id', $vehicle->id)->orderBy('id', 'DESC')->first();
-			if ($previous_job_order) {
-				if ($previous_job_order->status_id != 8470 && $previous_job_order->status_id != 8476 && $previous_job_order->status_id != 8467 && $previous_job_order->status_id != 8468 && $previous_job_order->status_id != '') {
-					$record_errors[] = 'Previous Job Order not completed on this Vehicle!';
-            		$skip = true;
-				}
-			}
-		}
+        if ($vehicle) {
+            //CHECK VEHICLE PREVIOUS JOBCARD STATUS
+            $previous_job_order = JobOrder::where('vehicle_id', $vehicle->id)->orderBy('id', 'DESC')->first();
+            if ($previous_job_order) {
+                if ($previous_job_order->status_id != 8470 && $previous_job_order->status_id != 8476 && $previous_job_order->status_id != 8467 && $previous_job_order->status_id != 8468 && $previous_job_order->status_id != '') {
+                    $record_errors[] = 'Previous Job Order not completed on this Vehicle!';
+                    $skip = true;
+                }
+            }
+        }
 
         if (!empty($import_record[$mandatory_columns['Status']->excel_column_name])) {
-            $vehicle_status = VehicleDeliveryStatus::where('name',$import_record[$mandatory_columns['Status']->excel_column_name])->first();
-            if($vehicle_status){
+            $vehicle_status = VehicleDeliveryStatus::where('name', $import_record[$mandatory_columns['Status']->excel_column_name])->first();
+            if ($vehicle_status) {
                 $data['vehicle_status_id'] = $vehicle_status->id;
-            }else{
+            } else {
                 $data['vehicle_status_id'] = 1;
             }
-        }else{
+        } else {
             $data['vehicle_status_id'] = 1;
         }
 
@@ -396,140 +395,139 @@ class GateLog extends Model
         $status['errors'] = $record_errors;
         $status['data'] = $data;
         return $status;
-	}
-	
-	public static function create_gate_in_entry($data)
+    }
+
+    public static function create_gate_in_entry($data)
     {
-		//GET BRANCH/OUTLET
-		$branch = Outlet::where('id', $data['outlet_id'])->first();
+        //GET BRANCH/OUTLET
+        $branch = Outlet::where('id', $data['outlet_id'])->first();
 
-		//GET VEHICLE
-		$vehicle = Vehicle::find($data['vehicle_id']);
-		if (date('m') > 3) {
-			$year = date('Y') + 1;
-		} else {
-			$year = date('Y');
-		}
-		//GET FINANCIAL YEAR ID
-		$financial_year = FinancialYear::where('from', $year)
-			->where('company_id', $branch->company_id)
-			->first();
-		if (!$financial_year) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Validation Error',
-				'errors' => [
-					'Fiancial Year Not Found',
-				],
-			]);
-		}
-		
-		//Save Job Order
-		$job_order = new JobOrder;
-		$job_order->company_id = $branch->company_id;
-		$job_order->vehicle_id = $vehicle->id;
-		$job_order->outlet_id = $branch->id;
-		$job_order->vehicle_delivery_status_id = $data['vehicle_status_id'];
-		if ($vehicle->currentOwner) {
-			$job_order->customer_id = $vehicle->currentOwner->customer_id;
-		}
-		
-		//GENERATE JOB ORDER NUMBER
-		$generateJONumber = SerialNumberGroup::generateNumber(21, $financial_year->id, $branch->state_id, $branch->id);
-		if (!$generateJONumber['success']) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Validation Error',
-				'errors' => [
-					'No Job Order Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
-				],
-			]);
-		}
+        //GET VEHICLE
+        $vehicle = Vehicle::find($data['vehicle_id']);
+        if (date('m') > 3) {
+            $year = date('Y') + 1;
+        } else {
+            $year = date('Y');
+        }
+        //GET FINANCIAL YEAR ID
+        $financial_year = FinancialYear::where('from', $year)
+            ->where('company_id', $branch->company_id)
+            ->first();
+        if (!$financial_year) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Validation Error',
+                'errors' => [
+                    'Fiancial Year Not Found',
+                ],
+            ]);
+        }
 
-		$error_messages_2 = [
-			'number.required' => 'Serial number is required',
-			'number.unique' => 'Serial number is already taken',
-		];
+        //Save Job Order
+        $job_order = new JobOrder;
+        $job_order->company_id = $branch->company_id;
+        $job_order->vehicle_id = $vehicle->id;
+        $job_order->outlet_id = $branch->id;
+        $job_order->vehicle_delivery_status_id = $data['vehicle_status_id'];
+        if ($vehicle->currentOwner) {
+            $job_order->customer_id = $vehicle->currentOwner->customer_id;
+        }
 
-		$validator_2 = Validator::make($generateJONumber, [
-			'number' => [
-				'required',
-				'unique:job_orders,number,' . $job_order->id . ',id,company_id,' . $branch->company_id,
-			],
-		], $error_messages_2);
+        //GENERATE JOB ORDER NUMBER
+        $generateJONumber = SerialNumberGroup::generateNumber(21, $financial_year->id, $branch->state_id, $branch->id);
+        if (!$generateJONumber['success']) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Validation Error',
+                'errors' => [
+                    'No Job Order Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
+                ],
+            ]);
+        }
 
-		if ($validator_2->fails()) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Validation Error',
-				'errors' => $validator_2->errors()->all(),
-			]);
-		}
+        $error_messages_2 = [
+            'number.required' => 'Serial number is required',
+            'number.unique' => 'Serial number is already taken',
+        ];
 
-		$job_order->number = $generateJONumber['number'];
-		$job_order->service_advisor_id = NULL;
-		$job_order->km_reading = $vehicle->km_reading;
-		$job_order->hr_reading = $vehicle->hr_reading;
-		$job_order->km_reading_type_id = $vehicle->km_reading_type_id;
-		$job_order->driver_name = $vehicle->driver_name;
-		$job_order->driver_mobile_number = $vehicle->driver_mobile_number;
-		$job_order->status_id = 8460; //Ready for Inward
-		$job_order->save();
-		// dd($job_order);
+        $validator_2 = Validator::make($generateJONumber, [
+            'number' => [
+                'required',
+                'unique:job_orders,number,' . $job_order->id . ',id,company_id,' . $branch->company_id,
+            ],
+        ], $error_messages_2);
 
-		//Save gateLog
-		$gate_log = new GateLog;
-		$gate_log->company_id = $branch->company_id;
-		$gate_log->job_order_id = $job_order->id;
-		$gate_log->gate_in_date = $data['gate_in_date_time'];
-		$gate_log->status_id = 8120; //GATE IN COMPLETED
-		$gate_log->outlet_id = $branch->id;
+        if ($validator_2->fails()) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Validation Error',
+                'errors' => $validator_2->errors()->all(),
+            ]);
+        }
 
-		//GENERATE GATE IN VEHICLE NUMBER
-		$generateNumber = SerialNumberGroup::generateNumber(20, $financial_year->id, $branch->state_id, $branch->id);
-		if (!$generateNumber['success']) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Validation Error',
-				'errors' => [
-					'No Gate In Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
-				],
-			]);
-		}
+        $job_order->number = $generateJONumber['number'];
+        $job_order->service_advisor_id = null;
+        $job_order->km_reading = $vehicle->km_reading;
+        $job_order->hr_reading = $vehicle->hr_reading;
+        $job_order->km_reading_type_id = $vehicle->km_reading_type_id;
+        $job_order->driver_name = $vehicle->driver_name;
+        $job_order->driver_mobile_number = $vehicle->driver_mobile_number;
+        $job_order->status_id = 8460; //Ready for Inward
+        $job_order->save();
+        // dd($job_order);
 
-		$error_messages_1 = [
-			'number.required' => 'Serial number is required',
-			'number.unique' => 'Serial number is already taken',
-		];
+        //Save gateLog
+        $gate_log = new GateLog;
+        $gate_log->company_id = $branch->company_id;
+        $gate_log->job_order_id = $job_order->id;
+        $gate_log->gate_in_date = $data['gate_in_date_time'];
+        $gate_log->status_id = 8120; //GATE IN COMPLETED
+        $gate_log->outlet_id = $branch->id;
 
-		$validator_1 = Validator::make($generateNumber, [
-			'number' => [
-				'required',
-				'unique:gate_logs,number,' . $gate_log->id . ',id,company_id,' . $branch->company_id,
-			],
-		], $error_messages_1);
+        //GENERATE GATE IN VEHICLE NUMBER
+        $generateNumber = SerialNumberGroup::generateNumber(20, $financial_year->id, $branch->state_id, $branch->id);
+        if (!$generateNumber['success']) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Validation Error',
+                'errors' => [
+                    'No Gate In Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
+                ],
+            ]);
+        }
 
-		if ($validator_1->fails()) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Validation Error',
-				'errors' => $validator_1->errors()->all(),
-			]);
-		}
-		$gate_log->number = $generateNumber['number'];
+        $error_messages_1 = [
+            'number.required' => 'Serial number is required',
+            'number.unique' => 'Serial number is already taken',
+        ];
 
-		$gate_log->save();
+        $validator_1 = Validator::make($generateNumber, [
+            'number' => [
+                'required',
+                'unique:gate_logs,number,' . $gate_log->id . ',id,company_id,' . $branch->company_id,
+            ],
+        ], $error_messages_1);
 
-		//Inward Process Customer Save
-		if($job_order->cusotmer_id)
-		{
-			$job_order->inwardProcessChecks()->where('tab_id', 8701)->update(['is_form_filled' => 1]);
-		}
+        if ($validator_1->fails()) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Validation Error',
+                'errors' => $validator_1->errors()->all(),
+            ]);
+        }
+        $gate_log->number = $generateNumber['number'];
 
-		//Inward Process Vehicle Save
-		$job_order->inwardProcessChecks()->where('tab_id', 8700)->update(['is_form_filled' => 1]);
+        $gate_log->save();
 
-		return true;
+        //Inward Process Customer Save
+        if ($job_order->cusotmer_id) {
+            $job_order->inwardProcessChecks()->where('tab_id', 8701)->update(['is_form_filled' => 1]);
+        }
+
+        //Inward Process Vehicle Save
+        $job_order->inwardProcessChecks()->where('tab_id', 8700)->update(['is_form_filled' => 1]);
+
+        return true;
     }
 
 }

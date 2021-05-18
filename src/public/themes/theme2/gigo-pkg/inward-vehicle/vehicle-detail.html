@@ -40,6 +40,29 @@
                                                 <ul class="view-row mb-no">
                                                     <li class="view-col-3">
                                                         <span class="view-col-label">
+                                                            Service Type
+                                                        </span>
+                                                        <span class="view-data-list-value">
+                                                            <b ng-if="job_order.job_order_type == 1">
+                                                                Vehicle Service
+                                                            </b>
+                                                            <b ng-if="job_order.job_order_type == 2">
+                                                                Aggregate Service
+                                                            </b>
+                                                        </span>
+                                                    </li>
+                                                    <li class="view-col-3" ng-if="job_order.vehicle.vehicle_type == 2">
+                                                        <span class="view-col-label">
+                                                            Aggregate Service Number
+                                                        </span>
+                                                        <span class="view-data-list-value">
+                                                            <b>
+                                                                {{job_order.number}}
+                                                            </b>
+                                                        </span>
+                                                    </li>
+                                                    <li class="view-col-3" ng-if="$ctrl.aggregate_type == 1">
+                                                        <span class="view-col-label">
                                                             Registration Type
                                                         </span>
                                                         <span class="view-data-list-value">
@@ -51,7 +74,7 @@
                                                             </b>
                                                         </span>
                                                     </li>
-                                                    <li class="view-col-3" ng-if="job_order.vehicle.is_registered == 1">
+                                                    <li class="view-col-3" ng-if="$ctrl.aggregate_type == 1">
                                                         <span class="view-col-label">
                                                             Registration No
                                                         </span>
@@ -61,7 +84,8 @@
                                                             </b>
                                                         </span>
                                                     </li>
-                                                    <li class="view-col-3" ng-if="job_order.vehicle.is_registered == 0">
+                                                    <li class="view-col-3"
+                                                        ng-if="$ctrl.aggregate_type == 1 && job_order.gate_in_trade_plate_number.trade_plate_number">
                                                         <span class="view-col-label">
                                                             Trade Plate Number
                                                         </span>
@@ -71,7 +95,7 @@
                                                             </b>
                                                         </span>
                                                     </li>
-                                                    <li class="view-col-3">
+                                                    <li class="view-col-3" ng-if="$ctrl.aggregate_type == 1">
                                                         <span class="view-col-label">
                                                             Vehicle Model
                                                         </span>
@@ -82,7 +106,7 @@
                                                             </b>
                                                         </span>
                                                     </li>
-                                                    <li class="view-col-3">
+                                                    <li class="view-col-3" ng-if="$ctrl.aggregate_type == 1">
                                                         <span class="view-col-label">
                                                             Engine Number
                                                         </span>
@@ -90,7 +114,7 @@
                                                             {{job_order.vehicle.engine_number}}
                                                         </span>
                                                     </li>
-                                                    <li class="view-col-3">
+                                                    <li class="view-col-3" ng-if="$ctrl.aggregate_type == 1">
                                                         <span class="view-col-label">
                                                             Chassis / VIN Number
                                                         </span>
@@ -100,8 +124,7 @@
                                                             </b>
                                                         </span>
                                                     </li>
-                                                    <li class="view-col-3"
-                                                        ng-if="!job_order.vehicle.registration_number">
+                                                    <li class="view-col-3" ng-if="$ctrl.aggregate_type == 1">
                                                         <span class="view-col-label">
                                                             Is Sold ?
                                                         </span>
@@ -114,7 +137,8 @@
                                                             </b>
                                                         </span>
                                                     </li>
-                                                    <li class="view-col-3" ng-if="job_order.vehicle.sold_date">
+                                                    <li class="view-col-3"
+                                                        ng-if="$ctrl.aggregate_type == 1 && job_order.vehicle.sold_date">
                                                         <span class="view-col-label">
                                                             Sold Date
                                                         </span>
@@ -131,6 +155,38 @@
                                             <div class="row" ng-show="show_vehicle_form" id="vehicle_edit">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
+                                                        <label>Service Type <sup class="mandatory">*</sup></label>
+                                                        <div class="common-radio-button type-4">
+                                                            <input type="radio" id="vehicle_service" name="service_type"
+                                                                ng-model="$ctrl.service_type" ng-value="1"
+                                                                ng-click="serviceType(1)">
+                                                            <label for="vehicle_service">Vehicle</label>
+                                                            <input type="radio" id="aggregate_service"
+                                                                name="service_type" ng-model="$ctrl.service_type"
+                                                                ng-value="0" ng-click="serviceType(2)">
+                                                            <label for="aggregate_service">Aggregate</label>
+                                                        </div>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3" ng-if="$ctrl.service_type != 1">
+                                                    <div class="form-group">
+                                                        <label>Aggregate Type <sup class="mandatory">*</sup></label>
+                                                        <div class="common-radio-button type-4">
+                                                            <input type="radio" id="vehicle_aggregate_service"
+                                                                name="aggregate_type" ng-model="$ctrl.aggregate_type"
+                                                                ng-value="1">
+                                                            <label for="vehicle_aggregate_service">Vehicle</label>
+                                                            <input type="radio" id="part_aggregate_service"
+                                                                name="aggregate_type" ng-model="$ctrl.aggregate_type"
+                                                                ng-value="0">
+                                                            <label for="part_aggregate_service">Parts</label>
+                                                        </div>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-12">
+                                                </div>
+                                                <div class="col-md-3" ng-if="$ctrl.aggregate_type == 1">
+                                                    <div class="form-group">
                                                         <label>Registration Type <sup class="mandatory">*</sup></label>
                                                         <div class="common-radio-button type-4">
                                                             <input type="radio" id="registered" name="is_registered"
@@ -143,7 +199,8 @@
                                                         </div>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-3" ng-if="job_order.vehicle.is_registered == 1">
+                                                <div class="col-md-3"
+                                                    ng-if="job_order.vehicle.is_registered == 1 && $ctrl.aggregate_type == 1">
                                                     <div class="form-group">
                                                         <label>
                                                             Registration Number
@@ -157,7 +214,8 @@
                                                             oninput="this.value = this.value.toUpperCase()" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-3" ng-if="job_order.vehicle.is_registered == 0">
+                                                <div class="col-md-3"
+                                                    ng-if="job_order.vehicle.is_registered == 0 && $ctrl.aggregate_type == 1">
                                                     <div class="form-group">
                                                         <label>
                                                             Trade Plate Number
@@ -182,7 +240,7 @@
                                                             value="{{job_order.gatein_trade_plate_number_id}}">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-3">
+                                                <div class="col-md-3" ng-if="$ctrl.aggregate_type == 1">
                                                     <div class="form-group">
                                                         <label>
                                                             Vehicle Model
@@ -191,7 +249,6 @@
                                                         <md-autocomplete
                                                             md-items="option in $ctrl.searchVehicleModel($ctrl.modelSearchText)"
                                                             md-selected-item="job_order.vehicle.model"
-                                                            md-selected-item-change="selectedVehicleModel(job_order.vehicle.model.id)"
                                                             md-search-text="$ctrl.modelSearchText"
                                                             md-item-text="option.model_name" md-min-length="3"
                                                             placeholder="Vehicle Model Name" md-autofocus>
@@ -209,7 +266,7 @@
                                                             value="{{job_order.vehicle.model.id}}">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-3">
+                                                <div class="col-md-3" ng-if="$ctrl.aggregate_type == 1">
                                                     <div class="form-group">
                                                         <label>
                                                             Engine Number
@@ -221,7 +278,7 @@
                                                             name="engine_number" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-3">
+                                                <div class="col-md-3" ng-if="$ctrl.aggregate_type == 1">
                                                     <div class="form-group">
                                                         <label>
                                                             Chassis / VIN Number
@@ -234,7 +291,7 @@
                                                             name="chassis_number" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-3" ng-if="!job_order.vehicle.registration_number">
+                                                <div class="col-md-3" ng-if="$ctrl.aggregate_type == 1">
                                                     <div class="form-group">
                                                         <label>Is Sold ? <sup class="mandatory">*</sup></label>
                                                         <div class="common-radio-button type-4">
@@ -247,7 +304,8 @@
                                                         </div>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-3" ng-if="$ctrl.is_sold">
+                                                <div class="col-md-3"
+                                                    ng-if="$ctrl.is_sold && $ctrl.aggregate_type == 1">
                                                     <div class="form-group">
                                                         <label>
                                                             Sold Date
@@ -267,6 +325,16 @@
                                                                     alt="Calendar Image" />
                                                             </div>
                                                         </div><!-- Input Group -->
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3" ng-if="$ctrl.aggregate_type == 0">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Aggregate Number
+                                                            <sup class="mandatory">*</sup></label>
+                                                        <input type="text" readonly class="form-control"
+                                                            value="{{extras.aggregate_number}}" autocomplete="off"
+                                                            name="aggregate_number" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                             </div><!-- Row -->

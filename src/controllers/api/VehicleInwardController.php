@@ -108,6 +108,7 @@ class VehicleInwardController extends Controller
                     'job_orders.id',
                     DB::raw('IF(vehicles.is_registered = 1,"Registered Vehicle","Un-Registered Vehicle") as registration_type'),
                     'vehicles.registration_number',
+                    'job_orders.number as aggregate_number',
                     'vehicles.chassis_number',
                     'vehicles.engine_number',
                     'models.model_number',
@@ -121,6 +122,7 @@ class VehicleInwardController extends Controller
                     DB::raw('GROUP_CONCAT(amc_policies.name) as amc_policies'),
                     'status.name as status_name',
                     'customers.name as customer_name',
+                    DB::raw('IF(job_orders.job_order_type = 1,"Vehicle Service","Aggregate Service") as service_type'),
                 ])
                 ->where(function ($query) use ($request) {
                     if (!empty($request->search_key)) {
@@ -287,6 +289,7 @@ class VehicleInwardController extends Controller
                 'gateLog.kmAttachment',
                 'gateLog.vehicleAttachment',
                 'gateLog.chassisAttachment',
+                'gateLog.partAttachment',
                 'customerApprovalAttachment',
                 'customerESign',
                 'VOCAttachment',
@@ -2102,6 +2105,9 @@ class VehicleInwardController extends Controller
             } else {
                 $job_order->enable_estimate_status = true;
             }
+
+            $outlet = Outlet::find($job_order->outlet_id);
+
             //Job card details need to get future
             return response()->json([
                 'success' => true,
@@ -2109,6 +2115,7 @@ class VehicleInwardController extends Controller
                 'extras' => [
                     'model_list' => VehicleModel::getDropDownList(),
                     'trade_plate_number_list' => TradePlateNumber::get(),
+                    'aggregate_number' => 'AG-' . $outlet->code,
                 ],
                 'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
             ]);

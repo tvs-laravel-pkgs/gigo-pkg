@@ -65,7 +65,7 @@
                                     <div class="card-box">
                                         <div class="card-box-head">
                                             <div class="card-box-head-title">
-                                                {{gate_log.registration_type}}
+                                                {{gate_log.service_type}}
                                             </div>
                                         </div><!-- Card Box Head -->
                                         <div class="card-box-body">
@@ -73,7 +73,8 @@
                                                 <div class="box-left">
                                                     <div class="box-transparent">
                                                         <div class="box-transparent-title">
-                                                            {{gate_log.registration_number}}
+                                                            {{gate_log.registration_number ?
+                                                            gate_log.registration_number : gate_log.aggregate_number}}
                                                         </div>
                                                         <div class="box-transparent-subtitle">
                                                             {{gate_log.model_number}}

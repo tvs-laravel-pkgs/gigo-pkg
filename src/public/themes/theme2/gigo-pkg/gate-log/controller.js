@@ -57,6 +57,7 @@ app.component('gateLogList', {
                 // { data: 'action', class: 'action', name: 'action', searchable: false },
                 { data: 'number', name: 'gate_logs.number', searchable: true },
                 { data: 'gate_in_date', name: 'gate_logs.gate_in_date' },
+                { data: 'service_type', searchable: false },
                 { data: 'registration_number', name: 'vehicles.registration_number', searchable: true },
                 { data: 'model_name', name: 'models.model_name', searchable: true },
                 { data: 'outlet', name: 'outlets.code', searchable: true },
@@ -291,6 +292,12 @@ app.component('gateLogForm', {
             $scope.btnNxt = function () { }
             $scope.prev = function () { }
         }, 1000);
+
+        $scope.serviceType = function (type) {
+            if (type == 1) {
+                self.aggregate_type = 1;
+            }
+        }
 
         //GET VEHICLE LIST
         self.searchVehicle = function (query) {

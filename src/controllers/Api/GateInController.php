@@ -748,8 +748,8 @@ class GateInController extends Controller
             }
 
             //SAVE PART PHOTO
-            if (!empty($request->chassis_photo)) {
-                $attachment = $request->chassis_photo;
+            if (!empty($request->part_photo)) {
+                $attachment = $request->part_photo;
                 $entity_id = $gate_log->id;
                 $attachment_of_id = 225; //GATE LOG
                 $attachment_type_id = 11800; //PART PHOTO
@@ -1255,17 +1255,20 @@ class GateInController extends Controller
             'gate_logs.gate_in_date',
             'gate_logs.status_id',
             'vehicles.registration_number',
+            // 'vehicles.aggregate_number',
+            'job_orders.number as aggregate_number',
             'vehicles.engine_number',
             'vehicles.chassis_number',
             'models.model_name',
             'outlets.code as outlet',
             'regions.name as region', 'states.name as state',
             'configs.name as status',
+            DB::raw('IF(job_orders.job_order_type = 1,"Vehicle Service","Aggregate Service") as service_type'),
         ])
-            ->leftjoin('job_orders', 'job_orders.id', 'gate_logs.job_order_id')
-            ->leftjoin('vehicles', 'vehicles.id', 'job_orders.vehicle_id')
+            ->join('job_orders', 'job_orders.id', 'gate_logs.job_order_id')
+            ->join('vehicles', 'vehicles.id', 'job_orders.vehicle_id')
             ->leftjoin('models', 'models.id', 'vehicles.model_id')
-            ->leftjoin('outlets', 'outlets.id', 'job_orders.outlet_id')
+            ->join('outlets', 'outlets.id', 'job_orders.outlet_id')
             ->leftjoin('regions', 'regions.id', 'outlets.region_id')
             ->leftjoin('states', 'states.id', 'outlets.state_id')
             ->join('configs', 'configs.id', 'gate_logs.status_id')
@@ -1300,6 +1303,13 @@ class GateInController extends Controller
         $gate_pass_lists->orderBy('gate_logs.id', 'DESC');
 
         return Datatables::of($gate_pass_lists)
+            ->editColumn('registration_number', function ($gate_pass_list) {
+                if (!$gate_pass_list->registration_number) {
+                    return $gate_pass_list->aggregate_number;
+                } else {
+                    return $gate_pass_list->registration_number;
+                }
+            })
             ->addColumn('status', function ($gate_pass_list) {
                 // $status = $gate_pass_list->status == 'Active' ? 'green' : 'red';
                 return $gate_pass_list->status;
@@ -1537,17 +1547,20 @@ class GateInController extends Controller
                 'gate_logs.gate_in_date',
                 'gate_logs.status_id',
                 'vehicles.registration_number',
+                // 'vehicles.aggregate_number',
+                'job_orders.number as aggregate_number',
                 'vehicles.engine_number',
                 'vehicles.chassis_number',
                 'models.model_name',
                 'outlets.code as outlet',
                 'regions.name as region', 'states.name as state',
                 'configs.name as status',
+                DB::raw('IF(job_orders.job_order_type = 1,"Vehicle Service","Aggregate Service") as service_type'),
             ])
-                ->leftjoin('job_orders', 'job_orders.id', 'gate_logs.job_order_id')
-                ->leftjoin('vehicles', 'vehicles.id', 'job_orders.vehicle_id')
+                ->join('job_orders', 'job_orders.id', 'gate_logs.job_order_id')
+                ->join('vehicles', 'vehicles.id', 'job_orders.vehicle_id')
                 ->leftjoin('models', 'models.id', 'vehicles.model_id')
-                ->leftjoin('outlets', 'outlets.id', 'job_orders.outlet_id')
+                ->join('outlets', 'outlets.id', 'job_orders.outlet_id')
                 ->leftjoin('regions', 'regions.id', 'outlets.region_id')
                 ->leftjoin('states', 'states.id', 'outlets.state_id')
                 ->join('configs', 'configs.id', 'gate_logs.status_id')

@@ -80,6 +80,7 @@ class ManualVehicleDeliveryController extends Controller
                 'job_orders.id',
                 DB::raw('IF(vehicles.is_registered = 1,"Registered Vehicle","Un-Registered Vehicle") as registration_type'),
                 'vehicles.registration_number',
+                'job_orders.number as aggregate_number',
                 DB::raw('COALESCE(models.model_number, "-") as model_number'),
                 'gate_logs.number',
                 'job_orders.status_id',
@@ -93,7 +94,8 @@ class ManualVehicleDeliveryController extends Controller
                 // DB::raw('COALESCE(customers.name, "-") as customer_name'),
                 DB::raw('CONCAT(customers.code, " / ",customers.name) as customer_name'),
                 'job_orders.vehicle_delivery_status_id',
-                DB::raw('IF(job_orders.vehicle_delivery_status_id IS NULL,"WIP",vehicle_delivery_statuses.name) as vehicle_status')
+                DB::raw('IF(job_orders.vehicle_delivery_status_id IS NULL,"WIP",vehicle_delivery_statuses.name) as vehicle_status'),
+                DB::raw('IF(job_orders.job_order_type = 1,"Vehicle Service","Aggregate Service") as service_type')
             )
         // ->where(function ($query) use ($start_date, $end_date) {
         //     $query->whereDate('gate_logs.gate_in_date', '>=', $start_date)
@@ -164,6 +166,13 @@ class ManualVehicleDeliveryController extends Controller
             ->filterColumn('registration_type', function ($query, $keyword) {
                 $sql = 'IF(vehicles.is_registered = 1,"Registered Vehicle","Un-Registered Vehicle")  like ?';
                 $query->whereRaw($sql, ["%{$keyword}%"]);
+            })
+            ->editColumn('registration_number', function ($gate_pass_list) {
+                if (!$gate_pass_list->registration_number) {
+                    return $gate_pass_list->aggregate_number;
+                } else {
+                    return $gate_pass_list->registration_number;
+                }
             })
             ->editColumn('status', function ($vehicle_inward) {
                 $status = $vehicle_inward->status_id == '8460' || $vehicle_inward->status_id == '8469' || $vehicle_inward->status_id == '8477' || $vehicle_inward->status_id == '8479' ? 'green' : 'blue';
