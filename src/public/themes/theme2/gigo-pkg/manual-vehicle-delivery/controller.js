@@ -78,10 +78,6 @@ app.component('manualVehicleDeliveryList', {
                 name: 'vehicle_delivery_statuses.name'
             },
             {
-                data: 'discount_approval_status',
-                name: 'configs.name'
-            },
-            {
                 data: 'outlet_code',
                 name: 'outlets.code'
             },
@@ -98,12 +94,16 @@ app.component('manualVehicleDeliveryList', {
                 name: 'customers.name'
             },
             {
-                data: 'model_number',
-                name: 'models.model_number'
-            },
-            {
                 data: 'amc_policies',
                 name: 'amc_policies.name'
+            },
+            {
+                data: 'discount_approval_status',
+                name: 'configs.name'
+            },
+            {
+                data: 'model_number',
+                name: 'models.model_number'
             },
             {
                 data: 'number',

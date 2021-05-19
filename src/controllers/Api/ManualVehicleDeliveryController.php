@@ -457,7 +457,7 @@ class ManualVehicleDeliveryController extends Controller
 
         //0 means inactive 1 means active
         $membership_status = 0;
-        if (strtotime($vehicle_membership->expiry_date) >= strtotime($invoice_date)) {
+        if ($vehicle_membership && (strtotime($vehicle_membership->expiry_date) >= strtotime($invoice_date))) {
             $membership_status = 1;
         }
 
