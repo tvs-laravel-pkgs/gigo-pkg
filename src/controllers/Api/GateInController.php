@@ -9,6 +9,7 @@ use Abs\GigoPkg\TradePlateNumber;
 use Abs\SerialNumberPkg\SerialNumberGroup;
 use App\AmcAggregateCoupon;
 use App\AmcCustomer;
+use App\ApiLog;
 use App\Attachment;
 use App\Config;
 use App\Customer;
@@ -713,14 +714,28 @@ class GateInController extends Controller
 
             if ($vehicle->chassis_number) {
                 $soap_number = $vehicle->chassis_number;
-            } elseif ($vehicle->registration_number) {
-                $soap_number = $vehicle->registration_number;
-            } else {
+            } elseif ($vehicle->engine_number) {
                 $soap_number = $vehicle->engine_number;
+            } else {
+                $soap_number = $vehicle->registration_number;
             }
 
             $membership_data = $this->getSoap->GetTVSONEVehicleDetails($soap_number);
             // dd($membership_data);
+            //Save API Response
+            $api_log = new ApiLog;
+            $api_log->type_id = 11780;
+            $api_log->entity_number = $soap_number;
+            $api_log->entity_id = $vehicle->id;
+            $api_log->url = 'https: //tvsapp.tvs.in/tvsone/tvsoneapi/WebService1.asmx?wsdl';
+            $api_log->src_data = 'https: //tvsapp.tvs.in/tvsone/tvsoneapi/WebService1.asmx?wsdl';
+            $api_log->response_data = json_encode(array($membership_data));
+            $api_log->user_id = Auth::user()->id;
+            $api_log->status_id = isset($membership_data) ? $membership_data['success'] == 'true' ? 11271 : 11272 : 11272;
+            $api_log->errors = null;
+            $api_log->created_by_id = Auth::user()->id;
+            $api_log->save();
+
             if ($membership_data && $membership_data['success'] == 'true') {
                 // dump($membership_data);
                 $amc_customer_id = null;

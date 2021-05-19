@@ -10,7 +10,8 @@
                 </div><!-- Page Header Content -->
                 <div class="page-header-content reset-block">
                     <div class="reset-wrap">
-                        <button class="btn-reset reset-tooltip refresh_table my-tooltip" ng-shortcut="'meta+shift+r'" ng-shortcut-click data-title="ctrl+shift+r">
+                        <button class="btn-reset reset-tooltip refresh_table my-tooltip" ng-shortcut="'meta+shift+r'"
+                            ng-shortcut-click data-title="ctrl+shift+r">
                             <img class="img-responsive" src="./public/theme/img/content/reset.svg" alt="Reset" />
                         </button>
                     </div>
@@ -18,22 +19,27 @@
                 <div class="page-header-content search-block">
                     <div class="search_filter">
                         <label>
-                            <input type="search" id="search_gate_log" class="form-control" placeholder="Search" autofocus />
-                            <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">
+                            <input type="search" id="search_gate_log" class="form-control" placeholder="Search"
+                                autofocus />
+                            <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'"
+                                ng-shortcut-click data-title="ctrl+shift+c">
                                 Clear
                             </button>
                         </label>
                     </div><!-- Search Filter -->
                 </div>
                 <div class="page-header-content button-block">
-                    <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#gate-log-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>
+                    <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#gate-log-filter-modal"
+                        ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i
+                            class="icon ion-md-funnel"></i>
                         Filter
                     </button>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
             <div class="page-header-content-right">
                 <div class="page-header-content button-block">
-                    <a href="#!/gate-log/add" class="btn btn-primary my-tooltip" ng-shortcut="'meta+shift+n'" ng-shortcut-click data-title="ctrl+shift+n">
+                    <a href="#!/gate-log/add" class="btn btn-primary my-tooltip" ng-shortcut="'meta+shift+n'"
+                        ng-shortcut-click data-title="ctrl+shift+n">
                         Add New
                     </a>
                 </div><!-- Page Header Content -->
@@ -69,7 +75,8 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i
+                        class="icon ion-md-close"></i></button>
                 <h5 class="modal-title" id="myModalLabel">Filter</h5>
             </div><!-- Modal Header -->
             <div class="modal-body">
@@ -79,9 +86,12 @@
                             <div class="form-group">
                                 <label>Date</label>
                                 <div class="input-group date">
-                                    <input class="form-control daterange align-left" placeholder="Select a Date Range" name="date" id="date_range">
+                                    <input class="form-control daterange align-left" placeholder="Select a Date Range"
+                                        name="date" id="date_range" autocomplete="off">
                                     <span class="input-group-addon">
-                                        <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                        <img class="img-responsive"
+                                            src="./public/theme/img/content/calender-gray-icon.svg"
+                                            alt="Calendar Image" />
                                     </span>
                                 </div><!-- Input Group -->
                             </div><!-- Feild -->
@@ -89,29 +99,41 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Vehicle Model</label>
-                                <md-select ng-model="$ctrl.model_selected" md-on-close="clearSearchTerm()" ng-change="onSelectedmodel($ctrl.model_selected)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Model Type">
+                                <md-select ng-model="$ctrl.model_selected" md-on-close="clearSearchTerm()"
+                                    ng-change="onSelectedmodel($ctrl.model_selected)"
+                                    data-md-container-class="selectdemoSelectHeader" placeholder="Select Model Type">
                                     <md-select-header class="demo-select-header">
-                                        <input ng-model="searchTerm" type="search" placeholder="Search Model" class="demo-header-searchbox md-text">
+                                        <input ng-model="searchTerm" type="search" placeholder="Search Model"
+                                            class="demo-header-searchbox md-text">
                                     </md-select-header>
                                     <md-optgroup>
-                                        <md-option ng-value="model_list.id" ng-repeat="model_list in $ctrl.model_list | filter:searchTerm">{{model_list.model_name}}</md-option>
+                                        <md-option ng-value="model_list.id"
+                                            ng-repeat="model_list in $ctrl.model_list | filter:searchTerm">
+                                            {{model_list.model_name}}</md-option>
                                     </md-optgroup>
                                 </md-select>
-                                <input type="hidden" class="form-control type-sm" name="model_id" id="model_id" value="">
+                                <input type="hidden" class="form-control type-sm" name="model_id" id="model_id"
+                                    value="">
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Outlet</label>
-                                <md-select ng-model="$ctrl.outlet_selected" md-on-close="clearSearchTerm()" ng-change="onSelectedoutlet($ctrl.outlet_selected)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Outlet">
+                                <md-select ng-model="$ctrl.outlet_selected" md-on-close="clearSearchTerm()"
+                                    ng-change="onSelectedoutlet($ctrl.outlet_selected)"
+                                    data-md-container-class="selectdemoSelectHeader" placeholder="Select Outlet">
                                     <md-select-header class="demo-select-header">
-                                        <input ng-model="searchTerm" type="search" placeholder="Search Outlet" class="demo-header-searchbox md-text">
+                                        <input ng-model="searchTerm" type="search" placeholder="Search Outlet"
+                                            class="demo-header-searchbox md-text">
                                     </md-select-header>
                                     <md-optgroup>
-                                        <md-option ng-value="outlet_list.id" ng-repeat="outlet_list in $ctrl.outlet_list | filter:searchTerm">{{outlet_list.code}}</md-option>
+                                        <md-option ng-value="outlet_list.id"
+                                            ng-repeat="outlet_list in $ctrl.outlet_list | filter:searchTerm">
+                                            {{outlet_list.code}}</md-option>
                                     </md-optgroup>
                                 </md-select>
-                                <input type="hidden" class="form-control type-sm" name="outlet_id" id="outlet_id" value="">
+                                <input type="hidden" class="form-control type-sm" name="outlet_id" id="outlet_id"
+                                    value="">
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <!-- <div class="col-md-6">
@@ -134,7 +156,9 @@
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-md-6">
-                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.to_account='';$ctrl.from_account='';$ctrl.journal='';$ctrl.model_selected='';$ctrl.outlet_selected =''; $ctrl.status_selected='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">
+                        <button type="button" class="reset-link"
+                            ng-click="reset_filter();$ctrl.to_account='';$ctrl.from_account='';$ctrl.journal='';$ctrl.model_selected='';$ctrl.outlet_selected =''; $ctrl.status_selected='';"
+                            ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">
                             Reset Filter
                         </button>
                     </div><!-- Column -->
@@ -160,7 +184,8 @@
                 <p>You can’t retrive the data again, Are you sure you want to delete? </p>
                 <input type="hidden" name="gate_log_id" id="gate_log_id" value="">
                 <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">Cancel</button>
-                <button class="btn btn-rose" ng-click="deleteConfirm()" type="button" data-dismiss="modal" aria-label="Close">Yes</button>
+                <button class="btn btn-rose" ng-click="deleteConfirm()" type="button" data-dismiss="modal"
+                    aria-label="Close">Yes</button>
             </div>
         </div>
     </div>
