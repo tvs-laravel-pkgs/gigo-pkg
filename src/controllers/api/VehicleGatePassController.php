@@ -460,7 +460,7 @@ class VehicleGatePassController extends Controller
 
                                 $url = url('/') . '/feedback/' . $survey->id;
 
-                                $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
+                                $short_url = ShortUrl::createShortLink($url, $maxlength = "5");
 
                                 $message = 'Greetings from TVS & Sons! Thank you for having your vehicle serviced from TVS & Sons.Kindly click on this link to give Service Feedback: ' . $short_url;
 
@@ -537,7 +537,7 @@ class VehicleGatePassController extends Controller
 
                                 $url = url('/') . '/feedback/' . $survey->id;
 
-                                $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
+                                $short_url = ShortUrl::createShortLink($url, $maxlength = "5");
 
                                 $message = 'Greetings from TVS & Sons! Thank you for having your vehicle serviced from TVS & Sons.Kindly click on this link to give Service Feedback: ' . $short_url;
 

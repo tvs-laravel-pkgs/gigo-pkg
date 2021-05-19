@@ -1,61 +1,67 @@
 <?php
 
 namespace Abs\GigoPkg;
+
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\BaseModel;
 use Auth;
 use Carbon\Carbon;
 
-class ShortUrl extends BaseModel {
-	use SeederTrait;
-	protected $table = 'short_urls';
-	public $timestamps = false;
+class ShortUrl extends BaseModel
+{
+    use SeederTrait;
+    protected $table = 'short_urls';
+    public $timestamps = false;
 
-	protected $fillable = [
-		"url",
-		"token",
-	];
+    protected $fillable = [
+        "url",
+        "token",
+    ];
 
-	protected static $chars = "abcdfghjkmnpqrstvwxyz|ABCDFGHJKLMNPQRSTVWXYZ|0123456789";
+    protected static $chars = "abcdfghjkmnpqrstvwxyz|ABCDFGHJKLMNPQRSTVWXYZ|0123456789";
 
-	public static function generateRandomString($maxlength) {
+    public static function generateRandomString($maxlength)
+    {
 
-		$sets = explode('|', self::$chars);
-		$all = '';
-		$randString = '';
-		foreach ($sets as $set) {
-			$randString .= $set[array_rand(str_split($set))];
-			$all .= $set;
-		}
-		$all = str_split($all);
-		for ($i = 0; $i < $maxlength - count($sets); $i++) {
-			$randString .= $all[array_rand($all)];
-		}
-		$randString = str_shuffle($randString);
-		return $randString;
-	}
+        $sets = explode('|', self::$chars);
+        $all = '';
+        $randString = '';
+        foreach ($sets as $set) {
+            $randString .= $set[array_rand(str_split($set))];
+            $all .= $set;
+        }
+        $all = str_split($all);
+        for ($i = 0; $i < $maxlength - count($sets); $i++) {
+            $randString .= $all[array_rand($all)];
+        }
+        $randString = str_shuffle($randString);
+        return $randString;
+    }
 
-	public static function createShortLink($url, $maxlength) {
+    public static function createShortLink($url, $maxlength)
+    {
 
-		$shortCode = self::generateRandomString($maxlength);
+        $shortCode = self::generateRandomString($maxlength);
 
-		//Check URL already exist
-		$link = ShortUrl::where('url', $url)->first();
-		if ($link) {
-			$link->updated_by_id = Auth::user()->id;
-			$link->updated_at = Carbon::now();
-		} else {
-			$link = new ShortUrl;
-			$link->created_by_id = Auth::user()->id;
-			$link->created_at = Carbon::now();
-			$link->url = $url;
-		}
+        $link = ShortUrl::where('token', $shortCode)->forceDelete();
 
-		$short_url = url('/link/' . $shortCode);
+        //Check URL already exist
+        $link = ShortUrl::where('url', $url)->first();
+        if ($link) {
+            $link->updated_by_id = Auth::user()->id;
+            $link->updated_at = Carbon::now();
+        } else {
+            $link = new ShortUrl;
+            $link->created_by_id = Auth::user()->id;
+            $link->created_at = Carbon::now();
+            $link->url = $url;
+        }
 
-		$link->token = $short_url;
-		$link->save();
+        $short_url = url('/link/' . $shortCode);
 
-		return $short_url;
-	}
+        $link->token = $short_url;
+        $link->save();
+
+        return $short_url;
+    }
 }

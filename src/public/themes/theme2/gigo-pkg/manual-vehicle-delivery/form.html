@@ -503,7 +503,7 @@
                                                     <div class="form-group">
                                                         <label>Job Card Number<sup class="mandatory">*</sup></label>
                                                         <input type="text" class="form-control required"
-                                                            placeholder="Ex:12345"
+                                                            placeholder="Ex:12345" minlength="10"
                                                             onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')"
                                                             ng-model="job_order.job_card_number"
                                                             value="{{job_order.job_card_number}}"

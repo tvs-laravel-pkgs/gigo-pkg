@@ -2233,7 +2233,7 @@ class JobCardController extends Controller
 
             $url = url('/') . '/jobcard/bill-details/view/' . $job_order->id . '/' . $job_order->otp_no;
 
-            $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
+            $short_url = ShortUrl::createShortLink($url, $maxlength = "5");
 
             $message = 'Dear Customer, Kindly click on this link to pay for the TVS job order ' . $short_url . ' Vehicle Reg Number : ' . $vehicle_no . ' - TVS';
 
@@ -3975,7 +3975,7 @@ class JobCardController extends Controller
 
                 $url = url('/') . '/vehicle-inward/estimate/customer/view/' . $request->job_order_id . '/' . $job_order->otp_no;
 
-                $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
+                $short_url = ShortUrl::createShortLink($url, $maxlength = "5");
 
                 $message = 'Dear Customer, Kindly click on this link to approve for Revised TVS job order ' . $short_url . $number . ' : ' . $vehicle_no . ' - TVS';
 

@@ -78,6 +78,10 @@ app.component('manualVehicleDeliveryList', {
                 name: 'vehicle_delivery_statuses.name'
             },
             {
+                data: 'discount_approval_status',
+                name: 'configs.name'
+            },
+            {
                 data: 'outlet_code',
                 name: 'outlets.code'
             },
@@ -254,7 +258,7 @@ app.component('manualVehicleDeliveryList', {
             $('#vehicle-inward-filter-modal').modal('hide');
         }
 
-        //Change Status
+        //Change Vehicle Delivery Status
         $scope.changeStatus = function (id, vehicle_delivery_status_id) {
             setTimeout(function () {
                 $scope.job_order_id = id;
@@ -262,6 +266,17 @@ app.component('manualVehicleDeliveryList', {
 
                 $('#vehicle_delivery_status_id').val(vehicle_delivery_status_id);
                 $('#job_order_id').val(id);
+            }, 100);
+        }
+
+        //Change Status
+        $scope.updateApprovalStatus = function (id, mobile_no) {
+            // alert(111);
+            setTimeout(function () {
+                $scope.job_order_id = id;
+                $scope.mobile_no = mobile_no;
+                $('.customer_mobile_no').html(mobile_no);
+                $('.job_order_id').val(id);
             }, 100);
         }
 
@@ -292,6 +307,70 @@ app.component('manualVehicleDeliveryList', {
         $('.daterange').on('cancel.daterangepicker', function (ev, picker) {
             $(this).val('');
         });
+
+        $scope.reSendOtp = function () {
+            $.ajax({
+                url: base_url + '/api/vehicle-delivery/send/customer/otp/' + $scope.job_order_id + '/' + 2,
+                type: "GET",
+                dataType: "json",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+                success: function (response) {
+                    custom_noty('success', response.message);
+                },
+                error: function (textStatus, errorThrown) {
+                    custom_noty('error', 'Something went wrong at server');
+                }
+            });
+        }
+
+        $scope.saveOTP = function () {
+            var split_form_id = '#otp_customer_confirm';
+            var v = jQuery(split_form_id).validate({
+                ignore: '',
+                rules: {
+                    'job_order_id': {
+                        required: true,
+                    },
+                    'otp_no': {
+                        required: true,
+                    },
+                },
+                submitHandler: function (form) {
+                    let formData = new FormData($(split_form_id)[0]);
+                    $('.submit_otp').button('loading');
+                    $.ajax({
+                        url: base_url + '/api/manual-vehicle-delivery/verify/otp',
+                        method: "POST",
+                        data: formData,
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                        processData: false,
+                        contentType: false,
+                    })
+                        .done(function (res) {
+                            $('.submit_otp').button('reset');
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            $scope.job_order_id = '';
+                            $scope.vehicle_delivery_status_id = '';
+                            $('#otp-modal').modal('hide');
+                            $('.job_order_id').val('');
+                            dataTables.fnFilter();
+                        })
+                        .fail(function (xhr) {
+                            $('.submit_otp').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                            dataTables.fnFilter();
+                        });
+                }
+            });
+        }
 
         $scope.vehicleStatusSave = function () {
             var split_form_id = '#vehicle_status_form';

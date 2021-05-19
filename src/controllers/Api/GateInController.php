@@ -820,7 +820,7 @@ class GateInController extends Controller
 
             $url = url('/') . '/vehicle/track/' . $job_order->id;
 
-            $short_url = ShortUrl::createShortLink($url, $maxlength = "8");
+            $short_url = ShortUrl::createShortLink($url, $maxlength = "5");
 
             $tracking_message = 'Greetings from TVS & Sons! Kindly click on this link to track vehicle service status: ' . $short_url . ' - TVS';
 

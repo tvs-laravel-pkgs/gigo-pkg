@@ -74,6 +74,7 @@ class ManualVehicleDeliveryController extends Controller
             ->leftJoin('amc_members', 'amc_members.vehicle_id', 'vehicles.id')
             ->leftJoin('amc_policies', 'amc_policies.id', 'amc_members.policy_id')
             ->leftJoin('vehicle_delivery_statuses', 'vehicle_delivery_statuses.id', 'job_orders.vehicle_delivery_status_id')
+            ->leftJoin('configs as discount_status', 'discount_status.id', 'job_orders.customer_approval_status_id')
             ->join('configs', 'configs.id', 'job_orders.status_id')
             ->join('outlets', 'outlets.id', 'job_orders.outlet_id')
             ->select(
@@ -83,6 +84,7 @@ class ManualVehicleDeliveryController extends Controller
                 DB::raw('COALESCE(models.model_number, "-") as model_number'),
                 'gate_logs.number',
                 'job_orders.status_id',
+                'job_orders.customer_approval_status_id',
                 DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%d/%m/%Y, %h:%i %p") as date'),
                 'job_orders.driver_name',
                 'job_orders.driver_mobile_number as driver_mobile_number',
@@ -93,7 +95,8 @@ class ManualVehicleDeliveryController extends Controller
                 // DB::raw('COALESCE(customers.name, "-") as customer_name'),
                 DB::raw('CONCAT(customers.code, " / ",customers.name) as customer_name'),
                 'job_orders.vehicle_delivery_status_id',
-                DB::raw('IF(job_orders.vehicle_delivery_status_id IS NULL,"WIP",vehicle_delivery_statuses.name) as vehicle_status')
+                'customers.mobile_no',
+                DB::raw('IF(job_orders.vehicle_delivery_status_id IS NULL,"WIP",vehicle_delivery_statuses.name) as vehicle_status'), 'discount_status.name as discount_approval_status'
             )
         // ->where(function ($query) use ($start_date, $end_date) {
         //     $query->whereDate('gate_logs.gate_in_date', '>=', $start_date)
@@ -178,12 +181,24 @@ class ManualVehicleDeliveryController extends Controller
                 }
                 return '<span class="text-' . $status . '">' . $vehicle_inward->vehicle_status . '</span>';
             })
+            ->editColumn('discount_approval_status', function ($vehicle_inward) {
+                $status = 'blue';
+                if ($vehicle_inward->customer_approval_status_id == 11851) {
+                    $status = 'green';
+                } elseif ($vehicle_inward->customer_approval_status_id == 11852) {
+                    $status = 'red';
+                }
+                return '<span class="text-' . $status . '">' . $vehicle_inward->discount_approval_status . '</span>';
+            })
             ->addColumn('action', function ($vehicle_inward) {
                 $view_img = asset('public/themes/' . $this->data['theme'] . '/img/content/table/view.svg');
                 $edit_img = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
 
                 $status_img = asset('public/theme/img/table/add-new-invoice.svg');
                 $status_img_hover = asset('public/theme/img/table/add-hover.svg');
+
+                $otp_img = asset('public/theme/img/table/options.svg');
+                $otp_img_hover = asset('public/theme/img/table/options-active.svg');
 
                 $output = '';
 
@@ -196,6 +211,12 @@ class ManualVehicleDeliveryController extends Controller
                     $output .= '<a href="#!/manual-vehicle-delivery/form/' . $vehicle_inward->id . '" id = "" title="Form"><img src="' . $edit_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $edit_img . '" onmouseout=this.src="' . $edit_img . '"></a>';
                 }
                 $output .= '<a href="#!/manual-vehicle-delivery/view/' . $vehicle_inward->id . '" id = "" title="View"><img src="' . $view_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $view_img . '" onmouseout=this.src="' . $view_img . '"></a>';
+
+                if ($vehicle_inward->customer_approval_status_id == 11850 && !Entrust::can('verify-manual-vehicle-delivery')) {
+                    $output .= '<a href="javascript:;" data-toggle="modal" data-target="#otp-modal" onclick="angular.element(this).scope().updateApprovalStatus(' . $vehicle_inward->id . ',' . $vehicle_inward->mobile_no . ')" title="Change Vehicle Status"><img src="' . $otp_img . '" alt="Change Vehicle Status" class="img-responsive delete" onmouseover=this.src="' . $otp_img_hover . '" onmouseout=this.src="' . $otp_img . '"></a>
+					';
+                }
+
                 return $output;
             })
             ->make(true);

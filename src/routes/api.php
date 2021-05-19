@@ -473,6 +473,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
         Route::post('/manual-vehicle-delivery/get-form-data', 'ManualVehicleDeliveryController@getFormData');
         Route::post('/manual-vehicle-delivery/save', 'ManualVehicleDeliveryController@save');
         Route::post('/manual-vehicle-delivery/update/vehicle-status', 'ManualVehicleDeliveryController@updateVehicleStatus');
+        Route::post('/manual-vehicle-delivery/verify/otp', 'ManualVehicleDeliveryController@verifyOtp');
+        Route::get('vehicle-delivery/send/customer/otp/{job_order_id}/{type}', 'ManualVehicleDeliveryController@discountCustomerNotification');
 
         //TVS One Discount Request
         Route::post('/tvs-one/discount/save', 'ManualVehicleDeliveryController@tvsOneDiscountSave');

@@ -50,6 +50,7 @@
                                 <th class="action width-100">Action</th>
                                 <th>Gate In Date & Time</th>
                                 <th>Vehicle Status</th>
+                                <th>Discount Approval Status</th>
                                 <th>Outlet</th>
                                 <!-- <th>Registration Type</th> -->
                                 <th>Registration No</th>
@@ -347,6 +348,36 @@
                     </form>
                 </div><!-- Modal Form -->
             </div><!-- Modal Body -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div>
+<!-- Modal -->
+<div class="modal fade alert-modal" id="otp-modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog  modal-xs" role="document">
+        <div class="modal-content">
+            <form id="otp_customer_confirm">
+                <div class="modal-header">
+                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i
+                            class="icon ion-md-close"></i></button>
+                    <h5 id="myModalLabel">
+                        Change Status
+                    </h5>
+                </div><!-- Modal Header -->
+                <div class="modal-body">
+                    <h6 class="title">ENTER OTP</h6>
+                    <p class="info">Received in Customer Mobile +91<span class="customer_mobile_no">{{mobile_no}}</span>
+                    </p>
+                    <div class="form-group">
+                        <input type="text" autofocus name="otp_no" maxlength="6"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');"
+                            class="form-control text-center" placeholder="Enter OTP" autocomplete="off" />
+                        <input type="hidden" name="job_order_id" class="job_order_id" value="{{job_order.id}}" />
+                    </div><!-- Feild -->
+                    <button type="submit" class="btn btn-secondary-dark btn-square btn-block submit_otp"
+                        ng-click="saveOTP()">SUBMIT</button>
+                    <button type="button" class="btn-link link" ng-click="reSendOtp()">RESEND OTP</button>
+                </div><!-- Modal Body -->
+            </form>
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div>

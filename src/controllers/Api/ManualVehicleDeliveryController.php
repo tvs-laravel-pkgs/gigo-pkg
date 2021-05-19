@@ -4,6 +4,7 @@ namespace Abs\GigoPkg\Api;
 
 use Abs\AmcPkg\AmcPolicy;
 use Abs\GigoPkg\AmcMember;
+use Abs\GigoPkg\ShortUrl;
 use Abs\SerialNumberPkg\SerialNumberGroup;
 use App\AmcAggregateCoupon;
 use App\AmcCustomer;
@@ -620,6 +621,68 @@ class ManualVehicleDeliveryController extends Controller
             'message' => $message,
         ]);
     }
+
+    public function verifyOtp(Request $request)
+    {
+        // dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'job_order_id' => [
+                'required',
+                'integer',
+                'exists:job_orders,id',
+            ],
+            'otp_no' => [
+                'required',
+            ],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Validation Error',
+                'errors' => $validator->errors()->all(),
+            ]);
+        }
+
+        $job_order = JobOrder::find($request->job_order_id);
+
+        if (!$job_order) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Validation Error',
+                'errors' => [
+                    'Job Order Not Found!',
+                ],
+            ]);
+        }
+
+        DB::beginTransaction();
+
+        $otp_validate = JobOrder::where('id', $request->job_order_id)
+            ->where('otp_no', '=', $request->otp_no)
+            ->first();
+        if (!$otp_validate) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Validation Error',
+                'errors' => ['Customer OTP is wrong. Please try again.'],
+            ]);
+        }
+
+        $job_order->customer_approval_status_id = 11851;
+        $job_order->updated_by_id = Auth::user()->id;
+        $job_order->updated_at = Carbon::now();
+        $job_order->save();
+
+        DB::commit();
+        $message = "Customer Approved successfully!";
+
+        return response()->json([
+            'success' => true,
+            'message' => $message,
+        ]);
+    }
+
     public function save(Request $request)
     {
         // dd($request->all());
@@ -686,7 +749,7 @@ class ManualVehicleDeliveryController extends Controller
                             ]);
                         }
 
-                        $job_order = JobOrder::with('gateLog')->find($request->job_order_id);
+                        $job_order = JobOrder::with(['gateLog', 'customer'])->find($request->job_order_id);
 
                         if (!$job_order) {
                             return response()->json([
@@ -708,6 +771,17 @@ class ManualVehicleDeliveryController extends Controller
                             ]);
                         }
 
+                        $customer_mobile = $job_order->customer->mobile_no;
+                        if (!$customer_mobile) {
+                            return response()->json([
+                                'success' => false,
+                                'error' => 'Validation Error',
+                                'errors' => [
+                                    'Customer Mobile Number Not Found!',
+                                ],
+                            ]);
+                        }
+
                         $gate_in_date = $job_order->gateLog->gate_in_date;
                         $gate_in_date = date('d-m-Y', strtotime($gate_in_date));
 
@@ -724,7 +798,7 @@ class ManualVehicleDeliveryController extends Controller
                         DB::beginTransaction();
 
                         // if ($job_order->tvs_one_approval_status_id != 2) {
-                        if ($request->labour_discount_amount > 0 || $request->part_discount_amount) {
+                        if ($request->labour_discount_amount > 0 || $request->part_discount_amount > 0) {
                             $job_order->tvs_one_approval_status_id = 1;
                         } else {
                             $job_order->tvs_one_approval_status_id = null;
@@ -1008,9 +1082,27 @@ class ManualVehicleDeliveryController extends Controller
                             $gate_pass = $this->generateGatePass($job_order);
                         }
 
+                        if ($request->labour_discount_amount > 0 || $request->part_discount_amount > 0) {
+                            if ($job_order->customer_approval_status_id != 11851) {
+                                $job_order->customer_approval_status_id = 11850;
+                                $job_order->otp_no = mt_rand(111111, 999999);
+                            }
+                        } else {
+                            $job_order->customer_approval_status_id = null;
+                        }
+
+                        $job_order->save();
+
                         DB::commit();
 
-                        //Send Mail for Serivice Head
+                        if ($request->labour_discount_amount > 0 || $request->part_discount_amount > 0) {
+                            if ($job_order->customer_approval_status_id != 11851) {
+                                //Sent SMS to Customer
+                                $this->discountCustomerNotification($job_order->id, $type = 1);
+                            }
+                        }
+
+                        //Send Mail for Service Head
                         if (!$payment_status) {
                             $this->vehiceRequestMail($job_order->id, $type = 1);
                         }
@@ -1716,6 +1808,53 @@ class ManualVehicleDeliveryController extends Controller
                 ],
             ]);
         }
+    }
+
+    public function discountCustomerNotification($job_order_id, $type)
+    {
+        // dd($job_order_id, $type);
+        $job_order = JobOrder::with([
+            'vehicle',
+            'customer',
+            'outlet',
+        ])->find($job_order_id);
+
+        // dd($job_order);
+
+        $labour_discount_amount = round($job_order->labour_discount_amount > 0 ? $job_order->labour_discount_amount : 0);
+        $part_discount_amount = round($job_order->part_discount_amount > 0 ? $job_order->part_discount_amount : 0);
+
+        $total_discount_amount = round($labour_discount_amount + $part_discount_amount);
+
+        if ($job_order->vehicle->registration_number) {
+            $number = $job_order->vehicle->registration_number;
+        } elseif ($job_order->vehicle->chassis_number) {
+            $number = $job_order->vehicle->chassis_number;
+        } else {
+            $number = $job_order->vehicle->engine_number;
+        }
+
+        $customer_mobile = $job_order->customer->mobile_no;
+
+        if ($type == 2) {
+            $job_order->otp_no = mt_rand(111111, 999999);
+            $job_order->save();
+        }
+
+        //Generate URL
+        $url = url('/') . '/tvsone/discount/approval/' . $job_order->id . '/' . $job_order->otp_no;
+
+        $short_url = ShortUrl::createShortLink($url, $maxlength = "5");
+
+        $message = 'Dear customer,your vehicle ' . $number . ' service completed.Labour discount amount Rs:' . $labour_discount_amount . ',Parts discount amount Rs:' . $part_discount_amount . ',Total TVS ONE discount amount is Rs:' . $total_discount_amount . '. Kindly click on this link to approve for the TVS ONE discount amount Link:  ' . $short_url . ' or Please show the following OTP ' . $job_order->otp_no . ' to our cashier for approve the TVS ONE discount amount or kindly download the TVS ONE application from the play store and approve discount amount https: //ply.gl/app.tvsone.Customer - TVS';
+
+        $msg = sendSMSNotification($customer_mobile, $message);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Message Sent to successfully!!',
+        ]);
+
     }
 
     public function vehiceRequestMail($job_order_id, $type)
