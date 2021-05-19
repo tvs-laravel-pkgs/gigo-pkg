@@ -2,9 +2,12 @@
 
 namespace Abs\GigoPkg\Api;
 
+use Abs\AmcPkg\AmcPolicy;
 use Abs\GigoPkg\AmcMember;
 use Abs\SerialNumberPkg\SerialNumberGroup;
 use App\AmcAggregateCoupon;
+use App\AmcCustomer;
+use App\ApiLog;
 use App\Attachment;
 use App\Config;
 use App\Customer;
@@ -26,6 +29,7 @@ use App\PaymentMode;
 use App\PendingReason;
 use App\Receipt;
 use App\User;
+use App\Vehicle;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -217,6 +221,121 @@ class ManualVehicleDeliveryController extends Controller
     public function getFormData(Request $request)
     {
         // dd($request->all());
+        //Check Membership active or not
+        if ($request->action == 'Edit') {
+            $job_order = JobOrder::find($request->id);
+            if ($job_order) {
+                $vehicle = Vehicle::find($job_order->vehicle_id);
+                if ($vehicle) {
+                    if ($vehicle->chassis_number) {
+                        $soap_number = $vehicle->chassis_number;
+                    } elseif ($vehicle->engine_number) {
+                        $soap_number = $vehicle->engine_number;
+                    } else {
+                        $soap_number = $vehicle->registration_number;
+                    }
+
+                    $membership_data = $this->getSoap->GetTVSONEVehicleDetails($soap_number);
+                    // dump($membership_data);
+
+                    //Save API Response
+                    $api_log = new ApiLog;
+                    $api_log->type_id = 11780;
+                    $api_log->entity_number = $soap_number;
+                    $api_log->entity_id = $vehicle->id;
+                    $api_log->url = 'https: //tvsapp.tvs.in/tvsone/tvsoneapi/WebService1.asmx?wsdl';
+                    $api_log->src_data = 'https: //tvsapp.tvs.in/tvsone/tvsoneapi/WebService1.asmx?wsdl';
+                    $api_log->response_data = json_encode(array($membership_data));
+                    $api_log->user_id = Auth::user()->id;
+                    $api_log->status_id = isset($membership_data) ? $membership_data['success'] == 'true' ? 11271 : 11272 : 11272;
+                    $api_log->errors = null;
+                    $api_log->created_by_id = Auth::user()->id;
+                    $api_log->save();
+
+                    if ($membership_data && $membership_data['success'] == 'true') {
+                        // dump($membership_data);
+                        $amc_customer_id = null;
+                        if ($membership_data['tvs_one_customer_code']) {
+                            $amc_customer = AmcCustomer::firstOrNew(['tvs_one_customer_code' => $membership_data['tvs_one_customer_code']]);
+
+                            if (!$amc_customer->customer_id) {
+                                $customer = Customer::where('code', ltrim($membership_data['al_dms_code'], '0'))->first();
+                                if ($customer) {
+                                    $amc_customer->customer_id = $customer->id;
+                                }
+                            }
+
+                            if ($amc_customer->exists) {
+                                $amc_customer->updated_by_id = Auth::user()->id;
+                                $amc_customer->updated_at = Carbon::now();
+                            } else {
+                                $amc_customer->created_by_id = Auth::user()->id;
+                                $amc_customer->created_at = Carbon::now();
+                                $amc_customer->updated_at = null;
+                            }
+
+                            $amc_customer->save();
+
+                            $amc_customer_id = $amc_customer->id;
+
+                            //Save Aggregate Coupons
+                            if ($membership_data['aggregate_coupon']) {
+                                $aggregate_coupons = explode(',', $membership_data['aggregate_coupon']);
+                                if (count($aggregate_coupons) > 0) {
+                                    foreach ($aggregate_coupons as $aggregate_coupon) {
+                                        $coupon = AmcAggregateCoupon::firstOrNew(['coupon_code' => str_replace(' ', '', $aggregate_coupon)]);
+                                        if ($coupon->exists) {
+                                            $coupon->updated_by_id = Auth::user()->id;
+                                            $coupon->updated_at = Carbon::now();
+                                        } else {
+                                            $coupon->created_by_id = Auth::user()->id;
+                                            $coupon->created_at = Carbon::now();
+                                            $coupon->updated_at = null;
+                                            $coupon->status_id = 1;
+                                        }
+                                        $coupon->amc_customer_id = $amc_customer->id;
+                                        $coupon->save();
+                                    }
+                                }
+                            }
+                        }
+
+                        $amc_policy = AmcPolicy::firstOrNew(['company_id' => Auth::user()->company_id, 'name' => $membership_data['membership_name'], 'type' => $membership_data['membership_type']]);
+                        if ($amc_policy->exists) {
+                            $amc_policy->updated_by_id = Auth::user()->id;
+                            $amc_policy->updated_at = Carbon::now();
+                        } else {
+                            $amc_policy->created_by_id = Auth::user()->id;
+                            $amc_policy->created_at = Carbon::now();
+                        }
+                        $amc_policy->save();
+
+                        $amc_member = AmcMember::firstOrNew(['company_id' => Auth::user()->company_id, 'entity_type_id' => 11180, 'vehicle_id' => $vehicle->id, 'policy_id' => $amc_policy->id, 'number' => $membership_data['membership_number']]);
+
+                        if ($amc_member->exists) {
+                            $amc_member->updated_by_id = Auth::user()->id;
+                            $amc_member->updated_at = Carbon::now();
+                        } else {
+                            $amc_member->created_by_id = Auth::user()->id;
+                            $amc_member->created_at = Carbon::now();
+                        }
+
+                        $amc_member->start_date = date('Y-m-d', strtotime($membership_data['start_date']));
+                        $amc_member->expiry_date = date('Y-m-d', strtotime($membership_data['end_date']));
+                        $amc_member->amc_customer_id = $amc_customer_id;
+
+                        $amc_member->save();
+
+                        $job_order->service_policy_id = $amc_member->id;
+                        $job_order->save();
+                    } else {
+                        $job_order->service_policy_id = null;
+                        $job_order->save();
+                    }
+                }
+            }
+        }
+
         $job_order = JobOrder::with([
             'vehicle',
             'vehicle.model',
@@ -233,6 +352,7 @@ class ManualVehicleDeliveryController extends Controller
             'gateLog.kmAttachment',
             'gateLog.vehicleAttachment',
             'gateLog.chassisAttachment',
+            // 'gateLog.partAttachment',
             'manualDeliveryLabourInvoice',
             'manualDeliveryPartsInvoice',
             // 'manualDeliveryReceipt',
@@ -320,12 +440,32 @@ class ManualVehicleDeliveryController extends Controller
         $job_order->customer_paid_labour_amount = $customer_paid_labour_amount;
         $job_order->customer_paid_parts_amount = $customer_paid_parts_amount;
 
+        //Check Vehicle Membership
+        // $vehicle_membership = AmcMember::join('amc_policies', 'amc_policies.id', 'amc_members.policy_id')->whereIn('amc_policies.name', ['TVS ONE', 'TVS CARE'])->where('amc_members.vehicle_id', $job_order->vehicle_id)->first();
+        $vehicle_membership = AmcMember::where('id', $job_order->service_policy_id)->first();
+        // dump($vehicle_membership);
+        if ($vehicle_membership) {
+            if (strtotime($invoice_date) > strtotime($vehicle_membership->expiry_date)) {
+                $pending_reasons = collect(PendingReason::where('company_id', Auth::user()->company_id)->where('id', '!=', 2)->select('pending_reasons.id', 'pending_reasons.name')->get())->prepend(['id' => '', 'name' => 'Select Reason']);
+            } else {
+                $pending_reasons = collect(PendingReason::where('company_id', Auth::user()->company_id)->select('pending_reasons.id', 'pending_reasons.name')->get())->prepend(['id' => '', 'name' => 'Select Reason']);
+            }
+        } else {
+            $pending_reasons = collect(PendingReason::where('company_id', Auth::user()->company_id)->where('id', '!=', 2)->select('pending_reasons.id', 'pending_reasons.name')->get())->prepend(['id' => '', 'name' => 'Select Reason']);
+        }
+
+        //0 means inactive 1 means active
+        $membership_status = 0;
+        if (strtotime($vehicle_membership->expiry_date) >= strtotime($invoice_date)) {
+            $membership_status = 1;
+        }
+
         $aggregate_work = '';
         $active_aggregate_coupons = 0;
         $aggregate_coupons = '';
         $membership_id = '';
         // $aggregate_processed = 0;
-        if ($job_order && $job_order->amcMember) {
+        if ($job_order && $job_order->amcMember && $membership_status == 1) {
             $aggregate_works = $job_order->getAggregateWorkList($job_order->id, $job_order->amcMember->amcPolicy->id);
             $aggregate_work = $aggregate_works['aggregate_works'];
 
@@ -369,20 +509,6 @@ class ManualVehicleDeliveryController extends Controller
         $this->data['invoice_date'] = $invoice_date;
         $this->data['warranty_date'] = $warranty_date;
 
-        //Check Vehicle Membership
-        // $vehicle_membership = AmcMember::join('amc_policies', 'amc_policies.id', 'amc_members.policy_id')->whereIn('amc_policies.name', ['TVS ONE', 'TVS CARE'])->where('amc_members.vehicle_id', $job_order->vehicle_id)->first();
-        $vehicle_membership = AmcMember::where('vehicle_id', $job_order->vehicle_id)->first();
-
-        if ($vehicle_membership) {
-            if (strtotime($invoice_date) > strtotime($vehicle_membership->expiry_date)) {
-                $pending_reasons = collect(PendingReason::where('company_id', Auth::user()->company_id)->where('id', '!=', 2)->select('pending_reasons.id', 'pending_reasons.name')->get())->prepend(['id' => '', 'name' => 'Select Reason']);
-            } else {
-                $pending_reasons = collect(PendingReason::where('company_id', Auth::user()->company_id)->select('pending_reasons.id', 'pending_reasons.name')->get())->prepend(['id' => '', 'name' => 'Select Reason']);
-            }
-        } else {
-            $pending_reasons = collect(PendingReason::where('company_id', Auth::user()->company_id)->where('id', '!=', 2)->select('pending_reasons.id', 'pending_reasons.name')->get())->prepend(['id' => '', 'name' => 'Select Reason']);
-        }
-
         $extras = [
             'aggregate_works' => $aggregate_work,
             'aggregate_coupons' => $aggregate_coupons,
@@ -400,6 +526,7 @@ class ManualVehicleDeliveryController extends Controller
             'payment_modes' => collect(PaymentMode::where('company_id', Auth::user()->company_id)->whereNotIn('id', [9, 10, 11])
                     ->select('payment_modes.id', 'payment_modes.name')->get())->prepend(['id' => '', 'name' => 'Select Payment Mode']),
             'pending_reasons' => $pending_reasons,
+            'membership_status' => $membership_status,
             'billing_types' => Config::getDropDownList([
                 'config_type_id' => 454,
                 'orderBy' => 'id',

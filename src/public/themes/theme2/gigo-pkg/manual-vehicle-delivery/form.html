@@ -282,6 +282,10 @@
                                                     <span class="view-col-value" ng-if="job_order.amc_member">
                                                         <b>{{job_order.amc_member.amc_policy.name}}</b>-<b>{{job_order.amc_member.amc_policy.type}}</b>
                                                         Eligible Upto <b>{{job_order.amc_member.expiry_date}}</b>
+                                                        <b ng-if="extras.membership_status == 1" class="text-green"> -
+                                                            Active</b>
+                                                        <b ng-if="extras.membership_status == 0" class="text-red"> -
+                                                            Expired</b>
                                                     </span>
                                                     <span class="view-col-value" ng-if="!job_order.amc_member">
                                                         -

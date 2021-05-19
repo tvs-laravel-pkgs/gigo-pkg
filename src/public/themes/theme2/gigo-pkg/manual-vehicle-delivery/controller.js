@@ -375,6 +375,7 @@ app.component('manualVehicleDeliveryView', {
                 method: "POST",
                 data: {
                     id: $routeParams.id,
+                    action: 'View',
                 },
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
@@ -656,6 +657,7 @@ app.component('manualVehicleDeliveryForm', {
                 method: "POST",
                 data: {
                     id: $routeParams.id,
+                    action: 'Edit',
                 },
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
@@ -930,7 +932,7 @@ app.component('manualVehicleDeliveryForm', {
                 }
 
                 //Labour discount
-                if (labour_amount && $scope.job_order.amc_member && $scope.job_order.amc_member.amc_policy.labour_discount_percentage) {
+                if (labour_amount && $scope.extras.membership_status == 1 && $scope.job_order.amc_member && $scope.job_order.amc_member.amc_policy.labour_discount_percentage) {
                     labour_discount_value = (labour_amount * $scope.job_order.amc_member.amc_policy.labour_discount_percentage) / 100;
                     console.log('-----------labour--------------');
                     labour_discount_value = labour_discount_value.toFixed(2);
@@ -955,7 +957,7 @@ app.component('manualVehicleDeliveryForm', {
                 }
 
                 //Parts discount
-                if (parts_amount && $scope.job_order.amc_member && $scope.job_order.amc_member.amc_policy.part_discount_percentage) {
+                if (parts_amount && $scope.extras.membership_status == 1 && $scope.job_order.amc_member && $scope.job_order.amc_member.amc_policy.part_discount_percentage) {
                     part_discount_value = (parts_amount * $scope.job_order.amc_member.amc_policy.part_discount_percentage) / 100;
                     console.log('-----------part--------------');
                     part_discount_value = part_discount_value.toFixed(2);
