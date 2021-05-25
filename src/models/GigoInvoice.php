@@ -57,4 +57,9 @@ class GigoInvoice extends BaseModel
     {
         return $this->belongsTo('App\SaleOrder', 'entity_id');
     }
+
+    public function company()
+    {
+        return $this->belongsTo('App\Company', 'company_id');
+    }
 }
