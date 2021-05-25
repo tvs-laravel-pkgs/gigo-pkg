@@ -377,7 +377,7 @@ class GateInController extends Controller
                 $year = date('Y');
             }
             //GET FINANCIAL YEAR ID
-            $financial_year = FinancialYear::where('from', $year)
+            $financial_year = FinancialYear::select('id', 'company_id', 'from')->where('from', $year)
                 ->where('company_id', Auth::user()->company_id)
                 ->first();
             if (!$financial_year) {
@@ -390,7 +390,7 @@ class GateInController extends Controller
                 ]);
             }
             //GET BRANCH/OUTLET
-            $branch = Outlet::where('id', Auth::user()->employee->outlet_id)->first();
+            $branch = Outlet::select('id', 'state_id')->where('id', Auth::user()->employee->outlet_id)->first();
 
             //Check Floating GatePass
             $floating_gate_pass = FloatingGatePass::join('job_cards', 'job_cards.id', 'floating_stock_logs.job_card_id')->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')->where('floating_stock_logs.status_id', 11162)->where('job_orders.vehicle_id', $vehicle->id)->select('job_orders.id as job_order_id', 'job_orders.outlet_id')->first();
