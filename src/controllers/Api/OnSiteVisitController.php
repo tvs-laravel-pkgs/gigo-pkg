@@ -6,7 +6,6 @@ use Abs\SerialNumberPkg\SerialNumberGroup;
 use Abs\TaxPkg\Tax;
 use App\AmcCustomer;
 use App\Attachment;
-use App\Config;
 use App\Country;
 use App\Customer;
 use App\Employee;
@@ -14,7 +13,6 @@ use App\Entity;
 use App\FinancialYear;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\WpoSoapController;
-use App\JobOrder;
 use App\OnSiteOrder;
 use App\OnSiteOrderEstimate;
 use App\OnSiteOrderIssuedPart;
@@ -33,7 +31,6 @@ use App\User;
 use Auth;
 use Carbon\Carbon;
 use DB;
-use Entrust;
 use Illuminate\Http\Request;
 use Storage;
 use Validator;
@@ -45,176 +42,6 @@ class OnSiteVisitController extends Controller
     public function __construct(WpoSoapController $getSoap = null)
     {
         $this->getSoap = $getSoap;
-    }
-
-    public function getGateInList(Request $request)
-    {
-        try {
-            $validator = Validator::make($request->all(), [
-                'service_advisor_id' => [
-                    'required',
-                    'exists:users,id',
-                    'integer',
-                ],
-                'offset' => 'nullable|numeric',
-                'limit' => 'nullable|numeric',
-            ]);
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Validation Error',
-                    'errors' => $validator->errors()->all(),
-                ]);
-            }
-
-            $vehicle_inward_list_get = JobOrder::join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
-                ->leftJoin('vehicles', 'job_orders.vehicle_id', 'vehicles.id')
-                ->leftJoin('vehicle_owners', function ($join) {
-                    $join->on('vehicle_owners.vehicle_id', 'job_orders.vehicle_id')
-                        ->whereRaw('vehicle_owners.from_date = (select MAX(vehicle_owners1.from_date) from vehicle_owners as vehicle_owners1 where vehicle_owners1.vehicle_id = job_orders.vehicle_id)');
-                })
-                ->leftJoin('customers', 'customers.id', 'vehicle_owners.customer_id')
-                ->leftJoin('models', 'models.id', 'vehicles.model_id')
-                ->leftJoin('amc_members', 'amc_members.vehicle_id', 'vehicles.id')
-                ->leftJoin('amc_policies', 'amc_policies.id', 'amc_members.policy_id')
-                ->join('configs as status', 'status.id', 'job_orders.status_id')
-                ->select([
-                    'job_orders.id',
-                    DB::raw('IF(vehicles.is_registered = 1,"Registered Vehicle","Un-Registered Vehicle") as registration_type'),
-                    'vehicles.registration_number',
-                    'vehicles.chassis_number',
-                    'vehicles.engine_number',
-                    'models.model_number',
-                    'gate_logs.number',
-                    'job_orders.status_id',
-                    DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%d/%m/%Y") as date'),
-                    DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%h:%i %p") as time'),
-                    'job_orders.driver_name',
-                    'job_orders.is_customer_agreed',
-                    'job_orders.driver_mobile_number as driver_mobile_number',
-                    DB::raw('GROUP_CONCAT(amc_policies.name) as amc_policies'),
-                    'status.name as status_name',
-                    'customers.name as customer_name',
-                ])
-                ->where(function ($query) use ($request) {
-                    if (!empty($request->search_key)) {
-                        $query->where('vehicles.registration_number', 'LIKE', '%' . $request->search_key . '%')
-                            ->orWhere('customers.name', 'LIKE', '%' . $request->search_key . '%')
-                            ->orWhere('vehicles.chassis_number', 'LIKE', '%' . $request->search_key . '%')
-                            ->orWhere('vehicles.engine_number', 'LIKE', '%' . $request->search_key . '%')
-                            ->orWhere('models.model_number', 'LIKE', '%' . $request->search_key . '%')
-                            ->orWhere('amc_policies.name', 'LIKE', '%' . $request->search_key . '%')
-                            ->orWhere('gate_logs.number', 'LIKE', '%' . $request->search_key . '%')
-                            ->orWhere('status.name', 'LIKE', '%' . $request->search_key . '%')
-                        ;
-                    }
-                })
-                ->where(function ($query) use ($request) {
-                    if (!empty($request->gate_in_date)) {
-                        $query->whereDate('gate_logs.gate_in_date', date('Y-m-d', strtotime($request->gate_in_date)));
-                    }
-                })
-                ->where(function ($query) use ($request) {
-                    if (!empty($request->reg_no)) {
-                        $query->where('vehicles.registration_number', 'LIKE', '%' . $request->reg_no . '%');
-                    }
-                })
-                ->where(function ($query) use ($request) {
-                    if (!empty($request->membership)) {
-                        $query->where('amc_policies.name', 'LIKE', '%' . $request->membership . '%');
-                    }
-                })
-                ->where(function ($query) use ($request) {
-                    if (!empty($request->gate_in_no)) {
-                        $query->where('gate_logs.number', 'LIKE', '%' . $request->gate_in_no . '%');
-                    }
-                })
-                ->where(function ($query) use ($request) {
-                    if ($request->registration_type == '1' || $request->registration_type == '0') {
-                        $query->where('vehicles.is_registered', $request->registration_type);
-                    }
-                })
-                ->where(function ($query) use ($request) {
-                    if (!empty($request->customer_id)) {
-                        $query->where('vehicle_owners.customer_id', $request->customer_id);
-                    }
-                })
-                ->where(function ($query) use ($request) {
-                    if (!empty($request->model_id)) {
-                        $query->where('vehicles.model_id', $request->model_id);
-                    }
-                })
-                ->where(function ($query) use ($request) {
-                    if (!empty($request->status_id)) {
-                        $query->where('job_orders.status_id', $request->status_id);
-                    }
-                })
-                ->where('job_orders.company_id', Auth::user()->company_id)
-            ;
-            /*if (!Entrust::can('view-overall-outlets-vehicle-inward')) {
-            if (Entrust::can('view-mapped-outlet-vehicle-inward')) {
-            $vehicle_inward_list_get->whereIn('job_orders.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
-            } else {
-            $vehicle_inward_list_get->where('job_orders.outlet_id', Auth::user()->employee->outlet_id)
-            ->whereRaw("IF (`job_orders`.`status_id` = '8460', `job_orders`.`service_advisor_id` IS  NULL, `job_orders`.`service_advisor_id` = '" . $request->service_advisor_id . "')");
-            }
-            }*/
-            if (!Entrust::can('view-overall-outlets-vehicle-inward')) {
-                if (Entrust::can('view-mapped-outlet-vehicle-inward')) {
-                    $outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
-                    array_push($outlet_ids, Auth::user()->employee->outlet_id);
-                    $vehicle_inward_list_get->whereIn('job_orders.outlet_id', $outlet_ids);
-                } elseif (Entrust::can('view-own-outlet-vehicle-inward')) {
-                    $vehicle_inward_list_get->where('job_orders.outlet_id', Auth::user()->employee->outlet_id)
-                        ->whereRaw("IF (`job_orders`.`status_id` = '8460', `job_orders`.`service_advisor_id` IS  NULL, `job_orders`.`service_advisor_id` = '" . $request->service_advisor_id . "')");
-                } else {
-                    $vehicle_inward_list_get->where('job_orders.service_advisor_id', Auth::user()->id);
-                }
-            }
-
-            $vehicle_inward_list_get->groupBy('job_orders.id');
-            $vehicle_inward_list_get->orderBy('job_orders.created_at', 'DESC');
-
-            $total_records = $vehicle_inward_list_get->get()->count();
-
-            if ($request->offset) {
-                $vehicle_inward_list_get->offset($request->offset);
-            }
-            if ($request->limit) {
-                $vehicle_inward_list_get->limit($request->limit);
-            }
-
-            $gate_logs = $vehicle_inward_list_get->get();
-
-            $params = [
-                'config_type_id' => 49,
-                'add_default' => true,
-                'default_text' => "Select Status",
-            ];
-            $extras = [
-                'registration_type_list' => [
-                    ['id' => '', 'name' => 'Select Registration Type'],
-                    ['id' => '1', 'name' => 'Registered Vehicle'],
-                    ['id' => '0', 'name' => 'Un-Registered Vehicle'],
-                ],
-                'status_list' => Config::getDropDownList($params),
-            ];
-
-            return response()->json([
-                'success' => true,
-                'gate_logs' => $gate_logs,
-                'extras' => $extras,
-                'total_records' => $total_records,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Server Error',
-                'errors' => [
-                    'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
-                ],
-            ]);
-        }
     }
 
     public function getLabourPartsData($params)
@@ -957,7 +784,8 @@ class OnSiteVisitController extends Controller
                         }
                     }
 
-                    $total_amount = $tax_amount + $parts->amount;
+                    // $total_amount = $tax_amount + $parts->amount;
+                    $total_amount = $parts->amount;
                     $total_amount = number_format((float) $total_amount, 2, '.', '');
                     $parts_amount += $total_amount;
                 }
@@ -980,6 +808,8 @@ class OnSiteVisitController extends Controller
         return $result;
     }
 
+    //Send SMS to Customer for AMC Request
+    //Save AMC Customer details
     public function amcCustomerSave(Request $request)
     {
         // dd($request->all());
@@ -1822,7 +1652,7 @@ class OnSiteVisitController extends Controller
         }
     }
 
-    //PART DATA
+    //Return Part save form
     public function returnParts(Request $request)
     {
         // dd($request->all());
@@ -1921,7 +1751,7 @@ class OnSiteVisitController extends Controller
         }
     }
 
-    //PART DATA
+    //Get issue/return form data
     public function getPartsData(Request $request)
     {
         // dd($request->all());
@@ -2004,7 +1834,7 @@ class OnSiteVisitController extends Controller
         }
     }
 
-    public function sendRequestPartsIntent(Request $request)
+    public function saveRequest(Request $request)
     {
         // dd($request->all());
         try {
@@ -2022,13 +1852,18 @@ class OnSiteVisitController extends Controller
 
             DB::beginTransaction();
 
+            //Send Request to parts incharge for Add parts
             if ($request->type_id == 1) {
                 $site_visit->status_id = 4;
                 $message = 'On Site Visit Updated Successfully!';
-            } elseif ($request->type_id == 2) {
+            }
+            //parts Estimation Completed
+            elseif ($request->type_id == 2) {
                 $site_visit->status_id = 5;
                 $message = 'On Site Visit Updated Successfully!';
-            } elseif ($request->type_id == 3) {
+            }
+            //Send message to customer for approve the estimate
+            elseif ($request->type_id == 3) {
                 $site_visit->status_id = 6;
                 $otp_no = mt_rand(111111, 999999);
                 $site_visit->otp_no = $otp_no;
@@ -2079,7 +1914,14 @@ class OnSiteVisitController extends Controller
 
                 $message = 'Estimation sent to customer successfully!';
 
-            } elseif ($request->type_id == 4) {
+            }
+            //Work completed
+            elseif ($request->type_id == 4) {
+                $site_visit->status_id = 9;
+                $message = 'On Site Visit Work Completed Successfully!';
+            }
+            //Send sms to customer for payment
+            elseif ($request->type_id == 5) {
                 $site_visit->status_id = 10;
 
                 OnSiteOrderRepairOrder::where('on_site_order_id', $site_visit->id)->where('status_id', 8183)->whereNull('removal_reason_id')->update(['status_id' => 8187, 'updated_at' => Carbon::now()]);
@@ -2529,7 +2371,6 @@ class OnSiteVisitController extends Controller
     //Get Repair Orders
     public function getRepairOrderSearchList(Request $request)
     {
-        // dd($request->all());
         return RepairOrder::searchRepairOrder($request);
     }
 }

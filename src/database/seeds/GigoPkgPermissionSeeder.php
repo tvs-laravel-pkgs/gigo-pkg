@@ -2201,8 +2201,14 @@ class GigoPkgPermissionSeeder extends Seeder
             [
                 'display_order' => 4,
                 'parent' => 'gigo-site-visit',
-                'name' => 'parts-view-site-visit',
-                'display_name' => 'Parts View',
+                'name' => 'site-visit-parts-issue',
+                'display_name' => 'Parts Issue',
+            ],
+            [
+                'display_order' => 4,
+                'parent' => 'gigo-site-visit',
+                'name' => 'site-visit-approve',
+                'display_name' => 'Approve',
             ],
             [
                 'display_order' => 5,

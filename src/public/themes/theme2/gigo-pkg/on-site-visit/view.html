@@ -85,12 +85,12 @@
                                     </li>
                                     <li>
                                         <a data-target="#time_log_details" data-toggle="tab" aria-expanded="true"
-                                            class="filter" ng-if="!$ctrl.hasPermission('parts-view-site-visit')">
+                                            class="filter" ng-if="!$ctrl.hasPermission('site-visit-parts-issue')">
                                             Time Log
                                         </a>
                                     </li>
                                     <li>
-                                        <a ng-if="site_visit.status_id != 1 && site_visit.status_id != 2 && site_visit.status_id != 3 && site_visit.status_id != 4 && site_visit.status_id != 5 && !$ctrl.hasPermission('parts-view-site-visit')"
+                                        <a ng-if="site_visit.status_id != 1 && site_visit.status_id != 2 && site_visit.status_id != 3 && site_visit.status_id != 4 && site_visit.status_id != 5 && !$ctrl.hasPermission('site-visit-parts-issue')"
                                             data-target="#pdf_details" data-toggle="tab" aria-expanded="true"
                                             class="filter" ng-if="">
                                             PDF
@@ -203,14 +203,14 @@
                                                                 <h5 class="color-primary mb-10"
                                                                     ng-if="site_visit.customer.amc_customer">
                                                                     <b>
-                                                                        AMC Customer Details
+                                                                        AMC Details
                                                                     </b>
                                                                 </h5>
                                                                 <ul class="view-row mb-no"
                                                                     ng-if="site_visit.customer.amc_customer">
                                                                     <li class="view-col-3">
                                                                         <span class="view-col-label">
-                                                                            AMC Customer Code
+                                                                            AMC Number
                                                                         </span>
                                                                         <span class="view-data-list-value">
                                                                             <b>
@@ -434,7 +434,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="panel-group" id="accordion"
+                                            <div class="panel-group ng-hide" id="accordion"
                                                 ng-if="site_visit.status_id == 8 || site_visit.status_id == 9 || site_visit.status_id == 10 || site_visit.status_id == 12 || site_visit.status_id == 13 || site_visit.status_id == 14">
                                                 <div class="panel panel-default type-3">
                                                     <div class="panel-heading">
@@ -488,15 +488,15 @@
                                                 <div class="col-md-12">
                                                     <a class="btn btn-red part_request" data-toggle="modal"
                                                         data-target="#amc_update_modal"
-                                                        ng-if="amc_customer_status == 0 && !$ctrl.hasPermission('parts-view-site-visit') && site_visit.status_id != 10">Update
+                                                        ng-if="amc_customer_status == 0 && !$ctrl.hasPermission('site-visit-parts-issue') && site_visit.status_id != 10">Update
                                                         AMC Customer</a>
                                                     <input type="hidden" name="attachment_removal_ids"
                                                         id="attachment_removal_ids" value="">
                                                     <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                    <button type="submit"
+                                                    <!-- <button type="submit"
                                                         ng-if="site_visit.status_id == 8 || site_visit.status_id == 11 || site_visit.status_id == 12"
                                                         class="btn btn-red btn-min-wdth submit"
-                                                        ng-click="saveOnSiteVisit()">Save</button>
+                                                        ng-click="saveOnSiteVisit()">Save</button> -->
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
@@ -551,7 +551,7 @@
                                                             <td class="wid-100"
                                                                 ng-class="labour_details.removal_reason_id == 10022 ? 'my-disable' : ''">
                                                                 <button type="button"
-                                                                    ng-if="site_visit.status_id != 6 && site_visit.status_id != 10 && !$ctrl.hasPermission('parts-view-site-visit')"
+                                                                    ng-if="(labour_details.status_id == 8180 || labour_details.status_id == 8181 ) && site_visit.status_id != 6 && site_visit.status_id != 10 && !$ctrl.hasPermission('site-visit-parts-issue')"
                                                                     ng-click="showLabourForm(index,labour_details)"
                                                                     class="btn img-btn btn-delete">
                                                                     <img class="img-responsive radius-50"
@@ -559,7 +559,7 @@
                                                                         alt="Edit" />
                                                                 </button>
                                                                 <button
-                                                                    ng-if="site_visit.status_id != 6 && site_visit.status_id != 10 && !$ctrl.hasPermission('parts-view-site-visit')"
+                                                                    ng-if="(labour_details.status_id == 8180 || labour_details.status_id == 8181 ) && site_visit.status_id != 6 && site_visit.status_id != 10 && !$ctrl.hasPermission('site-visit-parts-issue')"
                                                                     class="btn img-btn btn-delete">
                                                                     <img class="img-responsive radius-50"
                                                                         ng-click="removeLabour(index,labour_details.id,'labour')"
@@ -567,7 +567,7 @@
                                                                         alt="Delete" />
                                                                 </button>
                                                                 <button
-                                                                    ng-if="site_visit.status_id != 6 && site_visit.status_id != 10 && labour_details.status_id != 8183 && !$ctrl.hasPermission('parts-view-site-visit')"
+                                                                    ng-if="site_visit.status_id != 6 && site_visit.status_id != 10 && labour_details.status_id != 8183 && !$ctrl.hasPermission('site-visit-parts-issue')"
                                                                     class="btn img-btn btn-delete">
                                                                     <img class="img-responsive radius-50"
                                                                         ng-click="startLabour(index,labour_details,'labour')"
@@ -600,7 +600,7 @@
                                                         <tr>
                                                             <td>
                                                                 <button
-                                                                    ng-if="!$ctrl.hasPermission('parts-view-site-visit') && site_visit.status_id != 6 && site_visit.status_id != 10"
+                                                                    ng-if="!$ctrl.hasPermission('site-visit-parts-issue') && site_visit.status_id != 6 && site_visit.status_id != 10"
                                                                     type="button"
                                                                     class="btn btn-md type2 btn-green btn-square"
                                                                     ng-click="showLabourForm(false)">
@@ -628,7 +628,7 @@
                                             </div><!-- Table Responsive -->
                                         </div><!-- Column -->
                                         <div class="col-md-12"
-                                            ng-if="!$ctrl.hasPermission('parts-view-site-visit') && site_visit.status_id != 10">
+                                            ng-if="!$ctrl.hasPermission('site-visit-parts-issue') && site_visit.status_id != 10">
                                             <div class="text-center pt-40">
                                                 <a class="btn btn-red part_request" data-toggle="modal"
                                                     data-target="#amc_confirmation_modal"
@@ -696,7 +696,7 @@
                                                             <td class="wid-100"
                                                                 ng-class="part_details.removal_reason_id == 10022 ? 'my-disable' : ''">
                                                                 <button type="button"
-                                                                    ng-if="site_visit.status_id != 6 && site_visit.status_id != 10"
+                                                                    ng-if="(part_details.status_id == 8200 || part_details.status_id == 8201 ) && site_visit.status_id != 6 && site_visit.status_id != 10"
                                                                     ng-click="showPartForm(index,part_details)"
                                                                     class="btn img-btn btn-delete">
                                                                     <img class="img-responsive radius-50"
@@ -704,7 +704,7 @@
                                                                         alt="Edit" />
                                                                 </button>
                                                                 <button
-                                                                    ng-if="site_visit.status_id != 6 && site_visit.status_id != 10"
+                                                                    ng-if="(part_details.status_id == 8200 || part_details.status_id == 8201 ) && site_visit.status_id != 6 && site_visit.status_id != 10"
                                                                     class="btn img-btn btn-delete">
                                                                     <img class="img-responsive radius-50"
                                                                         ng-click="removePart(index,part_details.id,'parts')"
@@ -712,7 +712,7 @@
                                                                         alt="Delete" />
                                                                 </button>
                                                                 <button
-                                                                    ng-if="site_visit.status_id != 6 && site_visit.status_id != 10 && part_details.status_id != 8202 && !$ctrl.hasPermission('parts-view-site-visit')"
+                                                                    ng-if="site_visit.status_id != 6 && site_visit.status_id != 10 && part_details.status_id != 8202 && !$ctrl.hasPermission('site-visit-parts-issue')"
                                                                     class="btn img-btn btn-delete">
                                                                     <img class="img-responsive radius-50"
                                                                         ng-click="issuePart(index,part_details,'parts')"
@@ -754,7 +754,7 @@
                                                                     ng-click="showPartForm(false)">
                                                                     Add Part
                                                                 </button>
-                                                                <!-- <a ng-if="part_details.length > 0 && site_visit.is_customer_approved == '1' && site_visit.status_id != 10 && $ctrl.hasPermission('parts-view-site-visit')"
+                                                                <!-- <a ng-if="part_details.length > 0 && site_visit.is_customer_approved == '1' && site_visit.status_id != 10 && $ctrl.hasPermission('site-visit-parts-issue')"
                                                                     href=".#!/on-site-visit/issue-bulk-part/form/{{site_visit.id}}"
                                                                     class="btn btn-md type2 btn-green btn-square">
                                                                     Issue Parts
@@ -787,17 +787,17 @@
                                                     </tbody>
                                                 </table>
                                             </div><!-- Table Responsive -->
-                                            <div class="mb-15" ng-if="$ctrl.hasPermission('parts-view-site-visit')">
+                                            <div class="mb-15" ng-if="$ctrl.hasPermission('site-visit-parts-issue')">
                                             </div><!-- Spacing -->
                                             <h5 class="color-primary mb-10"
-                                                ng-if="$ctrl.hasPermission('parts-view-site-visit') && part_logs.length > 0">
+                                                ng-if="$ctrl.hasPermission('site-visit-parts-issue') && part_logs.length > 0">
                                                 <b>Parts Indent Logs</b>
                                             </h5>
                                             <hr class="hr-15"
-                                                ng-if="$ctrl.hasPermission('parts-view-site-visit') && part_logs.length > 0">
+                                                ng-if="$ctrl.hasPermission('site-visit-parts-issue') && part_logs.length > 0">
                                             <!-- Separater -->
                                             <div class="table-responsive"
-                                                ng-if="$ctrl.hasPermission('parts-view-site-visit') && part_logs.length > 0">
+                                                ng-if="$ctrl.hasPermission('site-visit-parts-issue') && part_logs.length > 0">
                                                 <table class="table table-dark-grey">
                                                     <thead>
                                                         <tr>
@@ -808,7 +808,7 @@
                                                                 Part Name
                                                             </th>
                                                             <th>
-                                                                Transcation Type
+                                                                Transaction Type
                                                             </th>
                                                             <th>
                                                                 Quantity
@@ -817,7 +817,7 @@
                                                                 Issue Mode
                                                             </th>
                                                             <th>
-                                                                Mechnanic
+                                                                Mechanic
                                                             </th>
                                                             <th>
                                                                 Date
@@ -882,39 +882,33 @@
                                                         Parts</a>
                                                     <a class="btn btn-red part_request" data-toggle="modal"
                                                         data-target="#estimate_confirmation_modal"
-                                                        ng-if="site_visit.status_id == 4 && $ctrl.hasPermission('parts-view-site-visit')">Ready
+                                                        ng-if="site_visit.status_id == 4 && $ctrl.hasPermission('site-visit-parts-issue')">Ready
                                                         for
                                                         Estimate</a>
                                                     <a class="btn btn-red part_request" data-toggle="modal"
                                                         data-target="#send_customer_modal" ng-if="site_visit.status_id != 4 &&
-                                                        !$ctrl.hasPermission('parts-view-site-visit') &&
+                                                        !$ctrl.hasPermission('site-visit-parts-issue') &&
                                                         not_approved_labour_parts_count > 0 &&
                                                         site_visit.is_customer_approved == 0">Send to
                                                         Customer for Approval</a>
 
                                                     <a class="btn btn-red part_request" data-toggle="modal"
                                                         data-target="#send_otp_customer_modal" ng-if="site_visit.status_id != 4 &&
-                                                        !$ctrl.hasPermission('parts-view-site-visit') &&
+                                                        !$ctrl.hasPermission('site-visit-parts-issue') &&
                                                         not_approved_labour_parts_count > 0 &&
                                                         site_visit.is_customer_approved == 0">Approve on behalf of
                                                         Customer</a>
 
-                                                    <!-- <button
-                                                            class="btn btn-bordered btn-grey btn-min-wdth approval_behalf is_customer_agreed"
-                                                            ng-click="saveEstimate(3)">Approve on behalf of
-                                                            Customer</button>
-                                                        <button
-                                                            class="btn btn-secondary-dark btn-min-wdth send_to_customer_approval is_customer_agreed"
-                                                            ng-click="saveEstimate(4)">Send to Customer for
-                                                            Approval</button> -->
-                                                    <!-- <a class="btn btn-red part_request ng-hide" data-toggle="modal"
-                                                        data-target="#billing_confirmation_modal">Ready for
-                                                        Billing</a> -->
                                                     <a class="btn btn-red part_request"
-                                                        ng-if="site_visit.status_id == 14 && !$ctrl.hasPermission('parts-view-site-visit')"
+                                                        ng-if="site_visit.status_id == 14 && !$ctrl.hasPermission('site-visit-parts-issue')"
                                                         data-toggle="modal"
                                                         data-target="#work_complete_confirmation_modal">Work
                                                         Completed</a>
+
+                                                    <a class="btn btn-red part_request"
+                                                        ng-if="site_visit.status_id == 9 && $ctrl.hasPermission('site-visit-approve')"
+                                                        data-toggle="modal" data-target="#billing_confirmation_modal">On
+                                                        Site Visit Completed</a>
                                                 </div>
                                                 <div class="mb-20"></div><!-- Spacing -->
                                             </div>
@@ -924,7 +918,7 @@
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                     <a class="btn btn-secondary-dark btn-min-wdth btn-nxt"
-                                                        ng-if="!$ctrl.hasPermission('parts-view-site-visit')">Next</a>
+                                                        ng-if="!$ctrl.hasPermission('site-visit-parts-issue')">Next</a>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
@@ -1078,7 +1072,7 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <a ng-if="site_visit.status_id != 1 && site_visit.status_id != 2 && site_visit.status_id != 3 && site_visit.status_id != 4 && site_visit.status_id != 5 && !$ctrl.hasPermission('parts-view-site-visit')"
+                                                    <a ng-if="site_visit.status_id != 1 && site_visit.status_id != 2 && site_visit.status_id != 3 && site_visit.status_id != 4 && site_visit.status_id != 5 && !$ctrl.hasPermission('site-visit-parts-issue')"
                                                         class="btn btn-secondary-dark btn-nxt">Next</a>
                                                 </div>
                                             </div>
@@ -1513,6 +1507,22 @@
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal -->
+<div class="modal fade alert-modal failure" id="billing_confirmation_modal" role="dialog"
+    aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">CONFIRMATION?</h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure? Do you want to send invoice to customer for payment? </p>
+                <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">No</button>
+                <button class="btn btn-success send_confirm" ng-click="sendConfirm(5)">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="modal fade alert-modal failure" id="work_complete_confirmation_modal" role="dialog"
     aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
@@ -1741,16 +1751,16 @@
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i
                             class="icon ion-md-close"></i></button>
-                    <h4 class="modal-title">AMC Customer Details</h4>
+                    <h4 class="modal-title">AMC Details</h4>
                 </div>
                 <div class="modal-body">
                     <div class="container">
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>AMC Customer Code<sup class="mandatory">*</sup></label>
+                                    <label>AMC Number<sup class="mandatory">*</sup></label>
                                     <input type="text" autofocus name="amc_customer_code" class="form-control"
-                                        placeholder="Enter AMC Customer Code" autocomplete="off" />
+                                        placeholder="Enter AMC Number" autocomplete="off" />
                                 </div><!-- Feild -->
                             </div><!-- Column -->
                             <div class="col-md-4">

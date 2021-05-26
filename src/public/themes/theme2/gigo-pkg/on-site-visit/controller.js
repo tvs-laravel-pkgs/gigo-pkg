@@ -9,7 +9,7 @@ app.component('onSiteVisitList', {
         $('.master_link').addClass('active').trigger('click');
 
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('gigo-manual-vehicle-delivery')) {
+        if (!self.hasPermission('gigo-site-visit')) {
             window.location = "#!/page-permission-denied";
             return false;
         }
@@ -281,54 +281,6 @@ app.component('onSiteVisitList', {
             $(this).val('');
         });
 
-        $scope.vehicleStatusSave = function () {
-            var split_form_id = '#vehicle_status_form';
-            var v = jQuery(split_form_id).validate({
-                ignore: '',
-                rules: {
-                    'job_order_id': {
-                        required: true,
-                    },
-                    'vehicle_delivery_status_id': {
-                        required: true,
-                    },
-                },
-                submitHandler: function (form) {
-                    let formData = new FormData($(split_form_id)[0]);
-                    $('.submit').button('loading');
-                    $.ajax({
-                        url: base_url + '/api/manual-vehicle-delivery/update/vehicle-status',
-                        method: "POST",
-                        data: formData,
-                        beforeSend: function (xhr) {
-                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                        },
-                        processData: false,
-                        contentType: false,
-                    })
-                        .done(function (res) {
-                            $('.submit').button('reset');
-                            if (!res.success) {
-                                showErrorNoty(res);
-                                return;
-                            }
-                            custom_noty('success', res.message);
-                            $scope.job_order_id = '';
-                            $scope.vehicle_delivery_status_id = '';
-                            $('#change_vehicle_status').modal('hide');
-                            $('#job_order_id').val('');
-                            $('#vehicle_delivery_status_id').val('');
-                            dataTables.fnFilter();
-                        })
-                        .fail(function (xhr) {
-                            $('.submit').button('reset');
-                            custom_noty('error', 'Something went wrong at server');
-                            dataTables.fnFilter();
-                        });
-                }
-            });
-        }
-
         $rootScope.loading = false;
     }
 });
@@ -343,7 +295,7 @@ app.component('onSiteVisitView', {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         $scope.hasPerm = HelperService.hasPerm;
-        if (!self.hasPermission('view-manual-vehicle-delivery')) {
+        if (!self.hasPermission('view-site-visit')) {
             window.location = "#!/page-permission-denied";
             return false;
         }
@@ -514,6 +466,7 @@ app.component('onSiteVisitView', {
                     $("#billing_confirmation_modal").modal('hide');
                     $("#estimate_confirmation_modal").modal('hide');
                     $("#work_complete_confirmation_modal").modal('hide');
+                    $("#billing_confirmation_modal").modal('hide');
                     $('#send_otp_customer_modal').modal('hide');
                     $('#otp').modal('hide');
                     $('#otp_no').val('');
@@ -881,7 +834,7 @@ app.component('onSiteVisitView', {
         $scope.sendConfirm = function (type_id) {
             $('.send_confirm').button('loading');
             $.ajax({
-                url: base_url + '/api/on-site-visit/request/parts',
+                url: base_url + '/api/on-site-visit/request/save',
                 method: "POST",
                 data: {
                     id: $scope.site_visit.id,
@@ -1366,7 +1319,7 @@ app.component('onSiteVisitForm', {
         });
         var self = this;
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('add-manual-vehicle-delivery') && !self.hasPermission('edit-manual-vehicle-delivery')) {
+        if (!self.hasPermission('add-site-visit') && !self.hasPermission('edit-site-visit')) {
             window.location = "#!/page-permission-denied";
             return false;
         }

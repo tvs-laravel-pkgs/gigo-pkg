@@ -485,7 +485,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
         Route::post('on-site-visit/get-bulk-form-data', 'OnSiteVisitController@getBulkIssuePartFormData');
         Route::post('on-site-visit/bulk-form-data/save', 'OnSiteVisitController@saveIssuedPart');
         Route::post('on-site-visit/get-parts-data', 'OnSiteVisitController@getPartsData');
-        Route::post('on-site-visit/request/parts', 'OnSiteVisitController@sendRequestPartsIntent');
+        Route::post('on-site-visit/request/save', 'OnSiteVisitController@saveRequest');
         Route::post('on-site-visit/return/parts', 'OnSiteVisitController@returnParts');
         Route::post('on-site-visit/get/time-log', 'OnSiteVisitController@getTimeLog');
         Route::post('on-site-visit/save/time-log', 'OnSiteVisitController@saveTimeLog');
