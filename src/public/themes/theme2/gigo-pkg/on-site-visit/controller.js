@@ -466,7 +466,7 @@ app.component('onSiteVisitView', {
                     $("#billing_confirmation_modal").modal('hide');
                     $("#estimate_confirmation_modal").modal('hide');
                     $("#work_complete_confirmation_modal").modal('hide');
-                    $("#billing_confirmation_modal").modal('hide');
+                    $("#parts_confirmation_modal").modal('hide');
                     $('#send_otp_customer_modal').modal('hide');
                     $('#otp').modal('hide');
                     $('#otp_no').val('');

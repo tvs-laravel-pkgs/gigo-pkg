@@ -130,8 +130,8 @@ class OnSiteVisitController extends Controller
             }
         }
 
-        if (Entrust::can('parts-view-site-visit')) {
-            $vehicle_inwards->whereIn('on_site_orders.status_id', [4]);
+        if (Entrust::can('site-visit-parts-issue')) {
+            $vehicle_inwards->whereIn('on_site_orders.status_id', [4, 13, 14, 15, 16]);
         }
 
         $vehicle_inwards->orderBy('on_site_orders.planned_visit_date', 'DESC');

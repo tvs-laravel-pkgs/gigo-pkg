@@ -713,9 +713,6 @@ class OnSiteVisitController extends Controller
             'onSiteVisitUser',
             'customer',
             'customer.address',
-            'customer.address.country',
-            'customer.address.state',
-            'customer.address.city',
             'status',
             'onSiteOrderRepairOrders' => function ($q) {
                 $q->whereNull('removal_reason_id');
@@ -988,7 +985,7 @@ class OnSiteVisitController extends Controller
             $otp->outlet_id = Auth::user()->employee->outlet_id;
             $otp->save();
 
-            $message = 'OTP is ' . $otp_no . ' for Job Order Estimate. Please show this SMS to Our Service Executive to verify your Job Order Estimate';
+            $message = 'OTP is ' . $otp_no . ' for Job Order Estimate. Please show this SMS to Our Service Advisor to verify your Job Order Estimate - TVS';
 
             $msg = sendSMSNotification($customer_mobile, $message);
 
@@ -1074,7 +1071,8 @@ class OnSiteVisitController extends Controller
 
             //UPDATE STATUS
             if ($on_site_order->status_id == 6) {
-                $on_site_order->status_id = 8; //Estimation approved onbehalf of customer
+                // $on_site_order->status_id = 8; //Estimation approved onbehalf of customer
+                $on_site_order->status_id = 13; //Ready for Start Work
             }
             $on_site_order->is_customer_approved = 1;
             // if ($request->revised_estimate_amount) {
@@ -1530,7 +1528,6 @@ class OnSiteVisitController extends Controller
                         'required',
                         'exists:on_site_order_repair_orders,id',
                     ],
-
                 ]);
 
                 if ($validator->fails()) {
@@ -1547,6 +1544,23 @@ class OnSiteVisitController extends Controller
                 $on_site_order_repair_order->updated_at = Carbon::now();
                 $on_site_order_repair_order->save();
 
+                $site_visit = OnSiteOrder::where('id', $on_site_order_repair_order->on_site_order_id)->first();
+                $site_visit->status_id = 14;
+                $site_visit->updated_by_id = Auth::user()->id;
+                $site_visit->updated_at = Carbon::now();
+                $site_visit->save();
+
+                //Check Previous entry closed or not
+                $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id', 2)->whereNull('end_date_time')->first();
+                if (!$travel_log) {
+                    $travel_log = new OnSiteOrderTimeLog;
+                    $travel_log->on_site_order_id = $site_visit->id;
+                    $travel_log->work_log_type_id = 2;
+                    $travel_log->start_date_time = Carbon::now();
+                    $travel_log->created_by_id = Auth::user()->id;
+                    $travel_log->created_at = Carbon::now();
+                    $travel_log->save();
+                }
                 $message = 'Work Started Successfully!';
             } else {
                 $validator = Validator::make($request->all(), [
@@ -1799,6 +1813,7 @@ class OnSiteVisitController extends Controller
                 $parts_return_logs = OnSiteOrderReturnedPart::join('on_site_order_parts', 'on_site_order_parts.id', 'on_site_order_returned_parts.on_site_order_part_id')
                     ->join('parts', 'on_site_order_parts.part_id', 'parts.id')
                     ->join('users', 'on_site_order_returned_parts.returned_to_id', 'users.id')
+                    ->where('on_site_order_parts.on_site_order_id', $request->id)
                     ->select(
                         DB::raw('"Part Returned" as transaction_type'),
                         'parts.name',
@@ -1883,7 +1898,7 @@ class OnSiteVisitController extends Controller
                 $url = url('/') . '/on-site-visit/estimate/customer/view/' . $site_visit->id . '/' . $otp_no;
                 $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
-                $message = 'Dear Customer, Kindly click on this link to approve for TVS job order ' . $short_url;
+                $message = 'Dear Customer, Kindly click on this link to approve for TVS job order ' . $short_url . $number . ' : ' . $site_visit->number . ' - TVS';
 
                 if (!$site_visit->customer) {
                     return response()->json([
@@ -1915,14 +1930,9 @@ class OnSiteVisitController extends Controller
                 $message = 'Estimation sent to customer successfully!';
 
             }
-            //Work completed
+            //Work completed // Waiting for parts confirmation
             elseif ($request->type_id == 4) {
-                $site_visit->status_id = 9;
-                $message = 'On Site Visit Work Completed Successfully!';
-            }
-            //Send sms to customer for payment
-            elseif ($request->type_id == 5) {
-                $site_visit->status_id = 10;
+                $site_visit->status_id = 16;
 
                 OnSiteOrderRepairOrder::where('on_site_order_id', $site_visit->id)->where('status_id', 8183)->whereNull('removal_reason_id')->update(['status_id' => 8187, 'updated_at' => Carbon::now()]);
 
@@ -1933,6 +1943,12 @@ class OnSiteVisitController extends Controller
                     $travel_log->updated_at = Carbon::now();
                     $travel_log->save();
                 }
+
+                $message = 'On Site Visit Work Completed Successfully!';
+            }
+            //Send sms to customer for payment
+            elseif ($request->type_id == 5) {
+                $site_visit->status_id = 10;
 
                 //Generate Labour PDF
                 $generate_on_site_estimate_pdf = OnSiteOrder::generateLabourPDF($site_visit->id);
@@ -1949,7 +1965,7 @@ class OnSiteVisitController extends Controller
                 $url = url('/') . '/on-site-visit/view/bill-details/' . $site_visit->id . '/' . $otp_no;
                 $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
-                $message = 'Dear Customer, Kindly click on this link to pay for the TVS job order ' . $short_url . ' Job Card Number : ' . $site_visit->job_card_number . ' - TVS';
+                $message = 'Dear Customer, Kindly click on this link to pay for the TVS job order ' . $short_url . ' Job Card Number : ' . $site_visit->number . ' - TVS';
 
                 if (!$site_visit->customer) {
                     return response()->json([
@@ -1972,6 +1988,11 @@ class OnSiteVisitController extends Controller
                 $msg = sendSMSNotification($customer_mobile, $message);
 
                 $message = 'On Site Visit Completed Successfully!';
+            }
+            //returned parts confirmed
+            elseif ($request->type_id == 6) {
+                $site_visit->status_id = 9;
+                $message = 'Parts Confirmed Successfully!';
             } else {
                 // $site_visit->status_id = 8;
                 $message = 'On Site Visit Updated Successfully!';
