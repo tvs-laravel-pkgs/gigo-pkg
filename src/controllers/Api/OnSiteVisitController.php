@@ -1853,7 +1853,10 @@ class OnSiteVisitController extends Controller
     {
         // dd($request->all());
         try {
-            $site_visit = OnSiteOrder::with(['customer'])->find($request->id);
+            $site_visit = OnSiteOrder::with([
+                'customer',
+                'customer.amcCustomer',
+            ])->find($request->id);
 
             if (!$site_visit) {
                 return response()->json([
@@ -1898,7 +1901,7 @@ class OnSiteVisitController extends Controller
                 $url = url('/') . '/on-site-visit/estimate/customer/view/' . $site_visit->id . '/' . $otp_no;
                 $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
-                $message = 'Dear Customer, Kindly click on this link to approve for TVS job order ' . $short_url . $number . ' : ' . $site_visit->number . ' - TVS';
+                $message = 'Dear Customer, Kindly click on this link to approve for TVS job order ' . $short_url . ' Job Order Number : ' . $site_visit->number . ' - TVS';
 
                 if (!$site_visit->customer) {
                     return response()->json([
@@ -1943,11 +1946,41 @@ class OnSiteVisitController extends Controller
                     $travel_log->updated_at = Carbon::now();
                     $travel_log->save();
                 }
-
                 $message = 'On Site Visit Work Completed Successfully!';
             }
             //Send sms to customer for payment
             elseif ($request->type_id == 5) {
+
+                //Save AMC Service count update
+                if ($site_visit && $site_visit->customer && $site_visit->customer->amcCustomer) {
+                    if (date('Y-m-d', strtotime($site_visit->customer->amcCustomer->expiry_date)) >= date('Y-m-d')) {
+                        $amc_customer_status = 1;
+                    }
+
+                    if (date('Y-m-d', strtotime($site_visit->customer->amcCustomer->start_date)) <= date('Y-m-d')) {
+                        $amc_customer_status = 1;
+                    } else {
+                        $amc_customer_status = 0;
+                    }
+
+                    if ($amc_customer_status == 1) {
+                        $amc_customer = AmcCustomer::find($site_visit->customer->amcCustomer->id);
+
+                        if ($amc_customer) {
+                            $remaining_services = $amc_customer->remaining_services ? $amc_customer->remaining_services : 0;
+                            if ($remaining_services > 0) {
+                                $remaining_services = $remaining_services - 1;
+                            } else {
+                                $remaining_services = $amc_customer->total_services - 1;
+                            }
+                            $amc_customer->remaining_services = $remaining_services;
+                            $amc_customer->updated_by_id = Auth::user()->id;
+                            $amc_customer->updated_at = Carbon::now();
+                            $amc_customer->save();
+                        }
+                    }
+                }
+
                 $site_visit->status_id = 10;
 
                 //Generate Labour PDF
@@ -1989,6 +2022,7 @@ class OnSiteVisitController extends Controller
 
                 $message = 'On Site Visit Completed Successfully!';
             }
+
             //returned parts confirmed
             elseif ($request->type_id == 6) {
                 $site_visit->status_id = 9;
