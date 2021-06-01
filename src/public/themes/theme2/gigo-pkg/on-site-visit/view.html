@@ -886,7 +886,7 @@
                                                 <div class="text-center pt-40">
                                                     <a class="btn btn-info part_request" data-toggle="modal"
                                                         data-target="#confirmation_modal"
-                                                        ng-if="site_visit.status_id == 2">Send to Module Store to Add
+                                                        ng-if="site_visit.status_id == 2">Send Module Store to Add
                                                         Parts</a>
                                                     <a class="btn btn-red part_request" data-toggle="modal"
                                                         data-target="#estimate_confirmation_modal"
@@ -897,8 +897,8 @@
                                                         data-target="#send_customer_modal" ng-if="site_visit.status_id != 4 &&
                                                         !$ctrl.hasPermission('site-visit-parts-issue') &&
                                                         not_approved_labour_parts_count > 0 &&
-                                                        site_visit.is_customer_approved == 0">Send to
-                                                        Customer for Approval</a>
+                                                        site_visit.is_customer_approved == 0">Send Customer for
+                                                        Approval</a>
                                                     <a class="btn btn-red part_request" data-toggle="modal"
                                                         data-target="#send_otp_customer_modal" ng-if="site_visit.status_id != 4 &&
                                                         !$ctrl.hasPermission('site-visit-parts-issue') &&

@@ -874,12 +874,19 @@ app.component('onSiteVisitView', {
                         return;
                     }
                     custom_noty('success', res.message);
-                    $('#send_otp_customer_modal').modal('hide');
-                    $('body').removeClass('modal-open');
-                    $('.modal-backdrop').remove();
-                    $('#otp').modal('show');
-                    $('.send_otp_confirm').button('reset');
-                    $('.resend_otp').button('reset');
+
+                    if (res.notify_type == 1) {
+                        $('.send_otp_confirm').button('reset');
+                        $scope.fetchData();
+                    } else {
+                        $('#send_otp_customer_modal').modal('hide');
+                        $('body').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
+                        $('#otp').modal('show');
+                        $('.send_otp_confirm').button('reset');
+                        $('.resend_otp').button('reset');
+                    }
+
                 })
                 .fail(function (xhr) {
                     $('.send_otp_confirm').button('reset');

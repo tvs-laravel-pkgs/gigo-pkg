@@ -213,24 +213,8 @@ class OnSiteVisitController extends Controller
 
             $site_visit = $result['site_visit'];
             $amc_customer_status = 0;
-            if ($site_visit && $site_visit->customer && $site_visit->customer->amcCustomer) {
-                if (date('Y-m-d', strtotime($site_visit->customer->amcCustomer->expiry_date)) >= date('Y-m-d')) {
-                    $amc_customer_status = 1;
-                }
-
-                if (date('Y-m-d', strtotime($site_visit->customer->amcCustomer->start_date)) <= date('Y-m-d')) {
-                    $amc_customer_status = 1;
-                } else {
-                    $amc_customer_status = 0;
-                }
-
-                $remaining_services = $site_visit->customer->amcCustomer->remaining_services ? $site_visit->customer->amcCustomer->remaining_services : 0;
-
-                if ($remaining_services > 0) {
-                    $amc_customer_status = 1;
-                } else {
-                    $amc_customer_status = 0;
-                }
+            if ($site_visit && $site_visit->amc_customer_id) {
+                $amc_customer_status = 1;
             }
 
             //Check Estimate PDF Available or not
@@ -865,6 +849,8 @@ class OnSiteVisitController extends Controller
                     ]);
                 }
 
+                DB::beginTransaction();
+
                 $amc_customer = AmcCustomer::firstOrNew(['customer_id' => $request->customer_id, 'amc_customer_type_id' => 2, 'tvs_one_customer_code' => $request->amc_customer_code]);
 
                 if ($amc_customer->exists) {
@@ -875,10 +861,50 @@ class OnSiteVisitController extends Controller
                     $amc_customer->remaining_services = 12;
                     $amc_customer->created_by_id = Auth::user()->id;
                     $amc_customer->created_at = Carbon::now();
+                    $amc_customer->outlet_id = Auth::user()->working_outlet_id;
+                    $amc_customer->updated_at = null;
                 }
                 $amc_customer->start_date = date('Y-m-d', strtotime($request->amc_starting_date));
                 $amc_customer->expiry_date = date('Y-m-d', strtotime($request->amc_ending_date));
                 $amc_customer->save();
+
+                //Update AMC Remaining Count
+                $amc_customer_status = 0;
+                if (date('Y-m-d', strtotime($amc_customer->expiry_date)) >= date('Y-m-d')) {
+                    $amc_customer_status = 1;
+                }
+
+                if (date('Y-m-d', strtotime($amc_customer->start_date)) <= date('Y-m-d')) {
+                    if ($amc_customer_status == 1) {
+                        $amc_customer_status = 1;
+                    } else {
+                        $amc_customer_status = 0;
+                    }
+                } else {
+                    $amc_customer_status = 0;
+                }
+
+                $amc_available = 0;
+                if (is_null($amc_customer->remaining_services)) {
+                    $remaining_services = $amc_customer->total_services - 1;
+                    $amc_available = 1;
+                } elseif ($amc_customer->remaining_services > 0) {
+                    $remaining_services = $amc_customer->remaining_services - 1;
+                    $amc_available = 1;
+                }
+
+                if ($amc_available && $amc_customer_status) {
+                    $amc_customer->remaining_services = $remaining_services;
+                    $amc_customer->save();
+
+                    //Update On Site Visit AMC Customer
+                    $on_site_order->amc_customer_id = $amc_customer->id;
+                    $on_site_order->updated_by_id = Auth::user()->id;
+                    $on_site_order->updated_at = Carbon::now();
+                    $on_site_order->save();
+                }
+
+                DB::commit();
 
                 $message = 'AMC Customer details saved successfully!';
             }
@@ -934,65 +960,92 @@ class OnSiteVisitController extends Controller
 
             DB::beginTransaction();
 
-            $otp_no = mt_rand(111111, 999999);
-            $on_site_order_otp_update = OnSiteOrder::where('id', $request->id)
-                ->update([
-                    'otp_no' => $otp_no,
-                    'status_id' => 6, //Waiting for Customer Approval
-                    'is_customer_approved' => 0,
-                    'updated_by_id' => Auth::user()->id,
-                    'updated_at' => Carbon::now(),
-                ]);
+            if ($on_site_order->notification_sent_status == 1) {
 
-            $site_visit_estimates = OnSiteOrderEstimate::where('on_site_order_id', $on_site_order->id)->count();
+                $on_site_order->status_id = 13;
+                $on_site_order->updated_by_id = Auth::user()->id;
+                $on_site_order->updated_at = Carbon::now();
+                $on_site_order->save();
 
-            //Type 1 -> Estimate
-            //Type 2 -> Revised Estimate
-            $type = 1;
-            if ($site_visit_estimates > 1) {
-                $type = 2;
+                //UPDATE REPAIR ORDER STATUS
+                OnSiteOrderRepairOrder::where('on_site_order_id', $on_site_order->id)->where('is_customer_approved', 0)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8181, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
+
+                //UPDATE PARTS STATUS
+                OnSiteOrderPart::where('on_site_order_id', $on_site_order->id)->where('is_customer_approved', 0)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8201, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
+
+                $result = $this->getApprovedLabourPartsAmount($on_site_order->id);
+                if ($result['status'] == 'true') {
+                    $site_visit->approved_amount = $result['total_billing_amount'];
+                }
+
+                $message = 'Ready for Start Work';
+                $notify_type = 1;
+            } else {
+                $otp_no = mt_rand(111111, 999999);
+                $on_site_order_otp_update = OnSiteOrder::where('id', $request->id)
+                    ->update([
+                        'otp_no' => $otp_no,
+                        'status_id' => 6, //Waiting for Customer Approval
+                        'is_customer_approved' => 0,
+                        'updated_by_id' => Auth::user()->id,
+                        'updated_at' => Carbon::now(),
+                    ]);
+
+                $site_visit_estimates = OnSiteOrderEstimate::where('on_site_order_id', $on_site_order->id)->count();
+
+                //Type 1 -> Estimate
+                //Type 2 -> Revised Estimate
+                $type = 1;
+                if ($site_visit_estimates > 1) {
+                    $type = 2;
+                }
+
+                //Generate PDF
+                $generate_on_site_estimate_pdf = OnSiteOrder::generateEstimatePDF($on_site_order->id, $type);
+
+                if (!$on_site_order_otp_update) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => ['On Site Order OTP Update Failed!'],
+                    ]);
+                }
+
+                $current_time = date("Y-m-d H:m:s");
+
+                $expired_time = Entity::where('entity_type_id', 32)->select('name')->first();
+                if ($expired_time) {
+                    $expired_time = date("Y-m-d H:i:s", strtotime('+' . $expired_time->name . ' hours', strtotime($current_time)));
+                } else {
+                    $expired_time = date("Y-m-d H:i:s", strtotime('+1 hours', strtotime($current_time)));
+                }
+
+                //Otp Save
+                $otp = new Otp;
+                $otp->entity_type_id = 10113;
+                $otp->entity_id = $on_site_order->id;
+                $otp->otp_no = $otp_no;
+                $otp->created_by_id = Auth::user()->id;
+                $otp->created_at = $current_time;
+                $otp->expired_at = $expired_time;
+                $otp->outlet_id = Auth::user()->employee->outlet_id;
+                $otp->save();
+
+                $message = 'OTP is ' . $otp_no . ' for Job Order Estimate. Please show this SMS to Our Service Advisor to verify your Job Order Estimate - TVS';
+
+                $msg = sendSMSNotification($customer_mobile, $message);
+
+                $message = 'OTP Sent successfully!!';
+                $notify_type = 2;
             }
-
-            //Generate PDF
-            $generate_on_site_estimate_pdf = OnSiteOrder::generateEstimatePDF($on_site_order->id, $type);
 
             DB::commit();
-            if (!$on_site_order_otp_update) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Validation Error',
-                    'errors' => ['On Site Order OTP Update Failed!'],
-                ]);
-            }
-
-            $current_time = date("Y-m-d H:m:s");
-
-            $expired_time = Entity::where('entity_type_id', 32)->select('name')->first();
-            if ($expired_time) {
-                $expired_time = date("Y-m-d H:i:s", strtotime('+' . $expired_time->name . ' hours', strtotime($current_time)));
-            } else {
-                $expired_time = date("Y-m-d H:i:s", strtotime('+1 hours', strtotime($current_time)));
-            }
-
-            //Otp Save
-            $otp = new Otp;
-            $otp->entity_type_id = 10113;
-            $otp->entity_id = $on_site_order->id;
-            $otp->otp_no = $otp_no;
-            $otp->created_by_id = Auth::user()->id;
-            $otp->created_at = $current_time;
-            $otp->expired_at = $expired_time;
-            $otp->outlet_id = Auth::user()->employee->outlet_id;
-            $otp->save();
-
-            $message = 'OTP is ' . $otp_no . ' for Job Order Estimate. Please show this SMS to Our Service Advisor to verify your Job Order Estimate - TVS';
-
-            $msg = sendSMSNotification($customer_mobile, $message);
 
             return response()->json([
                 'success' => true,
                 'mobile_number' => $customer_mobile,
-                'message' => 'OTP Sent successfully!!',
+                'message' => $message,
+                'notify_type' => $notify_type,
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -1142,6 +1195,9 @@ class OnSiteVisitController extends Controller
                 DB::beginTransaction();
 
                 if ($request->on_site_order_id) {
+                    //If status 1 means AMC Remaining count already updated
+                    $status = 1;
+
                     $site_visit = OnSiteOrder::find($request->on_site_order_id);
                     if (!$site_visit) {
                         return response()->json([
@@ -1154,7 +1210,11 @@ class OnSiteVisitController extends Controller
                     }
                     $site_visit->updated_by_id = Auth::id();
                     $site_visit->updated_at = Carbon::now();
+                    $site_visit->on_site_visit_user_id = Auth::user()->id;
                 } else {
+                    //If status 2 means AMC Remaining count need to update
+                    $status = 2;
+
                     $site_visit = new OnSiteOrder;
                     $site_visit->company_id = Auth::user()->company_id;
                     $site_visit->outlet_id = Auth::user()->working_outlet_id;
@@ -1197,6 +1257,7 @@ class OnSiteVisitController extends Controller
                     $site_visit->number = $generateNumber['number'];
                     $site_visit->created_by_id = Auth::id();
                     $site_visit->created_at = Carbon::now();
+                    $site_visit->updated_at = null;
                     $site_visit->status_id = 1;
                 }
 
@@ -1207,8 +1268,50 @@ class OnSiteVisitController extends Controller
                 $site_visit->customer_id = $customer->id;
                 $site_visit->planned_visit_date = date('Y-m-d', strtotime($request->planned_visit_date));
                 $site_visit->customer_remarks = $request->customer_remarks;
+                $site_visit->notification_sent_status = $request->notification_sent_status;
 
                 $site_visit->save();
+
+                if ($status == 2) {
+                    $amc_customer = AmcCustomer::where('customer_id', $customer->id)->where('amc_customer_type_id', 2)->orderBy('id', 'desc')->first();
+
+                    if ($amc_customer) {
+                        $amc_customer_status = 0;
+                        if (date('Y-m-d', strtotime($amc_customer->expiry_date)) >= date('Y-m-d')) {
+                            $amc_customer_status = 1;
+                        }
+
+                        if (date('Y-m-d', strtotime($amc_customer->start_date)) <= date('Y-m-d')) {
+                            if ($amc_customer_status == 1) {
+                                $amc_customer_status = 1;
+                            } else {
+                                $amc_customer_status = 0;
+                            }
+                        } else {
+                            $amc_customer_status = 0;
+                        }
+
+                        $amc_available = 0;
+                        if (is_null($amc_customer->remaining_services)) {
+                            $remaining_services = $amc_customer->total_services - 1;
+                            $amc_available = 1;
+                        } elseif ($amc_customer->remaining_services > 0) {
+                            $remaining_services = $amc_customer->remaining_services - 1;
+                            $amc_available = 1;
+                        }
+
+                        if ($amc_available && $amc_customer_status) {
+                            $amc_customer->remaining_services = $remaining_services;
+                            $amc_customer->save();
+
+                            //Update On Site Visit AMC Customer OD
+                            $site_visit->amc_customer_id = $amc_customer->id;
+                            $site_visit->updated_by_id = Auth::user()->id;
+                            $site_visit->updated_at = Carbon::now();
+                            $site_visit->save();
+                        }
+                    }
+                }
 
                 $message = "On Site Visit Saved Successfully!";
 
@@ -1249,9 +1352,9 @@ class OnSiteVisitController extends Controller
                     ]);
                 }
 
-                if (!$site_visit->actual_visit_date) {
-                    $site_visit->actual_visit_date = date('Y-m-d');
-                }
+                // if (!$site_visit->actual_visit_date) {
+                //     $site_visit->actual_visit_date = date('Y-m-d');
+                // }
 
                 $site_visit->se_remarks = $request->se_remarks;
                 $site_visit->parts_requirements = $request->parts_requirements;
@@ -1341,9 +1444,6 @@ class OnSiteVisitController extends Controller
 
                 DB::commit();
             }
-
-            //Send Approved Mail for user
-            // $this->vehiceRequestMail($job_order->id, $type = 2);
 
             return response()->json([
                 'success' => true,
@@ -1882,9 +1982,6 @@ class OnSiteVisitController extends Controller
             }
             //Send message to customer for approve the estimate
             elseif ($request->type_id == 3) {
-                $site_visit->status_id = 6;
-                $otp_no = mt_rand(111111, 999999);
-                $site_visit->otp_no = $otp_no;
 
                 $site_visit_estimates = OnSiteOrderEstimate::where('on_site_order_id', $site_visit->id)->count();
 
@@ -1898,39 +1995,64 @@ class OnSiteVisitController extends Controller
                 //Generate PDF
                 $generate_on_site_estimate_pdf = OnSiteOrder::generateEstimatePDF($site_visit->id, $type);
 
-                $url = url('/') . '/on-site-visit/estimate/customer/view/' . $site_visit->id . '/' . $otp_no;
-                $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
-
-                $message = 'Dear Customer, Kindly click on this link to approve for TVS job order ' . $short_url . ' Job Order Number : ' . $site_visit->number . ' - TVS';
-
-                if (!$site_visit->customer) {
-                    return response()->json([
-                        'success' => false,
-                        'error' => 'Validation Error',
-                        'errors' => ['Customer Not Found!'],
-                    ]);
-                }
-
-                $customer_mobile = $site_visit->customer->mobile_no;
-
-                if (!$customer_mobile) {
-                    return response()->json([
-                        'success' => false,
-                        'error' => 'Validation Error',
-                        'errors' => ['Customer Mobile Number Not Found!'],
-                    ]);
-                }
-
-                $msg = sendSMSNotification($customer_mobile, $message);
-
                 //Update OnSiteOrder Estimate
                 $on_site_order_estimate = OnSiteOrderEstimate::where('on_site_order_id', $site_visit->id)->orderBy('id', 'DESC')->first();
-                $on_site_order_estimate->status_id = 10071;
+
+                if ($site_visit->notification_sent_status == 1) {
+                    $on_site_order_estimate->status_id = 10072;
+
+                    $site_visit->status_id = 13;
+
+                    //UPDATE REPAIR ORDER STATUS
+                    OnSiteOrderRepairOrder::where('on_site_order_id', $site_visit->id)->where('is_customer_approved', 0)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8181, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
+
+                    //UPDATE PARTS STATUS
+                    OnSiteOrderPart::where('on_site_order_id', $site_visit->id)->where('is_customer_approved', 0)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8201, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
+
+                    $result = $this->getApprovedLabourPartsAmount($site_visit->id);
+                    if ($result['status'] == 'true') {
+                        $site_visit->approved_amount = $result['total_billing_amount'];
+                    }
+
+                    $message = 'Ready for Start Work';
+
+                } else {
+                    $site_visit->status_id = 6;
+                    $otp_no = mt_rand(111111, 999999);
+                    $site_visit->otp_no = $otp_no;
+
+                    $url = url('/') . '/on-site-visit/estimate/customer/view/' . $site_visit->id . '/' . $otp_no;
+                    $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
+
+                    $message = 'Dear Customer, Kindly click on this link to approve for TVS job order ' . $short_url . ' Job Order Number : ' . $site_visit->number . ' - TVS';
+
+                    if (!$site_visit->customer) {
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'Validation Error',
+                            'errors' => ['Customer Not Found!'],
+                        ]);
+                    }
+
+                    $customer_mobile = $site_visit->customer->mobile_no;
+
+                    if (!$customer_mobile) {
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'Validation Error',
+                            'errors' => ['Customer Mobile Number Not Found!'],
+                        ]);
+                    }
+
+                    $msg = sendSMSNotification($customer_mobile, $message);
+
+                    $on_site_order_estimate->status_id = 10071;
+                    $message = 'Estimation sent to customer successfully!';
+                }
+
                 $on_site_order_estimate->updated_by_id = Auth::user()->id;
                 $on_site_order_estimate->updated_at = Carbon::now();
                 $on_site_order_estimate->save();
-
-                $message = 'Estimation sent to customer successfully!';
 
             }
             //Work completed // Waiting for parts confirmation
@@ -1950,36 +2072,6 @@ class OnSiteVisitController extends Controller
             }
             //Send sms to customer for payment
             elseif ($request->type_id == 5) {
-
-                //Save AMC Service count update
-                if ($site_visit && $site_visit->customer && $site_visit->customer->amcCustomer) {
-                    if (date('Y-m-d', strtotime($site_visit->customer->amcCustomer->expiry_date)) >= date('Y-m-d')) {
-                        $amc_customer_status = 1;
-                    }
-
-                    if (date('Y-m-d', strtotime($site_visit->customer->amcCustomer->start_date)) <= date('Y-m-d')) {
-                        $amc_customer_status = 1;
-                    } else {
-                        $amc_customer_status = 0;
-                    }
-
-                    if ($amc_customer_status == 1) {
-                        $amc_customer = AmcCustomer::find($site_visit->customer->amcCustomer->id);
-
-                        if ($amc_customer) {
-                            $remaining_services = $amc_customer->remaining_services ? $amc_customer->remaining_services : 0;
-                            if ($remaining_services > 0) {
-                                $remaining_services = $remaining_services - 1;
-                            } else {
-                                $remaining_services = $amc_customer->total_services - 1;
-                            }
-                            $amc_customer->remaining_services = $remaining_services;
-                            $amc_customer->updated_by_id = Auth::user()->id;
-                            $amc_customer->updated_at = Carbon::now();
-                            $amc_customer->save();
-                        }
-                    }
-                }
 
                 $site_visit->status_id = 10;
 
@@ -2215,9 +2307,10 @@ class OnSiteVisitController extends Controller
             if ($request->work_log_type == 'travel_log') {
                 if ($request->type_id == 1) {
 
-                    //Check alreay save or not not means site visit status update
+                    //Check already save or not not means site visit status update
                     $travel_log = OnSiteOrderTimeLog::where('on_site_order_id', $site_visit->id)->where('work_log_type_id', 1)->first();
                     if (!$travel_log) {
+                        $site_visit->actual_visit_date = date('Y-m-d');
                         $site_visit->status_id = 11;
                         $site_visit->updated_by_id = Auth::user()->id;
                         $site_visit->updated_at = Carbon::now();

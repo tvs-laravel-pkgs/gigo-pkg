@@ -363,6 +363,28 @@
                                                                         maxlength="10" name="pan_number" />
                                                                 </div><!-- Feild -->
                                                             </div><!-- Column -->
+                                                            <div class="col-md-3">
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        Notification Sent
+                                                                        <sup class="mandatory">*</sup>
+                                                                    </label>
+                                                                    <div class="common-radio-button type-5">
+                                                                        <input type="radio" id="check_yes"
+                                                                            name="notification_sent_status"
+                                                                            ng-checked="site_visit.notification_sent_status != 0"
+                                                                            value="1" ng-value="1" />
+                                                                        <label for="check_yes"
+                                                                            class="check-yes">Yes</label>
+                                                                        <input type="radio" id="check_no"
+                                                                            name="notification_sent_status"
+                                                                            ng-checked="site_visit.notification_sent_status == 0"
+                                                                            value="0" ng-value="0" />
+                                                                        <label for="check_no"
+                                                                            class="check-no">No</label>
+                                                                    </div>
+                                                                </div><!-- Feild -->
+                                                            </div><!-- Column -->
                                                         </div>
                                                     </div>
                                                 </div>
