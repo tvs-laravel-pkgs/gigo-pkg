@@ -170,19 +170,19 @@
                                                                             Address
                                                                         </span>
                                                                         <span
-                                                                            class="view-col-value">{{site_visit.customer.address.address_line1}},
-                                                                            {{site_visit.customer.address.address_line2}},
-                                                                            {{site_visit.customer.address.city.name}},
-                                                                            {{site_visit.customer.address.state.name}},
-                                                                            {{site_visit.customer.address.pincode}},
-                                                                            {{site_visit.customer.address.country.name}}.</span>
+                                                                            class="view-col-value">{{site_visit.address.address_line1}},
+                                                                            {{site_visit.address.address_line2}},
+                                                                            {{site_visit.address.city.name}},
+                                                                            {{site_visit.address.state.name}},
+                                                                            {{site_visit.address.pincode}},
+                                                                            {{site_visit.address.country.name}}.</span>
                                                                     </li>
                                                                     <li class="view-col-3">
                                                                         <span class="view-col-label">
                                                                             GST No
                                                                         </span>
                                                                         <span class="view-col-value">
-                                                                            {{site_visit.customer.gst_number}}
+                                                                            {{site_visit.address.gst_number}}
                                                                         </span>
                                                                     </li>
                                                                     <li class="view-col-3">
@@ -713,14 +713,14 @@
                                                                         src="./public/theme/img/content/delete-active.svg"
                                                                         alt="Delete" />
                                                                 </button>
-                                                                <button
+                                                                <!-- <button
                                                                     ng-if="site_visit.status_id != 6 && site_visit.status_id != 9 && site_visit.status_id != 10 && site_visit.status_id != 16 && part_details.status_id != 8202 && !$ctrl.hasPermission('site-visit-parts-issue')"
                                                                     class="btn img-btn btn-delete">
                                                                     <img class="img-responsive radius-50"
                                                                         ng-click="issuePart(index,part_details,'parts')"
                                                                         src="./public/theme/img/table/add-hover.svg"
                                                                         alt="Issue Part" />
-                                                                </button>
+                                                                </button> -->
                                                             </td>
                                                             <td>
                                                                 {{part_details.code}}
@@ -1012,7 +1012,7 @@
                                                 ng-if="site_visit.status_id == 13 || site_visit.status_id == 14 || site_visit.status_id == 10 || site_visit.status_id == 15 || site_visit.status_id == 16 || site_visit.status_id == 9">
                                                 <h6 class="mb-20"><b>Work Log</b>
                                                     <button type="button"
-                                                        ng-if="work_start_button_status == 'true' && site_visit.status_id == 13 || site_visit.status_id == 14 || site_visit.status_id == 15 && (site_visit.on_site_visit_user_id == $ctrl.user.id)"
+                                                        ng-if="work_start_button_status == 'true' && (site_visit.status_id == 13 || site_visit.status_id == 14 || site_visit.status_id == 15) && (site_visit.on_site_visit_user_id == $ctrl.user.id)"
                                                         ng-click="saveWorkLog(1,'work_log')"
                                                         class="btn btn-start float-right start_work">
                                                         <img class="img-responsive"
@@ -1529,7 +1529,7 @@
                 <p>Are you sure? Do you want to send invoice to customer for payment? </p>
                 <input type="hidden" name="job_order_id" value="{{job_order.id}}">
                 <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">No</button>
-                <button class="btn btn-success send_confirm" ng-click="sendConfirm(5)">Yes</button>
+                <button class="btn btn-success send_confirm" ng-click="sendInvoiceConfirm()">Yes</button>
             </div>
         </div>
     </div>

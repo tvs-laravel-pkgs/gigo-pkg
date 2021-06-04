@@ -221,7 +221,7 @@
                                                                     </label>
                                                                     <input type="text" class="form-control required"
                                                                         placeholder="Enter Address" autocomplete="off"
-                                                                        ng-model="customer.address.address_line1"
+                                                                        ng-model="address.address_line1"
                                                                         name="address_line1" />
                                                                 </div><!-- Feild -->
                                                             </div><!-- Column -->
@@ -232,9 +232,11 @@
                                                                     </label>
                                                                     <input type="text" class="form-control"
                                                                         placeholder="Enter Address" autocomplete="off"
-                                                                        maxlength="64"
-                                                                        ng-model="customer.address.address_line2"
+                                                                        maxlength="64" ng-model="address.address_line2"
                                                                         name="address_line2" />
+                                                                    <input type="hidden" class="form-control"
+                                                                        id="address_id" name="address_id"
+                                                                        value="{{address.id}}">
                                                                 </div><!-- Feild -->
                                                             </div><!-- Column -->
                                                             <div class="col-md-3">
@@ -301,7 +303,7 @@
                                                                     </label>
                                                                     <md-autocomplete
                                                                         md-items="option in $ctrl.searchCity($ctrl.citySearchText)"
-                                                                        md-selected-item="customer.address.city"
+                                                                        md-selected-item="address.city"
                                                                         md-search-text="$ctrl.citySearchText"
                                                                         md-item-text="option.name" md-min-length="3"
                                                                         placeholder="City Name" md-autofocus
@@ -317,8 +319,7 @@
                                                                         </md-not-found>
                                                                     </md-autocomplete>
                                                                     <input type="hidden" class="required" id="city_id"
-                                                                        name="city_id"
-                                                                        value="{{customer.address.city.id}}">
+                                                                        name="city_id" value="{{address.city.id}}">
                                                                 </div><!-- Feild -->
                                                             </div><!-- Column -->
                                                             <div class="col-md-3">
@@ -331,8 +332,7 @@
                                                                         minlength="6" maxlength="6"
                                                                         oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
                                                                         maxlength="6" placeholder="Enter PIN Code"
-                                                                        autocomplete="off"
-                                                                        ng-model="customer.address.pincode"
+                                                                        autocomplete="off" ng-model="address.pincode"
                                                                         name="pincode" />
                                                                 </div><!-- Feild -->
                                                             </div><!-- Column -->
@@ -345,7 +345,7 @@
                                                                         minlength="15" maxlength="15"
                                                                         onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')"
                                                                         placeholder="Enter GST No" autocomplete="off"
-                                                                        ng-model="customer.gst_number"
+                                                                        ng-model="address.gst_number"
                                                                         name="gst_number" />
                                                                 </div><!-- Feild -->
                                                             </div><!-- Column -->

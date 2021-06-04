@@ -485,6 +485,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
         Route::post('on-site-visit/get-bulk-form-data', 'OnSiteVisitController@getBulkIssuePartFormData');
         Route::post('on-site-visit/bulk-form-data/save', 'OnSiteVisitController@saveIssuedPart');
         Route::post('on-site-visit/get-parts-data', 'OnSiteVisitController@getPartsData');
+        Route::post('on-site-visit/status/update', 'OnSiteVisitController@updateStatus');
         Route::post('on-site-visit/request/save', 'OnSiteVisitController@saveRequest');
         Route::post('on-site-visit/return/parts', 'OnSiteVisitController@returnParts');
         Route::post('on-site-visit/get/time-log', 'OnSiteVisitController@getTimeLog');
@@ -495,6 +496,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
         Route::post('on-site-visit/labour-part/process', 'OnSiteVisitController@processLabourPart');
         Route::post('/on-site-visit/amc-customer/save', 'OnSiteVisitController@amcCustomerSave');
         Route::post('/on-site-visit/get/part/stock-details', 'OnSiteVisitController@getPartStockDetails');
+        Route::post('/on-site-visit/get/customer/address', 'OnSiteVisitController@getCustomerAddress');
 
         //Battery
         Route::post('/battery/get-form-data', 'BatteryController@getFormData');

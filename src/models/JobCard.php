@@ -349,11 +349,11 @@ class JobCard extends BaseModel
                                     $tax_percentage_wise_amount[$value->pivot->percentage]['taxable_amount'] = $labour->amount;
                                     $tax_percentage_wise_amount[$value->pivot->percentage]['tax'][$value->name] = $percentage_value;
                                 }
+                                $count++;
                             }
                             $tax_values[$tax_key] = $percentage_value;
                             $tax_amount += $percentage_value;
 
-                            $count++;
                         }
                     } else {
                         for ($i = 0; $i < count($taxes); $i++) {
@@ -465,11 +465,11 @@ class JobCard extends BaseModel
                                     $tax_percentage_wise_amount[$value->pivot->percentage]['tax'][$value->name] = $percentage_value;
                                 }
 
+                                $count++;
                             }
                             $tax_values[$tax_key] = $percentage_value;
                             $tax_amount += $percentage_value;
 
-                            $count++;
                         }
                     } else {
                         for ($i = 0; $i < count($taxes); $i++) {
@@ -665,11 +665,11 @@ class JobCard extends BaseModel
                                     $tax_percentage_wise_amount[$value->pivot->percentage]['taxable_amount'] = $labour->amount;
                                     $tax_percentage_wise_amount[$value->pivot->percentage]['tax'][$value->name] = $percentage_value;
                                 }
+                                $count++;
                             }
                             $tax_values[$tax_key] = $percentage_value;
                             $tax_amount += $percentage_value;
 
-                            $count++;
                         }
                     } else {
                         for ($i = 0; $i < count($taxes); $i++) {
@@ -878,11 +878,11 @@ class JobCard extends BaseModel
                                     $tax_percentage_wise_amount[$value->pivot->percentage]['tax'][$value->name] = $percentage_value;
                                 }
 
+                                $count++;
                             }
                             $tax_values[$tax_key] = $percentage_value;
                             $tax_amount += $percentage_value;
 
-                            $count++;
                         }
                     } else {
                         for ($i = 0; $i < count($taxes); $i++) {
