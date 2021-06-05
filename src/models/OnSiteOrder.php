@@ -237,18 +237,19 @@ class OnSiteOrder extends BaseModel
                         }
                     }
 
-                    $total_labour_qty += $labour->qty;
-                    $total_labour_mrp += $labour->amount;
-                    $total_labour_price += $labour->repairOrder->amount;
-                    $total_labour_tax += $tax_amount;
-                    $total_labour_taxable_amount += $labour->amount;
-
                     $total_amount = $tax_amount + $labour->amount;
                     $total_amount = number_format((float) $total_amount, 2, '.', '');
                     $labour_amount += $total_amount;
                     $labour_details[$key]['tax_values'] = $tax_values;
                     $labour_details[$key]['tax_amount'] = number_format($tax_amount, 2);
                     $labour_details[$key]['total_amount'] = $total_amount;
+
+                    $total_labour_qty += $labour->qty;
+                    $total_labour_mrp += $total_amount;
+                    $total_labour_price += $labour->amount;
+                    $total_labour_tax += $tax_amount;
+                    $total_labour_taxable_amount += $labour->amount;
+
                 } else {
                     for ($i = 0; $i < count($taxes); $i++) {
                         $tax_values[$i] = 0.00;
@@ -282,14 +283,13 @@ class OnSiteOrder extends BaseModel
                 $returned_qty = OnSiteOrderReturnedPart::where('on_site_order_part_id', $parts->id)->sum('returned_qty');
 
                 $qty = $issued_qty - $returned_qty;
-                $qty = number_format($qty, 2);
 
                 if ($qty > 0) {
                     $part_details[$key]['sno'] = $j;
                     $part_details[$key]['code'] = $parts->part->code;
                     $part_details[$key]['name'] = $parts->part->name;
                     $part_details[$key]['hsn_code'] = $parts->part->taxCode ? $parts->part->taxCode->code : '-';
-                    $part_details[$key]['qty'] = $qty;
+                    $part_details[$key]['qty'] = number_format($qty, 2);
                     $part_details[$key]['mrp'] = $parts->rate;
                     $part_details[$key]['price'] = $parts->rate;
                     $part_details[$key]['is_free_service'] = $parts->is_free_service;
@@ -381,14 +381,14 @@ class OnSiteOrder extends BaseModel
                             }
                         }
 
-                        // $total_amount = $tax_amount + $parts->amount;
+                        $total_amount = $tax_amount + $total_price;
                         // $total_amount = $parts->amount;
-                        $total_amount = $parts->rate * $qty;
+                        // $total_amount = $parts->rate * $qty;
                         $total_amount = number_format((float) $total_amount, 2, '.', '');
                         $parts_amount += $total_amount;
                         $total_parts_qty += $qty;
                         $total_parts_mrp += $parts->rate;
-                        $total_parts_price += $total_amount;
+                        $total_parts_price += $price;
                         $total_parts_tax += $tax_amount;
                         $total_parts_taxable_amount += $total_price;
                     } else {
@@ -574,18 +574,20 @@ class OnSiteOrder extends BaseModel
                         }
                     }
 
-                    $total_labour_qty += $labour->qty;
-                    $total_labour_mrp += $labour->amount;
-                    $total_labour_price += $labour->repairOrder->amount;
-                    $total_labour_tax += $tax_amount;
-                    $total_labour_taxable_amount += $labour->amount;
-
                     $total_amount = $tax_amount + $labour->amount;
                     $total_amount = number_format((float) $total_amount, 2, '.', '');
                     $labour_amount += $total_amount;
+                    $labour_details[$key]['mrp'] = $total_amount;
                     $labour_details[$key]['tax_values'] = $tax_values;
                     $labour_details[$key]['tax_amount'] = number_format($tax_amount, 2);
                     $labour_details[$key]['total_amount'] = $total_amount;
+
+                    $total_labour_qty += $labour->qty;
+                    $total_labour_mrp += $total_amount;
+                    $total_labour_price += $labour->amount;
+                    $total_labour_tax += $tax_amount;
+                    $total_labour_taxable_amount += $labour->amount;
+
                 } else {
                     for ($i = 0; $i < count($taxes); $i++) {
                         $tax_values[$i] = 0.00;
@@ -613,13 +615,11 @@ class OnSiteOrder extends BaseModel
                 $total_amount = 0;
 
                 $qty = $parts->qty;
-                $qty = number_format($qty, 2);
-
                 $part_details[$key]['sno'] = $j;
                 $part_details[$key]['code'] = $parts->part->code;
                 $part_details[$key]['name'] = $parts->part->name;
                 $part_details[$key]['hsn_code'] = $parts->part->taxCode ? $parts->part->taxCode->code : '-';
-                $part_details[$key]['qty'] = $qty;
+                $part_details[$key]['qty'] = number_format($qty, 2);
                 $part_details[$key]['mrp'] = $parts->rate;
                 $part_details[$key]['price'] = $parts->rate;
                 $part_details[$key]['is_free_service'] = $parts->is_free_service;
@@ -696,12 +696,13 @@ class OnSiteOrder extends BaseModel
                     }
 
                     // $total_amount = $tax_amount + $parts->amount;
-                    $total_amount = $parts->amount;
+                    // $total_amount = $parts->amount;
+                    $total_amount = $tax_amount + $total_price;
                     $total_amount = number_format((float) $total_amount, 2, '.', '');
                     $parts_amount += $total_amount;
                     $total_parts_qty += $qty;
                     $total_parts_mrp += $parts->rate;
-                    $total_parts_price += $parts->amount;
+                    $total_parts_price += $price;
                     $total_parts_tax += $tax_amount;
                     $total_parts_taxable_amount += $total_price;
                 } else {
@@ -892,15 +893,17 @@ class OnSiteOrder extends BaseModel
                         }
                     }
 
-                    $total_labour_qty += $labour->qty;
-                    $total_labour_mrp += $labour->amount;
-                    $total_labour_price += $labour->repairOrder->amount;
-                    $total_labour_tax += $tax_amount;
-                    $total_labour_taxable_amount += $labour->amount;
-
                     $total_amount = $tax_amount + $labour->amount;
                     $total_amount = number_format((float) $total_amount, 2, '.', '');
                     $labour_amount += $total_amount;
+                    $labour_details[$key]['mrp'] = $total_amount;
+
+                    $total_labour_qty += $labour->qty;
+                    $total_labour_mrp += $total_amount;
+                    $total_labour_price += $labour->amount;
+                    $total_labour_tax += $tax_amount;
+                    $total_labour_taxable_amount += $labour->amount;
+
                 } else {
                     for ($i = 0; $i < count($taxes); $i++) {
                         $tax_values[$i] = 0.00;
@@ -1035,12 +1038,11 @@ class OnSiteOrder extends BaseModel
                 $qty = $issued_qty - $returned_qty;
 
                 if ($qty > 0) {
-
                     $part_details[$key]['sno'] = $i;
                     $part_details[$key]['code'] = $parts->part->code;
                     $part_details[$key]['name'] = $parts->part->name;
                     $part_details[$key]['hsn_code'] = $parts->part->taxCode ? $parts->part->taxCode->code : '-';
-                    $part_details[$key]['qty'] = $qty;
+                    $part_details[$key]['qty'] = number_format($qty, 2);
                     $part_details[$key]['mrp'] = $parts->rate;
                     $part_details[$key]['price'] = $parts->rate;
                     $part_details[$key]['is_free_service'] = $parts->is_free_service;
@@ -1117,13 +1119,13 @@ class OnSiteOrder extends BaseModel
                             }
                         }
 
-                        // $total_amount = $tax_amount + $parts->amount;
-                        $total_amount = $parts->amount;
+                        // $total_amount = $parts->amount;
+                        $total_amount = $tax_amount + $total_price;
                         $total_amount = number_format((float) $total_amount, 2, '.', '');
                         $parts_amount += $total_amount;
                         $total_parts_qty += $qty;
                         $total_parts_mrp += $parts->rate;
-                        $total_parts_price += $parts->amount;
+                        $total_parts_price += $price;
                         $total_parts_tax += $tax_amount;
                         $total_parts_taxable_amount += $total_price;
 

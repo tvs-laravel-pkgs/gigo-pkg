@@ -1348,6 +1348,26 @@ class OnSiteVisitController extends Controller
                     'name' => [
                         'required',
                     ],
+                    'mobile_no' => [
+                        'required',
+                        'max:10',
+                    ],
+                    'address_line1' => [
+                        'required',
+                        'max:100',
+                    ],
+                    'country_id' => [
+                        'required',
+                    ],
+                    'state_id' => [
+                        'required',
+                    ],
+                    'city_id' => [
+                        'required',
+                    ],
+                    'pincode' => [
+                        'required',
+                    ],
                 ], $error_messages);
 
                 if ($validator->fails()) {
