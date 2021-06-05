@@ -548,6 +548,11 @@ class JobOrder extends BaseModel
         return $this->belongsTo('App\TvsOneApprovalStatus', 'tvs_one_approval_status_id');
     }
 
+    public function customerAddress()
+    {
+        return $this->belongsTo('App\Address', 'address_id');
+    }
+
     // Query Scopes --------------------------------------------------------------
 
     public function scopeFilterSearch($query, $term)

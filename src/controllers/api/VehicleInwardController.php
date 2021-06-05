@@ -8,6 +8,7 @@ use Abs\GigoPkg\ServiceOrderType;
 use Abs\GigoPkg\ShortUrl;
 use Abs\SerialNumberPkg\SerialNumberGroup;
 use Abs\TaxPkg\Tax;
+use App\Address;
 use App\Attachment;
 use App\Campaign;
 use App\Config;
@@ -2329,8 +2330,69 @@ class VehicleInwardController extends Controller
                 ]);
             }
 
+            //Check GSTIN Valid Or Not
+            if ($request->gst_number) {
+                $gstin = Customer::getGstDetail($request->gst_number);
+
+                $gstin_encode = json_encode($gstin);
+                $gst_data = json_decode($gstin_encode, true);
+                $gst_response = $gst_data['original'];
+
+                if (isset($gst_response) && $gst_response['success'] == true) {
+                    $customer_name = strtolower($request->name);
+                    $trade_name = strtolower($gst_response['trade_name']);
+                    $legal_name = strtolower($gst_response['legal_name']);
+
+                    if ($trade_name || $legal_name) {
+                        if ($customer_name === $legal_name) {
+                            $e_invoice_registration = 1;
+                        } elseif ($customer_name === $trade_name) {
+                            $e_invoice_registration = 1;
+                        } else {
+                            $message = 'GSTIN Registered Legal Name: ' . strtoupper($legal_name) . ', and GSTIN Registered Trade Name: ' . strtoupper($trade_name) . '. Check GSTIN Number and Customer details';
+                            return response()->json([
+                                'success' => false,
+                                'error' => 'Validation Error',
+                                'errors' => [
+                                    $message,
+                                ],
+                            ]);
+
+                        }
+                    } else {
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'Validation Error',
+                            'errors' => [
+                                'Check GSTIN Number!',
+                            ],
+                        ]);
+
+                    }
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => [
+                            $gst_response['error'],
+                        ],
+                    ]);
+                }
+            } else {
+                $e_invoice_registration = 0;
+            }
+
             $customer = Customer::saveCustomer($request->all());
-            $customer->saveAddress($request->all());
+            // $customer->saveAddress($request->all());
+            $address = Address::firstOrNew([
+                'company_id' => Auth::user()->company_id,
+                'address_of_id' => 24, //CUSTOMER
+                'entity_id' => $customer->id,
+                'address_type_id' => 40, //PRIMARY ADDRESS
+            ]);
+
+            $address->fill($request->all());
+            $address->save();
 
             if (!$request->id) {
                 //NEW OWNER
@@ -2358,6 +2420,8 @@ class VehicleInwardController extends Controller
             $job_order->inwardProcessChecks()->where('tab_id', 8701)->update(['is_form_filled' => 1]);
             //CUSTOMER MAPPING
             $job_order->customer_id = $customer->id;
+            $job_order->address_id = $address->id;
+            $job_order->e_invoice_registration = $e_invoice_registration;
             $job_order->save();
 
             //Mapped customer to vehicle
@@ -3730,8 +3794,8 @@ class VehicleInwardController extends Controller
                         }
                     }
 
-                    // $total_amount = $tax_amount + $labour->amount;
-                    $total_amount = $labour->amount;
+                    $total_amount = $tax_amount + $labour->amount;
+                    // $total_amount = $labour->amount;
                     $total_amount = number_format((float) $total_amount, 2, '.', '');
                     $labour_amount += $total_amount;
                 }
@@ -5935,6 +5999,7 @@ class VehicleInwardController extends Controller
 
             $job_order = JobOrder::with([
                 'vehicle',
+                'customerAddress',
                 'vehicle.model',
                 'jobOrderRepairOrders' => function ($q) use ($customer_paid_type_id) {
                     $q->whereNull('removal_reason_id');
@@ -5975,9 +6040,9 @@ class VehicleInwardController extends Controller
                 ]);
             }
 
-            if ($job_order->vehicle->currentOwner->customer->primaryAddress) {
+            if ($job_order->customerAddress) {
                 //Check which tax applicable for customer
-                if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
+                if ($job_order->outlet->state_id == $job_order->customerAddress->state_id) {
                     $tax_type = 1160; //Within State
                 } else {
                     $tax_type = 1161; //Inter State
@@ -6045,8 +6110,8 @@ class VehicleInwardController extends Controller
                                     $tax_amount += $percentage_value;
                                 }
                                 $total_payable_labour_tax += $tax_amount;
-                                // $total_amount = $tax_amount + $labour->amount;
-                                $total_amount = $labour->amount;
+                                $total_amount = $tax_amount + $labour->amount;
+                                // $total_amount = $labour->amount;
                                 $total_payable_labour_amount += $total_amount;
                             } else {
                                 $total_payable_labour_amount += $labour->amount;
@@ -6227,7 +6292,7 @@ class VehicleInwardController extends Controller
             }
 
             //CHECK ALL INWARD MANDATORY FORM ARE FILLED
-            $job_order = jobOrder::with(['vehicle'])->find($request->job_order_id);
+            $job_order = jobOrder::with(['vehicle', 'customer', 'customerAddress'])->find($request->job_order_id);
 
             $inward_process_check = $job_order->inwardProcessChecks()
                 ->where('tab_id', '!=', 8706)
@@ -6299,6 +6364,56 @@ class VehicleInwardController extends Controller
                         'Please Update Customer',
                     ],
                 ]);
+            }
+
+            //Check GST Eligile or Not
+            if ($job_order->customerAddress) {
+                if ($job_order->customerAddress->gst_number) {
+                    $gstin = Customer::getGstDetail($job_order->customerAddress->gst_number);
+
+                    $gstin_encode = json_encode($gstin);
+                    $gst_data = json_decode($gstin_encode, true);
+                    $gst_response = $gst_data['original'];
+
+                    if (isset($gst_response) && $gst_response['success'] == true) {
+                        $customer_name = strtolower($job_order->customer->name);
+                        $trade_name = strtolower($gst_response['trade_name']);
+                        $legal_name = strtolower($gst_response['legal_name']);
+
+                        if ($trade_name || $legal_name) {
+                            if ($customer_name === $legal_name) {
+                            } elseif ($customer_name === $trade_name) {
+                            } else {
+                                $message = 'GSTIN Registered Legal Name: ' . strtoupper($legal_name) . ', and GSTIN Registered Trade Name: ' . strtoupper($trade_name) . '. Check GSTIN Number and Customer details';
+                                return response()->json([
+                                    'success' => false,
+                                    'error' => 'Validation Error',
+                                    'errors' => [
+                                        $message,
+                                    ],
+                                ]);
+                            }
+                        } else {
+                            return response()->json([
+                                'success' => false,
+                                'error' => 'Validation Error',
+                                'errors' => [
+                                    'Check GSTIN Number and Customer Details!',
+                                ],
+                            ]);
+
+                        }
+                    } else {
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'Validation Error',
+                            'errors' => [
+                                $gst_response['error'],
+                            ],
+                        ]);
+                    }
+
+                }
             }
 
             $job_order->estimated_amount = $request->estimated_amount;

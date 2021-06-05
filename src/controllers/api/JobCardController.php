@@ -11,6 +11,7 @@ use Abs\GigoPkg\GatePassItem;
 use Abs\GigoPkg\JobCard;
 use Abs\GigoPkg\JobCardReturnableItem;
 use Abs\GigoPkg\JobOrder;
+use Abs\GigoPkg\JobOrderEInvoice;
 use Abs\GigoPkg\JobOrderRepairOrder;
 use Abs\GigoPkg\MechanicTimeLog;
 use Abs\GigoPkg\RepairOrder;
@@ -20,6 +21,7 @@ use Abs\GigoPkg\ShortUrl;
 use Abs\PartPkg\Part;
 use Abs\SerialNumberPkg\SerialNumberGroup;
 use Abs\TaxPkg\Tax;
+use App\Address;
 use App\Attachment;
 use App\Config;
 use App\Customer;
@@ -38,6 +40,7 @@ use App\Jobs\Notification;
 use App\OSLWorkOrder;
 use App\Otp;
 use App\Outlet;
+use App\QRPaymentApp;
 use App\QuoteType;
 use App\ServiceOrderType;
 use App\ServiceType;
@@ -52,7 +55,10 @@ use Auth;
 use Carbon\Carbon;
 use DB;
 use Entrust;
+use File;
 use Illuminate\Http\Request;
+use phpseclib\Crypt\RSA as Crypt_RSA;
+use QRCode;
 use Storage;
 use Validator;
 
@@ -2126,14 +2132,848 @@ class JobCardController extends Controller
                     'success' => false,
                     'error' => 'Validation Error',
                     'errors' => [
-                        'Fiancial Year Not Found',
+                        'Financial Year Not Found',
                     ],
                 ]);
             }
+
+            $customer_mobile = $job_card->jobOrder->contact_number;
+            $vehicle_no = $job_card->jobOrder->vehicle->registration_number;
+
+            if (!$customer_mobile) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Customer Mobile Number Not Found',
+                ]);
+            }
+
+            $customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
+
+            $job_order = JobOrder::with([
+                'customer',
+                'customerAddress',
+                'jobOrderRepairOrders' => function ($q) use ($customer_paid_type_id) {
+                    $q->whereIn('split_order_type_id', $customer_paid_type_id)->where('is_free_service', '!=', 1)->whereNull('removal_reason_id');
+                },
+                // 'jobOrderRepairOrders.repairOrder',
+                // 'jobOrderRepairOrders.repairOrder.taxCode',
+                // 'jobOrderRepairOrders.repairOrder.taxCode.taxes',
+                'jobOrderParts' => function ($q) use ($customer_paid_type_id) {
+                    $q->whereIn('split_order_type_id', $customer_paid_type_id)->where('is_free_service', '!=', 1)->whereNull('removal_reason_id');
+                },
+                // 'jobOrderParts.part',
+                // 'jobOrderParts.part.taxCode',
+                // 'jobOrderParts.part.taxCode.taxes',
+            ])
+                ->find($job_card->job_order_id);
+
+            if (!$job_order) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => ['Job Order Not Found!'],
+                ]);
+            }
+
+            $address = Address::find($job_order->address_id);
+            if (!$address) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => [
+                        'Address Not Found!',
+                    ],
+                ]);
+            }
+
             //GET BRANCH/OUTLET
-            $branch = Outlet::where('id', Auth::user()->employee->outlet_id)->first();
+            $outlet = $branch = Outlet::where('id', $job_card->outlet_id)->first();
+            if (!$outlet) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => [
+                        'Outlet Not Found!',
+                    ],
+                ]);
+            }
 
             DB::beginTransaction();
+
+            $total_inv_amount = 0;
+
+            if ($address) {
+                //Check which tax applicable for customer
+                if ($job_order->outlet->state_id == $address->state_id) {
+                    $tax_type = 1160; //Within State
+                } else {
+                    $tax_type = 1161; //Inter State
+                }
+            } else {
+                $tax_type = 1160; //Within State
+            }
+
+            //Count Tax Type
+            $taxes = Tax::whereIn('id', [1, 2, 3])->get();
+
+            $cgst_total = 0;
+            $sgst_total = 0;
+            $igst_total = 0;
+            $cgst_amt = 0;
+            $sgst_amt = 0;
+            $igst_amt = 0;
+            $tcs_total = 0;
+            $cess_on_gst_total = 0;
+
+            $items = [];
+            if ($job_order->jobOrderRepairOrders) {
+                $i = 1;
+                foreach ($job_order->jobOrderRepairOrders as $key => $labour) {
+                    $total_amount = 0;
+                    $tax_amount = 0;
+                    $cgst_percentage = 0;
+                    $sgst_percentage = 0;
+                    $igst_percentage = 0;
+
+                    // dd($labour);
+                    // dd($labour->repairOrder->taxCode,$labour->repairOrder->taxCode->taxes);
+                    if ($labour->repairOrder->taxCode) {
+                        foreach ($labour->repairOrder->taxCode->taxes as $tax_key => $value) {
+                            $percentage_value = 0;
+                            if ($value->type_id == $tax_type) {
+                                $percentage_value = ($labour->amount * $value->pivot->percentage) / 100;
+                                $percentage_value = number_format((float) $percentage_value, 2, '.', '');
+
+                                //FOR CGST
+                                if ($value->name == 'CGST') {
+                                    $cgst_amt = $percentage_value;
+                                    $cgst_total += $cgst_amt;
+                                    $cgst_percentage = $value->pivot->percentage;
+                                }
+                                //FOR SGST
+                                if ($value->name == 'SGST') {
+                                    $sgst_amt = $percentage_value;
+                                    $sgst_total += $sgst_amt;
+                                    $sgst_percentage = $value->pivot->percentage;
+                                }
+                                //FOR CGST
+                                if ($value->name == 'IGST') {
+                                    $igst_amt = $percentage_value;
+                                    $igst_total += $igst_amt;
+                                    $igst_percentage = $value->pivot->percentage;
+                                }
+
+                            }
+
+                            $tax_amount += $percentage_value;
+                        }
+                    } else {
+
+                    }
+
+                    $total_amount = $tax_amount + $labour->amount;
+
+                    $total_inv_amount += $total_amount;
+
+                    $item['SlNo'] = $i; //Statically assumed
+                    $item['PrdDesc'] = $labour->repairOrder->name;
+                    $item['IsServc'] = "Y"; //ALWAYS Y
+                    $item['HsnCd'] = $labour->repairOrder->taxCode ? $labour->repairOrder->taxCode->code : null;
+
+                    //BchDtls
+                    $item['BchDtls']["Nm"] = null;
+                    $item['BchDtls']["Expdt"] = null;
+                    $item['BchDtls']["wrDt"] = null;
+
+                    $item['Barcde'] = null;
+                    $item['Qty'] = 1;
+                    $item['FreeQty'] = 0;
+                    $item['Unit'] = "NOS";
+                    $item['UnitPrice'] = number_format($labour->amount, 2);
+                    $item['TotAmt'] = number_format($labour->amount, 2);
+                    $item['Discount'] = 0; //Always value will be "0"
+                    $item['PreTaxVal'] = number_format($labour->amount, 2);
+                    $item['AssAmt'] = number_format($labour->amount, 2);
+                    $item['IgstRt'] = number_format($igst_percentage, 2);
+                    $item['IgstAmt'] = number_format($igst_amt, 2);
+                    $item['CgstRt'] = number_format($cgst_percentage, 2);
+                    $item['CgstAmt'] = number_format($cgst_amt, 2);
+                    $item['SgstRt'] = number_format($sgst_percentage, 2);
+                    $item['SgstAmt'] = number_format($sgst_amt, 2);
+                    $item['CesRt'] = 0;
+                    $item['CesAmt'] = 0;
+                    $item['CesNonAdvlAmt'] = 0;
+                    $item['StateCesRt'] = 0; //NEED TO CLARIFY IF KFC
+                    $item['StateCesAmt'] = 0; //NEED TO CLARIFY IF KFC
+                    $item['StateCesNonAdvlAmt'] = 0; //NEED TO CLARIFY IF KFC
+                    $item['OthChrg'] = 0;
+                    $item['TotItemVal'] = number_format(($total_amount), 2);
+
+                    $item['OrdLineRef'] = "0";
+                    $item['OrgCntry'] = "IN"; //Always value will be "IND"
+                    $item['PrdSlNo'] = null;
+
+                    //AttribDtls
+                    $item['AttribDtls'][] = [
+                        "Nm" => null,
+                        "Val" => null,
+                    ];
+
+                    //EGST
+                    //NO DATA GIVEN IN WORD DOC START
+                    $item['EGST']['nilrated_amt'] = null;
+                    $item['EGST']['exempted_amt'] = null;
+                    $item['EGST']['non_gst_amt'] = null;
+                    $item['EGST']['reason'] = null;
+                    $item['EGST']['debit_gl_id'] = null;
+                    $item['EGST']['debit_gl_name'] = null;
+                    $item['EGST']['credit_gl_id'] = null;
+                    $item['EGST']['credit_gl_name'] = null;
+                    $item['EGST']['sublocation'] = null;
+                    //NO DATA GIVEN IN WORD DOC END
+
+                    $i++;
+                    $items[] = $item;
+                }
+            }
+
+            $part_amount = 0;
+            if ($job_order->jobOrderParts) {
+                foreach ($job_order->jobOrderParts as $key => $parts) {
+
+                    $qty = $parts->qty;
+                    //Issued Qty
+                    $issued_qty = JobOrderIssuedPart::where('job_order_part_id', $parts->id)->sum('issued_qty');
+                    //Returned Qty
+                    $returned_qty = JobOrderReturnedPart::where('job_order_part_id', $parts->id)->sum('returned_qty');
+
+                    $qty = $issued_qty - $returned_qty;
+                    $qty = number_format($qty, 2);
+
+                    if ($qty > 0) {
+
+                        $total_amount = 0;
+                        $tax_amount = 0;
+                        $cgst_percentage = 0;
+                        $sgst_percentage = 0;
+                        $igst_percentage = 0;
+
+                        $price = $parts->rate;
+                        $tax_percent = 0;
+
+                        if ($parts->part->taxCode) {
+                            foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
+                                if ($value->type_id == $tax_type) {
+                                    $tax_percent += $value->pivot->percentage;
+                                }
+                            }
+
+                            $tax_percent = (100 + $tax_percent) / 100;
+
+                            $price = $parts->rate / $tax_percent;
+                            $price = number_format((float) $price, 2, '.', '');
+                            $part_details[$key]['price'] = $price;
+                        }
+
+                        $total_price = $price * $qty;
+
+                        $tax_amount = 0;
+                        $tax_values = array();
+
+                        if ($parts->part->taxCode) {
+                            if (count($parts->part->taxCode->taxes) > 0) {
+                                foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
+                                    $percentage_value = 0;
+                                    if ($value->type_id == $tax_type) {
+                                        $percentage_value = ($total_price * $value->pivot->percentage) / 100;
+                                        $percentage_value = number_format((float) $percentage_value, 2, '.', '');
+
+                                        //FOR CGST
+                                        if ($value->name == 'CGST') {
+                                            $cgst_amt = $percentage_value;
+                                            $cgst_total += $cgst_amt;
+                                            $cgst_percentage = $value->pivot->percentage;
+                                        }
+                                        //FOR SGST
+                                        if ($value->name == 'SGST') {
+                                            $sgst_amt = $percentage_value;
+                                            $sgst_total += $sgst_amt;
+                                            $sgst_percentage = $value->pivot->percentage;
+                                        }
+                                        //FOR CGST
+                                        if ($value->name == 'IGST') {
+                                            $igst_amt = $percentage_value;
+                                            $igst_total += $igst_amt;
+                                            $igst_percentage = $value->pivot->percentage;
+                                        }
+                                    }
+                                }
+                            } else {
+
+                            }
+
+                        } else {
+
+                        }
+
+                        $total_inv_amount += ($parts->rate * $qty);
+                        $part_amount += ($parts->rate * $qty);
+
+                        $item['SlNo'] = $i; //Statically assumed
+                        $item['PrdDesc'] = $parts->part->name;
+                        $item['IsServc'] = "Y"; //ALWAYS Y
+                        $item['HsnCd'] = $parts->part->taxCode ? $parts->part->taxCode->code : null;
+
+                        //BchDtls
+                        $item['BchDtls']["Nm"] = null;
+                        $item['BchDtls']["Expdt"] = null;
+                        $item['BchDtls']["wrDt"] = null;
+
+                        $item['Barcde'] = null;
+                        $item['Qty'] = $qty;
+                        $item['FreeQty'] = 0;
+                        // $item['Unit'] = $parts->part->uom ? $parts->part->uom->name : "NOS";
+                        $item['Unit'] = "NOS";
+                        $item['UnitPrice'] = number_format($price, 2);
+                        $item['TotAmt'] = number_format($total_price, 2);
+                        $item['Discount'] = 0; //Always value will be "0"
+                        $item['PreTaxVal'] = number_format($total_price, 2);
+                        $item['AssAmt'] = number_format($total_price, 2);
+                        $item['IgstRt'] = number_format($igst_percentage, 2);
+                        $item['IgstAmt'] = number_format($igst_amt, 2);
+                        $item['CgstRt'] = number_format($cgst_percentage, 2);
+                        $item['CgstAmt'] = number_format($cgst_amt, 2);
+                        $item['SgstRt'] = number_format($sgst_percentage, 2);
+                        $item['SgstAmt'] = number_format($sgst_amt, 2);
+                        $item['CesRt'] = 0;
+                        $item['CesAmt'] = 0;
+                        $item['CesNonAdvlAmt'] = 0;
+                        $item['StateCesRt'] = 0; //NEED TO CLARIFY IF KFC
+                        $item['StateCesAmt'] = 0; //NEED TO CLARIFY IF KFC
+                        $item['StateCesNonAdvlAmt'] = 0; //NEED TO CLARIFY IF KFC
+                        $item['OthChrg'] = 0;
+                        $item['TotItemVal'] = number_format(($parts->rate * $qty), 2);
+
+                        $item['OrdLineRef'] = "0";
+                        $item['OrgCntry'] = "IN"; //Always value will be "IND"
+                        $item['PrdSlNo'] = null;
+
+                        //AttribDtls
+                        $item['AttribDtls'][] = [
+                            "Nm" => null,
+                            "Val" => null,
+                        ];
+
+                        //EGST
+                        //NO DATA GIVEN IN WORD DOC START
+                        $item['EGST']['nilrated_amt'] = null;
+                        $item['EGST']['exempted_amt'] = null;
+                        $item['EGST']['non_gst_amt'] = null;
+                        $item['EGST']['reason'] = null;
+                        $item['EGST']['debit_gl_id'] = null;
+                        $item['EGST']['debit_gl_name'] = null;
+                        $item['EGST']['credit_gl_id'] = null;
+                        $item['EGST']['credit_gl_name'] = null;
+                        $item['EGST']['sublocation'] = null;
+                        //NO DATA GIVEN IN WORD DOC END
+
+                        $i++;
+                        $items[] = $item;
+
+                    }
+                }
+            }
+
+            $errors = [];
+            //QR Code Generate
+            if ($job_order->e_invoice_registration == 1) {
+                // RSA ENCRYPTION
+                $rsa = new Crypt_RSA;
+
+                $public_key = 'MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAxqHazGS4OkY/bDp0oklL+Ser7EpTpxyeMop8kfBlhzc8dzWryuAECwu8i/avzL4f5XG/DdSgMz7EdZCMrcxtmGJlMo2tUqjVlIsUslMG6Cmn46w0u+pSiM9McqIvJgnntKDHg90EIWg1BNnZkJy1NcDrB4O4ea66Y6WGNdb0DxciaYRlToohv8q72YLEII/z7W/7EyDYEaoSlgYs4BUP69LF7SANDZ8ZuTpQQKGF4TJKNhJ+ocmJ8ahb2HTwH3Ol0THF+0gJmaigs8wcpWFOE2K+KxWfyX6bPBpjTzC+wQChCnGQREhaKdzawE/aRVEVnvWc43dhm0janHp29mAAVv+ngYP9tKeFMjVqbr8YuoT2InHWFKhpPN8wsk30YxyDvWkN3mUgj3Q/IUhiDh6fU8GBZ+iIoxiUfrKvC/XzXVsCE2JlGVceuZR8OzwGrxk+dvMnVHyauN1YWnJuUTYTrCw3rgpNOyTWWmlw2z5dDMpoHlY0WmTVh0CrMeQdP33D3LGsa+7JYRyoRBhUTHepxLwk8UiLbu6bGO1sQwstLTTmk+Z9ZSk9EUK03Bkgv0hOmSPKC4MLD5rOM/oaP0LLzZ49jm9yXIrgbEcn7rv82hk8ghqTfChmQV/q+94qijf+rM2XJ7QX6XBES0UvnWnV6bVjSoLuBi9TF1ttLpiT3fkCAwEAAQ=='; //PROVIDE FROM BDO COMPANY
+
+                $clientid = config('custom.CLIENT_ID');
+
+                $rsa->loadKey($public_key);
+                $rsa->setEncryptionMode(2);
+
+                $client_secret_key = config('custom.CLIENT_SECRET_KEY');
+
+                $ClientSecret = $rsa->encrypt($client_secret_key);
+                $clientsecretencrypted = base64_encode($ClientSecret);
+
+                $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                $app_secret_key = substr(str_shuffle($characters), 0, 32); // RANDOM KEY GENERATE
+
+                $AppSecret = $rsa->encrypt($app_secret_key);
+                $appsecretkey = base64_encode($AppSecret);
+
+                $bdo_login_url = config('custom.BDO_LOGIN_URL');
+
+                $ch = curl_init($bdo_login_url);
+                // Setup request to send json via POST`
+                $params = json_encode(array(
+                    'clientid' => $clientid,
+                    'clientsecretencrypted' => $clientsecretencrypted,
+                    'appsecretkey' => $appsecretkey,
+                ));
+
+                // Attach encoded JSON string to the POST fields
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+
+                // Set the content type to application/json
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+
+                // Return response instead of outputting
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+                // Execute the POST request
+                $server_output = curl_exec($ch);
+
+                // Get the POST request header status
+                $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+                // If header status is not Created or not OK, return error message
+                if ($status != 200) {
+                    return [
+                        'success' => false,
+                        'errors' => ["Conection Error in BDO Login!"],
+                    ];
+                    $errors[] = 'Conection Error in BDO Login!';
+                }
+
+                curl_close($ch);
+
+                $bdo_login_check = json_decode($server_output);
+
+                $api_params = [
+                    'type_id' => 1062,
+                    'entity_number' => $job_order->number,
+                    'entity_id' => $job_order->id,
+                    'url' => $bdo_login_url,
+                    'src_data' => $params,
+                    'response_data' => $server_output,
+                    'user_id' => Auth::user()->id,
+                    'status_id' => $bdo_login_check->status == 0 ? 11272 : 11271,
+                    'errors' => !empty($errors) ? null : json_encode($errors),
+                    'created_by_id' => Auth::user()->id,
+                ];
+
+                if ($bdo_login_check->status == 0) {
+                    $api_params['message'] = 'Login Failed!';
+                    $api_logs[0] = $api_params;
+                    return [
+                        'success' => false,
+                        'errors' => [$bdo_login_check->ErrorMsg],
+                        'api_logs' => $api_logs,
+                    ];
+                }
+                $api_params['message'] = 'Login Success!';
+
+                $api_logs[1] = $api_params;
+
+                $expiry = $bdo_login_check->expiry;
+                $bdo_authtoken = $bdo_login_check->bdo_authtoken;
+                $status = $bdo_login_check->status;
+                $bdo_sek = $bdo_login_check->bdo_sek;
+
+                //DECRYPT WITH APP KEY AND BDO SEK KEY
+                $decrypt_data_with_bdo_sek = self::decryptAesData($app_secret_key, $bdo_sek);
+                if (!$decrypt_data_with_bdo_sek) {
+                    $errors[] = 'Decryption Error!';
+                    return response()->json(['success' => false, 'error' => 'Decryption Error!']);
+                }
+
+                //RefDtls BELLOW
+                //PrecDocDtls
+                $prodoc_detail = [];
+                $prodoc_detail['InvNo'] = null;
+                $prodoc_detail['InvDt'] = null;
+                $prodoc_detail['OthRefNo'] = null; //no DATA ?
+                //ContrDtls
+                $control_detail = [];
+                $control_detail['RecAdvRefr'] = null; //no DATA ?
+                $control_detail['RecAdvDt'] = null; //no DATA ?
+                $control_detail['Tendrefr'] = null; //no DATA ?
+                $control_detail['Contrrefr'] = null; //no DATA ?
+                $control_detail['Extrefr'] = null; //no DATA ?
+                $control_detail['Projrefr'] = null;
+                $control_detail['Porefr'] = null;
+                $control_detail['PoRefDt'] = null;
+
+                //AddlDocDtls
+                $additionaldoc_detail = [];
+                $additionaldoc_detail['Url'] = null;
+                $additionaldoc_detail['Docs'] = null;
+                $additionaldoc_detail['Info'] = null;
+
+                // if ($sale_orders->customer_type_id == 800) {
+                //     $type = 'CRN';
+                // } elseif ($sale_orders->type_id == 801) {
+                //     $type = 'DBN';
+                // } else {
+                //     $type = '';
+                // }
+
+                $json_encoded_data =
+                    json_encode(
+                    array(
+                        'TranDtls' => array(
+                            'TaxSch' => "GST",
+                            'SupTyp' => "B2B", //ALWAYS B2B FOR REGISTER IRN
+                            // 'RegRev' => $invoice->is_reverse_charge_applicable == 1 ? "Y" : "N",
+                            'RegRev' => "N",
+                            'EcmGstin' => null,
+                            'IgstonIntra' => null, //NEED TO CLARIFY
+                            'supplydir' => "O", //NULL ADDED 28-sep-2020 discussion "supplydir": "O"
+                        ),
+                        'DocDtls' => array(
+                            "Typ" => 'INV',
+                            "No" => $job_order->number,
+                            "Dt" => date('d-m-Y'),
+                        ),
+                        'SellerDtls' => array(
+                            "Gstin" => $outlet ? ($outlet->gst_number ? $outlet->gst_number : 'N/A') : 'N/A',
+                            "LglNm" => $outlet ? $outlet->name : 'N/A',
+                            "TrdNm" => $outlet ? $outlet->name : 'N/A',
+                            "Addr1" => $outlet->primaryAddress ? preg_replace('/\r|\n|:|"/', ",", $outlet->primaryAddress->address_line1) : 'N/A',
+                            "Addr2" => $outlet->primaryAddress ? preg_replace('/\r|\n|:|"/', ",", $outlet->primaryAddress->address_line2) : null,
+                            "Loc" => $outlet->primaryAddress ? ($outlet->primaryAddress->state ? $outlet->primaryAddress->state->name : 'N/A') : 'N/A',
+                            "Pin" => $outlet->primaryAddress ? $outlet->primaryAddress->pincode : 'N/A',
+                            "Stcd" => $outlet->primaryAddress ? ($outlet->primaryAddress->state ? $outlet->primaryAddress->state->e_invoice_state_code : 'N/A') : 'N/A',
+                            "Ph" => '123456789', //need to clarify
+                            "Em" => null, //need to clarify
+                        ),
+                        "BuyerDtls" => array(
+                            "Gstin" => $address->gst_number ? $address->gst_number : 'N/A', //need to clarify if available ok otherwise ?
+                            "LglNm" => $job_order ? $job_order->customer->name : 'N/A',
+                            "TrdNm" => $job_order ? $job_order->customer->name : null,
+                            "Pos" => $address ? ($address->state ? $address->state->e_invoice_state_code : 'N/A') : 'N/A',
+                            "Loc" => $address ? ($address->state ? $address->state->name : 'N/A') : 'N/A',
+
+                            "Addr1" => $address ? preg_replace('/\r|\n|:|"/', ",", $address->address_line1) : 'N/A',
+                            "Addr2" => $address ? preg_replace('/\r|\n|:|"/', ",", $address->address_line2) : null,
+                            "Stcd" => $address ? ($address->state ? $address->state->e_invoice_state_code : null) : null,
+                            "Pin" => $address ? $address->pincode : null,
+                            "Ph" => $job_order->customer->mobile_no ? $job_order->customer->mobile_no : null,
+                            "Em" => $job_order->customer->email ? $job_order->customer->email : null,
+                        ),
+                        // 'BuyerDtls' => array(
+                        'DispDtls' => array(
+                            "Nm" => null,
+                            "Addr1" => null,
+                            "Addr2" => null,
+                            "Loc" => null,
+                            "Pin" => null,
+                            "Stcd" => null,
+                        ),
+                        'ShipDtls' => array(
+                            "Gstin" => null,
+                            "LglNm" => null,
+                            "TrdNm" => null,
+                            "Addr1" => null,
+                            "Addr2" => null,
+                            "Loc" => null,
+                            "Pin" => null,
+                            "Stcd" => null,
+                        ),
+                        'ItemList' => array(
+                            'Item' => $items,
+                        ),
+                        'ValDtls' => array(
+                            "AssVal" => number_format(5000, 2),
+                            "CgstVal" => number_format($cgst_total, 2),
+                            "SgstVal" => number_format($sgst_total, 2),
+                            "IgstVal" => number_format($igst_total, 2),
+                            "CesVal" => 0,
+                            "StCesVal" => 0,
+                            "Discount" => 0,
+                            "OthChrg" => number_format($tcs_total + $cess_on_gst_total, 2),
+                            "RndOffAmt" => number_format(0, 2),
+                            "TotInvVal" => number_format($total_inv_amount, 2),
+                            // "TotInvVal" => number_format($part_amount, 2),
+                            "TotInvValFc" => null,
+                        ),
+                        "PayDtls" => array(
+                            "Nm" => null,
+                            "Accdet" => null,
+                            "Mode" => null,
+                            "Fininsbr" => null,
+                            "Payterm" => null, //NO DATA
+                            "Payinstr" => null, //NO DATA
+                            "Crtrn" => null, //NO DATA
+                            "Dirdr" => null, //NO DATA
+                            "Crday" => 0, //NO DATA
+                            "Paidamt" => 0, //NO DATA
+                            "Paymtdue" => 0, //NO DATA
+                        ),
+                        "RefDtls" => array(
+                            "InvRm" => null,
+                            "DocPerdDtls" => array(
+                                "InvStDt" => null,
+                                "InvEndDt" => null,
+                            ),
+                            "PrecDocDtls" => [
+                                $prodoc_detail,
+                            ],
+                            "ContrDtls" => [
+                                $control_detail,
+                            ],
+                        ),
+                        "AddlDocDtls" => [
+                            $additionaldoc_detail,
+                        ],
+                        "ExpDtls" => array(
+                            "ShipBNo" => null,
+                            "ShipBDt" => null,
+                            "Port" => null,
+                            "RefClm" => null,
+                            "ForCur" => null,
+                            "CntCode" => null, // ALWAYS IND //// ERROR : For Supply type other than EXPWP and EXPWOP, country code should be blank
+                            "ExpDuty" => null,
+                        ),
+                        "EwbDtls" => array(
+                            "Transid" => null,
+                            "Transname" => null,
+                            "Distance" => null,
+                            "Transdocno" => null,
+                            "TransdocDt" => null,
+                            "Vehno" => null,
+                            "Vehtype" => null,
+                            "TransMode" => null,
+                        ),
+                    )
+                );
+
+                // dd($json_encoded_data);
+
+                //AES ENCRYPT
+                //ENCRYPT WITH Decrypted BDO SEK KEY TO PLAIN TEXT AND JSON DATA
+                $encrypt_data = self::encryptAesData($decrypt_data_with_bdo_sek, $json_encoded_data);
+                if (!$encrypt_data) {
+                    $errors[] = 'IRN Encryption Error!';
+                    return response()->json(['success' => false, 'error' => 'IRN Encryption Error!']);
+                }
+
+                //ENCRYPTED GIVEN DATA TO DBO
+                $bdo_generate_irn_url = config('custom.BDO_IRN_REGISTRATION_URL');
+
+                $ch = curl_init($bdo_generate_irn_url);
+                // Setup request to send json via POST`
+                $params = json_encode(array(
+                    'Data' => $encrypt_data,
+                ));
+
+                // Attach encoded JSON string to the POST fields
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+
+                // Set the content type to application/json
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                    'Content-Type: application/json',
+                    'client_id: ' . $clientid,
+                    'bdo_authtoken: ' . $bdo_authtoken,
+                    'action: GENIRN',
+                ));
+
+                // Return response instead of outputting
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+                // Execute the POST request
+                $generate_irn_output_data = curl_exec($ch);
+
+                curl_close($ch);
+
+                $generate_irn_output = json_decode($generate_irn_output_data, true);
+
+                $api_params = [
+                    'type_id' => 1062,
+                    'entity_number' => $job_order->number,
+                    'entity_id' => $job_order->id,
+                    'url' => $bdo_generate_irn_url,
+                    'src_data' => $params,
+                    'response_data' => $generate_irn_output_data,
+                    'user_id' => Auth::user()->id,
+                    'status_id' => $bdo_login_check->status == 0 ? 11272 : 11271,
+                    // 'errors' => !empty($errors) ? NULL : json_encode($errors),
+                    'created_by_id' => Auth::user()->id,
+                ];
+
+                if (is_array($generate_irn_output['Error'])) {
+                    $bdo_errors = [];
+                    $rearrange_key = 0;
+                    foreach ($generate_irn_output['Error'] as $key => $error) {
+                        $bdo_errors[$rearrange_key] = $error;
+                        $errors[$rearrange_key] = $error;
+                        $rearrange_key++;
+                    }
+
+                    $api_params['errors'] = empty($errors) ? 'Somthin went worng!, Try again later!' : json_encode($errors);
+                    $api_params['message'] = 'Error GENERATE IRN array!';
+
+                    $api_logs[2] = $api_params;
+
+                    return [
+                        'success' => false,
+                        'errors' => $bdo_errors,
+                        'api_logs' => $api_logs,
+                    ];
+                    if ($generate_irn_output['status'] == 0) {
+                        $api_params['errors'] = ['Somthing Went Wrong!. Try Again Later!'];
+                        $api_params['message'] = 'Error Generating IRN!';
+                        $api_logs[5] = $api_params;
+                        return [
+                            'success' => false,
+                            'errors' => 'Somthing Went Wrong!. Try Again Later!',
+                            'api_logs' => $api_logs,
+                        ];
+                    }
+                } elseif (!is_array($generate_irn_output['Error'])) {
+                    if ($generate_irn_output['Status'] != 1) {
+                        $errors[] = $generate_irn_output['Error'];
+                        $api_params['message'] = 'Error GENERATE IRN!';
+
+                        $api_params['errors'] = empty($errors) ? 'Error GENERATE IRN, Try again later!' : json_encode($errors);
+                        // DB::beginTransaction();
+
+                        $api_logs[3] = $api_params;
+
+                        return [
+                            'success' => false,
+                            'errors' => $generate_irn_output['Error'],
+                            'api_logs' => $api_logs,
+                        ];
+                        // dd('Error: ' . $generate_irn_output['Error']);
+                    }
+                }
+
+                $api_params['message'] = 'Success GENSERATE IRN!';
+
+                $api_params['errors'] = null;
+                $api_logs[4] = $api_params;
+
+                //AES DECRYPTION AFTER GENERATE IRN
+                $irn_decrypt_data = self::decryptAesData($decrypt_data_with_bdo_sek, $generate_irn_output['Data']);
+                if (!$irn_decrypt_data) {
+                    $errors[] = 'IRN Decryption Error!';
+                    return response()->json(['success' => false, 'error' => 'IRN Decryption Error!']);
+                }
+                $final_json_decode = json_decode($irn_decrypt_data);
+
+                if ($final_json_decode->irnStatus == 0) {
+                    $api_params['message'] = $final_json_decode->irnStatus;
+                    $api_params['errors'] = $final_json_decode->irnStatus;
+                    $api_logs[6] = $api_params;
+                    return [
+                        'success' => false,
+                        'errors' => $final_json_decode->ErrorMsg,
+                        'api_logs' => $api_logs,
+                    ];
+                }
+
+                $IRN_images_des = storage_path('app/public/gigo/job_order/IRN_images');
+                File::makeDirectory($IRN_images_des, $mode = 0777, true, true);
+
+                $qr_images_des = storage_path('app/public/gigo/job_order/qr_images');
+                File::makeDirectory($qr_images_des, $mode = 0777, true, true);
+
+                $url = QRCode::text($final_json_decode->SignedQRCode)->setSize(4)->setOutfile('storage/app/public/gigo/job_order/IRN_images/' . $job_order->number . '.png')->png();
+
+                $qr_attachment_path = base_path("storage/app/public/gigo/job_order/IRN_images/" . $job_order->number . '.png');
+                if (file_exists($qr_attachment_path)) {
+                    $ext = pathinfo(base_path("storage/app/public/gigo/job_order/IRN_images/" . $job_order->number . '.png'), PATHINFO_EXTENSION);
+                    if ($ext == 'png') {
+                        $image = imagecreatefrompng($qr_attachment_path);
+                        $bg = imagecreatetruecolor(imagesx($image), imagesy($image));
+                        imagefill($bg, 0, 0, imagecolorallocate($bg, 255, 255, 255));
+                        imagealphablending($bg, true);
+                        imagecopy($bg, $image, 0, 0, 0, 0, imagesx($image), imagesy($image));
+                        $quality = 70; // 0 = worst / smaller file, 100 = better / bigger file
+                        imagejpeg($bg, 'storage/app/public/gigo/job_order/qr_images/' . $job_order->number . '.jpg', 100);
+
+                        if (File::exists('storage/app/public/gigo/job_order/qr_images/' . $job_order->number . '.png')) {
+                            File::delete('storage/app/public/gigo/job_order/qr_images/' . $job_order->number . '.png');
+                        }
+
+                        $qr_image = $job_order->number . '.jpg';
+                    }
+                } else {
+                    $qr_image = '';
+                }
+
+                $get_version = json_decode($final_json_decode->Invoice);
+                $get_version = json_decode($get_version->data);
+
+                $job_order_e_invoice = JobOrderEInvoice::firstOrNew(['job_order_id' => $job_order->id]);
+                if ($job_order_e_invoice->exist) {
+                    $job_order_e_invoice->updated_by_id = Auth::user()->id;
+                    $job_order_e_invoice->updated_at = Carbon::now();
+                } else {
+                    $job_order_e_invoice->created_by_id = Auth::user()->id;
+                    $job_order_e_invoice->created_at = Carbon::now();
+                    $job_order_e_invoice->updated_at = null;
+                }
+                $job_order_e_invoice->e_invoice_registration = 1;
+                $job_order_e_invoice->irn_number = $final_json_decode->Irn;
+                $job_order_e_invoice->qr_image = $job_order->number . '.jpg';
+                $job_order_e_invoice->ack_no = $final_json_decode->AckNo;
+                $job_order_e_invoice->ack_date = $final_json_decode->AckDt;
+                $job_order_e_invoice->version = $get_version->Version;
+                $job_order_e_invoice->irn_request = $json_encoded_data;
+                $job_order_e_invoice->irn_response = $irn_decrypt_data;
+                $job_order_e_invoice->errors = empty($errors) ? null : json_encode($errors);
+                $job_order_e_invoice->save();
+            } else {
+                $qrPaymentApp = QRPaymentApp::where([
+                    'name' => 'Vims',
+                ])->first();
+                if (!$qrPaymentApp) {
+                    return [
+                        'success' => false,
+                        'errors' => 'QR Payment App not found : Vims',
+                    ];
+                    $errors[] = 'QR Payment App not found : Vims';
+                }
+
+                $base_url_with_invoice_details = url(
+                    '/pay' .
+                    '?invNo=' . $job_order->number .
+                    '&date=' . date('d-m-Y') .
+                    '&invAmt=' . str_replace(',', '', $total_inv_amount) .
+                    '&oc=' . $job_order->outlet->code .
+                    '&cc=' . $job_order->customer->code .
+                    '&cgst=' . $cgst_total .
+                    '&sgst=' . $sgst_total .
+                    '&igst=' . $igst_total .
+                    '&cess=' . $cess_on_gst_total .
+                    '&appCode=' . $qrPaymentApp->app_code
+                );
+
+                $B2C_images_des = storage_path('app/public/gigo/job_order/qr_images');
+                File::makeDirectory($B2C_images_des, $mode = 0777, true, true);
+
+                $url = QRCode::URL($base_url_with_invoice_details)->setSize(4)->setOutfile('storage/app/public/gigo/job_order/qr_images/' . $job_order->number . '.png')->png();
+
+                $qr_attachment_path = base_path("storage/app/public/gigo/job_order/qr_images/" . $job_order->number . '.png');
+
+                if (file_exists($qr_attachment_path)) {
+                    $ext = pathinfo(base_path("storage/app/public/gigo/job_order/qr_images/" . $job_order->number . '.png'), PATHINFO_EXTENSION);
+                    if ($ext == 'png') {
+                        $image = imagecreatefrompng($qr_attachment_path);
+                        $bg = imagecreatetruecolor(imagesx($image), imagesy($image));
+                        imagefill($bg, 0, 0, imagecolorallocate($bg, 255, 255, 255));
+                        imagealphablending($bg, true);
+                        imagecopy($bg, $image, 0, 0, 0, 0, imagesx($image), imagesy($image));
+
+                        imagejpeg($bg, 'storage/app/public/gigo/job_order/qr_images/' . $job_order->number . '.jpg', 100);
+
+                        if (File::exists('storage/app/public/gigo/job_order/qr_images/' . $job_order->number . '.png')) {
+                            File::delete('storage/app/public/gigo/job_order/qr_images/' . $job_order->number . '.png');
+                        }
+                    }
+                }
+
+                $job_order->qr_image = $job_order->number . '.jpg';
+            }
 
             $params['job_card_id'] = $request->job_card_id;
             $params['customer_id'] = $job_card->jobOrder->customer->id;
@@ -2204,25 +3044,6 @@ class JobCardController extends Controller
                 $this->saveGigoInvoice($params);
             }
 
-            $customer_mobile = $job_card->jobOrder->contact_number;
-            $vehicle_no = $job_card->jobOrder->vehicle->registration_number;
-
-            if (!$customer_mobile) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Customer Mobile Number Not Found',
-                ]);
-            }
-            $job_order = JobOrder::find($job_card->job_order_id);
-
-            if (!$job_order) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Validation Error',
-                    'errors' => ['Job Order Not Found!'],
-                ]);
-            }
-
             $job_card->status_id = 8225; //Waiting for Customer Payment
             $job_card->save();
 
@@ -2239,6 +3060,7 @@ class JobCardController extends Controller
 
             $msg = sendSMSNotification($customer_mobile, $message);
 
+            dd(111);
             DB::commit();
 
             return response()->json([
@@ -6276,5 +7098,26 @@ class JobCardController extends Controller
                 'errors' => ['Exception Error' => $e->getMessage()],
             ]);
         }
+    }
+
+    public static function encryptAesData($encryption_key, $data)
+    {
+        $method = 'aes-256-ecb';
+
+        $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($method));
+
+        $encrypted = openssl_encrypt($data, $method, $encryption_key, 0, $iv);
+
+        return $encrypted;
+    }
+
+    public static function decryptAesData($encryption_key, $data)
+    {
+        $method = 'aes-256-ecb';
+
+        $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($method));
+
+        $decrypted = openssl_decrypt(base64_decode($data), $method, $encryption_key, OPENSSL_RAW_DATA, $iv);
+        return $decrypted;
     }
 }
