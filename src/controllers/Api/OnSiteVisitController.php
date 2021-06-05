@@ -240,15 +240,104 @@ class OnSiteVisitController extends Controller
 
     }
 
+    public function chmsLogin()
+    {
+        $username = 'SPA3938';
+        $password = '123456';
+
+        $login_url = 'https://tvsconnect.in/cemhs/apis/felogin?';
+        $auth_url = $login_url . 'userId=' . $username . '&password=' . $password . '&userType=4';
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $auth_url);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $login_response = curl_exec($ch);
+
+        $login_encode = json_encode($login_response);
+        $login_data = json_decode($login_response, true);
+
+        if ($login_data && $login_data['loginSuccessful'] == 'true') {
+            $api_token = Config::firstOrNew(['config_type_id' => 465]);
+            $api_token->name = $login_data['authenticationToken'];
+            $api_token->save();
+
+            $api_token = $login_data['authenticationToken'];
+            return $api_token;
+        } else {
+            return false;
+            //     return response()->json([
+            //         'success' => false,
+            //         'error' => 'Validation Error',
+            //         'errors' => [
+            //             'Login Details mismatched!',
+            //         ],
+            //     ]);
+        }
+    }
+
+    public function chmsPartStock($token, $part_code, $outlet_code)
+    {
+        $part_stock_url = 'https://tvsconnect.in/cemhs/apis/getStockDetails?';
+        $part_content = $part_stock_url . 'apiKey=' . $token . '&partCode=' . $part_code . '&branch=' . $outlet_code;
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $part_content);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $part_stock_response = curl_exec($ch);
+
+        $stock_data = json_encode($part_stock_response);
+        $stock_data = json_decode($part_stock_response, true);
+
+        return $stock_data;
+    }
+
     public function getPartStockDetails(Request $request)
     {
         // dd($request->all());
-        // dd(Auth::user()->outlet->code);
+        $part = Part::find($request->part_id);
+        $outlet = Outlet::find($request->outlet_id);
+
+        $api_token = Config::where('config_type_id', 465)->pluck('name')->first();
+        if (!$api_token) {
+            $api_token = $this->chmsLogin();
+        }
+
+        if ($api_token) {
+            $part_stock_detail = $this->chmsPartStock($api_token, $part->code, $outlet->code);
+
+            if ($part_stock_detail && isset($part_stock_detail['status']) && ($part_stock_detail['status'] == 'failiure' || $part_stock_detail['status'] == 'failure')) {
+                $api_token = $this->chmsLogin();
+                $part_stock_detail = $this->chmsPartStock($api_token, $part->code, $outlet->code);
+            }
+
+            if ($part_stock_detail && isset($part_stock_detail['AvailableStock']) && $part_stock_detail['AvailableStock'] > 0) {
+
+                $part_stock = PartStock::firstOrNew(['company_id' => Auth::user()->company_id, 'outlet_id' => $outlet->id, 'part_id' => $part->id]);
+
+                if ($part_stock->exists) {
+                    $part_stock->updated_by_id = Auth::user()->id;
+                    $part_stock->updated_at = Carbon::now();
+                } else {
+                    $part_stock->created_by_id = Auth::user()->id;
+                    $part_stock->created_at = Carbon::now();
+                    $part_stock->updated_at = null;
+                }
+
+                $part_stock->stock = $part_stock_detail['AvailableStock'];
+                $part_stock->mrp = $part_stock_detail['mrp'];
+                // $part_stock->rate = $part_stock_detail['rate'];
+                $part_stock->cost_price = $part_stock_detail['cost'];
+                $part_stock->save();
+            }
+        }
 
         $part = Part::with([
             'uom',
-            'partStock' => function ($query) use ($request) {
-                $query->where('outlet_id', $request->outlet_id);
+            'partStock' => function ($query) use ($outlet) {
+                $query->where('outlet_id', $outlet->id);
             },
             'taxCode',
             'taxCode.taxes',
@@ -258,62 +347,6 @@ class OnSiteVisitController extends Controller
         $data['part'] = $part;
 
         return response()->json(['success' => true, 'data' => $data]);
-
-        $part = Part::find($request->part_id);
-
-        $api_token = Config::where('config_type_id', 465)->pluck('name')->first();
-        if (!$api_token) {
-            $username = 'SPA3938';
-            $password = '123456';
-
-            $login_url = 'https://tvsconnect.in/cemhs/apis/felogin?';
-            $auth_url = $login_url . 'userId=' . $username . '&password=' . $password . '&userType=4';
-
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $auth_url);
-            curl_setopt($ch, CURLOPT_HEADER, 0);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-            $login_response = curl_exec($ch);
-
-            $login_encode = json_encode($login_response);
-            $login_data = json_decode($login_response, true);
-
-            if ($login_data && $login_data['loginSuccessful'] == 'true') {
-                $api_token = Config::firstOrNew(['config_type_id' => 465]);
-                $api_token->name = $login_data['authenticationToken'];
-                $api_token->save();
-            } else {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Validation Error',
-                    'errors' => [
-                        'Login Details mismatched!',
-                    ],
-                ]);
-            }
-
-            $api_token = $login_data['authenticationToken'];
-        }
-
-        $part_stock_url = 'https://tvsconnect.in/cemhs/apis/getStockDetails?';
-        $part_content = $part_stock_url . 'apiKey=' . $api_token . '&partCode=' . $part->code . '&userType=' . Auth::user()->outlet->code;
-
-        // dump($part_content);
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $part_content);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $login_response = curl_exec($ch);
-
-        dump($login_response);
-
-        $gstin_encode = json_encode($login_response);
-        $gst_data = json_decode($login_response, true);
-        // $gst_response = $gst_data['original'];
-
-        dd($gst_data);
     }
 
     public function getFormData(Request $request)
@@ -3181,7 +3214,6 @@ class OnSiteVisitController extends Controller
                 $get_version = json_decode($final_json_decode->Invoice);
                 $get_version = json_decode($get_version->data);
 
-                // $gigo_invoice = GigoInvoice::find($invoice->id);
                 $site_visit->irn_number = $final_json_decode->Irn;
                 $site_visit->qr_image = $site_visit->number . '.jpg';
                 $site_visit->ack_no = $final_json_decode->AckNo;
@@ -3191,8 +3223,6 @@ class OnSiteVisitController extends Controller
                 $site_visit->irn_response = $irn_decrypt_data;
 
                 $site_visit->errors = empty($errors) ? null : json_encode($errors);
-                // $site_visit->save();
-
             } else {
                 $qrPaymentApp = QRPaymentApp::where([
                     'name' => 'Vims',
@@ -3273,7 +3303,6 @@ class OnSiteVisitController extends Controller
             //Generate Part PDF
             $generate_on_site_estimate_pdf = OnSiteOrder::generatePartPDF($site_visit->id);
 
-            dd();
             DB::commit();
 
             return response()->json([
