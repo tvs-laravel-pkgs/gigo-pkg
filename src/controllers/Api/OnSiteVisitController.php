@@ -3585,58 +3585,6 @@ class OnSiteVisitController extends Controller
                 }
             }
 
-            // $lat = '11.127122499999999';
-            // $lng = '78.6568942';
-            // $url = sprintf("https://maps.googleapis.com/maps/api/geocode/json?latlng=%s,%s", $lat, $lng);
-
-            // $content = file_get_contents($url); // get json content
-            // $metadata = json_decode($content, true); //json decoder
-
-            // dd($metadata);
-
-            // dump();
-            // if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-            //     $ip = $_SERVER['HTTP_CLIENT_IP'];
-            //     dump('IP - ' . $ip);
-            // }
-            // //whether ip is from the proxy
-            // elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            //     $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-            //     dump('Proxy - ' . $ip);
-
-            // }
-            // //whether ip is from the remote address
-            // else {
-            //     $ip = $_SERVER['REMOTE_ADDR'];
-            //     dump('Address - ' . $ip);
-
-            // }
-
-            // $headers = array();
-            // foreach ($_SERVER as $name => $value) {
-            //     if (substr($name, 0, 5) == 'HTTP_') {
-            //         $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
-            //     }
-            // }
-
-            // dd($headers);
-
-            // dd($_SERVER['REMOTE_ADDR']);
-            // // dd(111);
-
-            // $PublicIP = '10.238.100.76';
-            // $geo = unserialize(file_get_contents("http://www.geoplugin.net/php.gp?ip=$PublicIP"));
-
-            // dd($geo);
-            // $json = file_get_contents("http://ipinfo.io/$PublicIP/geo");
-            // $json = json_decode($json, true);
-            // // $country = $json['country'];
-            // // $region = $json['region'];
-            // // $city = $json['city'];
-
-            // dd($json);
-            // $location = $this->get_client_ip();
-            // dd($location);
             DB::commit();
 
             return response()->json([
