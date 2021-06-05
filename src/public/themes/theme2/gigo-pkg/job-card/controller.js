@@ -1972,6 +1972,7 @@ app.component('jobCardPdf', {
                     $scope.gate_pass_pdf = res.job_card.gate_pass_pdf;
 
                     $scope.vehicle_inspection_pdf = res.job_card.inspection_pdf;
+                    $scope.invoice_pdf = res.job_card.invoice_pdf;
 
                     $scope.$apply();
                 })

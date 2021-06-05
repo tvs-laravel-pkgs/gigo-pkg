@@ -792,6 +792,14 @@ class JobCardController extends Controller
                 $job_card->inspection_pdf = '';
             }
 
+            //Check Invoice PDF Available or not
+            $directoryPath = storage_path('app/public/gigo/pdf/' . $job_card->jobOrder->id . '_invoice.pdf');
+            if (file_exists($directoryPath)) {
+                $job_card->invoice_pdf = url('storage/app/public/gigo/pdf/' . $job_card->jobOrder->id . '_invoice.pdf');
+            } else {
+                $job_card->invoice_pdf = '';
+            }
+
             return response()->json([
                 'success' => true,
                 'job_card' => $job_card,
@@ -3044,6 +3052,9 @@ class JobCardController extends Controller
                 $this->saveGigoInvoice($params);
             }
 
+            //Overall invoice
+            $invoice_pdf = JobCard::generateInvoicePDF($job_card->id);
+
             $job_card->status_id = 8225; //Waiting for Customer Payment
             $job_card->save();
 
@@ -3060,7 +3071,6 @@ class JobCardController extends Controller
 
             $msg = sendSMSNotification($customer_mobile, $message);
 
-            dd(111);
             DB::commit();
 
             return response()->json([
@@ -4423,7 +4433,8 @@ class JobCardController extends Controller
                         }
                     }
 
-                    $total_amount = $tax_amount + $labour->amount;
+                    // $total_amount = $tax_amount + $labour->amount;
+                    $total_amount = $labour->amount;
                     $total_amount = number_format((float) $total_amount, 2, '.', '');
                     $labour_amount += $total_amount;
                 }
