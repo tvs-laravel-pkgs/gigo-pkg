@@ -1109,6 +1109,9 @@ app.component('onSiteVisitView', {
                         on_site_order_id: $scope.site_visit.id,
                         type_id: id,
                         work_log_type: work_log_type,
+                        latitude: $('.latitude').val(),
+                        longitude: $('.longitude').val(),
+                        location_error: $('.location_error').val(),
                     },
                 })
                     .done(function (res) {

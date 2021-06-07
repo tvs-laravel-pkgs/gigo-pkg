@@ -52,6 +52,11 @@ class OnSiteOrder extends BaseModel
         return $this->belongsTo('App\Outlet', 'outlet_id');
     }
 
+    public function sbu()
+    {
+        return $this->belongsTo('App\Sbu', 'sbu_id');
+    }
+
     public function onSiteVisitUser()
     {
         return $this->belongsTo('App\User', 'on_site_visit_user_id');

@@ -1525,6 +1525,7 @@ class OnSiteVisitController extends Controller
                 $address->save();
                 // $customer->saveAddress($request->all());
 
+                $site_visit->sbu_id = Auth::user()->employee ? Auth::user()->employee->sbu_id : null;
                 $site_visit->e_invoice_registration = $e_invoice_registration;
                 $site_visit->customer_id = $customer->id;
                 $site_visit->address_id = $address->id;
@@ -3245,14 +3246,14 @@ class OnSiteVisitController extends Controller
                 $site_visit->errors = empty($errors) ? null : json_encode($errors);
             } else {
                 $qrPaymentApp = QRPaymentApp::where([
-                    'name' => 'Vims',
+                    'name' => 'On Site Visit',
                 ])->first();
                 if (!$qrPaymentApp) {
                     return [
                         'success' => false,
-                        'errors' => 'QR Payment App not found : Vims',
+                        'errors' => 'QR Payment App not found : On Site Visit',
                     ];
-                    $errors[] = 'QR Payment App not found : Vims';
+                    $errors[] = 'QR Payment App not found : On Site Visit';
                 }
 
                 $base_url_with_invoice_details = url(
@@ -3484,6 +3485,7 @@ class OnSiteVisitController extends Controller
     public function saveTimeLog(Request $request)
     {
         // dd($request->all());
+
         try {
             $site_visit = OnSiteOrder::find($request->on_site_order_id);
 
@@ -3529,6 +3531,9 @@ class OnSiteVisitController extends Controller
                     $travel_log->start_date_time = Carbon::now();
                     $travel_log->created_by_id = Auth::user()->id;
                     $travel_log->created_at = Carbon::now();
+                    $travel_log->start_latitude = $request->latitude ? $request->latitude : $request->location_error;
+                    $travel_log->start_longitude = $request->longitude;
+
                     $travel_log->save();
                     $message = 'Travel Log Added Successfully!';
                 } else {
@@ -3545,6 +3550,9 @@ class OnSiteVisitController extends Controller
                     $travel_log->end_date_time = Carbon::now();
                     $travel_log->updated_by_id = Auth::user()->id;
                     $travel_log->updated_at = Carbon::now();
+                    $travel_log->end_latitude = $request->latitude ? $request->latitude : $request->location_error;
+                    $travel_log->end_longitude = $request->longitude;
+
                     $travel_log->save();
                     $message = 'Travel Log Updated Successfully!';
                 }
@@ -3578,6 +3586,9 @@ class OnSiteVisitController extends Controller
                     $travel_log->start_date_time = Carbon::now();
                     $travel_log->created_by_id = Auth::user()->id;
                     $travel_log->created_at = Carbon::now();
+                    $travel_log->start_latitude = $request->latitude ? $request->latitude : $request->location_error;
+                    $travel_log->start_longitude = $request->longitude;
+
                     $travel_log->save();
                     $message = 'Work Started Successfully!';
                 } else {
@@ -3600,6 +3611,9 @@ class OnSiteVisitController extends Controller
                     $travel_log->end_date_time = Carbon::now();
                     $travel_log->updated_by_id = Auth::user()->id;
                     $travel_log->updated_at = Carbon::now();
+                    $travel_log->end_latitude = $request->latitude ? $request->latitude : $request->location_error;
+                    $travel_log->end_longitude = $request->longitude;
+
                     $travel_log->save();
                     $message = 'Work Stopped Successfully!';
                 }

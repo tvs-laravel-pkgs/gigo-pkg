@@ -2932,14 +2932,14 @@ class JobCardController extends Controller
                 $job_order_e_invoice->save();
             } else {
                 $qrPaymentApp = QRPaymentApp::where([
-                    'name' => 'Vims',
+                    'name' => 'GIGO',
                 ])->first();
                 if (!$qrPaymentApp) {
                     return [
                         'success' => false,
-                        'errors' => 'QR Payment App not found : Vims',
+                        'errors' => 'QR Payment App not found : GIGO',
                     ];
-                    $errors[] = 'QR Payment App not found : Vims';
+                    $errors[] = 'QR Payment App not found : GIGO';
                 }
 
                 $base_url_with_invoice_details = url(

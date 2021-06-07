@@ -611,6 +611,7 @@ class GateInController extends Controller
             if ($vehicle->currentOwner) {
                 $job_order->customer_id = $vehicle->currentOwner->customer_id;
             }
+            $job_order->sbu_id = Auth::user()->employee ? Auth::user()->employee->sbu_id : null;
             $job_order->save();
             // $job_order->vehicleInventoryItem()->sync([]);
             //Remove already saved gatelog inventories

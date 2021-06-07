@@ -553,6 +553,11 @@ class JobOrder extends BaseModel
         return $this->belongsTo('App\Address', 'address_id');
     }
 
+    public function sbu()
+    {
+        return $this->belongsTo('App\Sbu', 'sbu_id');
+    }
+
     // Query Scopes --------------------------------------------------------------
 
     public function scopeFilterSearch($query, $term)

@@ -31,6 +31,9 @@
     <div class="page-main-content form-content type2">
         <form id="on_site_form" autocomplete="off">
             <input type="hidden" name="on_site_order_id" value="{{site_visit.id}}">
+            <input type="hidden" class="latitude" name="latitude" value="">
+            <input type="hidden" class="longitude" name="longitude" value="">
+            <input type="hidden" class="location_error" name="location_error" value="">
             <div class="page-tab-form pb-70">
                 <div class="page-tab-form-top">
                     <div class="page-tab-form-top-left">
@@ -1846,5 +1849,53 @@
         </form>
     </div><!-- Modal Dialog -->
 </div>
+
+<!-- Get Users latitude & longitude -->
+<script>
+    $(document).ready(function () {
+        if (navigator.geolocation) {
+            // navigator.geolocation.watchPosition(showPosition);
+            navigator.geolocation.getCurrentPosition(
+                showPosition,
+                errorLocation,
+                null,
+                {
+                    enableHighAccuracy: true, timeout: 9000, maximumAge: 0
+                }
+            );
+        }
+    });
+
+    function showPosition(position) {
+        console.log(position.coords.latitude);
+        console.log(position.coords.longitude);
+        setTimeout(function () {
+            $('.latitude').val(position.coords.latitude);
+            $('.longitude').val(position.coords.longitude);
+        }, 2000);
+    }
+
+    function errorLocation(error) {
+        var location_error = '';
+        switch (error.code) {
+            case error.PERMISSION_DENIED:
+                location_error = "User denied the request for Geolocation."
+                break;
+            case error.POSITION_UNAVAILABLE:
+                location_error = "Location information is unavailable."
+                break;
+            case error.TIMEOUT:
+                location_error = "The request to get user location timed out."
+                break;
+            case error.UNKNOWN_ERROR:
+                location_error = "An unknown error occurred."
+                break;
+        }
+
+        setTimeout(function () {
+            $('.location_error').val(location_error);
+        }, 2000);
+    }
+</script>
 <!-- Modal Content
 <script src="./public/theme/js/imageuploadify-mgatepass.min.js"></script>
