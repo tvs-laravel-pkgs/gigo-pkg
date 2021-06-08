@@ -3297,7 +3297,7 @@ class OnSiteVisitController extends Controller
                 $site_visit->qr_image = $site_visit->number . '.jpg';
             }
 
-            // $site_visit->status_id = 10;
+            $site_visit->status_id = 10;
 
             $otp_no = mt_rand(111111, 999999);
             $site_visit->otp_no = $otp_no;
