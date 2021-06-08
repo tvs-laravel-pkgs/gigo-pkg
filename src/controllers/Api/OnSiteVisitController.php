@@ -1379,7 +1379,7 @@ class OnSiteVisitController extends Controller
                 }
 
                 //Check GSTIN Valid Or Not
-                if ($request->gst_number) {
+                if ($request->gst_number && Auth::user()->company->gst_verification == 1) {
                     $gstin = Customer::getGstDetail($request->gst_number);
 
                     $gstin_encode = json_encode($gstin);

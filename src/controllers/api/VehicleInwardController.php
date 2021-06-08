@@ -2331,7 +2331,7 @@ class VehicleInwardController extends Controller
             }
 
             //Check GSTIN Valid Or Not
-            if ($request->gst_number) {
+            if ($request->gst_number && Auth::user()->company->gst_verification == 1) {
                 $gstin = Customer::getGstDetail($request->gst_number);
 
                 $gstin_encode = json_encode($gstin);
@@ -6368,7 +6368,7 @@ class VehicleInwardController extends Controller
 
             //Check GST Eligile or Not
             if ($job_order->customerAddress) {
-                if ($job_order->customerAddress->gst_number) {
+                if ($job_order->customerAddress->gst_number && Auth::user()->company->gst_verification == 1) {
                     $gstin = Customer::getGstDetail($job_order->customerAddress->gst_number);
 
                     $gstin_encode = json_encode($gstin);
