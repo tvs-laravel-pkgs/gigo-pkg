@@ -369,19 +369,19 @@
                                                                             <sup class="mandatory">*</sup>
                                                                         </label>
                                                                         <md-autocomplete
-                                                                            md-items="option in searchCustomer($ctrl.customerSearchText)"
-                                                                            md-selected-item="vehicle"
+                                                                            md-items="customer in searchCustomer($ctrl.customerSearchText)"
+                                                                            md-selected-item="customerResult"
                                                                             md-search-text="$ctrl.customerSearchText"
-                                                                            md-selected-item-change="customerChanged(option)"
+                                                                            md-selected-item-change="customerChanged(customerResult)"
                                                                             md-item-text="customer.code"
                                                                             md-min-length="3"
                                                                             placeholder="Customer Code / Name"
-                                                                            md-input-id="customer_ac"
+                                                                            md-input-id="customer_ac" md-autofocus
                                                                             md-no-cache="true">
                                                                             <md-item-template>
                                                                                 <span>
-                                                                                    {{option.name}} /
-                                                                                    {{option.code}}
+                                                                                    {{customer.code}} /
+                                                                                    {{customer.name}}
                                                                                 </span>
                                                                             </md-item-template>
                                                                             <md-not-found>
