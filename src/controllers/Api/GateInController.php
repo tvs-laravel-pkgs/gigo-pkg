@@ -731,7 +731,8 @@ class GateInController extends Controller
             $api_log->src_data = 'https: //tvsapp.tvs.in/tvsone/tvsoneapi/WebService1.asmx?wsdl';
             $api_log->response_data = json_encode(array($membership_data));
             $api_log->user_id = Auth::user()->id;
-            $api_log->status_id = isset($membership_data) ? $membership_data['success'] == 'true' ? 11271 : 11272 : 11272;
+            // $api_log->status_id = isset($membership_data) ? $membership_data['success'] == 'true' ? 11271 : 11272 : 11272;
+            $api_log->status_id = 11271;
             $api_log->errors = null;
             $api_log->created_by_id = Auth::user()->id;
             $api_log->save();
