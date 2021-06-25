@@ -7,10 +7,13 @@ use Abs\HelperPkg\Traits\SeederTrait;
 use App\BaseModel;
 use App\Company;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Venturecraft\Revisionable\RevisionableTrait;
 
 class CustomerVoice extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
+	use  RevisionableTrait;
+	
 	protected $table = 'customer_voices';
 	public $timestamps = true;
 	protected $fillable = [
@@ -20,6 +23,9 @@ class CustomerVoice extends BaseModel {
 		"repair_order_id",
 		"lv_main_type_id",
 	];
+
+	protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
 
 	protected static $excelColumnRules = [
 		'Code' => [

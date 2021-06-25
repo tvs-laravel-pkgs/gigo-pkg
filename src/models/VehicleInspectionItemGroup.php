@@ -8,10 +8,12 @@ use App\Company;
 use App\SerialNumberGroup;
 // use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use \Venturecraft\Revisionable\RevisionableTrait;
 
 class VehicleInspectionItemGroup extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
+	use  RevisionableTrait;
 	protected $table = 'vehicle_inspection_item_groups';
 	public $timestamps = true;
 	public static $AUTO_GENERATE_CODE = true;
@@ -20,7 +22,11 @@ class VehicleInspectionItemGroup extends BaseModel {
 		"company_id",
 		"code",
 		"name",
+		"deleted_at"
 	];
+
+	protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
 
 	protected static $excelColumnRules = [
 		'Name' => [

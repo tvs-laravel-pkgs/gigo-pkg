@@ -15,10 +15,11 @@ use App\Part;
 use Auth;
 use DB;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use \Venturecraft\Revisionable\RevisionableTrait;
 class RepairOrder extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
+	use RevisionableTrait;
 	protected $table = 'repair_orders';
 	public $timestamps = true;
 	protected $fillable = [
@@ -36,6 +37,9 @@ class RepairOrder extends BaseModel {
 		'uom_id',
 	];
 
+	protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
+	
 	protected static $excelColumnRules = [
 		'Group Code' => [
 			'table_column_name' => 'type_id',

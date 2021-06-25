@@ -6,16 +6,19 @@ use App\Company;
 use App\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use \Venturecraft\Revisionable\RevisionableTrait;
 
 class JobOrderRepairOrder extends Model {
 	use SeederTrait;
 	use SoftDeletes;
+	use RevisionableTrait;
 	protected $table = 'job_order_repair_orders';
 	public $timestamps = true;
 	protected $fillable =
 		["job_order_id", "repair_order_id", "is_recommended_by_oem", "is_customer_approved", "split_order_type_id", "qty", "amount", "failure_date", "status_id", "remarks", "observation", "action_taken", "is_free_service"]
 	;
-
+	protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
 	public function getFailureDateAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
 	}

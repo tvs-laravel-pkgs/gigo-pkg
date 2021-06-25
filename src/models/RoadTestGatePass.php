@@ -4,10 +4,11 @@ namespace Abs\GigoPkg;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use \Venturecraft\Revisionable\RevisionableTrait;
 class RoadTestGatePass extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
+	use RevisionableTrait;
 	protected $table = 'road_test_gate_pass';
 	public $timestamps = true;
 	protected $fillable = [
@@ -19,7 +20,8 @@ class RoadTestGatePass extends BaseModel {
 		"gate_out_date",
 		"gate_out_remarks",
 	];
-
+	protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
 	// Getters --------------------------------------------------------------
 
 	//APPEND - INBETWEEN REGISTRATION NUMBER

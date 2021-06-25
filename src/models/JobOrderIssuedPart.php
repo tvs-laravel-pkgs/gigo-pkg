@@ -7,10 +7,11 @@ use App\Company;
 use App\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use \Venturecraft\Revisionable\RevisionableTrait;
 class JobOrderIssuedPart extends Model {
 	use SeederTrait;
 	use SoftDeletes;
+	use RevisionableTrait;
 	protected $table = 'job_order_issued_parts';
 	public $timestamps = true;
 	protected $fillable = [
@@ -20,7 +21,9 @@ class JobOrderIssuedPart extends Model {
 		"issued_mode_id",
 		"issued_to_id",
 	];
-
+	protected $revisionCreationsEnabled = true;
+	protected $revisionForceDeleteEnabled = true;
+	
 	public function getDateOfJoinAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
 	}

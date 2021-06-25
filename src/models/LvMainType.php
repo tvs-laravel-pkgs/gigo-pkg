@@ -6,10 +6,11 @@ use Abs\HelperPkg\Traits\SeederTrait;
 use App\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
-
+use \Venturecraft\Revisionable\RevisionableTrait;
 class LvMainType extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
+	use RevisionableTrait;
 	protected $table = 'lv_main_types';
 	public $timestamps = true;
 	protected $fillable = [
@@ -17,6 +18,9 @@ class LvMainType extends BaseModel {
 		"company_id",
 		"name",
 	];
+	
+	protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
 
 	public static function relationships($action = '') {
 		$relationships = [

@@ -7,10 +7,12 @@ use App\BaseModel;
 use App\Company;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
+use \Venturecraft\Revisionable\RevisionableTrait;
 
 class PartSupplier extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
+	use RevisionableTrait;
 	protected $table = 'part_suppliers';
 	public $timestamps = true;
 	protected $fillable = [
@@ -19,6 +21,9 @@ class PartSupplier extends BaseModel {
 		"code",
 		"name",
 	];
+
+	protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
 
 	// Query Scopes --------------------------------------------------------------
 

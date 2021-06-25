@@ -7,16 +7,20 @@ use App\BaseModel;
 use App\Company;
 use Auth;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use \Venturecraft\Revisionable\RevisionableTrait;
 class RepairOrderType extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
+	use  RevisionableTrait;
 	protected $table = 'repair_order_types';
 	public $timestamps = true;
 	protected $fillable =
 		["id", "company_id", "short_name", "name"]
 	;
 
+	protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
+	
 	protected static $excelColumnRules = [
 		'Short Name' => [
 			'table_column_name' => 'short_name',

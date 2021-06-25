@@ -7,15 +7,18 @@ use App\BaseModel;
 use App\Company;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
-
+use \Venturecraft\Revisionable\RevisionableTrait;
 class Complaint extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
+	use RevisionableTrait;
 	protected $table = 'complaints';
 	public $timestamps = true;
 	protected $fillable =
 		["company_id", "code", "name", "group_id", "sub_aggregate_id", "hours", "kms", "months"]
 	;
+	protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
 
 	protected static $excelColumnRules = [
 		/*'Group Code' => [

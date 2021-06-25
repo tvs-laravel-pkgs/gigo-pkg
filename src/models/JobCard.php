@@ -17,13 +17,14 @@ use File;
 use Illuminate\Database\Eloquent\Model;
 use PDF;
 use Storage;
-
+use \Venturecraft\Revisionable\RevisionableTrait;
 // use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JobCard extends BaseModel
 {
     use SeederTrait;
     // use SoftDeletes;
+    use RevisionableTrait;
     protected $table = 'job_cards';
     public $timestamps = true;
     protected $fillable = [
@@ -38,7 +39,8 @@ class JobCard extends BaseModel
         "floor_supervisor_id",
         "status_id",
     ];
-
+    protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
     //APPEND - INBETWEEN REGISTRATION NUMBER
     public function getRegistrationNumberAttribute($value)
     {

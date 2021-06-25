@@ -7,10 +7,11 @@ use App\BaseModel;
 use Auth;
 // use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use \Venturecraft\Revisionable\RevisionableTrait;
 class QuoteType extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
+	use  RevisionableTrait;
 	public static $AUTO_GENERATE_CODE = true;
 
 	protected $table = 'quote_types';
@@ -18,7 +19,9 @@ class QuoteType extends BaseModel {
 	protected $fillable =
 		["id", "company_id", "code", "name"]
 	;
-
+	protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
+	
 	protected static $excelColumnRules = [
 		'Name' => [
 			'table_column_name' => 'name',

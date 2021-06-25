@@ -8,16 +8,18 @@ use App\Config;
 use App\Customer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use \Venturecraft\Revisionable\RevisionableTrait;
 class VehicleOwner extends Model {
 	use SeederTrait;
 	//use SoftDeletes;
 	protected $table = 'vehicle_owners';
+	use RevisionableTrait;
 	public $timestamps = true;
 	protected $fillable =
 		["vehicle_id", "customer_id", "from_date", "ownership_id"]
 	;
-
+	protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
 	// public function getFromDateAttribute($value) {
 	// 	return empty($value) ? '' : date('d-m-Y', strtotime($value));
 	// }

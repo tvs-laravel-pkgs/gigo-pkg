@@ -18,11 +18,12 @@ use File;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use PDF;
 use Storage;
-
+use \Venturecraft\Revisionable\RevisionableTrait;
 class JobOrder extends BaseModel
 {
     use SeederTrait;
     use SoftDeletes;
+    use RevisionableTrait;
     protected $table = 'job_orders';
     public $timestamps = true;
     protected $fillable = [
@@ -57,6 +58,9 @@ class JobOrder extends BaseModel
         "service_advisor_id",
         "floor_supervisor_id",
     ];
+    
+    protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
 
     protected $dates = [
         'created_at',

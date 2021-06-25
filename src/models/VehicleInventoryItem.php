@@ -11,6 +11,7 @@ use App\JobOrder;
 use App\SerialNumberGroup;
 use Auth;
 use DB;
+use \Venturecraft\Revisionable\RevisionableTrait;
 
 // use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -18,6 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class VehicleInventoryItem extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
+	use RevisionableTrait;
 	public static $AUTO_GENERATE_CODE = true;
 
 	protected $table = 'vehicle_inventory_items';
@@ -25,6 +27,9 @@ class VehicleInventoryItem extends BaseModel {
 	protected $fillable =
 		["id", "company_id", "code", "name", "field_type_id"]
 	;
+	protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
+	
 	protected static $excelColumnRules = [
 		'Name' => [
 			'table_column_name' => 'name',

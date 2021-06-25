@@ -10,16 +10,20 @@ use App\Config;
 use App\JobOrder;
 use App\Outlet;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use \Venturecraft\Revisionable\RevisionableTrait;
 
 class Bay extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
+	use RevisionableTrait;
 	protected $table = 'bays';
 	public $timestamps = true;
 	protected $fillable =
 		["id", "short_name", "outlet_id", "name", "status_id", "job_order_id", "area_type_id", "display_order"]
 	;
-
+	protected $revisionCreationsEnabled = true;
+	protected $revisionForceDeleteEnabled = true;
+	
 	protected static $excelColumnRules = [
 		'Outlet Code' => [
 			'table_column_name' => 'outlet_id',

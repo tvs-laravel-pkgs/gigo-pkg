@@ -7,14 +7,18 @@ use App\BaseModel;
 // use App\Company;
 use Auth;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use \Venturecraft\Revisionable\RevisionableTrait;
 class Aggregate extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
+	use RevisionableTrait;
 	protected $table = 'aggregates';
 	public $timestamps = true;
 	protected $fillable =
 		["name", "code"];
+
+	protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
 
 	protected static $excelColumnRules = [
 		'Name' => [

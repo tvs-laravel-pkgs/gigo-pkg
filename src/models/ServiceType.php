@@ -8,15 +8,20 @@ use App\Company;
 use App\SerialNumberGroup;
 use Auth;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use \Venturecraft\Revisionable\RevisionableTrait;
 class ServiceType extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
+	use  RevisionableTrait;
 	protected $table = 'service_types';
 	public $timestamps = true;
 	protected $fillable =
 		["company_id", "code", "name", "display_order"]
 	;
+	
+	protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
+
 	public static $AUTO_GENERATE_CODE = true;
 
 	protected static $excelColumnRules = [

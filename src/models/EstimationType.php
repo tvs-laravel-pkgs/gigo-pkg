@@ -8,10 +8,11 @@ use App\Company;
 use App\SerialNumberGroup;
 // use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use \Venturecraft\Revisionable\RevisionableTrait;
 class EstimationType extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
+	use RevisionableTrait;
 	protected $table = 'estimation_types';
 	public $timestamps = true;
 	public static $AUTO_GENERATE_CODE = true;
@@ -19,6 +20,8 @@ class EstimationType extends BaseModel {
 	protected $fillable =
 		["id", "company_id", "code", "minimum_amount", "name"]
 	;
+	protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
 
 	protected static $excelColumnRules = [
 		'Name' => [

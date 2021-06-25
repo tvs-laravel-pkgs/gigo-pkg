@@ -5,10 +5,11 @@ namespace Abs\GigoPkg;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use \Venturecraft\Revisionable\RevisionableTrait;
 class Campaign extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
+	use RevisionableTrait;
 	protected $table = 'compaigns';
 	public $timestamps = true;
 	protected $fillable = [
@@ -21,6 +22,9 @@ class Campaign extends BaseModel {
 		"vehicle_model_id",
 		"campaign_type",
 	];
+
+	protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
 
 	public function getManufactureDateAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));

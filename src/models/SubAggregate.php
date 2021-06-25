@@ -8,10 +8,12 @@ use App\BaseModel;
 // use App\Company;
 use Auth;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use \Venturecraft\Revisionable\RevisionableTrait;
 
 class SubAggregate extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
+	use RevisionableTrait;
 	protected $table = 'sub_aggregates';
 	public $timestamps = true;
 	protected $fillable = [
@@ -19,6 +21,9 @@ class SubAggregate extends BaseModel {
 		"aggregate_id",
 		"code"
 	];
+
+	protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
 
 	protected static $excelColumnRules = [
 		'Name' => [

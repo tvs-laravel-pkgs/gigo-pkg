@@ -20,11 +20,12 @@ use PHPExcel_Style_NumberFormat;
 use Validator;
 use Carbon\Carbon;
 use DB;
-
+use \Venturecraft\Revisionable\RevisionableTrait;
 class GateLog extends Model
 {
     use SeederTrait;
     use SoftDeletes;
+    use RevisionableTrait;
     protected $table = 'gate_logs';
     public $timestamps = true;
     protected $fillable = [
@@ -37,7 +38,8 @@ class GateLog extends Model
         "gate_pass_id",
         "status_id",
     ];
-
+    protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
     //APPEND - INBETWEEN REGISTRATION NUMBER
     public function getRegistrationNumberAttribute($value)
     {

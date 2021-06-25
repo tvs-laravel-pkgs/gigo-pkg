@@ -7,10 +7,11 @@ use App\Company;
 use App\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use \Venturecraft\Revisionable\RevisionableTrait;
 class JobCardReturnableItem extends Model {
 	use SeederTrait;
 	use SoftDeletes;
+	use RevisionableTrait;
 	protected $table = 'job_card_returnable_items';
 	public $timestamps = true;
 	protected $fillable = [
@@ -23,7 +24,9 @@ class JobCardReturnableItem extends Model {
 		"qty",
 		"remarks",
 	];
-
+	protected $revisionCreationsEnabled = true;
+	protected $revisionForceDeleteEnabled = true;
+	
 	public function getDateOfJoinAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
 	}

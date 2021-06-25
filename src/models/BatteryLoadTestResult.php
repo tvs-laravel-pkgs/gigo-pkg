@@ -5,16 +5,19 @@ namespace Abs\GigoPkg;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use \Venturecraft\Revisionable\RevisionableTrait;
 class BatteryLoadTestResult extends BaseModel
 {
     use SeederTrait;
     use SoftDeletes;
+    use RevisionableTrait;
     protected $table = 'battery_load_test_results';
     public $timestamps = true;
     protected $fillable =
         ["company_id", "outlet_id", "vehicle_battery_id", "amp_hour", "battery_voltage", "load_test_status_id", "hydrometer_electrolyte_status_id", "remarks"]
     ;
+    protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
 
     public function getRegistrationNumberAttribute($value)
     {

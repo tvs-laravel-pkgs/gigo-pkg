@@ -8,16 +8,19 @@ use App\Config;
 use DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use \Venturecraft\Revisionable\RevisionableTrait;
 class JobOrderPart extends Model {
 	use SeederTrait;
 	use SoftDeletes;
+	use RevisionableTrait;
 	protected $table = 'job_order_parts';
 	public $timestamps = true;
 	protected $fillable =
 		["job_order_id", "part_id", "qty", "split_order_type_id", "rate", "amount", "status_id", "is_free_service", "is_oem_recommended"]
 	;
-
+	protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
+	
 	public function getDateOfJoinAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
 	}

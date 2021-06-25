@@ -9,10 +9,11 @@ use App\Config;
 use App\SerialNumberGroup;
 // use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use \Venturecraft\Revisionable\RevisionableTrait;
 class SplitOrderType extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
+	use  RevisionableTrait;
 	protected $table = 'split_order_types';
 	public $timestamps = true;
 	public static $AUTO_GENERATE_CODE = true;
@@ -26,6 +27,9 @@ class SplitOrderType extends BaseModel {
 		"claim_category_id",
 	];
 
+	protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
+	
 	public function paidBy() {
 		return $this->belongsTo('App\Config', 'paid_by_id');
 	}

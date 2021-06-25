@@ -7,10 +7,11 @@ use App\Company;
 use App\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use \Venturecraft\Revisionable\RevisionableTrait;
 class GatePass extends Model {
 	use SeederTrait;
 	use SoftDeletes;
+	use RevisionableTrait;
 	protected $table = 'gate_passes';
 	public $timestamps = true;
 	protected $fillable = [
@@ -25,6 +26,8 @@ class GatePass extends Model {
 		"gate_in_remarks",
 		"gate_out_remarks",
 	];
+	protected $revisionCreationsEnabled = true;
+	protected $revisionForceDeleteEnabled = true;
 
 	protected $appends = [
 		'created_on',

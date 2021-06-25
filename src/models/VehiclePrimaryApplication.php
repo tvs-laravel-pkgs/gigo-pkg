@@ -7,10 +7,11 @@ use App\BaseModel;
 use App\Company;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
-
+use \Venturecraft\Revisionable\RevisionableTrait;
 class VehiclePrimaryApplication extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
+	use RevisionableTrait;
 	public static $AUTO_GENERATE_CODE = true;
 	protected $table = 'vehicle_primary_applications';
 	public $timestamps = true;
@@ -20,6 +21,8 @@ class VehiclePrimaryApplication extends BaseModel {
 		"code",
 		"name",
 	];
+	protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
 
 	// Query Scopes --------------------------------------------------------------
 

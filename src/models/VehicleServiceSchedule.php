@@ -7,10 +7,13 @@ use App\BaseModel;
 use App\Company;
 use App\SerialNumberGroup;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use \Venturecraft\Revisionable\RevisionableTrait;
 
 class VehicleServiceSchedule extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
+	use  RevisionableTrait;
+
 	protected $table = 'vehicle_service_schedules';
 	public $timestamps = true;
 
@@ -21,6 +24,9 @@ class VehicleServiceSchedule extends BaseModel {
 		"code",
 		"name",
 	];
+
+	protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
 
 	protected $dates = [
 		'created_at',

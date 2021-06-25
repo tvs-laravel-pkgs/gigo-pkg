@@ -8,10 +8,11 @@ use App\Company;
 // use Illuminate\Database\Eloquent\Model;
 use Auth;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use \Venturecraft\Revisionable\RevisionableTrait;
 class ServiceOrderType extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
+	use RevisionableTrait;
 	public static $AUTO_GENERATE_CODE = false;
 
 	protected $table = 'service_order_types';
@@ -22,6 +23,9 @@ class ServiceOrderType extends BaseModel {
 		"code",
 		"name",
 	];
+
+	protected $revisionCreationsEnabled = true;
+    protected $revisionForceDeleteEnabled = true;
 
 	protected static $excelColumnRules = [
 		'Code' => [
