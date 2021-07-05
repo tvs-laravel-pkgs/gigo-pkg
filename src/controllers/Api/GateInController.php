@@ -357,15 +357,16 @@ class GateInController extends Controller
             }
 
             //CHECK VEHICLE PREVIOUS JOBCARD STATUS
-            $previous_job_order = JobOrder::where('vehicle_id', $vehicle->id)->orderBy('id', 'DESC')->first();
+            $previous_job_order = JobOrder::join('outlets','outlets.id','job_orders.outlet_id')->where('job_orders.vehicle_id', $vehicle->id)->orderBy('job_orders.id', 'DESC')->select('outlets.ax_name','outlets.code','job_orders.status_id')->first();
 
             if ($previous_job_order) {
                 if ($previous_job_order->status_id != 8470 && $previous_job_order->status_id != 8476 && $previous_job_order->status_id != 8467 && $previous_job_order->status_id != 8468 && $previous_job_order->status_id != '') {
+                    $outlet_code = $previous_job_order->ax_name ? $previous_job_order->ax_name : $previous_job_order->code;
                     return response()->json([
                         'success' => false,
                         'error' => 'Validation Error',
                         'errors' => [
-                            'Previous Job Order not completed on this Vehicle!',
+                            'Previous Job Order is not completed on the '.$outlet_code.' outlet!',
                         ],
                     ]);
                 }

@@ -87,6 +87,12 @@ class BatteryController extends Controller
     {
         // dd($request->all());
         try {
+            
+            $error_messages = [
+                'battery_serial_number.required_if' => "Battery Serial Number required",
+                'load_test_status_id.required' => "Load Test Status required",
+                'hydrometer_electrolyte_status_id.required' => "Hydrometer Electrolyte Status required",
+            ];
 
             $validator = Validator::make($request->all(), [
                 'registration_number' => [
@@ -188,6 +194,9 @@ class BatteryController extends Controller
                     'integer',
                     'exists:battery_makes,id',
                 ],
+                'battery_serial_number' => [
+                    'required_if:overall_status_id,==,3',
+                ],
                 'amp_hour' => [
                     'required',
                 ],
@@ -212,7 +221,7 @@ class BatteryController extends Controller
                 'remarks' => [
                     'required',
                 ],
-            ]);
+            ], $error_messages);
 
             if ($validator->fails()) {
                 return response()->json([
