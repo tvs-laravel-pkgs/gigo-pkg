@@ -368,7 +368,8 @@ app.component('batteryForm', {
         self.user = $scope.user = HelperService.getLoggedUser();
         self.customer_search_type = true;
         self.search_type = true;
-
+        self.is_battery_replaced= 1;
+        self.is_battery_buy_back=1;
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
@@ -394,6 +395,17 @@ app.component('batteryForm', {
                     $scope.action = res.action;
                     $scope.user_info = res.user;
 
+                        if( $scope.battery.is_battery_replaced == 0){
+                            self.is_battery_replaced= 0;
+                        }else{
+                            self.is_battery_replaced= 1;
+                        }
+                        if($scope.battery.is_buy_back_opted == 0){
+                            self.is_battery_buy_back=0;
+                        }else{
+                            self.is_battery_buy_back=1;
+                        }
+                    
                     $scope.customer = $scope.battery ? $scope.battery.vehicle_battery ? $scope.battery.vehicle_battery.customer : [] : [];
                     console.log($scope.customer);
 

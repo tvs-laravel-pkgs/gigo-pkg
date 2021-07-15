@@ -749,7 +749,7 @@
                                                         <div class="panel-body">
                                                             <div class="row">
                                                                 <div class="col-md-12">
-                                                                    <div class="col-md-6">
+                                                                    <div class="col-md-3">
                                                                         <div class="form-group">
                                                                             <label>Load Test Status<sup
                                                                                     class="mandatory">*</sup></label>
@@ -784,7 +784,7 @@
                                                                             </div>
                                                                         </div><!-- Feild -->
                                                                     </div><!-- Column -->
-                                                                    <div class="col-md-6">
+                                                                    <div class="col-md-3">
                                                                         <div class="form-group">
                                                                             <label>Hydrometer Electrolyte Status
                                                                                 <sup class="mandatory">*</sup></label>
@@ -850,6 +850,132 @@
                                                                                 name="overall_status_id"
                                                                                 value="{{battery.overall_status_id}}">
                                                                         </div><!-- Feild -->
+                                                                    </div>
+                                                                    <div class="col-md-3" ng-if="battery.overall_status_id==2">
+                                                                        <div class="form-group">
+                                                                            <label>
+                                                                                New Battery Replaced
+                                                                                <sup class="mandatory">*</sup>
+                                                                            </label>
+                                                                            <div class="common-radio-button type-4">
+                                                                                <input type="radio"
+                                                                                    id="is_battery_replaced_yes"
+                                                                                    name="is_battery_replaced"
+                                                                                    ng-model="$ctrl.is_battery_replaced"
+                                                                                    ng-value="1">
+                                                                                <label for="is_battery_replaced_yes">
+                                                                                    Yes<span class="rd-focused"></span>
+                                                                                </label>
+                                                                                <input type="radio"
+                                                                                    id="is_battery_replaced_no"
+                                                                                    name="is_battery_replaced"
+                                                                                    ng-model="$ctrl.is_battery_replaced"
+                                                                                    ng-value="0">
+                                                                                <label for="is_battery_replaced_no">
+                                                                                    No<span class="rd-focused"></span>
+                                                                                </label>
+                                                                            </div>
+                                                                        </div><!-- Feild -->
+                                                                    </div>
+                                                                    <div class="col-md-3"  ng-if="$ctrl.is_battery_replaced == true && battery.overall_status_id==2">
+                                                                            <div class="form-group">
+                                                                                <label>
+                                                                                   Replace Battery To Replace
+                                                                                    <sup class="mandatory">*</sup>
+                                                                                </label>
+                                                                                <md-select
+                                                                                    ng-model="battery.replaced_battery_make_id"
+                                                                                    placeholder="Select Battery"
+                                                                                    data-md-container-class="selectdemoSelectHeader">
+                                                                                    <md-select-header
+                                                                                        class="demo-select-header">
+                                                                                        <input ng-model="searchBattery"
+                                                                                            type="search"
+                                                                                            placeholder="Search for a Battery.."
+                                                                                            class="demo-header-searchbox md-text"
+                                                                                            ng-keydown="$event.stopPropagation()">
+                                                                                    </md-select-header>
+                                                                                    <md-optgroup>
+                                                                                        <md-option ng-value="list.id"
+                                                                                            ng-repeat="list in extras.replaced_battery_list | filter:searchBattery">
+                                                                                            {{list.name}}
+                                                                                        </md-option>
+                                                                                    </md-optgroup>
+                                                                                </md-select>
+                                                                                <input type="hidden" class="required"
+                                                                                    name="replaced_battery_make_id"
+                                                                                    value="{{battery.replaced_battery_make_id}}">
+                                                                            </div><!-- Feild -->
+                                                                         </div>
+                                                                         <div class="col-md-3"  ng-if="$ctrl.is_battery_replaced == true && battery.overall_status_id==2 ">
+                                                                          <div class="form-group">
+                                                                            <label>
+                                                                                Replace Battery Serial Number
+                                                                                <sup class="mandatory">*</sup>
+                                                                            </label>
+                                                                            <input type="text" class="form-control required"
+                                                                                minlength="5" maxlength="30"
+                                                                                placeholder="Enter Serial Number"
+                                                                                autocomplete="off"
+                                                                                name="replaced_battery_serial_number"
+                                                                                ng-model="battery.replaced_battery_serial_number" />
+                                                                            </div>
+                                                                         </div>
+                                                                         <div class="col-md-3" ng-if=" battery.overall_status_id==2 && $ctrl.is_battery_replaced == true">
+                                                                          <div class="form-group">
+                                                                            <label>
+                                                                                Is Buy Back Opted
+                                                                                <sup class="mandatory">*</sup>
+                                                                            </label>
+                                                                            <div class="common-radio-button type-4">
+                                                                                <input type="radio"
+                                                                                    id="is_battery_buy_back_yes"
+                                                                                    name="is_buy_back_opted"
+                                                                                    ng-model="$ctrl.is_battery_buy_back"
+                                                                                    ng-value="1">
+                                                                                <label for="is_battery_buy_back_yes">
+                                                                                    Yes<span class="rd-focused"></span>
+                                                                                </label>
+                                                                                <input type="radio"
+                                                                                    id="is_battery_buy_back_no"
+                                                                                    name="is_buy_back_opted"
+                                                                                    ng-model="$ctrl.is_battery_buy_back"
+                                                                                    ng-value="0">
+                                                                                <label for="is_battery_buy_back_no">
+                                                                                    No<span class="rd-focused"></span>
+                                                                                </label>
+                                                                          </div>
+                                                                        </div><!-- Feild -->
+                                                                    </div>
+                                                                    <div class="col-md-5"  ng-if="battery.overall_status_id==2  && $ctrl.is_battery_replaced == false">
+                                                                       <div class="form-group">
+                                                                        <label>
+                                                                            Reason for Non-replacement
+                                                                            <sup class="mandatory">*</sup>
+                                                                        </label>
+                                                                        <md-select
+                                                                            ng-model="battery.battery_not_replaced_reason_id"
+                                                                            placeholder="Select Reason"
+                                                                            data-md-container-class="selectdemoSelectHeader">
+                                                                            <md-select-header
+                                                                                class="demo-select-header">
+                                                                                <input ng-model="searchReason"
+                                                                                    type="search"
+                                                                                    placeholder="Search for a Reason.."
+                                                                                    class="demo-header-searchbox md-text"
+                                                                                    ng-keydown="$event.stopPropagation()">
+                                                                            </md-select-header>
+                                                                            <md-optgroup>
+                                                                                <md-option ng-value="list.id"
+                                                                                    ng-repeat="list in extras.battery_not_replace_reasons | filter:searchBatteryNonReplacementReason">
+                                                                                    {{list.name}}
+                                                                                </md-option>
+                                                                            </md-optgroup>
+                                                                        </md-select>
+                                                                        <input type="hidden" class="form-control required"
+                                                                            name="battery_not_replaced_reason_id"
+                                                                            value="{{battery.battery_not_replaced_reason_id}}">
+                                                                       </div>
                                                                     </div>
                                                                     <div class="col-md-9">
                                                                         <div class="form-group">

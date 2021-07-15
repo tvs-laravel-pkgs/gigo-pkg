@@ -43,6 +43,8 @@ class BatteryController extends Controller
                 'batteryLoadTestStatus',
                 'loadTestStatus',
                 'hydrometerElectrolyteStatus',
+                'replacedBatteryMake',
+                'batteryNotReplacedReason'
             ])->find($request->id);
             $action = 'Edit';
 
@@ -73,9 +75,13 @@ class BatteryController extends Controller
                 'config_type_id' => 33,
                 'default_text' => 'Select Reading type',
             ]),
+            'battery_not_replace_reasons' => collect(Config::where('config_type_id',477)->select('id','name')->get())->prepend(['id' => '', 'name'=>'Select Reason']),
+            'replaced_battery_list' => collect(BatteryMake::where('id', 4)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Battery']),
+
+                
         ];
 
-        $this->data['extras'] = $extras;
+        $this->data['extras'] = $extras; 
 
         $this->data['success'] = true;
 
@@ -195,7 +201,8 @@ class BatteryController extends Controller
                     'exists:battery_makes,id',
                 ],
                 'battery_serial_number' => [
-                    'required_if:overall_status_id,==,3',
+                    // 'required_if:overall_status_id,==,3',
+                    'required_if:is_buy_back_opted,==,1',
                 ],
                 'amp_hour' => [
                     'required',
@@ -221,6 +228,10 @@ class BatteryController extends Controller
                 'remarks' => [
                     'required',
                 ],
+                'battery_not_replaced_reason_id'=> [
+                    'required_if:is_battery_replaced,==,0',
+                ],
+                
             ], $error_messages);
 
             if ($validator->fails()) {
@@ -379,6 +390,20 @@ class BatteryController extends Controller
             $battery_result->amp_hour = $request->amp_hour;
             $battery_result->battery_voltage = $request->battery_voltage;
             $battery_result->remarks = $request->remarks;
+           
+            if($request->is_battery_replaced){
+                $battery_result->is_battery_replaced = $request->is_battery_replaced;
+                $battery_result->replaced_battery_make_id = $request->replaced_battery_make_id;
+                $battery_result->replaced_battery_serial_number = $request->replaced_battery_serial_number;
+                $battery_result->is_buy_back_opted = $request->is_buy_back_opted;
+                $battery_result->battery_not_replaced_reason_id = $request->battery_not_replaced_reason_id;
+            }else{
+                $battery_result->is_battery_replaced = $request->is_battery_replaced;
+                $battery_result->replaced_battery_make_id = null;
+                $battery_result->replaced_battery_serial_number = null;
+                $battery_result->is_buy_back_opted = null;
+                $battery_result->battery_not_replaced_reason_id =  $request->battery_not_replaced_reason_id;
+            }
             $battery_result->save();
 
             DB::commit();

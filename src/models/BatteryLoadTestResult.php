@@ -13,7 +13,7 @@ class BatteryLoadTestResult extends BaseModel
     protected $table = 'battery_load_test_results';
     public $timestamps = true;
     protected $fillable =
-        ["company_id", "outlet_id", "vehicle_battery_id", "amp_hour", "battery_voltage", "load_test_status_id", "hydrometer_electrolyte_status_id", "remarks"]
+        ["company_id", "outlet_id", "vehicle_battery_id", "amp_hour", "battery_voltage", "load_test_status_id", "hydrometer_electrolyte_status_id", "remarks","replaced_battery_make_id","battery_not_replaced_reason_id"]
     ;
 
     public function getRegistrationNumberAttribute($value)
@@ -66,4 +66,12 @@ class BatteryLoadTestResult extends BaseModel
     {
         return $this->belongsTo('App\HydrometerElectrolyteStatus', 'hydrometer_electrolyte_status_id');
     }
+    public function replacedBatteryMake(){
+
+        return $this->belongsTo('App\BatteryMake', 'replaced_battery_make_id');
+    }
+    public function batteryNotReplacedReason() {
+
+		return $this->belongsTo('App\Config','battery_not_replaced_reason_id');
+	}
 }

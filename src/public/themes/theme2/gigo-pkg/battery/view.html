@@ -424,6 +424,56 @@
                                                                         </b>
                                                                     </span>
                                                                 </li>
+                                                                <li class="view-col-3" ng-if="battery.battery_load_test_status.id == 2">
+                                                                    <span class="view-col-label">
+                                                                     New Battery Replaced
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <b>
+                                                                            {{battery.is_battery_replaced == 1 ? 'Yes' : 'No'}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3" ng-if="battery.battery_load_test_status.id == 2">
+                                                                    <span class="view-col-label">
+                                                                     Is Buy Back Opted
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <b>   
+                                                                            {{battery.is_buy_back_opted == 1 ? 'Yes' : 'No'}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3" ng-if="battery.is_buy_back_opted == 1">
+                                                                    <span class="view-col-label">
+                                                                     Replaced Battery
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <b>
+                                                                           {{battery.replaced_battery_make.name}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3" ng-if="battery.is_battery_replaced == 0">
+                                                                    <span class="view-col-label">
+                                                                    Battery Not Replaced Reason
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <b>
+                                                                           {{battery.battery_not_replaced_reason.name}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3" ng-if="battery.is_buy_back_opted == 1">
+                                                                    <span class="view-col-label">
+                                                                     Replaced Battery Serial Number
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <b>
+                                                                            {{battery.replaced_battery_serial_number}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
                                                                 <li class="view-col-3">
                                                                     <span class="view-col-label">
                                                                         Remarks
