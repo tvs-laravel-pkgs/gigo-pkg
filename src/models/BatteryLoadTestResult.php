@@ -67,11 +67,20 @@ class BatteryLoadTestResult extends BaseModel
         return $this->belongsTo('App\HydrometerElectrolyteStatus', 'hydrometer_electrolyte_status_id');
     }
     public function replacedBatteryMake(){
-
         return $this->belongsTo('App\BatteryMake', 'replaced_battery_make_id');
     }
     public function batteryNotReplacedReason() {
-
 		return $this->belongsTo('App\Config','battery_not_replaced_reason_id');
 	}
+
+    public function getJobCardDateAttribute($value)
+    {
+        return empty($value) ? '' : date('d-m-Y', strtotime($value));
+    }
+
+    public function getInvoiceDateAttribute($value)
+    {
+        return empty($value) ? '' : date('d-m-Y', strtotime($value));
+    }
+
 }

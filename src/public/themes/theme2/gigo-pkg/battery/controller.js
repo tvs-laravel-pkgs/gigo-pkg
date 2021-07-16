@@ -334,6 +334,66 @@ app.component('batteryView', {
         }
         $scope.fetchData();
 
+        $scope.showPaymentForm = function (battery) {
+            $('#payment_modal').modal('show');
+        }
+
+        //Save Payment Data 
+        $scope.saveBatteryPaymentData = function () {
+            var form_id = '#battery-payment-form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'battery_id': {
+                        required: true,
+                    },
+                    'invoice_number': {
+                        required: true,
+                    },
+                    'invoice_date': {
+                        required: true,
+                    },
+                    'invoice_amount': {
+                        required: true,
+                    },
+                },
+                messages: {},
+                invalidHandler: function (event, validator) {
+                    custom_noty('error', 'You have errors, Please check all fields');
+                },
+                submitHandler: function (form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.submit').button('loading');
+                    $.ajax({
+                        url: base_url + '/api/battery/payment/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
+                        .done(function (res) {
+                            $('.submit').button('reset');
+
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                return;
+                            }
+                            $('#payment_modal').modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                            custom_noty('success', res.message);
+                            // $location.path('/manual-vehicle-delivery/table-list');
+                            $window.location.reload();
+                            $scope.$apply();
+                        })
+                        .fail(function (xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
         //Scrollable Tabs
         setTimeout(function () {
             scrollableTabs();

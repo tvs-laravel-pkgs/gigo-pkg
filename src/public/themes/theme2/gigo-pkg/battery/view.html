@@ -440,7 +440,7 @@
                                                                     </span>
                                                                 </li>
                                                                 <li class="view-col-3"
-                                                                    ng-if="battery.battery_load_test_status.id == 2">
+                                                                    ng-if="battery.battery_load_test_status.id == 2 && battery.is_battery_replaced == 1">
                                                                     <span class="view-col-label">
                                                                         Replaced Battery
                                                                     </span>
@@ -452,7 +452,7 @@
                                                                     </span>
                                                                 </li>
                                                                 <li class="view-col-3"
-                                                                    ng-if="battery.battery_load_test_status.id == 2">
+                                                                    ng-if="battery.battery_load_test_status.id == 2 && battery.is_battery_replaced == 1">
                                                                     <span class="view-col-label">
                                                                         Replaced Battery Serial Number
                                                                     </span>
@@ -460,6 +460,71 @@
                                                                         <b>
                                                                             {{battery.replaced_battery_serial_number ?
                                                                             battery.replaced_battery_serial_number :
+                                                                            '-'}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3"
+                                                                    ng-if="battery.battery_load_test_status.id == 2 && battery.is_battery_replaced == 1">
+                                                                    <span class="view-col-label">
+                                                                        Job Card Number
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <b>
+                                                                            {{battery.job_card_number ?
+                                                                            battery.job_card_number :
+                                                                            '-'}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3"
+                                                                    ng-if="battery.battery_load_test_status.id == 2 && battery.is_battery_replaced == 1">
+                                                                    <span class="view-col-label">
+                                                                        Job Card Date
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <b>
+                                                                            {{battery.job_card_date ?
+                                                                            battery.job_card_date :
+                                                                            '-'}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3"
+                                                                    ng-if="battery.battery_load_test_status.id == 2 && battery.invoice_number">
+                                                                    <span class="view-col-label">
+                                                                        Invoice Number
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <b>
+                                                                            {{battery.invoice_number ?
+                                                                            battery.invoice_number :
+                                                                            '-'}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3"
+                                                                    ng-if="battery.battery_load_test_status.id == 2 && battery.invoice_number">
+                                                                    <span class="view-col-label">
+                                                                        Invoice Date
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <b>
+                                                                            {{battery.invoice_date ?
+                                                                            battery.invoice_date :
+                                                                            '-'}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3"
+                                                                    ng-if="battery.battery_load_test_status.id == 2 && battery.invoice_number">
+                                                                    <span class="view-col-label">
+                                                                        Invoice Amount
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <b>
+                                                                            {{battery.invoice_amount ?
+                                                                            battery.invoice_amount :
                                                                             '-'}}
                                                                         </b>
                                                                     </span>
@@ -477,13 +542,15 @@
                                                                     </span>
                                                                 </li>
                                                                 <li class="view-col-3"
-                                                                    ng-if="battery.is_battery_replaced == 0">
+                                                                    ng-if="battery.is_battery_replaced == 0 && battery.battery_not_replaced_reason_id">
                                                                     <span class="view-col-label">
                                                                         Battery Not Replaced Reason
                                                                     </span>
                                                                     <span class="view-data-list-value">
                                                                         <b>
-                                                                            {{battery.battery_not_replaced_reason.name}}
+                                                                            {{battery.battery_not_replaced_reason ?
+                                                                            battery.battery_not_replaced_reason.name :
+                                                                            '-'}}
                                                                         </b>
                                                                     </span>
                                                                 </li>
@@ -508,6 +575,12 @@
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <button type="button"
+                                                    ng-if="battery.job_card_number && !battery.invoice_number"
+                                                    ng-click="showPaymentForm(battery)"
+                                                    class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                                    Update Invoice Details
+                                                </button>
                                             </div>
                                         </div>
                                     </div><!-- Tab Footer -->
@@ -520,4 +593,85 @@
         </form>
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
+<div class="modal fade filter" id="payment_modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <form id="battery-payment-form" autocomplete="off">
+            <input type="hidden" name="battery_id" value="{{battery.id}}">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close ripple reject_close" data-dismiss="modal" aria-label="Close">
+                        <i class="icon ion-md-close"></i>
+                    </button>
+                    <h5 class="modal-title">
+                        Payment Details
+                    </h5>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-form">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Job Card Number<sup class="mandatory">*</sup></label>
+                                    <input type="text" class="form-control" readonly
+                                        value="{{battery.job_card_number}}">
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Job Card Date<sup class="mandatory">*</sup></label>
+                                    <input type="text" class="form-control" readonly value="{{battery.job_card_date}}">
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Invoice Number<sup class="mandatory">*</sup></label>
+                                    <input type="text" name="invoice_number" maxlength="100"
+                                        placeholder="Ex: INV20210101" class="form-control" value=""
+                                        onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')">
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Invoice Date<sup class="mandatory">*</sup></label>
+                                    <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
+                                        <input type="text" class="form-control required" placeholder="Ex: 10-01-2021"
+                                            value="{{battery.invoice_date}}" name="invoice_date" />
+                                        <div class="input-group-addon">
+                                            <img class="img-responsive"
+                                                src="./public/theme/img/content/calender-gray-icon.svg"
+                                                alt="Calendar Image" />
+                                        </div>
+                                    </div><!-- Input Group -->
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Invoice Amount<sup class="mandatory">*</sup></label>
+                                    <input type="text" name="invoice_amount" maxlength="10"
+                                        class="form-control invoice_amount" placeholder="Ex: 3000"
+                                        value="{{battery.invoice_amount}}"
+                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                        </div><!-- Row -->
+                    </div><!-- Modal Form -->
+                </div><!-- Modal Body -->
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                        </div><!-- Column -->
+                        <div class="col-md-6 text-right">
+                            <button type="button" data-dismiss="modal" class="btn btn-secondary-dark">
+                                Cancel
+                            </button>
+                            <button type="submit" class="submit btn btn-primary" ng-click="saveBatteryPaymentData()">
+                                Save
+                            </button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Modal Footer -->
+            </div><!-- Modal Content -->
+        </form>
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->
 <script src="./public/theme/js/imageuploadify-mgatepass.min.js"></script>

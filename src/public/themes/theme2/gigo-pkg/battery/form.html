@@ -679,7 +679,8 @@
                                                                             placeholder="Enter Serial Number"
                                                                             autocomplete="off"
                                                                             name="battery_serial_number"
-                                                                            ng-model="battery.vehicle_battery.battery_serial_number" />
+                                                                            ng-model="battery.vehicle_battery.battery_serial_number"
+                                                                            onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')" />
                                                                     </div><!-- Feild -->
                                                                 </li>
                                                                 <li class="view-col-3">
@@ -922,7 +923,48 @@
                                                                                 placeholder="Enter Serial Number"
                                                                                 autocomplete="off"
                                                                                 name="replaced_battery_serial_number"
-                                                                                ng-model="battery.replaced_battery_serial_number" />
+                                                                                ng-model="battery.replaced_battery_serial_number"
+                                                                                onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')" />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-3"
+                                                                        ng-if="$ctrl.is_battery_replaced == true && battery.overall_status_id==2 ">
+                                                                        <div class="form-group">
+                                                                            <label>
+                                                                                Job Card Number
+                                                                                <sup class="mandatory">*</sup>
+                                                                            </label>
+                                                                            <input type="text"
+                                                                                class="form-control required"
+                                                                                minlength="5" maxlength="30"
+                                                                                placeholder="Enter JobCard Number"
+                                                                                autocomplete="off"
+                                                                                name="job_card_number"
+                                                                                ng-model="battery.job_card_number"
+                                                                                onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')" />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-3"
+                                                                        ng-if="$ctrl.is_battery_replaced == true && battery.overall_status_id==2 ">
+                                                                        <div class="form-group">
+                                                                            <label>
+                                                                                Job Card Date
+                                                                                <sup class="mandatory">*</sup>
+                                                                            </label>
+                                                                            <div class="input-group date"
+                                                                                data-date-end-date="0d"
+                                                                                data-provide="datepicker"
+                                                                                data-date-auto-close="true">
+                                                                                <input type="text" class="form-control"
+                                                                                    placeholder="Ex: 01-07-2021"
+                                                                                    ng-model="battery.job_card_date"
+                                                                                    name="job_card_date" />
+                                                                                <div class="input-group-addon">
+                                                                                    <img class="img-responsive"
+                                                                                        src="./public/theme/img/content/calender-gray-icon.svg"
+                                                                                        alt="Calendar Image" />
+                                                                                </div>
+                                                                            </div><!-- Input Group -->
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-md-3"

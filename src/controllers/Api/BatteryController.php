@@ -89,6 +89,67 @@ class BatteryController extends Controller
 
     }
 
+    public function paymentSave(Request $request)
+    {
+        // dd($request->all());
+        try {
+            
+            $validator = Validator::make($request->all(), [
+                'battery_id' => [
+                    'required',
+                ],
+                'invoice_number' => [
+                    'required',
+                    'unique:battery_load_test_results,invoice_number,' . $request->battery_id . ',id',
+                ],
+                'invoice_date' => [
+                    'required',
+                ],
+                'invoice_amount' => [
+                    'required',
+                ],
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => $validator->errors()->all(),
+                ]);
+            }
+
+            DB::beginTransaction();
+
+            $battery_result = BatteryLoadTestResult::find($request->battery_id);
+            
+            $battery_result->invoice_number = $request->invoice_number;
+            $battery_result->invoice_date = date('Y-m-d', strtotime($request->invoice_date));
+            $battery_result->invoice_amount = $request->invoice_amount;
+            $battery_result->updated_by_id = Auth::user()->id;
+            $battery_result->updated_at = Carbon::now();
+
+            $battery_result->save();
+
+            DB::commit();
+
+            $message = 'Battery Invoice Details Saved Successfully!';
+
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+            ]);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Server Error',
+                'errors' => [
+                    'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+                ],
+            ]);
+        }
+    }
+
     public function save(Request $request)
     {
         // dd($request->all());
@@ -397,13 +458,20 @@ class BatteryController extends Controller
                 $battery_result->replaced_battery_serial_number = $request->replaced_battery_serial_number;
                 $battery_result->is_buy_back_opted = $request->is_buy_back_opted;
                 $battery_result->battery_not_replaced_reason_id = $request->battery_not_replaced_reason_id;
+                $battery_result->job_card_number = $request->job_card_number;
+                $battery_result->job_card_date = date('Y-m-d', strtotime($request->job_card_date));
             }else{
                 $battery_result->is_battery_replaced = 0;
                 $battery_result->replaced_battery_make_id = null;
                 $battery_result->replaced_battery_serial_number = null;
                 $battery_result->is_buy_back_opted = null;
                 $battery_result->battery_not_replaced_reason_id =  $request->battery_not_replaced_reason_id;
+                $battery_result->job_card_number = null;
+                $battery_result->job_card_date = null;
             }
+            $battery_result->invoice_number = null;
+            $battery_result->invoice_date = null;
+            $battery_result->invoice_amount = null;
             $battery_result->save();
 
             DB::commit();
