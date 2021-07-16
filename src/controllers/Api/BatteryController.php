@@ -398,7 +398,7 @@ class BatteryController extends Controller
                 $battery_result->is_buy_back_opted = $request->is_buy_back_opted;
                 $battery_result->battery_not_replaced_reason_id = $request->battery_not_replaced_reason_id;
             }else{
-                $battery_result->is_battery_replaced = $request->is_battery_replaced;
+                $battery_result->is_battery_replaced = 0;
                 $battery_result->replaced_battery_make_id = null;
                 $battery_result->replaced_battery_serial_number = null;
                 $battery_result->is_buy_back_opted = null;

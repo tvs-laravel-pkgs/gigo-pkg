@@ -325,7 +325,10 @@
                                                                     </span>
                                                                     <span class="view-data-list-value">
                                                                         <b>
-                                                                            {{battery.vehicle_battery.battery_serial_number}}
+                                                                            {{battery.vehicle_battery.battery_serial_number
+                                                                            ?
+                                                                            battery.vehicle_battery.battery_serial_number
+                                                                            : '-'}}
                                                                         </b>
                                                                     </span>
                                                                 </li>
@@ -424,53 +427,63 @@
                                                                         </b>
                                                                     </span>
                                                                 </li>
-                                                                <li class="view-col-3" ng-if="battery.battery_load_test_status.id == 2">
+                                                                <li class="view-col-3"
+                                                                    ng-if="battery.battery_load_test_status.id == 2">
                                                                     <span class="view-col-label">
-                                                                     New Battery Replaced
+                                                                        New Battery Replaced
                                                                     </span>
                                                                     <span class="view-data-list-value">
                                                                         <b>
-                                                                            {{battery.is_battery_replaced == 1 ? 'Yes' : 'No'}}
+                                                                            {{battery.is_battery_replaced == 1 ? 'Yes' :
+                                                                            'No'}}
                                                                         </b>
                                                                     </span>
                                                                 </li>
-                                                                <li class="view-col-3" ng-if="battery.battery_load_test_status.id == 2">
+                                                                <li class="view-col-3"
+                                                                    ng-if="battery.battery_load_test_status.id == 2">
                                                                     <span class="view-col-label">
-                                                                     Is Buy Back Opted
-                                                                    </span>
-                                                                    <span class="view-data-list-value">
-                                                                        <b>   
-                                                                            {{battery.is_buy_back_opted == 1 ? 'Yes' : 'No'}}
-                                                                        </b>
-                                                                    </span>
-                                                                </li>
-                                                                <li class="view-col-3" ng-if="battery.is_buy_back_opted == 1">
-                                                                    <span class="view-col-label">
-                                                                     Replaced Battery
+                                                                        Replaced Battery
                                                                     </span>
                                                                     <span class="view-data-list-value">
                                                                         <b>
-                                                                           {{battery.replaced_battery_make.name}}
+                                                                            {{battery.replaced_battery_make ?
+                                                                            battery.replaced_battery_make.name : '-'}}
                                                                         </b>
                                                                     </span>
                                                                 </li>
-                                                                <li class="view-col-3" ng-if="battery.is_battery_replaced == 0">
+                                                                <li class="view-col-3"
+                                                                    ng-if="battery.battery_load_test_status.id == 2">
                                                                     <span class="view-col-label">
-                                                                    Battery Not Replaced Reason
+                                                                        Replaced Battery Serial Number
                                                                     </span>
                                                                     <span class="view-data-list-value">
                                                                         <b>
-                                                                           {{battery.battery_not_replaced_reason.name}}
+                                                                            {{battery.replaced_battery_serial_number ?
+                                                                            battery.replaced_battery_serial_number :
+                                                                            '-'}}
                                                                         </b>
                                                                     </span>
                                                                 </li>
-                                                                <li class="view-col-3" ng-if="battery.is_buy_back_opted == 1">
+                                                                <li class="view-col-3"
+                                                                    ng-if="battery.battery_load_test_status.id == 2">
                                                                     <span class="view-col-label">
-                                                                     Replaced Battery Serial Number
+                                                                        Is Buy Back Opted
                                                                     </span>
                                                                     <span class="view-data-list-value">
                                                                         <b>
-                                                                            {{battery.replaced_battery_serial_number}}
+                                                                            {{battery.is_buy_back_opted == 1 ? 'Yes' :
+                                                                            'No'}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3"
+                                                                    ng-if="battery.is_battery_replaced == 0">
+                                                                    <span class="view-col-label">
+                                                                        Battery Not Replaced Reason
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <b>
+                                                                            {{battery.battery_not_replaced_reason.name}}
                                                                         </b>
                                                                     </span>
                                                                 </li>

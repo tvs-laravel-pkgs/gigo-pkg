@@ -17,7 +17,7 @@ class AlterTableBatteryLoadTestResul extends Migration
 			$table->unsignedInteger('replaced_battery_make_id')->nullable()->after('is_battery_replaced');
 			$table->string('replaced_battery_serial_number',40)->nullable()->after('replaced_battery_make_id');
 			$table->tinyInteger('is_buy_back_opted')->after('replaced_battery_serial_number')->nullable()->comment('1->Yes 0->No');
-			$table->unsignedInteger('battery_not_replaced_reason_id')->after('is_buy_back_opted');
+			$table->unsignedInteger('battery_not_replaced_reason_id')->nullable()->after('is_buy_back_opted');
 			$table->foreign('battery_not_replaced_reason_id','battery_not_replaced_reason_id_foreign')->references('id')->on('configs')->onDelete('cascade')->onUpdate('cascade');
 			$table->foreign('replaced_battery_make_id','replaced_battery_make_id_foreign')->references('id')->on('battery_makes')->onDelete('cascade')->onUpdate('cascade');
 		});
