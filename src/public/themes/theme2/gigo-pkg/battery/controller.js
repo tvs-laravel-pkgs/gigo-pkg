@@ -67,46 +67,49 @@ app.component('batteryList', {
                 },
             },
 
-            columns: [{
-                data: 'action',
-                class: 'action',
-                name: 'action',
-                searchable: false
-            },
-            {
-                data: 'date',
-                searchable: false
-            },
-            {
-                data: 'outlet_code',
-                name: 'outlets.code'
-            },
-            {
-                data: 'customer_name',
-                name: 'customers.name'
-            },
-            {
-                data: 'registration_number',
-                name: 'vehicles.registration_number'
-            },
-            {
-                data: 'battery_name',
-                name: 'battery_makes.name'
-            },
-            {
-                data: 'load_test_status',
-                name: 'load_test_statuses.name'
-            },
-            {
-                data: 'hydrometer_electrolyte_status',
-                name: 'hydrometer_electrolyte_statuses.name'
-            },
-            {
-                data: 'overall_status',
-                name: 'battery_load_test_statuses.name'
-            },
-
-
+            columns: [
+                {
+                    data: 'action',
+                    class: 'action',
+                    name: 'action',
+                    searchable: false
+                },
+                {
+                    data: 'date',
+                    searchable: false
+                },
+                {
+                    data: 'outlet_code',
+                    name: 'outlets.code'
+                },
+                {
+                    data: 'customer_name',
+                    name: 'customers.name'
+                },
+                {
+                    data: 'registration_number',
+                    name: 'vehicles.registration_number'
+                },
+                {
+                    data: 'battery_name',
+                    name: 'battery_makes.name'
+                },
+                {
+                    data: 'load_test_status',
+                    name: 'load_test_statuses.name'
+                },
+                {
+                    data: 'hydrometer_electrolyte_status',
+                    name: 'hydrometer_electrolyte_statuses.name'
+                },
+                {
+                    data: 'overall_status',
+                    name: 'battery_load_test_statuses.name'
+                },
+                {
+                    data: 'status',
+                    searchable: false
+                },
             ],
             "infoCallback": function (settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)
