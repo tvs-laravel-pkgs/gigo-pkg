@@ -430,7 +430,11 @@
     var battery_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/battery/list.html')}}';
     var battery_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/battery/form.html')}}';
     var battery_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/battery/view.html')}}';
-    var import_gigo_template_url  = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/import/list.html')}}';
+</script>
+
+<script type='text/javascript'>
+    //GIGO Import
+     var import_gigo_template_url  = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/import/list.html')}}';
 </script>
 
 <script type='text/javascript'>

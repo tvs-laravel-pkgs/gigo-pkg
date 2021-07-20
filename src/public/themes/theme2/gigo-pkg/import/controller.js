@@ -26,7 +26,7 @@ app.component('gigoImportList', {
                 url: laravel_routes['getImportCronJobList'],
                 type: "GET",
                 dataType: "json",
-                data: function(d) {},
+                data: function (d) { },
             },
 
             columns: [
@@ -45,20 +45,20 @@ app.component('gigoImportList', {
                 { data: 'start_time', searchable: false },
                 { data: 'end_time', searchable: false },
                 { data: 'duration', searchable: false },
-              
+
                 { data: 'created_by', name: 'cb.name', searchable: true },
             ],
-            "initComplete": function(settings, json) {
+            "initComplete": function (settings, json) {
                 $('.dataTables_length select').select2();
                 $('#modal-loading').modal('hide');
             },
-            "infoCallback": function(settings, start, end, max, total, pre) {
+            "infoCallback": function (settings, start, end, max, total, pre) {
                 $('#table_info').html(total)
             },
-            rowCallback: function(row, data) {
+            rowCallback: function (row, data) {
                 $(row).addClass('highlight-row');
             },
-            createdRow: function(row, data, dataIndex) {
+            createdRow: function (row, data, dataIndex) {
                 $(row).find('td:eq(4)')
                     .attr('data-toggle', 'toggle')
                     .attr('title', data.error_details_tooltip)
@@ -66,7 +66,7 @@ app.component('gigoImportList', {
             }
         });
         //TOOLTIP
-        $(document).on('mouseover', ".table-attchment-view", function() {
+        $(document).on('mouseover', ".table-attchment-view", function () {
             var $this = $(this);
             if (this.offsetWidth <= this.scrollWidth && !$this.attr('title')) {
                 $this.tooltip({
@@ -77,28 +77,28 @@ app.component('gigoImportList', {
                 $this.tooltip('show');
             }
         });
-        setInterval(function() {
-            $('#table').DataTable().ajax.reload();
+        setInterval(function () {
+            $('#gigo-import').DataTable().ajax.reload();
         }, 60000);
-        $('.btn-add-close').on("click", function() {
-            $('#table').DataTable().search('').draw();
+        $('.btn-add-close').on("click", function () {
+            $('#gigo-import').DataTable().search('').draw();
         });
 
-        $('.btn-refresh, #refresh-btn').on("click", function() {
-            $('#table').DataTable().ajax.reload();
+        $('.btn-refresh, #refresh-btn').on("click", function () {
+            $('#gigo-import').DataTable().ajax.reload();
         });
 
-        $scope.deleteImportJob = function($id) {
+        $scope.deleteImportJob = function ($id) {
             $('#import_job_id').val($id);
         }
-        $scope.deleteConfirm = function() {
+        $scope.deleteConfirm = function () {
             $id = $('#import_job_id').val();
             $http.get(
                 import_cron_job_delete + '/' + $id,
-            ).then(function(response) {
+            ).then(function (response) {
                 if (response.data.success) {
                     custom_noty('success', 'Import job Deleted Successfully');
-                    $('#gigo-import').DataTable().ajax.reload(function(json) {});
+                    $('#gigo-import').DataTable().ajax.reload(function (json) { });
                     $location.path('/gigo-import/list');
                 }
             });

@@ -3,9 +3,9 @@
 namespace Abs\GigoPkg;
 
 use Abs\GigoPkg\JobCard;
-use Abs\ImportCronJobPkg\ImportCronJob;
 use Abs\GigoPkg\JobOrder;
 use Abs\HelperPkg\Traits\SeederTrait;
+use Abs\ImportCronJobPkg\ImportCronJob;
 use Abs\TaxPkg\Tax;
 use App\AggregateWork;
 use App\BaseModel;
@@ -19,11 +19,8 @@ use DB;
 use File;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use PDF;
-use Storage;
-use PHPExcel_IOFactory;
-use PHPExcel_Shared_Date;
-use Carbon\Carbon;
 use PHPExcel_Style_NumberFormat;
+use Storage;
 
 class JobOrder extends BaseModel
 {
@@ -1849,58 +1846,63 @@ class JobOrder extends BaseModel
 
         return true;
     }
-    public static function importFromExcelWIPVehicle($job){
+    public static function importFromExcelWIPVehicle($job)
+    {
         try {
-			$response = ImportCronJob::getRecordsFromExcel($job, 'AF');
-			$rows = $response['rows'];
-			$header = $response['header'];
-			$all_error_records = [];
-			$i = 0;
-			foreach ($rows as $k => $row) {
-				$record = [];
-				foreach ($header as $key => $column) {
-					if (!$column) {
-						continue;
-					} else {
-						$record[$column] = trim($row[$key]);
-					}
-				}
-                DB::beginTransaction();
-                $vehicle_inside_workshop= new VehicleInsideWorkshop();
+            $response = ImportCronJob::getRecordsFromExcel($job, 'AF');
+            $rows = $response['rows'];
+            $header = $response['header'];
+            $all_error_records = [];
+            $i = 0;
+            foreach ($rows as $k => $row) {
+                $record = [];
+                foreach ($header as $key => $column) {
+                    if (!$column) {
+                        continue;
+                    } else {
+                        $record[$column] = trim($row[$key]);
+                    }
+                }
+
+                $original_record = $record;
+                $status = [];
+                $status['errors'] = [];
+
+                $vehicle_inside_workshop = new VehicleInsideWorkshop;
                 if (empty($record['Plant Name'])) {
                     $status['errors'][] = 'Plant Name is empty';
                 } else {
-                     $vehicle_inside_workshop->plant_name = $record['Plant Name'];
+                    $vehicle_inside_workshop->plant_name = $record['Plant Name'];
                 }
 
                 if (empty($record['Company Code'])) {
                     $status['errors'][] = 'Company Code is empty';
                 } else {
-                    $vehicle_inside_workshop->company_code=$record['Company Code'];;
+                    $vehicle_inside_workshop->company_code = $record['Company Code'];
                 }
 
                 if (empty($record['Company Name'])) {
                     $status['errors'][] = 'Company Name is empty';
                 } else {
-                    $vehicle_inside_workshop->company_name=$record['Company Name'];
+                    $vehicle_inside_workshop->company_name = $record['Company Name'];
                 }
-					
+
                 if (empty($record['Company GSTIN'])) {
                     $status['errors'][] = 'Company GSTIN is empty';
                 } else {
-                  $vehicle_inside_workshop->company_gstin=$record['Company GSTIN'];
+                    $vehicle_inside_workshop->company_gstin = $record['Company GSTIN'];
                 }
 
                 if (empty($record['SAC Code'])) {
                     $status['errors'][] = 'SAC Code is empty';
                 } else {
-                    $vehicle_inside_workshop->sac_code= $record['SAC Code'];
+                    $vehicle_inside_workshop->sac_code = $record['SAC Code'];
                 }
 
                 if (empty($record['Model'])) {
-                    $status['errors'][] = 'Model is empty';
+                    // $status['errors'][] = 'Model is empty';
                 } else {
-                    $vehicle_inside_workshop->model_name=$record['Model'];
+                    $vehicle_inside_workshop->model = $record['Model'];
                 }
 
                 if (empty($record['Document No'])) {
@@ -1908,22 +1910,22 @@ class JobOrder extends BaseModel
                 } else {
                     $vehicle_inside_workshop->document_no = $record['Document No'];
                 }
-					
+
                 if (empty($record['Plant Code'])) {
                     $status['errors'][] = 'Plant Code is empty';
                 } else {
-                    $vehicle_inside_workshop->plant_code =$record['Plant Code'];
+                    $vehicle_inside_workshop->plant_code = $record['Plant Code'];
                 }
 
                 if (empty($record['Date Of Sale'])) {
-                    $status['errors'][] = 'Date Of Sale is empty';
+                    // $status['errors'][] = 'Date Of Sale is empty';
                 } else {
-                    $date_of_sale= PHPExcel_Style_NumberFormat::toFormattedString($record['Date Of Sale'],PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDD2);
-                    $vehicle_inside_workshop->date_of_sale=$date_of_sale;
+                    $date_of_sale = PHPExcel_Style_NumberFormat::toFormattedString($record['Date Of Sale'], PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDD2);
+                    $vehicle_inside_workshop->date_of_sale = $date_of_sale;
                 }
 
                 if (empty($record['VOR NO'])) {
-                    $status['errors'][] = 'VOR NO is empty';
+                    // $status['errors'][] = 'VOR NO is empty';
                 } else {
                     $vehicle_inside_workshop->vor_number = $record['VOR NO'];
                 }
@@ -1931,35 +1933,35 @@ class JobOrder extends BaseModel
                 if (empty($record['Doc Date'])) {
                     $status['errors'][] = 'Doc Date is empty';
                 } else {
-                    $doc_date= PHPExcel_Style_NumberFormat::toFormattedString($record['Doc Date'],PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDD2);
-                    $vehicle_inside_workshop->document_date=  $doc_date;
+                    $doc_date = PHPExcel_Style_NumberFormat::toFormattedString($record['Doc Date'], PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDD2);
+                    $vehicle_inside_workshop->document_date = $doc_date;
                 }
 
                 if (empty($record['Dealer Order Number'])) {
                     $status['errors'][] = 'Dealer Order Number is empty';
                 } else {
-                    $vehicle_inside_workshop->dealer_order_number=$record['Dealer Order Number'];
+                    $vehicle_inside_workshop->dealer_order_number = $record['Dealer Order Number'];
                 }
 
                 if (empty($record['Reg No.'])) {
-                    $status['errors'][] = 'Reg No is empty';
+                    // $status['errors'][] = 'Reg No is empty';
                 } else {
-                    $vehicle_inside_workshop->registration_number=$record['Reg No.'];
+                    $vehicle_inside_workshop->registration_number = $record['Reg No.'];
                 }
                 if (empty($record['Chassis No.'])) {
-                    $status['errors'][] = 'Chassis No is empty';
+                    // $status['errors'][] = 'Chassis No is empty';
                 } else {
                     $vehicle_inside_workshop->chassis_number = $record['Chassis No.'];
                 }
                 if (empty($record['Engine No.'])) {
-                    $status['errors'][] = 'Engine No is empty';
+                    // $status['errors'][] = 'Engine No is empty';
                 } else {
-                    $vehicle_inside_workshop->engine_number=$record['Engine No.'];
+                    $vehicle_inside_workshop->engine_number = $record['Engine No.'];
                 }
                 if (empty($record['Aggregate No.'])) {
-                    $status['errors'][] = 'Aggregate No is empty';
+                    // $status['errors'][] = 'Aggregate No is empty';
                 } else {
-                    $vehicle_inside_workshop->aggregate_number=$record['Aggregate No.'];
+                    $vehicle_inside_workshop->aggregate_number = $record['Aggregate No.'];
                 }
 
                 if (empty($record['Customer Code'])) {
@@ -1969,7 +1971,7 @@ class JobOrder extends BaseModel
                 }
 
                 if (empty($record['Customer Name'])) {
-                    $status['errors'][] = 'Customer Name is empty';
+                    // $status['errors'][] = 'Customer Name is empty';
                 } else {
                     $vehicle_inside_workshop->customer_name = $record['Customer Name'];
                 }
@@ -1977,106 +1979,111 @@ class JobOrder extends BaseModel
                 if (empty($record['KAM Status'])) {
                     $status['errors'][] = 'KAM Status is empty';
                 } else {
-                    $vehicle_inside_workshop->kam_status =$record['KAM Status'];
+                    $vehicle_inside_workshop->kam_status = $record['KAM Status'];
                 }
                 if (empty($record['Order Type'])) {
                     $status['errors'][] = 'Order Type is empty';
                 } else {
-                    $vehicle_inside_workshop->order_type =$record['Order Type'];
-                }   
+                    $vehicle_inside_workshop->order_type = $record['Order Type'];
+                }
                 if (empty($record['Inward/Quote Date Time'])) {
                     $status['errors'][] = 'Inward/Quote Date Time is empty';
                 } else {
-                    $date=$record['Inward/Quote Date Time'];
-                    $vehicle_inside_workshop->inward_quote_date_time= date('Y-m-d H:i:s', strtotime("$date"));
-                }   
+                    $date = $record['Inward/Quote Date Time'];
+                    $vehicle_inside_workshop->inward_quote_date_time = date('Y-m-d H:i:s', strtotime("$date"));
+                }
                 if (empty($record['No of Days Inside Workshop'])) {
-                    $status['errors'][] = 'No of Days Inside Workshop is empty';
+                    // $status['errors'][] = 'No of Days Inside Workshop is empty';
                 } else {
-                    $vehicle_inside_workshop->no_of_days_inside_workshop=$record['No of Days Inside Workshop'];
-                }   
+                    $vehicle_inside_workshop->no_of_days_inside_workshop = $record['No of Days Inside Workshop'];
+                }
                 if (empty($record['Status'])) {
                     $status['errors'][] = 'Status is empty';
                 } else {
-                    $vehicle_inside_workshop->status=$record['Status'];
-                }     
+                    $vehicle_inside_workshop->status = $record['Status'];
+                }
                 if (empty($record['Service Advisor'])) {
-                    $status['errors'][] = 'Service Advisor is empty';
+                    // $status['errors'][] = 'Service Advisor is empty';
                 } else {
-                    $vehicle_inside_workshop->service_advisor=$record['Service Advisor'];
-                }     
+                    $vehicle_inside_workshop->service_advisor = $record['Service Advisor'];
+                }
                 if (empty($record['Supervisor'])) {
-                    $status['errors'][] = 'Supervisor is empty';
+                    // $status['errors'][] = 'Supervisor is empty';
                 } else {
-                    $vehicle_inside_workshop->supervisor=$record['Supervisor'];
-                }  
+                    $vehicle_inside_workshop->supervisor = $record['Supervisor'];
+                }
 
                 if (empty($record['Quotation Type'])) {
-                    $status['errors'][] = 'Quotation Type is empty';
+                    // $status['errors'][] = 'Quotation Type is empty';
                 } else {
-                    $vehicle_inside_workshop->quotation_type=$record['Quotation Type'];
-                }  
-                
-                if (empty($record['Delay Remarks'])) {
-                    $status['errors'][] = 'Delay Remarks is empty';
-                } else {
-                    $vehicle_inside_workshop->delay_remarks=$record['Delay Remarks'];
-                } 
-                
-                if (empty($record['Vehicle Status'])) {
-                    $status['errors'][] = 'Vehicle Status is empty';
-                } else {
-                    $vehicle_inside_workshop->vehicle_status=$record['Vehicle Status'];
-                }     
-                if (empty($record['Service Contact Name'])) {
-                    $status['errors'][] = 'Service Contact Name is empty';
-                } else {
-                    $vehicle_inside_workshop->service_contact_name=$record['Service Contact Name'];
-                }     
-                if (empty($record['Service Contact Number'])) {
-                    $status['errors'][] = 'Service Contact Name is empty';
-                } else {
-                    $vehicle_inside_workshop->service_contact_number =$record['Service Contact Number'];
-                }  
-                if (empty($record['Driver Name'])) {
-                    $status['errors'][] = 'Driver Name is empty';
-                } else {
-                    $vehicle_inside_workshop->driver_name=$record['Driver Name'];
-                }     
-                if (empty($record['Driver Number'])) {
-                    $status['errors'][] = 'Driver Number is empty';
-                } else {
-                    $vehicle_inside_workshop->driver_number=$record['Driver Number'];
+                    $vehicle_inside_workshop->quotation_type = $record['Quotation Type'];
                 }
-                    $vehicle_inside_workshop->created_by_id = $job->created_by_id;
-                    $vehicle_inside_workshop->updated_at = NULL;
-                    try {
-                        $vehicle_inside_workshop->save();
-                        DB::commit();
-                    } catch (\Exception $e) {
-                        DB::rollback();
-                        $status['errors'][] = $e->getMessage();
-                        if (count($status['errors']) > 0) {
-                            $original_record['Record No'] = $k + 1;
-                            $original_record['Error Details'] = implode(',', $status['errors']);
-                            $all_error_records[] = $original_record;
-                            $job->incrementError();
-                            continue;
-                        }
+
+                if (empty($record['Delay Remarks'])) {
+                    // $status['errors'][] = 'Delay Remarks is empty';
+                } else {
+                    $vehicle_inside_workshop->delay_remarks = $record['Delay Remarks'];
+                }
+
+                if (empty($record['Vehicle Status'])) {
+                    // $status['errors'][] = 'Vehicle Status is empty';
+                } else {
+                    $vehicle_inside_workshop->vehicle_status = $record['Vehicle Status'];
+                }
+
+                $vehicle_inside_workshop->created_by_id = $job->created_by_id;
+                $vehicle_inside_workshop->updated_at = null;
+
+                //UPDATING PROGRESS FOR EVERY FIFTY RECORDS
+                if (($k + 1) % 50 == 0) {
+                    $job->processed_count = $k;
+                    $job->save();
+                }
+
+                if (count($status['errors']) > 0) {
+                    dump($status['errors']);
+                    $original_record['Record No'] = $k + 1;
+                    $original_record['Error Details'] = implode(',', $status['errors']);
+                    $all_error_records[] = $original_record;
+                    $job->incrementError();
+                    continue;
+                }
+
+                try {
+                    DB::beginTransaction();
+                    $vehicle_inside_workshop->save();
+                    DB::commit();
+                    $job->incrementNew();
+                } catch (\Exception $e) {
+                    $status['errors'][] = $e->getMessage();
+                    if (count($status['errors']) > 0) {
+                        dump($status['errors']);
+                        $original_record['Record No'] = $k + 1;
+                        $original_record['Error Details'] = implode(',', $status['errors']);
+                        $all_error_records[] = $original_record;
+                        $job->incrementError();
+                        continue;
                     }
-                //COMPLETED or completed with errors
-                $job->status_id = $job->error_count == 0 ? 7202 : 7205;
-                $job->save();
-                ImportCronJob::generateImportReport([
-                    'job' => $job,
-                    'all_error_records' => $all_error_records,
-                ]);
-		    	}
-			}catch(\Throwable $e){
-                dump($job->error_details);
-                $job->status_id = 7203; //Error
-                $job->error_details = 'Error:' . $e->getMessage() . '. Line:' . $e->getLine() . '. File:' . $e->getFile(); //Error
-                $job->save();
+                }
             }
-		}
+
+            $job->remaining_count = 0;
+            $job->processed_count = $job->total_record_count;
+            //COMPLETED or completed with errors
+            $job->status_id = $job->error_count == 0 ? 7202 : 7205;
+            $job->save();
+
+            // dd($job);
+            ImportCronJob::generateImportReport([
+                'job' => $job,
+                'all_error_records' => $all_error_records,
+            ]);
+
+        } catch (\Throwable $e) {
+            dump($job->error_details);
+            $job->status_id = 7203; //Error
+            $job->error_details = 'Error:' . $e->getMessage() . '. Line:' . $e->getLine() . '. File:' . $e->getFile(); //Error
+            $job->save();
+        }
+    }
 }
