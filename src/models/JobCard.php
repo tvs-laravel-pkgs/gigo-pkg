@@ -2091,7 +2091,7 @@ class JobCard extends BaseModel
                 }
 
                 if (empty($record['KM Reading / HR Reading'])) {
-                    $status['errors'][] = 'KM Reading / HR Reading is empty';
+                    // $status['errors'][] = 'KM Reading / HR Reading is empty';
                 } else {
                     $job_card_billed_details->current_reading = $record['KM Reading / HR Reading'];
                 }

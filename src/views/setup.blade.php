@@ -435,6 +435,7 @@
 <script type='text/javascript'>
     //GIGO Import
      var import_gigo_template_url  = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/import/list.html')}}';
+     var import_gigo_form_template_url  = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/import/form.html')}}';
 </script>
 
 <script type='text/javascript'>

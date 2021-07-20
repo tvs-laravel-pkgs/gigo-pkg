@@ -105,3 +105,73 @@ app.component('gigoImportList', {
         }
     }
 });
+
+app.component('gigoImportForm', {
+    templateUrl: import_gigo_form_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope) {
+        get_form_data_url = import_cron_job_from_data_url + '/' + $routeParams.id;
+        // if ($routeParams.id != 2) {
+        //     $location.path('/page-not-found')
+        //     // $scope.$apply()
+        // }
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        self.angular_routes = angular_routes;
+
+        self.type_id = $routeParams.id;
+        self.import_cron_job_template_base_path = import_cron_job_template_base_path;
+        $http.get(
+            get_form_data_url
+        ).then(function(response) {
+            // console.log(response.data);
+            self.impoty_type = response.data.impoty_type;
+            // if (self.impoty_type.permission != 'import-coupon') {
+            //     $location.path('/page-not-found')
+            //     $scope.$apply()
+            // }
+            // $rootScope.loading = false;
+        });
+
+        /* Tab Funtion */
+        var form_id = '#import-form';
+        var v = jQuery(form_id).validate({
+            ignore: '',
+            rules: {
+                'excel_file': {
+                    required: true,
+                },
+            },
+            submitHandler: function(form) {
+                let formData = new FormData($(form_id)[0]);
+                $('#upload').button('loading');
+                $.ajax({
+                        url: laravel_routes['saveImportCronJob'],
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
+                    .done(function(res) {
+                        if (res.success == true) {
+                            custom_noty('success', res.message);
+                            $location.path('/gigo-import/list');
+                            $scope.$apply();
+                        } else {
+                            if (!res.success) {
+                                $('#upload').button('reset');
+                                var errors = '';
+                                for (var i in res.errors) {
+                                    errors += '<li>' + res.errors[i] + '</li>';
+                                }
+                                custom_noty('error', errors);
+                            }
+                        }
+                    })
+                    .fail(function(xhr) {
+                        $('#upload').button('reset');
+                        custom_noty('error', 'Something went wrong at server');
+                    });
+            }
+        });
+    }
+});
