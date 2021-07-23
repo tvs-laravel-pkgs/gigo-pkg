@@ -23,6 +23,7 @@ use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 use Validator;
+use App\MultimeterTestStatus;
 
 class BatteryController extends Controller
 {
@@ -48,6 +49,19 @@ class BatteryController extends Controller
                 'hydrometerElectrolyteStatus',
                 'replacedBatteryMake',
                 'batteryNotReplacedReason',
+                'multimeterTestStatus',
+                'secondbatterymultimeterTestStatus',
+                'vehicleBattery.battery_status',
+                'vehicleBattery.secondbatteryMake',
+                'secondbatteryAmphour',
+                'firstbatteryAmphour',
+                'firstbatteryvoltage',
+                'secondbatteryvoltage',
+                'secondbatteryloadTestStatus',
+                'secondbatteryhydrometerElectrolyteStatus',
+                'secondbatterymultimeterTestStatus',
+                'secondreplacedBatteryMake',
+                'secondbatteryoverallLoadTestStatus',
             ])->find($request->id);
             $action = 'Edit';
 
@@ -80,9 +94,11 @@ class BatteryController extends Controller
             ]),
             'battery_not_replace_reasons' => collect(Config::where('config_type_id', 477)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Reason']),
             'replaced_battery_list' => collect(BatteryMake::where('id', 4)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Battery']),
-
+            'amp_hour' => collect(Config::where('config_type_id', 480)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select AMP Hour']),
+            'battery_voltage' => collect(Config::where('config_type_id', 479)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Battery Voltage']),
+            'multimeter_status_list' => collect(MultimeterTestStatus::where('company_id', Auth::user()->company_id)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Status']),
+            'over_all_status_list' => collect(config::where('config_type_id',481)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Status']),
         ];
-
         $this->data['extras'] = $extras;
 
         $this->data['success'] = true;
@@ -107,9 +123,9 @@ class BatteryController extends Controller
                 'invoice_date' => [
                     'required',
                 ],
-                'invoice_amount' => [
-                    'required',
-                ],
+                // 'invoice_amount' => [
+                //     'required',
+                // ],
             ]);
 
             if ($validator->fails()) {
@@ -125,8 +141,8 @@ class BatteryController extends Controller
             $battery_result = BatteryLoadTestResult::find($request->battery_id);
 
             $battery_result->invoice_number = $request->invoice_number;
-            $battery_result->invoice_date = date('Y-m-d', strtotime($request->invoice_date));
-            $battery_result->invoice_amount = $request->invoice_amount;
+            // $battery_result->invoice_date = date('Y-m-d', strtotime($request->invoice_date));
+            // $battery_result->invoice_amount = $request->invoice_amount;
             $battery_result->updated_by_id = Auth::user()->id;
             $battery_result->updated_at = Carbon::now();
 
@@ -154,7 +170,7 @@ class BatteryController extends Controller
 
     public function save(Request $request)
     {
-        // dd($request->all());
+        //    dd($request->all());
         try {
 
             $error_messages = [
@@ -267,12 +283,12 @@ class BatteryController extends Controller
                     // 'required_if:overall_status_id,==,3',
                     'required_if:is_buy_back_opted,==,1',
                 ],
-                'amp_hour' => [
-                    'required',
-                ],
-                'battery_voltage' => [
-                    'required',
-                ],
+                // 'amp_hour' => [
+                //     'required',
+                // ],
+                // 'battery_voltage' => [
+                //     'required',
+                // ],
                 'load_test_status_id' => [
                     'required',
                     'integer',
@@ -288,11 +304,15 @@ class BatteryController extends Controller
                     'integer',
                     'exists:battery_load_test_statuses,id',
                 ],
-                'remarks' => [
-                    'required',
-                ],
+                // 'remarks' => [
+                //     'required',
+                // ],
                 'battery_not_replaced_reason_id' => [
                     'required_if:is_battery_replaced,==,0',
+                ],
+                'second_battery_serial_number' => [
+                    // 'required_if:overall_status_id,==,3',
+                    'required_if:is_second_battery_buy_back_opted,==,1',
                 ],
 
             ], $error_messages);
@@ -410,6 +430,11 @@ class BatteryController extends Controller
             }
 
             $manufactured_date = date('Y-m-d', strtotime($request->manufactured_date));
+            if($request->no_of_batteries == 2){
+                $manufactured_date_2 = date('Y-m-d', strtotime($request->manufactured_date_2));//Battery - 2 
+             }else{
+                $manufactured_date_2 = null;
+             }
 
             $vehicle_battery = VehicleBattery::firstOrNew([
                 'company_id' => Auth::user()->company_id,
@@ -418,6 +443,10 @@ class BatteryController extends Controller
                 'customer_id' => $customer->id,
                 'battery_make_id' => $request->battery_make_id,
                 'manufactured_date' => $manufactured_date,
+                'battery_status_id' => $request->battery_status_id,
+                'outlet_id' => Auth::user()->employee->outlet_id,
+                'second_battery_make_id'=> $request->second_battery_make_id ? $request->second_battery_make_id : null,
+                'second_battery_manufactured_date' =>  $manufactured_date_2,
             ]);
 
             if ($vehicle_battery->exists) {
@@ -430,9 +459,21 @@ class BatteryController extends Controller
             }
 
             $vehicle_battery->battery_serial_number = isset($request->battery_serial_number) ? $request->battery_serial_number : null;
-
+           
+            $vehicle_battery->second_battery_serial_number = isset($request->second_battery_serial_number) ? $request->second_battery_serial_number : null;
+           
+            //To save job card details in vehilce_battery
+            if($request->is_buy_back_opted ||$request->is_second_battery_buy_back_opted){
+                $vehicle_battery->job_card_number =$request->job_card_number;
+                $vehicle_battery->job_card_date =date('Y-m-d', strtotime($request->job_card_date));
+            }else{
+                $vehicle_battery->job_card_number = null;
+                $vehicle_battery->job_card_date = null;
+            }
+            $vehicle_battery->remarks = $request->over_all_status_remarks;
+            
             $vehicle_battery->save();
-
+      
             if ($request->id) {
                 $battery_result = BatteryLoadTestResult::find($request->id);
                 $battery_result->updated_by_id = Auth::user()->id;
@@ -506,30 +547,49 @@ class BatteryController extends Controller
             $battery_result->load_test_status_id = $request->load_test_status_id;
             $battery_result->hydrometer_electrolyte_status_id = $request->hydrometer_electrolyte_status_id;
             $battery_result->overall_status_id = $request->overall_status_id;
-            $battery_result->amp_hour = $request->amp_hour;
-            $battery_result->battery_voltage = $request->battery_voltage;
-            $battery_result->remarks = $request->remarks;
+            $battery_result->first_battery_amp_hour_id = $request->first_battery_amp_hour_id;
+            $battery_result->multimeter_test_status_id = $request->multimeter_test_status_id;
+            $battery_result->first_battery_battery_voltage_id = $request->first_battery_battery_voltage_id;
+            //Battery - 2
+            $battery_result->second_battery_battery_voltage_id = $request->second_battery_battery_voltage_id;
+            $battery_result->second_battery_amp_hour_id = $request->second_battery_amp_hour_id;
+            $battery_result->second_battery_multimeter_test_status_id = $request->second_battery_multimeter_test_status_id;
+            $battery_result->second_battery_load_test_status_id = $request->second_battery_load_test_status_id;
+            $battery_result->second_battery_hydrometer_electrolyte_status_id=$request->second_battery_hydrometer_electrolyte_status_id;
+            $battery_result->second_battery_overall_status_id= $request->second_battery_overall_status_id;
+            // No of Batteries
+            $battery_result->no_of_batteries = $request->no_of_batteries;
 
-            if ($request->is_battery_replaced) {
+            if ($request->is_battery_replaced == 1) {
                 $battery_result->is_battery_replaced = $request->is_battery_replaced;
                 $battery_result->replaced_battery_make_id = $request->replaced_battery_make_id;
                 $battery_result->replaced_battery_serial_number = $request->replaced_battery_serial_number;
                 $battery_result->is_buy_back_opted = $request->is_buy_back_opted;
-                $battery_result->battery_not_replaced_reason_id = $request->battery_not_replaced_reason_id;
+                $battery_result->battery_not_replaced_reason_id = null;
                 $battery_result->job_card_number = $request->job_card_number;
-                $battery_result->job_card_date = date('Y-m-d', strtotime($request->job_card_date));
             } else {
                 $battery_result->is_battery_replaced = 0;
                 $battery_result->replaced_battery_make_id = null;
                 $battery_result->replaced_battery_serial_number = null;
                 $battery_result->is_buy_back_opted = null;
                 $battery_result->battery_not_replaced_reason_id = $request->battery_not_replaced_reason_id;
-                $battery_result->job_card_number = null;
-                $battery_result->job_card_date = null;
+                $battery_result->job_card_number = 1000;//for testing
             }
-            $battery_result->invoice_number = null;
-            $battery_result->invoice_date = null;
-            $battery_result->invoice_amount = null;
+            //Battery - 2
+            if($request->is_second_battery_replaced == 1){
+               $battery_result->is_second_battery_replaced = $request->is_second_battery_replaced;
+               $battery_result->replaced_second_battery_make_id = $request->replaced_second_battery_make_id;
+               $battery_result->replaced_second_battery_serial_number = $request->replaced_second_battery_serial_number;
+               $battery_result->is_second_battery_buy_back_opted = $request->is_second_battery_buy_back_opted;
+               $battery_result->second_battery_not_replaced_reason_id =  null;
+            }else{
+                $battery_result->is_second_battery_replaced = 0;
+                $battery_result->replaced_second_battery_make_id = null;
+                $battery_result->replaced_second_battery_serial_number = null;
+                $battery_result->is_second_battery_buy_back_opted = null;
+                $battery_result->second_battery_not_replaced_reason_id = $request->battery_not_replaced_reason_id;
+            }
+            $battery_result->invoice_number = 100;//for testing
             $battery_result->save();
 
             DB::commit();

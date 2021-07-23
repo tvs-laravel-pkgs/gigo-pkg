@@ -13,7 +13,7 @@ class VehicleBattery extends BaseModel
     protected $table = 'vehicle_batteries';
     public $timestamps = true;
     protected $fillable =
-        ["company_id", "business_id", "vehicle_id", "customer_id", "battery_make_id", "manufactured_date"]
+        ["company_id", "business_id", "vehicle_id", "customer_id", "battery_make_id", "manufactured_date","second_battery_make_id","second_battery_manufactured_date","battery_status_id","second_battery_overall_status_id","outlet_id","remarks"]
     ;
 
     public function getManufacturedDateAttribute($value)
@@ -38,4 +38,19 @@ class VehicleBattery extends BaseModel
     {
         return $this->belongsTo('App\BatteryMake', 'battery_make_id');
     }
+    public function outlet()
+    {
+        return $this->belongsTo('App\Outlet', 'outlet_id');
+    }
+    public function battery_status()
+    {
+        return $this->belongsTo('App\config', 'battery_status_id');
+    }
+    
+    public function secondbatteryMake()
+    {
+        return $this->belongsTo('App\BatteryMake', 'second_battery_make_id');
+    }
+
+
 }
