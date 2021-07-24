@@ -173,8 +173,8 @@ class BatteryController extends Controller
     public function export(Request $request)
     {
         ob_end_clean();
-
-        // ini_set('memory_limit', '50M');
+        // dd($request->all());
+        ini_set('memory_limit', '-1');
         ini_set('max_execution_time', 0);
 
         // dd($request->all());
