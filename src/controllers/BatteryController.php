@@ -193,7 +193,7 @@ class BatteryController extends Controller
         $battery_load_tests = BatteryLoadTestResult::select([
             'outlets.name as outlet_name', 'outlets.code as outlet_code', 'outlets.ax_name',
             DB::raw('DATE_FORMAT(battery_load_test_results.created_at,"%d-%m-%Y") as date'),
-            'vehicles.registration_number',
+            'vehicles.registration_number as regis_number',
             'vehicles.chassis_number',
             'vehicles.engine_number',
             'vehicles.km_reading_type_id',
@@ -290,7 +290,7 @@ class BatteryController extends Controller
                 // $battery_test_detail['sno'] = $count;
                 $battery_test_detail['outlet'] = $battery_load_test->outlet_code . ' / ' . ($battery_load_test->ax_name ? $battery_load_test->ax_name : $battery_load_test->outlet_name);
                 $battery_test_detail['date'] = $battery_load_test->date;
-                $battery_test_detail['reg_number'] = $battery_load_test->registration_number;
+                $battery_test_detail['reg_number'] = $battery_load_test->regis_number;
                 $battery_test_detail['chassis_number'] = $battery_load_test->chassis_number;
                 $battery_test_detail['engine_number'] = $battery_load_test->engine_number;
 
