@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateTableMultimeterTestStatus extends Migration
 {
@@ -17,13 +17,13 @@ class CreateTableMultimeterTestStatus extends Migration
             Schema::create('multimeter_test_statuses', function (Blueprint $table) {
                 $table->increments('id');
                 $table->unsignedInteger('company_id');
-                $table->string('code',40);
-                $table->string('name',40);
+                $table->string('code', 40);
+                $table->string('name', 40);
 
                 $table->unique(['company_id', 'code']);
                 $table->unique(['company_id', 'name']);
 
-                $table->foreign('company_id','company_id_foreign')->references('id')->on('companies')->onDelete('cascade')->onUpdate('cascade');
+                $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade')->onUpdate('cascade');
             });
         }
     }

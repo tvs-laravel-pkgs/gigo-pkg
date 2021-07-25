@@ -435,7 +435,7 @@ app.component('batteryForm', {
         self.is_battery_buy_back = 1;
         self.is_second_battery_replaced = 1;
         self.is_second_battery_buy_back_opted = 1;
-        self.no_of_batteries=1;
+        self.no_of_batteries = 1;
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
@@ -461,10 +461,10 @@ app.component('batteryForm', {
                     $scope.action = res.action;
                     $scope.user_info = res.user;
 
-                    if ($scope.battery.is_battery_replaced == 0) {
-                        self.is_battery_replaced = 0;
-                    } else {
+                    if ($scope.battery.is_battery_replaced == 1) {
                         self.is_battery_replaced = 1;
+                    } else {
+                        self.is_battery_replaced = 0;
                     }
                     if ($scope.battery.is_buy_back_opted == 1) {
                         self.is_battery_buy_back = 1;
@@ -477,17 +477,18 @@ app.component('batteryForm', {
                     } else {
                         self.is_second_battery_buy_back_opted = 0;
                     }
-                    if ($scope.battery.is_second_battery_replaced == 0) {
-                        self.is_second_battery_replaced = 0;
-                    } else {
+                    if ($scope.battery.is_second_battery_replaced == 1) {
                         self.is_second_battery_replaced = 1;
-                    }
-                    //For no of Batteries
-                    console.log($scope.battery.no_of_batteries);
-                    if ($scope.battery.no_of_batteries == 1) {
-                        self.no_of_batteries = 1;
                     } else {
+                        self.is_second_battery_replaced = 0;
+                    }
+
+                    //For no of Batteries
+                    console.log($scope.battery.vehicle_battery);
+                    if ($scope.battery.vehicle_battery && $scope.battery.vehicle_battery.no_of_batteries == 2) {
                         self.no_of_batteries = 2;
+                    } else {
+                        self.no_of_batteries = 1;
                     }
 
                     if (!$scope.battery.replaced_battery_make_id) {

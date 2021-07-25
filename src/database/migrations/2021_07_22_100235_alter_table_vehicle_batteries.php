@@ -15,6 +15,8 @@ class AlterTableVehicleBatteries extends Migration
     {
         Schema::table('vehicle_batteries', function (Blueprint $table) {
             $table->unsignedInteger('outlet_id')->nullable()->after('business_id');
+            $table->unsignedTinyInteger('no_of_batteries')->default(1)->after('customer_id');
+
             $table->unsignedInteger('second_battery_make_id')->nullable()->after('battery_serial_number');
             $table->date('second_battery_manufactured_date')->nullable()->after('second_battery_make_id');
             $table->string('second_battery_serial_number', 40)->nullable()->after('second_battery_manufactured_date');
@@ -45,6 +47,7 @@ class AlterTableVehicleBatteries extends Migration
             $table->dropForeign('vehicle_batteries_second_battery_id_foreign');
             $table->dropForeign('vehicle_batteries_battery_status_id_foreign');
             $table->dropColumn('outlet_id');
+            $table->dropColumn('no_of_batteries');
             $table->dropColumn('battery_status_id');
             $table->dropColumn('second_battery_make_id');
             $table->dropColumn('second_battery_manufactured_date');

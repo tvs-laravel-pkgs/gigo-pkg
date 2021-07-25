@@ -56,13 +56,13 @@ class BatteryController extends Controller
             ->join('customers', 'customers.id', 'vehicle_batteries.customer_id')
             ->join('vehicles', 'vehicles.id', 'vehicle_batteries.vehicle_id')
             ->join('battery_makes', 'battery_makes.id', 'vehicle_batteries.battery_make_id')
-            ->join('outlets', 'outlets.id', 'battery_load_test_results.outlet_id')
+            ->join('outlets', 'outlets.id', 'vehicle_batteries.outlet_id')
             ->join('load_test_statuses', 'load_test_statuses.id', 'battery_load_test_results.load_test_status_id')
             ->join('hydrometer_electrolyte_statuses', 'hydrometer_electrolyte_statuses.id', 'battery_load_test_results.hydrometer_electrolyte_status_id')
             ->join('battery_load_test_statuses', 'battery_load_test_statuses.id', 'battery_load_test_results.overall_status_id')
             ->select(
                 'battery_load_test_results.id',
-                'battery_load_test_results.job_card_number',
+                'vehicle_batteries.job_card_number',
                 'battery_load_test_results.invoice_number',
                 'customers.name as customer_name',
                 'battery_makes.name as battery_name',
@@ -151,14 +151,14 @@ class BatteryController extends Controller
                 return '<span class="text-' . $status . '">' . $battery_list->hydrometer_electrolyte_status . '</span>';
             })
             ->editColumn('status', function ($battery_list) {
-                if($battery_list->job_card_number){
-                    if($battery_list->invoice_number){
+                if ($battery_list->job_card_number) {
+                    if ($battery_list->invoice_number) {
                         return '<span class="text-green">Completed</span>';
-                    }else{
+                    } else {
                         return '<span class="text-green">Invoice Details Not Updated</span>';
                     }
-                }else{
-                   return '<span class="text-green">Completed</span>';
+                } else {
+                    return '<span class="text-green">Completed</span>';
                 }
             })
             ->addColumn('action', function ($battery_list) {
@@ -234,7 +234,7 @@ class BatteryController extends Controller
             'battery_load_test_results.is_buy_back_opted',
             'replaced_battery.name as replaced_battery_make',
             'battery_not_replaced_reasons.name as battery_not_replaced_reason',
-            ])
+        ])
             ->join('outlets', 'outlets.id', 'battery_load_test_results.outlet_id')
             ->join('vehicle_batteries', 'vehicle_batteries.id', 'battery_load_test_results.vehicle_battery_id')
             ->join('load_test_statuses', 'load_test_statuses.id', 'battery_load_test_results.load_test_status_id')
@@ -286,7 +286,9 @@ class BatteryController extends Controller
 
         $header = [
             // 'Sno',
-            'Outlet',
+            'Outlet Code',
+            'Outlet Name',
+            'Number',
             'Date',
             'Registration Number',
             'Chassis Number',
@@ -296,6 +298,7 @@ class BatteryController extends Controller
             'Date of Sale',
             'Customer Code',
             'Customer Name',
+            'Customer Mobile',
             'Battery Make',
             'Manufactured Month',
             'Manufactured Year',
@@ -349,7 +352,7 @@ class BatteryController extends Controller
                 $battery_test_detail['hydro_test'] = $battery_load_test->hydro_test_status;
                 $battery_test_detail['overall_status'] = $battery_load_test->overall_status;
 
-                if($battery_load_test->is_battery_replaced == 1){
+                if ($battery_load_test->is_battery_replaced == 1) {
                     $battery_test_detail['is_battery_replaced'] = 'Yes';
                     $battery_test_detail['replaced_battery_make'] = $battery_load_test->replaced_battery_make;
                     $battery_test_detail['replaced_battery_serial_number'] = $battery_load_test->replaced_battery_serial_number;
@@ -358,18 +361,18 @@ class BatteryController extends Controller
                     $battery_test_detail['invoice_number'] = $battery_load_test->invoice_number;
                     $battery_test_detail['invoice_date'] = $battery_load_test->invoice_date;
                     $battery_test_detail['invoice_amount'] = $battery_load_test->invoice_amount;
-                    if($battery_load_test->is_buy_back_opted == 1){
+                    if ($battery_load_test->is_buy_back_opted == 1) {
                         $battery_test_detail['is_buy_back_opted'] = 'Yes';
                         $battery_test_detail['battery_not_replaced_reason'] = '';
-                    }else{
+                    } else {
                         $battery_test_detail['is_buy_back_opted'] = 'No';
                         $battery_test_detail['battery_not_replaced_reason'] = $battery_load_test->battery_not_replaced_reason;
                     }
-                }else{
+                } else {
                     $battery_test_detail['is_battery_replaced'] = 'No';
-                    $battery_test_detail['replaced_battery_make'] ='-';
+                    $battery_test_detail['replaced_battery_make'] = '-';
                     $battery_test_detail['replaced_battery_serial_number'] = '-';
-                    $battery_test_detail['job_card_number'] ='-';
+                    $battery_test_detail['job_card_number'] = '-';
                     $battery_test_detail['job_card_date'] = '-';
                     $battery_test_detail['invoice_number'] = '-';
                     $battery_test_detail['invoice_date'] = '-';

@@ -294,309 +294,918 @@
                                         <div class="col-md-12" style="padding-left: 0px;">
                                             <h5 class="color-primary mb-10">
                                                 <b>
-                                                    Load Test Informations
+                                                    Battery Informations
                                                 </b>
                                             </h5>
                                             <div class="panel-group" id="accordion">
-                                                <div class="panel panel-default type-3">
-                                                    <div class="panel-heading">
-                                                        <a class="panel-title" data-toggle="collapse"
-                                                            data-parent="#accordion" data-target="#collapse3">
-                                                            Battery Details
-                                                            <span class="arrow"></span>
-                                                        </a>
-                                                    </div>
-                                                    <div id="collapse3" class="panel-collapse collapse in">
-                                                        <div class="panel-body">
-                                                            <ul class="view-row mb-no">
-                                                                <li class="view-col-3">
-                                                                    <span class="view-col-label">
-                                                                        Battery Make
-                                                                    </span>
-                                                                    <span class="view-data-list-value">
-                                                                        <b>
-                                                                            {{battery.vehicle_battery.battery_make.name}}
-                                                                        </b>
-                                                                    </span>
-                                                                </li>
-                                                                <li class="view-col-3">
-                                                                    <span class="view-col-label">
-                                                                        Battery Serial Number
-                                                                    </span>
-                                                                    <span class="view-data-list-value">
-                                                                        <b>
-                                                                            {{battery.vehicle_battery.battery_serial_number
-                                                                            ?
-                                                                            battery.vehicle_battery.battery_serial_number
-                                                                            : '-'}}
-                                                                        </b>
-                                                                    </span>
-                                                                </li>
-                                                                <li class="view-col-3">
-                                                                    <span class="view-col-label">
-                                                                        AMP Hour
-                                                                    </span>
-                                                                    <span class="view-data-list-value">
-                                                                        <b>
-                                                                            {{battery.amp_hour}}
-                                                                        </b>
-                                                                    </span>
-                                                                </li>
-                                                                <li class="view-col-3">
-                                                                    <span class="view-col-label">
-                                                                        Battery Voltage
-                                                                    </span>
-                                                                    <span class="view-data-list-value">
-                                                                        <b>
-                                                                            {{battery.battery_voltage}}
-                                                                        </b>
-                                                                    </span>
-                                                                </li>
-                                                                <li class="view-col-3">
-                                                                    <span class="view-col-label">
-                                                                        Battery Manufactured Date
-                                                                    </span>
-                                                                    <span class="view-data-list-value">
-                                                                        <b>
-                                                                            {{battery.vehicle_battery.manufactured_date}}
-                                                                        </b>
-                                                                    </span>
+                                                <div class="tab-page-wrap">
+                                                    <div class="tab-page-header">
+                                                        <div class="isotope-filters animated"
+                                                            data-animation="fadeInLeft" data-animation-delay="300">
+                                                            <ul class="nav nav-pills editDetails-tabs">
+                                                                <li class="active"><a class="btn-pills"
+                                                                        data-target="#battery1" role="tab"
+                                                                        data-toggle="tab" aria-expanded="true">Battery
+                                                                        1</a></li>
+                                                                <li
+                                                                    ng-if="battery.vehicle_battery.no_of_batteries == 2">
+                                                                    <a data-target="#battery2" role="tab"
+                                                                        data-toggle="tab" aria-expanded="true"
+                                                                        class="btn-pills">Battery 2</a>
                                                                 </li>
                                                             </ul>
-                                                        </div>
+                                                        </div><!-- Filters -->
+                                                    </div><!-- Tab Page Wrap Header -->
+                                                </div>
+                                                <div class="page-main-content form-content" style="padding: 10px;">
+                                                    <div class="container">
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <div class="page-form">
+                                                                    <div class="tab-page-body">
+                                                                        <div class="tab-content">
+                                                                            <div class="tab-pane fade in active"
+                                                                                id="battery1" data-animation="fadeInUp"
+                                                                                data-animation-delay="300">
+                                                                                <div class="tab-pane-wrap">
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-12"
+                                                                                            style="padding-left: 0px;">
+                                                                                            <h5
+                                                                                                class="color-primary mb-10">
+                                                                                                <b>
+                                                                                                    Load Test
+                                                                                                    Informations
+                                                                                                </b>
+                                                                                            </h5>
+                                                                                            <div class="panel-group"
+                                                                                                id="accordion">
+                                                                                                <div
+                                                                                                    class="panel panel-default type-3">
+                                                                                                    <div
+                                                                                                        class="panel-heading">
+                                                                                                        <a class="panel-title"
+                                                                                                            data-toggle="collapse"
+                                                                                                            data-parent="#accordion"
+                                                                                                            data-target="#collapse3">
+                                                                                                            Battery
+                                                                                                            Details
+                                                                                                            <span
+                                                                                                                class="arrow"></span>
+                                                                                                        </a>
+                                                                                                    </div>
+                                                                                                    <div id="collapse3"
+                                                                                                        class="panel-collapse collapse in">
+                                                                                                        <div
+                                                                                                            class="panel-body">
+                                                                                                            <ul
+                                                                                                                class="view-row mb-no">
+                                                                                                                <li
+                                                                                                                    class="view-col-3">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        Battery
+                                                                                                                        Make
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <b>
+                                                                                                                            {{battery.vehicle_battery.battery_make.name}}
+                                                                                                                        </b>
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                                <li
+                                                                                                                    class="view-col-3">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        Battery
+                                                                                                                        Serial
+                                                                                                                        Number
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <b>
+                                                                                                                            {{battery.vehicle_battery.battery_serial_number
+                                                                                                                            ?
+                                                                                                                            battery.vehicle_battery.battery_serial_number
+                                                                                                                            :
+                                                                                                                            '-'}}
+                                                                                                                        </b>
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                                <li
+                                                                                                                    class="view-col-3">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        AMP
+                                                                                                                        Hour
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <b>
+                                                                                                                            {{battery.firstbattery_amphour.name}}
+                                                                                                                        </b>
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                                <li
+                                                                                                                    class="view-col-3">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        Battery
+                                                                                                                        Voltage
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <b>
+                                                                                                                            {{battery.firstbatteryvoltage.name}}
+                                                                                                                        </b>
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                                <li
+                                                                                                                    class="view-col-3">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        Battery
+                                                                                                                        Manufactured
+                                                                                                                        Date
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <b>
+                                                                                                                            {{battery.vehicle_battery.manufactured_date}}
+                                                                                                                        </b>
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                            </ul>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="panel-group"
+                                                                                                id="accordion">
+                                                                                                <div
+                                                                                                    class="panel panel-default type-3">
+                                                                                                    <div
+                                                                                                        class="panel-heading">
+                                                                                                        <a class="panel-title"
+                                                                                                            data-toggle="collapse"
+                                                                                                            data-parent="#accordion"
+                                                                                                            data-target="#collapse4">
+                                                                                                            Battery Test
+                                                                                                            Results
+                                                                                                            <span
+                                                                                                                class="arrow"></span>
+                                                                                                        </a>
+                                                                                                    </div>
+                                                                                                    <div id="collapse4"
+                                                                                                        class="panel-collapse collapse in">
+                                                                                                        <div
+                                                                                                            class="panel-body">
+                                                                                                            <ul
+                                                                                                                class="view-row mb-no">
+                                                                                                                <li
+                                                                                                                    class="view-col-4">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        Multimeter
+                                                                                                                        Test
+                                                                                                                        Status
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <div class="color-list-item green"
+                                                                                                                            ng-if="battery.multimeter_test_status_id == 1">
+                                                                                                                            {{battery.multimeter_test_status.name}}
+                                                                                                                        </div>
+                                                                                                                        <!-- Color List Item -->
+                                                                                                                        <div class="color-list-item yellow"
+                                                                                                                            ng-if="battery.multimeter_test_status_id == 2">
+                                                                                                                            {{battery.multimeter_test_status.name}}
+                                                                                                                        </div>
+                                                                                                                        <!-- Color List Item -->
+                                                                                                                        <div class="color-list-item red"
+                                                                                                                            ng-if="battery.multimeter_test_status_id == 3">
+                                                                                                                            {{battery.mutlimeter_test_status.name}}
+                                                                                                                        </div>
+                                                                                                                        <!-- Color List Item -->
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                                <li
+                                                                                                                    class="view-col-4">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        Load
+                                                                                                                        Test
+                                                                                                                        Status
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <div class="color-list-item green"
+                                                                                                                            ng-if="battery.load_test_status_id == 1">
+                                                                                                                            {{battery.load_test_status.name}}
+                                                                                                                        </div>
+                                                                                                                        <!-- Color List Item -->
+                                                                                                                        <div class="color-list-item yellow"
+                                                                                                                            ng-if="battery.load_test_status_id == 2">
+                                                                                                                            {{battery.load_test_status.name}}
+                                                                                                                        </div>
+                                                                                                                        <!-- Color List Item -->
+                                                                                                                        <div class="color-list-item red"
+                                                                                                                            ng-if="battery.load_test_status_id == 3">
+                                                                                                                            {{battery.load_test_status.name}}
+                                                                                                                        </div>
+                                                                                                                        <!-- Color List Item -->
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                                <li
+                                                                                                                    class="view-col-4">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        Hydrometer
+                                                                                                                        Electrolyte
+                                                                                                                        Status
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <div class="color-list-item green"
+                                                                                                                            ng-if="battery.hydrometer_electrolyte_status_id == 1">
+                                                                                                                            {{battery.hydrometer_electrolyte_status.name}}
+                                                                                                                        </div>
+                                                                                                                        <!-- Color List Item -->
+                                                                                                                        <div class="color-list-item yellow"
+                                                                                                                            ng-if="battery.hydrometer_electrolyte_status_id == 2">
+                                                                                                                            {{battery.hydrometer_electrolyte_status.name}}
+                                                                                                                        </div>
+                                                                                                                        <!-- Color List Item -->
+                                                                                                                        <div class="color-list-item red"
+                                                                                                                            ng-if="battery.hydrometer_electrolyte_status_id == 3">
+                                                                                                                            {{battery.hydrometer_electrolyte_status.name}}
+                                                                                                                        </div>
+                                                                                                                        <!-- Color List Item -->
+                                                                                                                    </span>
+                                                                                                                </li>
+
+                                                                                                                <li
+                                                                                                                    class="view-col-4">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        Battery
+                                                                                                                        Status
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <b>
+                                                                                                                            {{battery.battery_load_test_status.name}}
+                                                                                                                        </b>
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                                <li class="view-col-4"
+                                                                                                                    ng-if="battery.battery_load_test_status.id == 2">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        New
+                                                                                                                        Battery
+                                                                                                                        Replaced
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <b>
+                                                                                                                            {{battery.is_battery_replaced
+                                                                                                                            ==
+                                                                                                                            1
+                                                                                                                            ?
+                                                                                                                            'Yes'
+                                                                                                                            :
+                                                                                                                            'No'}}
+                                                                                                                        </b>
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                                <li class="view-col-4"
+                                                                                                                    ng-if="battery.battery_load_test_status.id == 2 && battery.is_battery_replaced == 1">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        Replaced
+                                                                                                                        Battery
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <b>
+                                                                                                                            {{battery.replaced_battery_make
+                                                                                                                            ?
+                                                                                                                            battery.replaced_battery_make.name
+                                                                                                                            :
+                                                                                                                            '-'}}
+                                                                                                                        </b>
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                                <li class="view-col-4"
+                                                                                                                    ng-if="battery.battery_load_test_status.id == 2 && battery.is_battery_replaced == 1">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        Replaced
+                                                                                                                        Battery
+                                                                                                                        Serial
+                                                                                                                        Number
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <b>
+                                                                                                                            {{battery.replaced_battery_serial_number
+                                                                                                                            ?
+                                                                                                                            battery.replaced_battery_serial_number
+                                                                                                                            :
+                                                                                                                            '-'}}
+                                                                                                                        </b>
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                                <li class="view-col-4"
+                                                                                                                    ng-if="battery.battery_load_test_status.id == 2">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        Is
+                                                                                                                        Buy
+                                                                                                                        Back
+                                                                                                                        Opted
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <b>
+                                                                                                                            {{battery.is_buy_back_opted
+                                                                                                                            ==
+                                                                                                                            1
+                                                                                                                            ?
+                                                                                                                            'Yes'
+                                                                                                                            :
+                                                                                                                            'No'}}
+                                                                                                                        </b>
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                                <li class="view-col-4"
+                                                                                                                    ng-if="battery.is_battery_replaced == 0 && battery.battery_not_replaced_reason_id">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        Battery
+                                                                                                                        Not
+                                                                                                                        Replaced
+                                                                                                                        Reason
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <b>
+                                                                                                                            {{battery.battery_not_replaced_reason
+                                                                                                                            ?
+                                                                                                                            battery.battery_not_replaced_reason.name
+                                                                                                                            :
+                                                                                                                            '-'}}
+                                                                                                                        </b>
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                            </ul>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div><!-- Column -->
+                                                                                </div><!-- Row -->
+                                                                            </div>
+                                                                            <div ng-if="battery.vehicle_battery.no_of_batteries == 2"
+                                                                                class="tab-pane fade in active"
+                                                                                id="battery2" data-animation="fadeInUp"
+                                                                                data-animation-delay="300">
+                                                                                <div class="tab-pane-wrap">
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-12"
+                                                                                            style="padding-left: 0px;">
+                                                                                            <div class="panel-group"
+                                                                                                id="accordion">
+                                                                                                <div
+                                                                                                    class="panel panel-default type-3">
+                                                                                                    <div
+                                                                                                        class="panel-heading">
+                                                                                                        <a class="panel-title"
+                                                                                                            data-toggle="collapse"
+                                                                                                            data-parent="#accordion"
+                                                                                                            data-target="#collapse3">
+                                                                                                            Battery
+                                                                                                            Details
+                                                                                                            <span
+                                                                                                                class="arrow"></span>
+                                                                                                        </a>
+                                                                                                    </div>
+                                                                                                    <div id="collapse3"
+                                                                                                        class="panel-collapse collapse in">
+                                                                                                        <div
+                                                                                                            class="panel-body">
+                                                                                                            <ul
+                                                                                                                class="view-row mb-no">
+                                                                                                                <li
+                                                                                                                    class="view-col-3">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        Battery
+                                                                                                                        Make
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <b>
+                                                                                                                            {{battery.vehicle_battery.secondbattery_make.name}}
+                                                                                                                        </b>
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                                <li
+                                                                                                                    class="view-col-3">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        Battery
+                                                                                                                        Serial
+                                                                                                                        Number
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <b>
+                                                                                                                            {{battery.vehicle_battery.second_battery_serial_number
+                                                                                                                            ?
+                                                                                                                            battery.vehicle_battery.second_battery_serial_number
+                                                                                                                            :
+                                                                                                                            '-'}}
+                                                                                                                        </b>
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                                <li
+                                                                                                                    class="view-col-3">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        AMP
+                                                                                                                        Hour
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <b>
+                                                                                                                            {{battery.secondbattery_amphour.name}}
+                                                                                                                        </b>
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                                <li
+                                                                                                                    class="view-col-3">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        Battery
+                                                                                                                        Voltage
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <b>
+                                                                                                                            {{battery.secondbatteryvoltage.name}}
+                                                                                                                        </b>
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                                <li
+                                                                                                                    class="view-col-3">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        Battery
+                                                                                                                        Manufactured
+                                                                                                                        Date
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <b>
+                                                                                                                            {{battery.vehicle_battery.second_battery_manufactured_date}}
+                                                                                                                        </b>
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                            </ul>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="panel-group"
+                                                                                                id="accordion">
+                                                                                                <div
+                                                                                                    class="panel panel-default type-3">
+                                                                                                    <div
+                                                                                                        class="panel-heading">
+                                                                                                        <a class="panel-title"
+                                                                                                            data-toggle="collapse"
+                                                                                                            data-parent="#accordion"
+                                                                                                            data-target="#collapse4">
+                                                                                                            Battery Test
+                                                                                                            Results
+                                                                                                            <span
+                                                                                                                class="arrow"></span>
+                                                                                                        </a>
+                                                                                                    </div>
+                                                                                                    <div id="collapse4"
+                                                                                                        class="panel-collapse collapse in">
+                                                                                                        <div
+                                                                                                            class="panel-body">
+                                                                                                            <ul
+                                                                                                                class="view-row mb-no">
+                                                                                                                <li
+                                                                                                                    class="view-col-4">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        Multimeter
+                                                                                                                        Load
+                                                                                                                        Test
+                                                                                                                        Status
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <div class="color-list-item green"
+                                                                                                                            ng-if="battery.second_battery_multimeter_test_status_id == 1">
+                                                                                                                            {{battery.secondbatterymultimeter_test_status.name}}
+                                                                                                                        </div>
+                                                                                                                        <!-- Color List Item -->
+                                                                                                                        <div class="color-list-item yellow"
+                                                                                                                            ng-if="battery.second_battery_multimeter_test_status_id == 2">
+                                                                                                                            {{battery.secondbatterymultimeter_test_status.name}}
+                                                                                                                        </div>
+                                                                                                                        <!-- Color List Item -->
+                                                                                                                        <div class="color-list-item red"
+                                                                                                                            ng-if="battery.second_battery_multimeter_test_status_id == 3">
+                                                                                                                            {{battery.secondbatterymultimeter_test_status.name}}
+                                                                                                                        </div>
+                                                                                                                        <!-- Color List Item -->
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                                <li
+                                                                                                                    class="view-col-4">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        Load
+                                                                                                                        Test
+                                                                                                                        Status
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <div class="color-list-item green"
+                                                                                                                            ng-if="battery.second_battery_load_test_status_id == 1">
+                                                                                                                            {{battery.secondbatteryload_test_status.name}}
+                                                                                                                        </div>
+                                                                                                                        <!-- Color List Item -->
+                                                                                                                        <div class="color-list-item yellow"
+                                                                                                                            ng-if="battery.second_battery_load_test_status_id == 2">
+                                                                                                                            {{battery.secondbatteryload_test_status.name}}
+                                                                                                                        </div>
+                                                                                                                        <!-- Color List Item -->
+                                                                                                                        <div class="color-list-item red"
+                                                                                                                            ng-if="battery.second_battery_load_test_status_id == 3">
+                                                                                                                            {{battery.secondbatteryload_test_status.name}}
+                                                                                                                        </div>
+                                                                                                                        <!-- Color List Item -->
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                                <li
+                                                                                                                    class="view-col-4">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        Hydrometer
+                                                                                                                        Electrolyte
+                                                                                                                        Status
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <div class="color-list-item green"
+                                                                                                                            ng-if="battery.second_battery_hydrometer_electrolyte_status_id == 1">
+                                                                                                                            {{battery.secondbatteryhydrometer_electrolyte_status.name}}
+                                                                                                                        </div>
+                                                                                                                        <!-- Color List Item -->
+                                                                                                                        <div class="color-list-item yellow"
+                                                                                                                            ng-if="battery.second_battery_hydrometer_electrolyte_status_id == 2">
+                                                                                                                            {{battery.secondbatteryhydrometer_electrolyte_status.name}}
+                                                                                                                        </div>
+                                                                                                                        <!-- Color List Item -->
+                                                                                                                        <div class="color-list-item red"
+                                                                                                                            ng-if="battery.second_battery_hydrometer_electrolyte_status_id == 3">
+                                                                                                                            {{battery.secondbatteryhydrometer_electrolyte_status.name}}
+                                                                                                                        </div>
+                                                                                                                        <!-- Color List Item -->
+                                                                                                                    </span>
+                                                                                                                </li>
+
+
+                                                                                                                <li
+                                                                                                                    class="view-col-4">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        Battery
+                                                                                                                        Status
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <b>
+                                                                                                                            {{battery.secondbatteryoverall_load_test_status.name}}
+                                                                                                                        </b>
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                                <li class="view-col-4"
+                                                                                                                    ng-if="battery.second_battery_overall_status_id == 2">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        New
+                                                                                                                        Battery
+                                                                                                                        Replaced
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <b>
+                                                                                                                            {{battery.is_second_battery_replaced
+                                                                                                                            ==
+                                                                                                                            1
+                                                                                                                            ?
+                                                                                                                            'Yes'
+                                                                                                                            :
+                                                                                                                            'No'}}
+                                                                                                                        </b>
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                                <li class="view-col-4"
+                                                                                                                    ng-if="battery.second_battery_overall_status_id == 2 && battery.is_second_battery_replaced == 1">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        Replaced
+                                                                                                                        Battery
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <b>
+                                                                                                                            {{battery.secondreplaced_battery_make
+                                                                                                                            ?
+                                                                                                                            battery.secondreplaced_battery_make.name
+                                                                                                                            :
+                                                                                                                            '-'}}
+                                                                                                                        </b>
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                                <li class="view-col-4"
+                                                                                                                    ng-if="battery.second_battery_overall_status_id == 2 && battery.is_second_battery_replaced == 1">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        Replaced
+                                                                                                                        Battery
+                                                                                                                        Serial
+                                                                                                                        Number
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <b>
+                                                                                                                            {{battery.replaced_second_battery_serial_number
+                                                                                                                            ?
+                                                                                                                            battery.replaced_second_battery_serial_number
+                                                                                                                            :
+                                                                                                                            '-'}}
+                                                                                                                        </b>
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                                <!-- <li class="view-col-3"
+                                                                                                                ng-if="battery.battery_load_test_status.id == 2 && battery.is_battery_replaced == 1">
+                                                                                                                <span class="view-col-label">
+                                                                                                                    Job Card Number
+                                                                                                                </span>
+                                                                                                                <span class="view-data-list-value">
+                                                                                                                    <b>
+                                                                                                                        {{battery.job_card_number ?
+                                                                                                                        battery.job_card_number :
+                                                                                                                        '-'}}
+                                                                                                                    </b>
+                                                                                                                </span>
+                                                                                                            </li>
+                                                                                                            <li class="view-col-3"
+                                                                                                                ng-if="battery.battery_load_test_status.id == 2 && battery.is_battery_replaced == 1">
+                                                                                                                <span class="view-col-label">
+                                                                                                                    Job Card Date
+                                                                                                                </span>
+                                                                                                                <span class="view-data-list-value">
+                                                                                                                    <b>
+                                                                                                                        {{battery.job_card_date ?
+                                                                                                                        battery.job_card_date :
+                                                                                                                        '-'}}
+                                                                                                                    </b>
+                                                                                                                </span>
+                                                                                                            </li> -->
+                                                                                                                <li class="view-col-4"
+                                                                                                                    ng-if="battery.second_battery_overall_status_id == 2">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        Is
+                                                                                                                        Buy
+                                                                                                                        Back
+                                                                                                                        Opted
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <b>
+                                                                                                                            {{battery.is_second_battery_buy_back_opted
+                                                                                                                            ==
+                                                                                                                            1
+                                                                                                                            ?
+                                                                                                                            'Yes'
+                                                                                                                            :
+                                                                                                                            'No'}}
+                                                                                                                        </b>
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                                <li class="view-col-4"
+                                                                                                                    ng-if="battery.is_second_battery_replaced == 0 && battery.second_battery_not_replaced_reason_id">
+                                                                                                                    <span
+                                                                                                                        class="view-col-label">
+                                                                                                                        Battery
+                                                                                                                        Not
+                                                                                                                        Replaced
+                                                                                                                        Reason
+                                                                                                                    </span>
+                                                                                                                    <span
+                                                                                                                        class="view-data-list-value">
+                                                                                                                        <b>
+                                                                                                                            {{battery.second_battery_not_replaced_reason
+                                                                                                                            ?
+                                                                                                                            battery.second_battery_not_replaced_reason.name
+                                                                                                                            :
+                                                                                                                            '-'}}
+                                                                                                                        </b>
+                                                                                                                    </span>
+                                                                                                                </li>
+                                                                                                                <!-- <li class="view-col-3">
+                                                                                                                <span class="view-col-label">
+                                                                                                                    Remarks
+                                                                                                                </span>
+                                                                                                                <span class="view-data-list-value">
+                                                                                                                    <b>
+                                                                                                                        {{battery.remarks}}
+                                                                                                                    </b>
+                                                                                                                </span>
+                                                                                                            </li> -->
+                                                                                                            </ul>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div><!-- Column -->
+
+                                                                                </div><!-- Row -->
+                                                                            </div>
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div><!-- Tab Pane Wrap -->
+                                                        </div><!-- Tabe Pane -->
                                                     </div>
                                                 </div>
+                                                <!--Pannel Group Ends-->
                                             </div>
-                                            <div class="panel-group" id="accordion">
-                                                <div class="panel panel-default type-3">
-                                                    <div class="panel-heading">
-                                                        <a class="panel-title" data-toggle="collapse"
-                                                            data-parent="#accordion" data-target="#collapse4">
-                                                            Load Test Results
-                                                            <span class="arrow"></span>
-                                                        </a>
-                                                    </div>
+                                        </div><!-- Column -->
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10">
+                                                <b>
+                                                    Overall Status
+                                                </b>
+                                            </h5>
+                                            <hr class="hr-15">
+                                            <div id="collapse4" class="panel-collapse collapse in">
+                                                <div class="panel-body">
+                                                    <ul class="view-row mb-no">
+                                                        <li class="view-col-3">
+                                                            <span class="view-col-label">
+                                                                Overall Status
+                                                            </span>
+                                                            <span class="view-data-list-value">
+                                                                <b>
+                                                                    {{battery.vehicle_battery.battery_status.name}}
+                                                                </b>
+                                                            </span>
+                                                        </li>
+                                                        <li class="view-col-3"
+                                                            ng-if="battery.vehicle_battery.battery_status_id == 12191">
+                                                            <span class="view-col-label">
+                                                                Remarks
+                                                            </span>
+                                                            <span class="view-data-list-value">
+                                                                <b>
+                                                                    {{battery.vehicle_battery.remarks}}
+                                                                </b>
+                                                            </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="row" ng-if="battery.vehicle_battery.job_card_number">
+                                                <div class="col-md-12">
+                                                    <h5 class="color-primary mb-10">
+                                                        <b>
+                                                            Job Card Details
+                                                        </b>
+                                                    </h5>
+                                                    <hr class="hr-15">
                                                     <div id="collapse4" class="panel-collapse collapse in">
                                                         <div class="panel-body">
                                                             <ul class="view-row mb-no">
                                                                 <li class="view-col-3">
                                                                     <span class="view-col-label">
-                                                                        Load Test Status
-                                                                    </span>
-                                                                    <span class="view-data-list-value">
-                                                                        <div class="color-list-item green"
-                                                                            ng-if="battery.load_test_status_id == 1">
-                                                                            {{battery.load_test_status.name}}
-                                                                        </div><!-- Color List Item -->
-                                                                        <div class="color-list-item yellow"
-                                                                            ng-if="battery.load_test_status_id == 2">
-                                                                            {{battery.load_test_status.name}}
-                                                                        </div><!-- Color List Item -->
-                                                                        <div class="color-list-item red"
-                                                                            ng-if="battery.load_test_status_id == 3">
-                                                                            {{battery.load_test_status.name}}
-                                                                        </div><!-- Color List Item -->
-                                                                    </span>
-                                                                </li>
-                                                                <li class="view-col-3">
-                                                                    <span class="view-col-label">
-                                                                        Hydrometer Electrolyte Status
-                                                                    </span>
-                                                                    <span class="view-data-list-value">
-                                                                        <div class="color-list-item green"
-                                                                            ng-if="battery.hydrometer_electrolyte_status_id == 1">
-                                                                            {{battery.hydrometer_electrolyte_status.name}}
-                                                                        </div><!-- Color List Item -->
-                                                                        <div class="color-list-item yellow"
-                                                                            ng-if="battery.hydrometer_electrolyte_status_id == 2">
-                                                                            {{battery.hydrometer_electrolyte_status.name}}
-                                                                        </div><!-- Color List Item -->
-                                                                        <div class="color-list-item red"
-                                                                            ng-if="battery.hydrometer_electrolyte_status_id == 3">
-                                                                            {{battery.hydrometer_electrolyte_status.name}}
-                                                                        </div><!-- Color List Item -->
-                                                                    </span>
-                                                                </li>
-                                                                <li class="view-col-3">
-                                                                    <span class="view-col-label">
-                                                                        Overall Status
-                                                                    </span>
-                                                                    <span class="view-data-list-value">
-                                                                        <b>
-                                                                            {{battery.battery_load_test_status.name}}
-                                                                        </b>
-                                                                    </span>
-                                                                </li>
-                                                                <li class="view-col-3"
-                                                                    ng-if="battery.battery_load_test_status.id == 2">
-                                                                    <span class="view-col-label">
-                                                                        New Battery Replaced
-                                                                    </span>
-                                                                    <span class="view-data-list-value">
-                                                                        <b>
-                                                                            {{battery.is_battery_replaced == 1 ? 'Yes' :
-                                                                            'No'}}
-                                                                        </b>
-                                                                    </span>
-                                                                </li>
-                                                                <li class="view-col-3"
-                                                                    ng-if="battery.battery_load_test_status.id == 2 && battery.is_battery_replaced == 1">
-                                                                    <span class="view-col-label">
-                                                                        Replaced Battery
-                                                                    </span>
-                                                                    <span class="view-data-list-value">
-                                                                        <b>
-                                                                            {{battery.replaced_battery_make ?
-                                                                            battery.replaced_battery_make.name : '-'}}
-                                                                        </b>
-                                                                    </span>
-                                                                </li>
-                                                                <li class="view-col-3"
-                                                                    ng-if="battery.battery_load_test_status.id == 2 && battery.is_battery_replaced == 1">
-                                                                    <span class="view-col-label">
-                                                                        Replaced Battery Serial Number
-                                                                    </span>
-                                                                    <span class="view-data-list-value">
-                                                                        <b>
-                                                                            {{battery.replaced_battery_serial_number ?
-                                                                            battery.replaced_battery_serial_number :
-                                                                            '-'}}
-                                                                        </b>
-                                                                    </span>
-                                                                </li>
-                                                                <li class="view-col-3"
-                                                                    ng-if="battery.battery_load_test_status.id == 2 && battery.is_battery_replaced == 1">
-                                                                    <span class="view-col-label">
                                                                         Job Card Number
                                                                     </span>
                                                                     <span class="view-data-list-value">
                                                                         <b>
-                                                                            {{battery.job_card_number ?
-                                                                            battery.job_card_number :
-                                                                            '-'}}
+                                                                            {{battery.vehicle_battery.job_card_number}}
                                                                         </b>
                                                                     </span>
                                                                 </li>
-                                                                <li class="view-col-3"
-                                                                    ng-if="battery.battery_load_test_status.id == 2 && battery.is_battery_replaced == 1">
+                                                                <li class="view-col-3">
                                                                     <span class="view-col-label">
                                                                         Job Card Date
                                                                     </span>
                                                                     <span class="view-data-list-value">
                                                                         <b>
-                                                                            {{battery.job_card_date ?
-                                                                            battery.job_card_date :
+                                                                            {{battery.vehicle_battery.job_card_date ?
+                                                                            battery.vehicle_battery.job_card_date :
                                                                             '-'}}
                                                                         </b>
                                                                     </span>
                                                                 </li>
-                                                                <li class="view-col-3"
-                                                                    ng-if="battery.battery_load_test_status.id == 2 && battery.invoice_number">
+                                                            </ul>
+                                                            <div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12" ng-if="battery.vehicle_battery.invoice_number">
+                                                    <h5 class="color-primary mb-10">
+                                                        <b>
+                                                            Invoice Details
+                                                        </b>
+                                                    </h5>
+                                                    <hr class="hr-15">
+                                                    <div id="collapse4" class="panel-collapse collapse in">
+                                                        <div class="panel-body">
+                                                            <ul class="view-row mb-no">
+                                                                <li class="view-col-3">
                                                                     <span class="view-col-label">
                                                                         Invoice Number
                                                                     </span>
                                                                     <span class="view-data-list-value">
                                                                         <b>
-                                                                            {{battery.invoice_number ?
-                                                                            battery.invoice_number :
-                                                                            '-'}}
-                                                                        </b>
-                                                                    </span>
-                                                                </li>
-                                                                <li class="view-col-3"
-                                                                    ng-if="battery.battery_load_test_status.id == 2 && battery.invoice_number">
-                                                                    <span class="view-col-label">
-                                                                        Invoice Date
-                                                                    </span>
-                                                                    <span class="view-data-list-value">
-                                                                        <b>
-                                                                            {{battery.invoice_date ?
-                                                                            battery.invoice_date :
-                                                                            '-'}}
-                                                                        </b>
-                                                                    </span>
-                                                                </li>
-                                                                <li class="view-col-3"
-                                                                    ng-if="battery.battery_load_test_status.id == 2 && battery.invoice_number">
-                                                                    <span class="view-col-label">
-                                                                        Invoice Amount
-                                                                    </span>
-                                                                    <span class="view-data-list-value">
-                                                                        <b>
-                                                                            {{battery.invoice_amount ?
-                                                                            battery.invoice_amount :
-                                                                            '-'}}
-                                                                        </b>
-                                                                    </span>
-                                                                </li>
-                                                                <li class="view-col-3"
-                                                                    ng-if="battery.battery_load_test_status.id == 2">
-                                                                    <span class="view-col-label">
-                                                                        Is Buy Back Opted
-                                                                    </span>
-                                                                    <span class="view-data-list-value">
-                                                                        <b>
-                                                                            {{battery.is_buy_back_opted == 1 ? 'Yes' :
-                                                                            'No'}}
-                                                                        </b>
-                                                                    </span>
-                                                                </li>
-                                                                <li class="view-col-3"
-                                                                    ng-if="battery.is_battery_replaced == 0 && battery.battery_not_replaced_reason_id">
-                                                                    <span class="view-col-label">
-                                                                        Battery Not Replaced Reason
-                                                                    </span>
-                                                                    <span class="view-data-list-value">
-                                                                        <b>
-                                                                            {{battery.battery_not_replaced_reason ?
-                                                                            battery.battery_not_replaced_reason.name :
-                                                                            '-'}}
+                                                                            {{battery.vehicle_battery.invoice_number}}
                                                                         </b>
                                                                     </span>
                                                                 </li>
                                                                 <li class="view-col-3">
                                                                     <span class="view-col-label">
-                                                                        Remarks
+                                                                        Invoice Date
                                                                     </span>
                                                                     <span class="view-data-list-value">
                                                                         <b>
-                                                                            {{battery.remarks}}
+                                                                            {{battery.vehicle_battery.invoice_date}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Invoice Amount
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <b>
+                                                                            {{battery.vehicle_battery.invoice_amount}}
                                                                         </b>
                                                                     </span>
                                                                 </li>
                                                             </ul>
+                                                            <div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div><!-- Column -->
-                                    <div class="tab-pane-footer">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                <button type="button"
-                                                    ng-if="battery.job_card_number && !battery.invoice_number"
-                                                    ng-click="showPaymentForm(battery)"
-                                                    class="btn btn-secondary-dark btn-min-wdth btn-nxt">
-                                                    Update Invoice Details
-                                                </button>
-                                            </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane-footer">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                            <button type="button" data-toggle="modal" data-target="#payment_modal"
+                                                ng-if="battery.vehicle_battery.job_card_number && !battery.vehicle_battery.invoice_number"
+                                                class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                                Update Invoice Details
+                                            </button>
                                         </div>
-                                    </div><!-- Tab Footer -->
-                                </div><!-- Row -->
-                            </div><!-- Tab Pane Wrap -->
-                        </div><!-- Tab Content -->
-                    </div><!-- Tab Form Body -->
-                </div><!-- Tab Form Wrap -->
-            </div><!-- Page Form -->
-        </form>
-    </div><!-- Page Main Content -->
+                                    </div>
+                                </div><!-- Tab Footer -->
+                            </div><!-- Row -->
+                        </div><!-- Tab Pane Wrap -->
+                    </div><!-- Tab Content -->
+                </div><!-- Tab Form Body -->
+            </div><!-- Tab Form Wrap -->
+    </div><!-- Page Form -->
+    </form>
+</div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
 <div class="modal fade filter" id="payment_modal" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <form id="battery-payment-form" autocomplete="off">
-            <input type="hidden" name="battery_id" value="{{battery.id}}">
+            <input type="hidden" name="battery_id" value="{{battery.vehicle_battery.id}}">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close ripple reject_close" data-dismiss="modal" aria-label="Close">
@@ -613,13 +1222,14 @@
                                 <div class="form-group">
                                     <label>Job Card Number<sup class="mandatory">*</sup></label>
                                     <input type="text" class="form-control" readonly
-                                        value="{{battery.job_card_number}}">
+                                        value="{{battery.vehicle_battery.job_card_number}}">
                                 </div><!-- Feild -->
                             </div><!-- Column -->
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Job Card Date<sup class="mandatory">*</sup></label>
-                                    <input type="text" class="form-control" readonly value="{{battery.job_card_date}}">
+                                    <input type="text" class="form-control" readonly
+                                        value="{{battery.vehicle_battery.job_card_date}}">
                                 </div><!-- Feild -->
                             </div><!-- Column -->
                             <div class="col-md-4">
@@ -635,7 +1245,7 @@
                                     <label>Invoice Date<sup class="mandatory">*</sup></label>
                                     <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
                                         <input type="text" class="form-control required" placeholder="Ex: 10-01-2021"
-                                            value="{{battery.invoice_date}}" name="invoice_date" />
+                                            value="{{battery.vehicle_battery.invoice_date}}" name="invoice_date" />
                                         <div class="input-group-addon">
                                             <img class="img-responsive"
                                                 src="./public/theme/img/content/calender-gray-icon.svg"
@@ -649,7 +1259,7 @@
                                     <label>Invoice Amount<sup class="mandatory">*</sup></label>
                                     <input type="text" name="invoice_amount" maxlength="10"
                                         class="form-control invoice_amount" placeholder="Ex: 3000"
-                                        value="{{battery.invoice_amount}}"
+                                        value="{{battery.vehicle_battery.invoice_amount}}"
                                         oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                 </div><!-- Feild -->
                             </div><!-- Column -->

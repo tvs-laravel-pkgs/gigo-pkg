@@ -18,7 +18,7 @@ class BatteryLoadTestResult extends BaseModel
         "vehicle_battery_id",
         "amp_hour",
         "battery_voltage",
-        "load_test_status_id", 
+        "load_test_status_id",
         "hydrometer_electrolyte_status_id",
         "remarks",
         "replaced_battery_make_id",
@@ -29,8 +29,8 @@ class BatteryLoadTestResult extends BaseModel
         "first_battery_battery_voltage_id",
         "second_battery_battery_voltage_id",
         "second_battery_overall_status_id",
-        "replaced_second_battery_make_id"
-        ]
+        "replaced_second_battery_make_id",
+    ]
     ;
 
     public function getRegistrationNumberAttribute($value)
@@ -83,42 +83,39 @@ class BatteryLoadTestResult extends BaseModel
     {
         return $this->belongsTo('App\HydrometerElectrolyteStatus', 'hydrometer_electrolyte_status_id');
     }
-    public function replacedBatteryMake(){
+    public function replacedBatteryMake()
+    {
         return $this->belongsTo('App\BatteryMake', 'replaced_battery_make_id');
     }
-    public function batteryNotReplacedReason() {
-		return $this->belongsTo('App\Config','battery_not_replaced_reason_id');
-	}
-
-    public function getJobCardDateAttribute($value)
+    public function batteryNotReplacedReason()
     {
-        return empty($value) ? '' : date('d-m-Y', strtotime($value));
+        return $this->belongsTo('App\Config', 'battery_not_replaced_reason_id');
     }
 
-    public function getInvoiceDateAttribute($value)
-    {
-        return empty($value) ? '' : date('d-m-Y', strtotime($value));
-    }
     //Battery MultimeterStatus
     public function multimeterTestStatus()
     {
         return $this->belongsTo('App\MultimeterTestStatus', 'multimeter_test_status_id');
     }
-   
+
     //Battery Amphour
-    public function firstbatteryAmphour() {
-		return $this->belongsTo('App\Config','first_battery_amp_hour_id');
-	}
-    public function secondbatteryAmphour() {
-		return $this->belongsTo('App\Config','second_battery_amp_hour_id');
-	}
-    //Battery Voltage 
-    public function firstbatteryvoltage() {
-		return $this->belongsTo('App\Config','first_battery_battery_voltage_id');
-	}
-    public function secondbatteryvoltage() {
-		return $this->belongsTo('App\Config','second_battery_battery_voltage_id');
-	}
+    public function firstbatteryAmphour()
+    {
+        return $this->belongsTo('App\Config', 'first_battery_amp_hour_id');
+    }
+    public function secondbatteryAmphour()
+    {
+        return $this->belongsTo('App\Config', 'second_battery_amp_hour_id');
+    }
+    //Battery Voltage
+    public function firstbatteryvoltage()
+    {
+        return $this->belongsTo('App\Config', 'first_battery_battery_voltage_id');
+    }
+    public function secondbatteryvoltage()
+    {
+        return $this->belongsTo('App\Config', 'second_battery_battery_voltage_id');
+    }
     //Load Test Battery 2
     public function secondbatteryloadTestStatus()
     {
@@ -133,15 +130,17 @@ class BatteryLoadTestResult extends BaseModel
     {
         return $this->belongsTo('App\MultimeterTestStatus', 'second_battery_multimeter_test_status_id');
     }
-    public function secondreplacedBatteryMake(){
+    public function secondreplacedBatteryMake()
+    {
         return $this->belongsTo('App\BatteryMake', 'replaced_second_battery_make_id');
     }
-    public function secondbatteryNotReplacedReason() {
-		return $this->belongsTo('App\Config','second_battery_not_replaced_reason_id');
-	}
+    public function secondBatteryNotReplacedReason()
+    {
+        return $this->belongsTo('App\Config', 'second_battery_not_replaced_reason_id');
+    }
     public function secondbatteryoverallLoadTestStatus()
     {
         return $this->belongsTo('App\BatteryLoadTestStatus', 'second_battery_overall_status_id');
     }
-   
+
 }
