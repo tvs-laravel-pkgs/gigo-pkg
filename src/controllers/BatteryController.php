@@ -64,7 +64,7 @@ class BatteryController extends Controller
             ->select(
                 'battery_load_test_results.id',
                 'vehicle_batteries.job_card_number',
-                'battery_load_test_results.invoice_number',
+                'vehicle_batteries.invoice_number',
                 'customers.name as customer_name',
                 'battery_makes.name as battery_name',
                 'vehicles.registration_number',
@@ -236,8 +236,8 @@ class BatteryController extends Controller
 
             'second_battery_make.name as second_battery_make',
             'vehicle_batteries.second_battery_serial_number as second_battery_serial_number',
-            DB::raw('DATE_FORMAT(vehicle_batteries.manufactured_date,"%b") as second_battery_manufactured_month'),
-            DB::raw('DATE_FORMAT(vehicle_batteries.manufactured_date,"%Y") as second_battery_manufactured_year'),
+            DB::raw('DATE_FORMAT(vehicle_batteries.second_battery_manufactured_date,"%b") as second_battery_manufactured_month'),
+            DB::raw('DATE_FORMAT(vehicle_batteries.second_battery_manufactured_date,"%Y") as second_battery_manufactured_year'),
             'second_battery_amp_hour.name as second_battery_amp_hour',
             'second_battery_voltage.name as second_battery_voltage',
             'second_battery_load_test.name as second_battery_load_test_status',

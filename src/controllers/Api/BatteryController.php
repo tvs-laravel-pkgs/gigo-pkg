@@ -555,7 +555,7 @@ class BatteryController extends Controller
                 $validator_2 = Validator::make($generateJONumber, [
                     'number' => [
                         'required',
-                        'unique:battery_load_test_results,number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+                        'unique:vehicle_batteries,number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
                     ],
                 ], $error_messages_2);
 
