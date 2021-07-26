@@ -99,38 +99,38 @@ class BatteryLoadTestResult extends BaseModel
     }
 
     //Battery Amphour
-    public function firstbatteryAmphour()
+    public function firstBatteryAmphour()
     {
         return $this->belongsTo('App\Config', 'first_battery_amp_hour_id');
     }
-    public function secondbatteryAmphour()
+    public function secondBatteryAmphour()
     {
         return $this->belongsTo('App\Config', 'second_battery_amp_hour_id');
     }
     //Battery Voltage
-    public function firstbatteryvoltage()
+    public function firstBatteryVoltage()
     {
         return $this->belongsTo('App\Config', 'first_battery_battery_voltage_id');
     }
-    public function secondbatteryvoltage()
+    public function secondBatteryVoltage()
     {
         return $this->belongsTo('App\Config', 'second_battery_battery_voltage_id');
     }
     //Load Test Battery 2
-    public function secondbatteryloadTestStatus()
+    public function secondBatteryLoadTestStatus()
     {
         return $this->belongsTo('App\LoadTestStatus', 'second_battery_load_test_status_id');
     }
 
-    public function secondbatteryhydrometerElectrolyteStatus()
+    public function secondBatteryHydrometerElectrolyteStatus()
     {
         return $this->belongsTo('App\HydrometerElectrolyteStatus', 'second_battery_hydrometer_electrolyte_status_id');
     }
-    public function secondbatterymultimeterTestStatus()
+    public function secondBatteryMultimeterTestStatus()
     {
         return $this->belongsTo('App\MultimeterTestStatus', 'second_battery_multimeter_test_status_id');
     }
-    public function secondreplacedBatteryMake()
+    public function secondReplacedBatteryMake()
     {
         return $this->belongsTo('App\BatteryMake', 'replaced_second_battery_make_id');
     }
@@ -138,7 +138,7 @@ class BatteryLoadTestResult extends BaseModel
     {
         return $this->belongsTo('App\Config', 'second_battery_not_replaced_reason_id');
     }
-    public function secondbatteryoverallLoadTestStatus()
+    public function secondBatteryOverallLoadTestStatus()
     {
         return $this->belongsTo('App\BatteryLoadTestStatus', 'second_battery_overall_status_id');
     }

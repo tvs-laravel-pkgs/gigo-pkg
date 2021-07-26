@@ -57,12 +57,12 @@ class VehicleBattery extends BaseModel
     {
         return $this->belongsTo('App\Outlet', 'outlet_id');
     }
-    public function battery_status()
+    public function batteryStatus()
     {
         return $this->belongsTo('App\config', 'battery_status_id');
     }
 
-    public function secondbatteryMake()
+    public function secondBatteryMake()
     {
         return $this->belongsTo('App\BatteryMake', 'second_battery_make_id');
     }
