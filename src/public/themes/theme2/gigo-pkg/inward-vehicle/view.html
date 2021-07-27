@@ -2109,7 +2109,7 @@
                                                             </div>
                                                         </div>
                                                     </li>
-                                                    <li ng-if="job_order.status_id == 8470 && job_order.is_customer_agreed != 1 && job_order.is_customer_approved != 1">
+                                                    <li ng-if="(job_order.status_id == 8470 || job_order.status_id == 12220 ) && job_order.is_customer_agreed != 1 && job_order.is_customer_approved != 1">
                                                         <div class="checklist-item-wrap pad-big">
                                                             <div class="checklist-item-value">
                                                                 Gatepass

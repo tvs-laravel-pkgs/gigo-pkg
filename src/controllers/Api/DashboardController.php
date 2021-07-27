@@ -209,7 +209,7 @@ class DashboardController extends Controller {
 		$dashboard_data['inward_inprogress_data'] = $inward_inprogress_data;
 
 		//Total Inward Completed Vehicles
-		$inward_vehicles = JobOrder::whereDate('created_at', '>=', $start_date)->whereDate('created_at', '<=', $end_date)->whereIn('status_id', [8470, 8476, 8461])->whereIn('outlet_id', $outlet_ids)->pluck('id')->toArray();
+		$inward_vehicles = JobOrder::whereDate('created_at', '>=', $start_date)->whereDate('created_at', '<=', $end_date)->whereIn('status_id', [8470, 8476, 8461,12220])->whereIn('outlet_id', $outlet_ids)->pluck('id')->toArray();
 		// SELECT *  FROM `job_orders` WHERE `created_at` >= '2020-06-01' AND `created_at` <= '2020-11-21' ORDER BY `id`  DESC
 
 		$total_inward_vehicles = count($inward_vehicles);
