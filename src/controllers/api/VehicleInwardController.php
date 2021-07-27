@@ -7019,7 +7019,7 @@ class VehicleInwardController extends Controller
                     ]);
                 }
 
-                $job_order->status_id = 8470; // VEHICLE INWARD COMPLETED
+                $job_order->status_id = 12220; // VEHICLE INWARD COMPLETED
                 $job_order->is_customer_agreed = 0;
                 $job_order->is_customer_approved = 0;
                 $job_order->estimation_type_id = null;
@@ -7585,7 +7585,7 @@ class VehicleInwardController extends Controller
 
             if ($floating_gate_pass > 0) {
 
-                $job_order->status_id = 8470;
+                $job_order->status_id = 12220;
                 $job_order->save();
 
                 DB::commit();
@@ -7630,7 +7630,7 @@ class VehicleInwardController extends Controller
                         $job_card->floor_supervisor_id = null;
                         $job_card->status_id = 8220; //Waiting for Bay Allocation
 
-                        $job_order->status_id = 8470; // Inward Completed
+                        $job_order->status_id = 12220; // Inward Completed
                         $job_order->save();
                     }
 

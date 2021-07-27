@@ -137,7 +137,7 @@
                                         Estimation Status
                                     </a>
                                 </li>
-                                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-pdf') && (job_order.status_id == 8461 || job_order.status_id == 8468 || job_order.status_id == 8470)">
+                                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-pdf') && (job_order.status_id == 8461 || job_order.status_id == 8468 || job_order.status_id == 8470 || job_order.status_id == 12220)">
                                     <a data-target="#inward_pdf" data-toggle="tab" aria-expanded="true" class="filter">
                                         PDF
                                     </a>
@@ -2119,7 +2119,7 @@
                                                             </div>
                                                         </div>
                                                     </li>
-                                                    <li ng-if="job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468 ">
+                                                    <li ng-if="job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468  || job_order.status_id == 12220 ">
                                                         <div class="checklist-item-wrap pad-big">
                                                             <div class="checklist-item-value">
                                                                 Estimate
@@ -2129,7 +2129,7 @@
                                                             </div>
                                                         </div>
                                                     </li>
-                                                    <li ng-if="(job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468) && total_estimate > 1">
+                                                    <li ng-if="(job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468 || job_order.status_id == 12220 ) && total_estimate > 1">
                                                         <div class="checklist-item-wrap pad-big">
                                                             <div class="checklist-item-value">
                                                                 Revised Estimate
@@ -2139,7 +2139,7 @@
                                                             </div>
                                                         </div>
                                                     </li>
-                                                    <li ng-if="(job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468) && inspection_pdf">
+                                                    <li ng-if="(job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468 || job_order.status_id == 12220 ) && inspection_pdf">
                                                         <div class="checklist-item-wrap pad-big">
                                                             <div class="checklist-item-value">
                                                                 Inspection
@@ -2149,7 +2149,7 @@
                                                             </div>
                                                         </div>
                                                     </li>
-                                                    <li ng-if="job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468 ">
+                                                    <li ng-if="job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468 || job_order.status_id == 12220 ">
                                                         <div class="checklist-item-wrap pad-big">
                                                             <div class="checklist-item-value">
                                                                 Inventory
@@ -2159,7 +2159,7 @@
                                                             </div>
                                                         </div>
                                                     </li>
-                                                    <li ng-if="job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468 ">
+                                                    <li ng-if="job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468 || job_order.status_id == 12220 ">
                                                         <div class="checklist-item-wrap pad-big">
                                                             <div class="checklist-item-value">
                                                                 Manual Job Order
