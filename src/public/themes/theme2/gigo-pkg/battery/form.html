@@ -637,12 +637,14 @@
                                                     <div class="common-radio-button type-4">
                                                         <input type="radio" id="no_of_batteries_1"
                                                             name="no_of_batteries" ng-model="$ctrl.no_of_batteries"
+                                                            ng-click="battery_status_check()"
                                                             ng-value="1">
                                                         <label for="no_of_batteries_1">
                                                             1<span class="rd-focused"></span>
                                                         </label>
                                                         <input type="radio" id="no_of_batteries_2"
                                                             name="no_of_batteries" ng-model="$ctrl.no_of_batteries"
+                                                            ng-click="battery_status_check()"
                                                             ng-value="2">
                                                         <label for="no_of_batteries_2">
                                                             2<span class="rd-focused"></span>
@@ -827,7 +829,8 @@
                                                                                                                             <md-optgroup>
                                                                                                                                 <md-option
                                                                                                                                     ng-value="list.id"
-                                                                                                                                    ng-repeat="list in extras.battery_voltage | filter:searchStatus">
+                                                                                                                                    ng-repeat="list in extras.battery_voltage | filter:searchStatus"
+                                                                                                                                    ng-selected='list.name=="12V * 1"'>
                                                                                                                                     {{list.name}}
                                                                                                                                 </md-option>
                                                                                                                             </md-optgroup>
@@ -919,7 +922,8 @@
                                                                                                                                     name="multimeter_test_status_id"
                                                                                                                                     value="1"
                                                                                                                                     ng-value="1"
-                                                                                                                                    ng-checked="battery.multimeter_test_status_id == 1" />
+                                                                                                                                    ng-checked="battery.multimeter_test_status_id == 1"
+                                                                                                                                    ng-click="battery_status_check()"  />
                                                                                                                                 <label
                                                                                                                                     for="multimeter_radio_good"
                                                                                                                                     class="radio-good"></label>
@@ -932,7 +936,8 @@
                                                                                                                                     name="multimeter_test_status_id"
                                                                                                                                     value="2"
                                                                                                                                     ng-value="2"
-                                                                                                                                    ng-checked="battery.multimeter_test_status_id == 2" />
+                                                                                                                                    ng-checked="battery.multimeter_test_status_id == 2"
+                                                                                                                                    ng-click="battery_status_check()"  />
                                                                                                                                 <label
                                                                                                                                     for="multimeter_radio_average"
                                                                                                                                     class="radio-average"></label>
@@ -945,7 +950,8 @@
                                                                                                                                     name="multimeter_test_status_id"
                                                                                                                                     value="3"
                                                                                                                                     ng-value="3"
-                                                                                                                                    ng-checked="battery.multimeter_test_status_id == 3" />
+                                                                                                                                    ng-checked="battery.multimeter_test_status_id == 3"
+                                                                                                                                    ng-click="battery_status_check()"  />
                                                                                                                                 <label
                                                                                                                                     for="multimeter_radio_bad"
                                                                                                                                     class="radio-bad"></label>
@@ -972,7 +978,8 @@
                                                                                                                                     name="load_test_status_id"
                                                                                                                                     value="1"
                                                                                                                                     ng-value="1"
-                                                                                                                                    ng-checked="battery.load_test_status_id == 1" />
+                                                                                                                                    ng-checked="battery.load_test_status_id == 1"
+                                                                                                                                    ng-click="battery_status_check()"  />
                                                                                                                                 <label
                                                                                                                                     for="load_radio_good"
                                                                                                                                     class="radio-good"></label>
@@ -985,7 +992,8 @@
                                                                                                                                     name="load_test_status_id"
                                                                                                                                     value="2"
                                                                                                                                     ng-value="2"
-                                                                                                                                    ng-checked="battery.load_test_status_id == 2" />
+                                                                                                                                    ng-checked="battery.load_test_status_id == 2"
+                                                                                                                                    ng-click="battery_status_check()"  />
                                                                                                                                 <label
                                                                                                                                     for="load_radio_average"
                                                                                                                                     class="radio-average"></label>
@@ -998,7 +1006,8 @@
                                                                                                                                     name="load_test_status_id"
                                                                                                                                     value="3"
                                                                                                                                     ng-value="3"
-                                                                                                                                    ng-checked="battery.load_test_status_id == 3" />
+                                                                                                                                    ng-checked="battery.load_test_status_id == 3"
+                                                                                                                                    ng-click="battery_status_check()"  />
                                                                                                                                 <label
                                                                                                                                     for="load_radio_bad"
                                                                                                                                     class="radio-bad"></label>
@@ -1028,7 +1037,8 @@
                                                                                                                                         name="hydrometer_electrolyte_status_id"
                                                                                                                                         value="1"
                                                                                                                                         ng-value="1"
-                                                                                                                                        ng-checked="battery.hydrometer_electrolyte_status_id == 1" />
+                                                                                                                                        ng-checked="battery.hydrometer_electrolyte_status_id == 1"
+                                                                                                                                        ng-click="battery_status_check()"  />
                                                                                                                                     <label
                                                                                                                                         for="hydro_radio_good"
                                                                                                                                         class="radio-good"></label>
@@ -1041,7 +1051,8 @@
                                                                                                                                         name="hydrometer_electrolyte_status_id"
                                                                                                                                         value="2"
                                                                                                                                         ng-value="2"
-                                                                                                                                        ng-checked="battery.hydrometer_electrolyte_status_id == 2" />
+                                                                                                                                        ng-checked="battery.hydrometer_electrolyte_status_id == 2"
+                                                                                                                                        ng-click="battery_status_check()"  />
                                                                                                                                     <label
                                                                                                                                         for="hydro_radio_average"
                                                                                                                                         class="radio-average"></label>
@@ -1054,7 +1065,8 @@
                                                                                                                                         name="hydrometer_electrolyte_status_id"
                                                                                                                                         value="3"
                                                                                                                                         ng-value="3"
-                                                                                                                                        ng-checked="battery.hydrometer_electrolyte_status_id == 3" />
+                                                                                                                                        ng-checked="battery.hydrometer_electrolyte_status_id == 3"
+                                                                                                                                        ng-click="battery_status_check()"  />
                                                                                                                                     <label
                                                                                                                                         for="hydro_radio_bad"
                                                                                                                                         class="radio-bad"></label>
@@ -1448,7 +1460,8 @@
                                                                                                                             <md-optgroup>
                                                                                                                                 <md-option
                                                                                                                                     ng-value="list.id"
-                                                                                                                                    ng-repeat="list in extras.battery_voltage | filter:searchStatus">
+                                                                                                                                    ng-repeat="list in extras.battery_voltage | filter:searchStatus"
+                                                                                                                                    ng-selected='list.name=="12V * 1"'>
                                                                                                                                     {{list.name}}
                                                                                                                                 </md-option>
                                                                                                                             </md-optgroup>
@@ -1540,7 +1553,8 @@
                                                                                                                                     name="second_battery_multimeter_test_status_id"
                                                                                                                                     value="1"
                                                                                                                                     ng-value="1"
-                                                                                                                                    ng-checked="battery.second_battery_multimeter_test_status_id == 1" />
+                                                                                                                                    ng-checked="battery.second_battery_multimeter_test_status_id == 1"
+                                                                                                                                    ng-click="battery_status_check()" />
                                                                                                                                 <label
                                                                                                                                     for="second_battery_multimeter_radio_good"
                                                                                                                                     class="radio-good"></label>
@@ -1553,7 +1567,8 @@
                                                                                                                                     name="second_battery_multimeter_test_status_id"
                                                                                                                                     value="2"
                                                                                                                                     ng-value="2"
-                                                                                                                                    ng-checked="battery.second_battery_multimeter_test_status_id == 2" />
+                                                                                                                                    ng-checked="battery.second_battery_multimeter_test_status_id == 2"
+                                                                                                                                    ng-click="battery_status_check()" />
                                                                                                                                 <label
                                                                                                                                     for="second_battery_multimeter_radio_average"
                                                                                                                                     class="radio-average"></label>
@@ -1566,7 +1581,8 @@
                                                                                                                                     name="second_battery_multimeter_test_status_id"
                                                                                                                                     value="3"
                                                                                                                                     ng-value="3"
-                                                                                                                                    ng-checked="battery.second_battery_multimeter_test_status_id == 3" />
+                                                                                                                                    ng-checked="battery.second_battery_multimeter_test_status_id == 3"
+                                                                                                                                    ng-click="battery_status_check()" />
                                                                                                                                 <label
                                                                                                                                     for="second_battery_multimeter_radio_bad"
                                                                                                                                     class="radio-bad"></label>
@@ -1593,7 +1609,8 @@
                                                                                                                                     name="second_battery_load_test_status_id"
                                                                                                                                     value="1"
                                                                                                                                     ng-value="1"
-                                                                                                                                    ng-checked="battery.second_battery_load_test_status_id == 1" />
+                                                                                                                                    ng-checked="battery.second_battery_load_test_status_id == 1"
+                                                                                                                                    ng-click="battery_status_check()" />
                                                                                                                                 <label
                                                                                                                                     for="second_battery_load_radio_good_2"
                                                                                                                                     class="radio-good"></label>
@@ -1606,7 +1623,8 @@
                                                                                                                                     name="second_battery_load_test_status_id"
                                                                                                                                     value="2"
                                                                                                                                     ng-value="2"
-                                                                                                                                    ng-checked="battery.second_battery_load_test_status_id == 2" />
+                                                                                                                                    ng-checked="battery.second_battery_load_test_status_id == 2"
+                                                                                                                                    ng-click="battery_status_check()" />
                                                                                                                                 <label
                                                                                                                                     for="second_battery_load_radio_average_2"
                                                                                                                                     class="radio-average"></label>
@@ -1619,7 +1637,8 @@
                                                                                                                                     name="second_battery_load_test_status_id"
                                                                                                                                     value="3"
                                                                                                                                     ng-value="3"
-                                                                                                                                    ng-checked="battery.second_battery_load_test_status_id == 3" />
+                                                                                                                                    ng-checked="battery.second_battery_load_test_status_id == 3"
+                                                                                                                                    ng-click="battery_status_check()" />
                                                                                                                                 <label
                                                                                                                                     for="second_battery_load_radio_bad_2"
                                                                                                                                     class="radio-bad"></label>
@@ -1649,7 +1668,8 @@
                                                                                                                                         name="second_battery_hydrometer_electrolyte_status_id"
                                                                                                                                         value="1"
                                                                                                                                         ng-value="1"
-                                                                                                                                        ng-checked="battery.second_battery_hydrometer_electrolyte_status_id == 1" />
+                                                                                                                                        ng-checked="battery.second_battery_hydrometer_electrolyte_status_id == 1"
+                                                                                                                                        ng-click="battery_status_check()" />
                                                                                                                                     <label
                                                                                                                                         for="second_battery_hydro_radio_good_2"
                                                                                                                                         class="radio-good"></label>
@@ -1662,7 +1682,8 @@
                                                                                                                                         name="second_battery_hydrometer_electrolyte_status_id"
                                                                                                                                         value="2"
                                                                                                                                         ng-value="2"
-                                                                                                                                        ng-checked="battery.second_battery_hydrometer_electrolyte_status_id == 2" />
+                                                                                                                                        ng-checked="battery.second_battery_hydrometer_electrolyte_status_id == 2"
+                                                                                                                                        ng-click="battery_status_check()" />
                                                                                                                                     <label
                                                                                                                                         for="second_battery_hydro_radio_average_2"
                                                                                                                                         class="radio-average"></label>
@@ -1675,7 +1696,8 @@
                                                                                                                                         name="second_battery_hydrometer_electrolyte_status_id"
                                                                                                                                         value="3"
                                                                                                                                         ng-value="3"
-                                                                                                                                        ng-checked="battery.second_battery_hydrometer_electrolyte_status_id == 3" />
+                                                                                                                                        ng-checked="battery.second_battery_hydrometer_electrolyte_status_id == 3"
+                                                                                                                                        ng-click="battery_status_check()" />
                                                                                                                                     <label
                                                                                                                                         for="second_battery_hydro_radio_bad_2"
                                                                                                                                         class="radio-bad"></label>
