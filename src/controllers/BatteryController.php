@@ -408,10 +408,22 @@ class BatteryController extends Controller
                 $battery_test_detail['first_battery_hydrometer_test_status'] = $battery_load_test->first_battery_hydrometer_test_status;
                 $battery_test_detail['first_battery_multimeter_test_status'] = $battery_load_test->first_battery_multimeter_test_status;
                 $battery_test_detail['first_battery_overall_test_status'] = $battery_load_test->first_battery_overall_test_status;
-                $battery_test_detail['is_first_battery_replaced'] = $battery_load_test->is_first_battery_replaced == 1 ? 'Yes' : $battery_load_test->is_first_battery_replaced == 2 ? 'No' : '-';
+                if ($battery_load_test->is_first_battery_replaced == 1) {
+                    $battery_test_detail['is_first_battery_replaced'] = 'Yes';
+                } elseif ($battery_load_test->is_first_battery_replaced == 2) {
+                    $battery_test_detail['is_first_battery_replaced'] = 'No';
+                } else {
+                    $battery_test_detail['is_first_battery_replaced'] = '';
+                }
                 $battery_test_detail['first_battery_replaced_make'] = $battery_load_test->first_battery_replaced_make;
                 $battery_test_detail['first_battery_replaced_serial_number'] = $battery_load_test->first_battery_replaced_serial_number;
-                $battery_test_detail['first_battery_buy_back_opted'] = $battery_load_test->first_battery_buy_back_opted == 1 ? 'Yes' : $battery_load_test->first_battery_buy_back_opted == 2 ? 'No' : '-';
+                if ($battery_load_test->first_battery_buy_back_opted == 1) {
+                    $battery_test_detail['first_battery_buy_back_opted'] = 'Yes';
+                } elseif ($battery_load_test->first_battery_buy_back_opted == 2) {
+                    $battery_test_detail['first_battery_buy_back_opted'] = 'No';
+                } else {
+                    $battery_test_detail['first_battery_buy_back_opted'] = '';
+                }
                 $battery_test_detail['first_battery_not_replaced_reason'] = $battery_load_test->first_battery_not_replaced_reason;
 
                 $battery_test_detail['second_battery_make'] = $battery_load_test->second_battery_make;
@@ -424,10 +436,22 @@ class BatteryController extends Controller
                 $battery_test_detail['second_battery_hydrometer_test_status'] = $battery_load_test->second_battery_hydrometer_test_status;
                 $battery_test_detail['second_battery_multimeter_test_status'] = $battery_load_test->second_battery_multimeter_test_status;
                 $battery_test_detail['second_battery_overall_test_status'] = $battery_load_test->second_battery_overall_test_status;
-                $battery_test_detail['is_second_battery_replaced'] = $battery_load_test->is_second_battery_replaced == 1 ? 'Yes' : $battery_load_test->is_second_battery_replaced == 2 ? 'No' : '-';
+                if ($battery_load_test->is_second_battery_replaced == 1) {
+                    $battery_test_detail['is_second_battery_replaced'] = 'Yes';
+                } elseif ($battery_load_test->is_second_battery_replaced == 2) {
+                    $battery_test_detail['is_second_battery_replaced'] = 'No';
+                } else {
+                    $battery_test_detail['is_second_battery_replaced'] = '';
+                }
                 $battery_test_detail['second_battery_replaced_make'] = $battery_load_test->second_battery_replaced_make;
                 $battery_test_detail['second_battery_replaced_serial_number'] = $battery_load_test->second_battery_replaced_serial_number;
-                $battery_test_detail['second_battery_buy_back_opted'] = $battery_load_test->second_battery_buy_back_opted == 1 ? 'Yes' : $battery_load_test->second_battery_buy_back_opted == 2 ? 'No' : '-';
+                if ($battery_load_test->second_battery_buy_back_opted == 1) {
+                    $battery_test_detail['second_battery_buy_back_opted'] = 'Yes';
+                } elseif ($battery_load_test->second_battery_buy_back_opted == 2) {
+                    $battery_test_detail['second_battery_buy_back_opted'] = 'No';
+                } else {
+                    $battery_test_detail['second_battery_buy_back_opted'] = '';
+                }
                 $battery_test_detail['second_battery_not_replaced_reason'] = $battery_load_test->second_battery_not_replaced_reason;
 
                 $battery_test_detail['job_card_number'] = $battery_load_test->job_card_number;
