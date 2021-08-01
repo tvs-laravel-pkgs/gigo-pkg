@@ -371,13 +371,13 @@ class VehicleGatePassController extends Controller
                     ]);
             }
 
-            Bay::where('job_order_id', $gate_log->job_order_id)
-                ->update([
-                    'status_id' => 8240, //Free
-                    'job_order_id' => null, //Free
-                    'updated_by_id' => Auth::user()->id,
-                    'updated_at' => Carbon::now(),
-                ]);
+            // Bay::where('job_order_id', $gate_log->job_order_id)
+            //     ->update([
+            //         'status_id' => 8240, //Free
+            //         'job_order_id' => null, //Free
+            //         'updated_by_id' => Auth::user()->id,
+            //         'updated_at' => Carbon::now(),
+            //     ]);
 
             //Check Survey
             $survey_types = SurveyType::with([
