@@ -60,6 +60,8 @@ app.component('partsIndentList', {
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
                 { data: 'job_order_number', name: 'job_orders.number', searchable: true },
+                { data: 'job_card_number', name: 'job_cards.job_card_number', searchable: true },
+                { data: 'status', searchable: false },
                 { data: 'job_order_date_time', searchable: false },
                 { data: 'vehicle', name: 'vehicles.registration_number', searchable: true },
                 // { data: 'job_card_number', name: 'job_cards.job_card_number' , searchable: true },
@@ -72,7 +74,6 @@ app.component('partsIndentList', {
                 { data: 'state_name', name: 'states.name', searchable: true },
                 { data: 'region_name', name: 'regions.name', searchable: true },
                 { data: 'outlet_name', name: 'outlets.code', searchable: true },
-                { data: 'status', searchable: false },
             ],
             "infoCallback": function (settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)
