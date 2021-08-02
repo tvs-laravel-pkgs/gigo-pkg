@@ -866,6 +866,7 @@ class VehicleInwardController extends Controller
 
     public function getInwardPartIndentViewData(Request $r)
     {
+        // dd($r->all());
         try {
             $job_order = JobOrder::with([
                 'jobOrderRepairOrders' => function ($q) {
@@ -928,6 +929,7 @@ class VehicleInwardController extends Controller
                         $part_details[$key]['job_order_part_id'] = $value->id;
                         $part_details[$key]['code'] = $value->part->code;
                         $part_details[$key]['name'] = $value->part->name;
+                        $part_details[$key]['part_status'] = $value->status->name;
                         $part_details[$key]['part_detail'] = $value->part->code . ' | ' . $value->part->name;
                         $part_details[$key]['type'] = $value->part->taxCode ? $value->part->taxCode->code : '-';
                         $part_details[$key]['rate'] = $value->rate;
@@ -3261,7 +3263,7 @@ class VehicleInwardController extends Controller
                         'success' => false,
                         'error' => 'Validation Error',
                         'errors' => [
-                            'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $branch->state->code . ', Outlet : ' . $outlet->code,
+                            'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
                         ],
                     ]);
                 }
@@ -3319,12 +3321,17 @@ class VehicleInwardController extends Controller
             $job_order_part->split_order_type_id = $request->split_order_type_id;
             $job_order_part->amount = $request_qty * $part_mrp;
 
-            if (!$request->split_order_type_id || in_array($request->split_order_type_id, $customer_paid_type)) {
+            if ($request->split_order_type_id) {
+                if(in_array($request->split_order_type_id, $customer_paid_type)){
+                    $job_order_part->status_id = 8200; //Customer Approval Pending
+                    $job_order_part->is_customer_approved = 0;
+                }else{
+                    $job_order_part->is_customer_approved = 1;
+                    $job_order_part->status_id = 8201; //Not Issued
+                } 
+            } else {
                 $job_order_part->status_id = 8200; //Customer Approval Pending
                 $job_order_part->is_customer_approved = 0;
-            } else {
-                $job_order_part->is_customer_approved = 1;
-                $job_order_part->status_id = 8201; //Not Issued
             }
 
             $job_order_part->save();
