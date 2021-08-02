@@ -16,12 +16,14 @@ class AlterTableBatteryLoadTestResults extends Migration
         Schema::table('battery_load_test_results', function (Blueprint $table) {
             $table->unsignedInteger('first_battery_amp_hour_id')->nullable()->after('vehicle_battery_id');
             $table->unsignedInteger('first_battery_battery_voltage_id')->nullable()->after('first_battery_amp_hour_id');
-
+            $table->unsignedInteger('multimeter_test_status_id')->nullable()->after('battery_voltage');
+            
             $table->unsignedInteger('second_battery_amp_hour_id')->nullable()->after('overall_status_id');
             $table->unsignedInteger('second_battery_battery_voltage_id')->nullable()->after('second_battery_amp_hour_id');
-
+            
             $table->unsignedInteger('second_battery_load_test_status_id')->nullable()->after('second_battery_battery_voltage_id');
             $table->unsignedInteger('second_battery_hydrometer_electrolyte_status_id')->nullable()->after('second_battery_load_test_status_id');
+            $table->unsignedInteger('second_battery_multimeter_test_status_id')->nullable()->after('second_battery_battery_voltage_id');
             $table->unsignedInteger('second_battery_overall_status_id')->nullable()->after('second_battery_hydrometer_electrolyte_status_id');
 
             $table->tinyInteger('is_second_battery_replaced')->after('second_battery_overall_status_id')->nullable()->comment('1->Yes 0->No');
@@ -44,11 +46,9 @@ class AlterTableBatteryLoadTestResults extends Migration
             $table->foreign('second_battery_not_replaced_reason_id', 'second_battery_not_replaced_reason_id_foreign')->references('id')->on('configs')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('replaced_second_battery_make_id', 'replaced_second_battery_make_id_foreign')->references('id')->on('battery_makes')->onDelete('cascade')->onUpdate('cascade');
 
-            $table->unsignedInteger('multimeter_test_status_id')->nullable()->after('battery_voltage');
             $table->foreign('multimeter_test_status_id')->references('id')->on('multimeter_test_statuses')->onDelete('cascade')->onUpdate('cascade');
 
             //Added
-            $table->unsignedInteger('second_battery_multimeter_test_status_id')->nullable()->after('second_battery_battery_voltage_id');
             $table->foreign('multimeter_test_status_id')->references('id')->on('multimeter_test_statuses')->onDelete('cascade')->onUpdate('cascade');
         });
     }
