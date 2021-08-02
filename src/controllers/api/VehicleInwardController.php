@@ -7312,7 +7312,7 @@ class VehicleInwardController extends Controller
                     $user_images_des = storage_path('app/public/gigo/job_order/');
                     File::makeDirectory($user_images_des, $mode = 0777, true, true);
 
-                    $filename = "webcam_customer_sign_" . strtotime("now") . ".png";
+                    $filename = $request->job_order_id."_customer_esign.png";
 
                     File::put($attachment_path . $filename, base64_decode($customer_sign));
 
@@ -7335,11 +7335,20 @@ class VehicleInwardController extends Controller
                     saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
                 }
                 if (!empty($request->customer_e_sign)) {
-                    $attachment = $request->customer_e_sign;
-                    $entity_id = $request->job_order_id;
-                    $attachment_of_id = 227; //JOB ORDER
-                    $attachment_type_id = 253; //CUSTOMER E SIGN
-                    saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
+                    $image = $request->customer_e_sign;
+                    $extension = $image->getClientOriginalExtension();
+                    $name = $request->job_order_id . '_customer_esign'. $extension;
+                    $image->move(storage_path('app/public/gigo/job_order/attachments/'), $name);
+
+                    //SAVE ATTACHMENT
+                    $attachment = new Attachment;
+                    $attachment->attachment_of_id = 227; //JOB ORDER
+                    $attachment->attachment_type_id = 253; //CUSTOMER E SIGN
+                    $attachment->entity_id = $request->job_order_id;
+                    $attachment->name = $name;
+                    $attachment->created_by = Auth()->user()->id;
+                    $attachment->created_at = Carbon::now();
+                    $attachment->save();
                 }
             }
 
@@ -7384,7 +7393,7 @@ class VehicleInwardController extends Controller
 
                 $upload_filename = $uploads_directory . $filename;
 
-                $new_filename = "webcam_customer_sign_" . strtotime("now") . $request->job_order_id . 'ESign.jpg';
+                $new_filename = $request->job_order_id."_customer_esign.jpg";
 
                 $converted_filename = $uploads_directory . $new_filename;
 
