@@ -378,4 +378,6 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
     Route::get('/battery/get-filter-data', 'BatteryController@getBatteryFilterData')->name('getBatteryFilterData');
     Route::post('/battery/export', 'BatteryController@export')->name('exportBatteryLoadTest');
 
+    Route::post('gigo/job-card/export', 'VehicleInwardController@export')->name('exportJobCardReport');
+
 });

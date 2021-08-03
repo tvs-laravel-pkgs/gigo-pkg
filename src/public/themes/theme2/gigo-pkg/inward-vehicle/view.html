@@ -147,6 +147,11 @@
                                         Inward Cancel
                                     </a>
                                 </li>
+                                <li>
+                                    <a data-target="#reports" data-toggle="tab" aria-expanded="true" class="filter">
+                                        Reports
+                                    </a>
+                                </li>
                             </ul>
                         </div><!-- Filters -->
                     </div><!-- Tab Header -->
@@ -2262,6 +2267,47 @@
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
+                        <div class="tab-pane fade" id="reports" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <form id="job_card_report_form" autocomplete="off" action="{{$ctrl.export_job_card_report_url}}" method="post">
+                                    <input type="hidden" name="_token" value="{{ $ctrl.csrf_token}}" />
+                                    <input type="hidden" name="report_job_order_id" value="{{$ctrl.report_job_order_id}}">
+
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>Report</b></h5>
+                                            <hr class="hr-15">
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Report Type ?
+                                                        </label>
+                                                        <div class="common-radio-button type-4">
+                                                            <input type="radio" id="schedule_wise" name="report_wise_info" ng-checked="true" ng-model="$ctrl.schedule_wise" ng-value="1">
+                                                            <label for="schedule_wise">Schedule</label>
+                                                            <input type="radio" id="individual_wise" name="report_wise_info" ng-model="$ctrl.individual_wise" ng-value="2">
+                                                            <label for="individual_wise">Individual</label>
+                                                        </div>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                            </div><!-- Row -->
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <button type="submit" class="btn btn-red report_export">
+                                                        Export
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </form>
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+
                     </div><!-- Tab Content -->
                 </div><!-- Tab Form Body -->
             </div><!-- Tab Form Wrap -->

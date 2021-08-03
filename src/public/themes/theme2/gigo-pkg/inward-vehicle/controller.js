@@ -477,9 +477,12 @@ app.component('inwardVehicleView', {
         //     return false;
         // }
         self.angular_routes = angular_routes;
+        self.export_job_card_report_url = exportJobCardReport;
+        self.csrf_token = $('meta[name="csrf-token"]').attr('content');
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
+        self.report_job_order_id = $routeParams.job_order_id;
 
         $scope.job_order_id = $routeParams.job_order_id;
         //FETCH DATA

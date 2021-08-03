@@ -119,6 +119,7 @@
 
     //Battery export
     var exportBatteryLoadTest = "{{route('exportBatteryLoadTest')}}";
+    var exportJobCardReport = "{{route('exportJobCardReport')}}";
 
 </script>
 <!-- <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-segment/controller.js')}}"></script>
