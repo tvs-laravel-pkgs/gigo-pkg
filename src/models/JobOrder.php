@@ -906,7 +906,7 @@ class JobOrder extends BaseModel
             'roadTestDoneBy',
             'roadTestPreferedBy',
             'roadTestPreferedBy.employee',
-            'serviceAdviser',
+            'customerESign',
         ])
             ->find($job_order_id);
 
@@ -1005,6 +1005,12 @@ class JobOrder extends BaseModel
 
         $data['part_details'] = $part_details;
         $data['labour_details'] = $labour_details;
+
+        if ($job_order->customerESign && count($job_order->customerESign) > 0) {
+            $job_order->esign_img = 'app/public/gigo/job_order/' . $job_order->customerESign[0]->name;
+        } else {
+            $job_order->esign_img = '';
+        }
 
         $save_path = storage_path('app/public/gigo/pdf');
         Storage::makeDirectory($save_path, 0777);

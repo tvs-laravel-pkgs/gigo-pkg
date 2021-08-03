@@ -866,6 +866,7 @@ class VehicleInwardController extends Controller
 
     public function getInwardPartIndentViewData(Request $r)
     {
+        // dd($r->all());
         try {
             $job_order = JobOrder::with([
                 'jobOrderRepairOrders' => function ($q) {
@@ -928,6 +929,7 @@ class VehicleInwardController extends Controller
                         $part_details[$key]['job_order_part_id'] = $value->id;
                         $part_details[$key]['code'] = $value->part->code;
                         $part_details[$key]['name'] = $value->part->name;
+                        $part_details[$key]['part_status'] = $value->status->name;
                         $part_details[$key]['part_detail'] = $value->part->code . ' | ' . $value->part->name;
                         $part_details[$key]['type'] = $value->part->taxCode ? $value->part->taxCode->code : '-';
                         $part_details[$key]['rate'] = $value->rate;
@@ -3261,7 +3263,7 @@ class VehicleInwardController extends Controller
                         'success' => false,
                         'error' => 'Validation Error',
                         'errors' => [
-                            'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $branch->state->code . ', Outlet : ' . $outlet->code,
+                            'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
                         ],
                     ]);
                 }
@@ -3319,12 +3321,17 @@ class VehicleInwardController extends Controller
             $job_order_part->split_order_type_id = $request->split_order_type_id;
             $job_order_part->amount = $request_qty * $part_mrp;
 
-            if (!$request->split_order_type_id || in_array($request->split_order_type_id, $customer_paid_type)) {
+            if ($request->split_order_type_id) {
+                if(in_array($request->split_order_type_id, $customer_paid_type)){
+                    $job_order_part->status_id = 8200; //Customer Approval Pending
+                    $job_order_part->is_customer_approved = 0;
+                }else{
+                    $job_order_part->is_customer_approved = 1;
+                    $job_order_part->status_id = 8201; //Not Issued
+                } 
+            } else {
                 $job_order_part->status_id = 8200; //Customer Approval Pending
                 $job_order_part->is_customer_approved = 0;
-            } else {
-                $job_order_part->is_customer_approved = 1;
-                $job_order_part->status_id = 8201; //Not Issued
             }
 
             $job_order_part->save();
@@ -3447,6 +3454,14 @@ class VehicleInwardController extends Controller
                 $job_card->updated_by = Auth::user()->id;
                 $job_card->updated_at = Carbon::now();
                 $job_card->save();
+
+                Bay::where('job_order_id', $job_card->job_order_id)
+                ->update([
+                    'status_id' => 8240, //Free
+                    'job_order_id' => null, //Free
+                    'updated_by_id' => Auth::user()->id,
+                    'updated_at' => Carbon::now(),
+                ]);
 
                 DB::commit();
 
@@ -7019,7 +7034,7 @@ class VehicleInwardController extends Controller
                     ]);
                 }
 
-                $job_order->status_id = 8470; // VEHICLE INWARD COMPLETED
+                $job_order->status_id = 12220; // VEHICLE INWARD COMPLETED
                 $job_order->is_customer_agreed = 0;
                 $job_order->is_customer_approved = 0;
                 $job_order->estimation_type_id = null;
@@ -7297,7 +7312,7 @@ class VehicleInwardController extends Controller
                     $user_images_des = storage_path('app/public/gigo/job_order/');
                     File::makeDirectory($user_images_des, $mode = 0777, true, true);
 
-                    $filename = "webcam_customer_sign_" . strtotime("now") . ".png";
+                    $filename = $request->job_order_id."_customer_esign.png";
 
                     File::put($attachment_path . $filename, base64_decode($customer_sign));
 
@@ -7320,11 +7335,20 @@ class VehicleInwardController extends Controller
                     saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
                 }
                 if (!empty($request->customer_e_sign)) {
-                    $attachment = $request->customer_e_sign;
-                    $entity_id = $request->job_order_id;
-                    $attachment_of_id = 227; //JOB ORDER
-                    $attachment_type_id = 253; //CUSTOMER E SIGN
-                    saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
+                    $image = $request->customer_e_sign;
+                    $extension = $image->getClientOriginalExtension();
+                    $name = $request->job_order_id . '_customer_esign'. $extension;
+                    $image->move(storage_path('app/public/gigo/job_order/attachments/'), $name);
+
+                    //SAVE ATTACHMENT
+                    $attachment = new Attachment;
+                    $attachment->attachment_of_id = 227; //JOB ORDER
+                    $attachment->attachment_type_id = 253; //CUSTOMER E SIGN
+                    $attachment->entity_id = $request->job_order_id;
+                    $attachment->name = $name;
+                    $attachment->created_by = Auth()->user()->id;
+                    $attachment->created_at = Carbon::now();
+                    $attachment->save();
                 }
             }
 
@@ -7369,7 +7393,7 @@ class VehicleInwardController extends Controller
 
                 $upload_filename = $uploads_directory . $filename;
 
-                $new_filename = "webcam_customer_sign_" . strtotime("now") . $request->job_order_id . 'ESign.jpg';
+                $new_filename = $request->job_order_id."_customer_esign.jpg";
 
                 $converted_filename = $uploads_directory . $new_filename;
 
@@ -7585,7 +7609,7 @@ class VehicleInwardController extends Controller
 
             if ($floating_gate_pass > 0) {
 
-                $job_order->status_id = 8470;
+                $job_order->status_id = 12220;
                 $job_order->save();
 
                 DB::commit();
@@ -7630,7 +7654,7 @@ class VehicleInwardController extends Controller
                         $job_card->floor_supervisor_id = null;
                         $job_card->status_id = 8220; //Waiting for Bay Allocation
 
-                        $job_order->status_id = 8470; // Inward Completed
+                        $job_order->status_id = 12220; // Inward Completed
                         $job_order->save();
                     }
 

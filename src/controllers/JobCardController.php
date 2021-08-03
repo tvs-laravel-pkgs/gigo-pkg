@@ -123,7 +123,8 @@ class JobCardController extends Controller {
 			if (Entrust::can('view-mapped-outlet-job-card')) {
 				$job_cards->whereIn('job_cards.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
 			} else if (Entrust::can('view-own-outlet-job-card')) {
-				$job_cards->where('job_cards.outlet_id', Auth::user()->employee->outlet_id)->whereRaw("IF (job_cards.`status_id` = '8220', job_cards.`floor_supervisor_id` IS  NULL, job_cards.`floor_supervisor_id` = '" . $request->floor_supervisor_id . "')");
+				// $job_cards->where('job_cards.outlet_id', Auth::user()->employee->outlet_id)->whereRaw("IF (job_cards.`status_id` = '8220', job_cards.`floor_supervisor_id` IS  NULL, job_cards.`floor_supervisor_id` = '" . $request->floor_supervisor_id . "')");
+				$job_cards->where('job_cards.outlet_id', Auth::user()->working_outlet_id);
 			} else {
 				$job_cards->where('job_cards.outlet_id', Auth::user()->working_outlet_id);
 			}

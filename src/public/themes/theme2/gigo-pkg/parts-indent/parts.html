@@ -66,6 +66,9 @@ input[type=number] {
                                                             Parts Details
                                                         </th>
                                                         <th>
+                                                            Status
+                                                        </th>
+                                                        <th>
                                                             Requested Quantity
                                                         </th>
                                                         <th>
@@ -86,6 +89,9 @@ input[type=number] {
                                                     <tr class="ptb-12" ng-repeat="(index,part_detail) in part_details" id="tp_{{index}}" ng-class="part_detail.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="part_detail.removal_reason_id != '10021'">
                                                         <td>
                                                             {{part_detail.part_detail}}
+                                                        </td>
+                                                        <td>
+                                                            {{part_detail.part_status}}
                                                         </td>
                                                         <td>
                                                             {{part_detail.qty}}
@@ -112,7 +118,7 @@ input[type=number] {
                                                         </td>
                                                     </tr>
                                                     <tr class="ptb-9">
-                                                        <td colspan="6">
+                                                        <td colspan="7">
                                                             <button type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showPartForm(false)" ng-if="!job_order.part_intent_confirmed_date &&  job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227 && job_order.job_card.status_id != 8228 && job_order.job_card.status_id != 8231">
                                                                 Add Part
                                                             </button>
