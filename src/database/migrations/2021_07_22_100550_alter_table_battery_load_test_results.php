@@ -46,10 +46,10 @@ class AlterTableBatteryLoadTestResults extends Migration
             $table->foreign('second_battery_not_replaced_reason_id', 'second_battery_not_replaced_reason_id_foreign')->references('id')->on('configs')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('replaced_second_battery_make_id', 'replaced_second_battery_make_id_foreign')->references('id')->on('battery_makes')->onDelete('cascade')->onUpdate('cascade');
 
-            $table->foreign('multimeter_test_status_id')->references('id')->on('multimeter_test_statuses')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('multimeter_test_status_id','first_battery_multimeter_test_status_id_foreign')->references('id')->on('multimeter_test_statuses')->onDelete('cascade')->onUpdate('cascade');
 
             //Added
-            $table->foreign('multimeter_test_status_id')->references('id')->on('multimeter_test_statuses')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('second_battery_multimeter_test_status_id','second_battery_multimeter_test_status_id_foreign')->references('id')->on('multimeter_test_statuses')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 
@@ -71,6 +71,8 @@ class AlterTableBatteryLoadTestResults extends Migration
             $table->dropForeign('second_battery_load_test_status_id_foreign');
             $table->dropForeign('second_battery_hydrometer_electrolyte_status_id_foreign');
             $table->dropForeign('second_battery_overall_status_id_foreign');
+            $table->dropForeign('first_battery_multimeter_test_status_id_foreign');
+            $table->dropForeign('second_battery_multimeter_test_status_id_foreign');
 
             $table->dropColumn('first_battery_amp_hour_id');
             $table->dropColumn('first_battery_battery_voltage_id');
