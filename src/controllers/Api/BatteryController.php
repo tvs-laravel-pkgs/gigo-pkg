@@ -123,9 +123,9 @@ class BatteryController extends Controller
                 'invoice_date' => [
                     'required',
                 ],
-                // 'invoice_amount' => [
-                //     'required',
-                // ],
+                'invoice_amount' => [
+                    'required',
+                ],
             ]);
 
             if ($validator->fails()) {
@@ -505,7 +505,6 @@ class BatteryController extends Controller
                 $vehicle_battery = VehicleBattery::find($request->vehicle_battery_id);
                 $vehicle_battery->updated_by_id = Auth::user()->id;
                 $vehicle_battery->updated_at = Carbon::now();
-
             } else {
                 $vehicle_battery = new VehicleBattery;
                 $vehicle_battery->outlet_id = Auth::user()->employee->outlet_id;
@@ -658,9 +657,8 @@ class BatteryController extends Controller
             }
             $battery_result->save();
 
-            // dump($battery_result);
             DB::commit();
-            // dd(333);
+
             $message = 'Battery Details Saved Successfully!';
 
             return response()->json([
