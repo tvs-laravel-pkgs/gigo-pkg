@@ -35,7 +35,18 @@ class DashboardController extends Controller
     {
         // dd($request->all());
         if ($request->state_id) {
-            $outlet_list = collect(Outlet::where('company_id', Auth::user()->company_id)->whereIn('state_id', $request->state_id)->orderBy('name', 'ASC')->select('id', 'name')->get());
+            if (Entrust::can('dashboard-view-all-outlet')) {
+                $outlet_list = collect(Outlet::where('company_id', Auth::user()->company_id)->whereIn('state_id', $request->state_id)->orderBy('name', 'ASC')->select('id', 'name')->get());
+            } else {
+                if (Entrust::can('dashboard-view-mapped-outlet')) {
+                    $outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
+                    array_push($outlet_ids, Auth::user()->employee->outlet_id);
+
+                    $outlet_list = collect(Outlet::whereIn('id', $outlet_ids)->whereIn('state_id', $request->state_id)->orderBy('name', 'ASC')->select('id', 'name')->get());
+                } else {
+                    $outlet_list = collect(Outlet::where('id', Auth::user()->employee->outlet_id)->whereIn('state_id', $request->state_id)->orderBy('name', 'ASC')->select('id', 'name')->get());
+                }
+            }
         } else {
             if (Entrust::can('dashboard-view-all-outlet')) {
                 $outlet_list = collect(Outlet::where('company_id', Auth::user()->company_id)->orderBy('name', 'ASC')->select('id', 'name')->get());
