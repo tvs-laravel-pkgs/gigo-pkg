@@ -85,13 +85,8 @@ class DashboardController extends Controller
             $filter_date_range = date('d-m-Y', strtotime($start_date)) . ' to ' . date('d-m-Y', strtotime($end_date));
         }
 
-        if ($request->state_id) {
-            if ($request->outlet_id) {
-                $outlet_ids = $request->outlet_id;
-            } else {
-                $outlet_ids = Outlet::whereIn('state_id', $request->state_id)->where('company_id', Auth::user()->company_id)->pluck('id')->toArray();
-            }
-            $filter_state_ids = $request->state_id;
+        if ($request->outlet_id) {
+            $outlet_ids = $request->outlet_id;
         } else {
             if (Entrust::can('dashboard-view-all-outlet')) {
                 $outlet_list = Outlet::where('company_id', Auth::user()->company_id)->pluck('id')->toArray();
@@ -435,10 +430,10 @@ class DashboardController extends Controller
 
         $dashboard_data['state_list'] = $state_list;
         $dashboard_data['outlet_list'] = $outlet_list;
-        // $dashboard_data['filter_oulet_ids'] = $filter_oulet_ids;
-        // $dashboard_data['filter_state_ids'] = $filter_state_ids;
-        $dashboard_data['filter_oulet_ids'] = [];
-        $dashboard_data['filter_state_ids'] = [];
+        $dashboard_data['filter_oulet_ids'] = $filter_oulet_ids;
+        $dashboard_data['filter_state_ids'] = $filter_state_ids;
+        // $dashboard_data['filter_oulet_ids'] = [];
+        // $dashboard_data['filter_state_ids'] = [];
         $dashboard_data['filter_date_range'] = $filter_date_range;
 
         $dashboard_datas = $dashboard_data;
@@ -531,6 +526,9 @@ class DashboardController extends Controller
 
         //Today Work In Progress Vehicles
         $today_wip_vehicles = GateLog::join('job_orders', 'job_orders.id', 'gate_logs.job_order_id')->where('job_orders.outlet_id', $user->working_outlet_id)->where('job_orders.vehicle_delivery_status_id', 1)->whereBetween('gate_in_date', [$date . " 00:00:00", $date . " 23:59:59"])->count();
+        // $today_wip_vehicles = JobCard::join('job_orders', 'job_orders.id', 'job_cards.job_order_id')->join('gate_logs','gate_logs.job_order_id','job_orders.id')->whereBetween('gate_in_date', [$date . " 00:00:00", $date . " 23:59:59"])->whereIn('job_cards.status_id', [8220, 8221, 8222, 8229, 8230])->where('job_cards.outlet_id', $user->working_outlet_id)->count();
+
+        $total_wip_vehicles = count($wip_vehicles);
 
         //Total WIP vehicles
         $total_wip_vehicles = $previous_wip_vehicles + $today_wip_vehicles;
