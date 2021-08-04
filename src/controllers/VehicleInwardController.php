@@ -185,150 +185,158 @@ class VehicleInwardController extends Controller {
         	ob_end_clean();
 			ob_start();
 
-            $labours_header = [
-                'Code',
-                'Name',
-                'Type',
-                'Quantity',
-                'Rate',
-                'Amount',
-            ];
-           
-            $parts_header = [
-                'Code',
-                'Name',
-                'Type',
-                'Quantity',
-                'Rate',
-                'Amount',
-            ];
+            if($request->report_wise_info === '1')
+			{
 
-            $labour_details = array();
-            $part_details = array();
-            
-			$job_order = JobOrder::find($request->report_job_order_id); 
-            if ($job_order->customerAddress) {
-	            //Check which tax applicable for customer
-	            if ($job_order->outlet->state_id == $job_order->customerAddress->state_id) {
-	                $tax_type = 1160; //Within State
-	            } else {
-	                $tax_type = 1161; //Inter State
-	            }
-	        } else {
-	            $tax_type = 1160; //Within State
-	        }
+				$job_order = JobOrder::with([
+					'jobOrderRepairOrders' => function ($q) {
+						$q->whereNull('removal_reason_id');
+					},
+					'jobOrderRepairOrders.repairOrder',
+					'jobOrderRepairOrders.repairOrder.repairOrderType',
+					'jobOrderParts' => function ($q) {
+						$q->whereNull('removal_reason_id');
+					},
+					'jobOrderParts.part',
+				])->find($request->report_job_order_id);
+				
+				if ($job_order->customerAddress) {
+					//Check which tax applicable for customer
+					if ($job_order->outlet->state_id == $job_order->customerAddress->state_id) {
+						$tax_type = 1160; //Within State
+					} else {
+						$tax_type = 1161; //Inter State
+					}
+				} else {
+					$tax_type = 1160; //Within State
+				}
 
-            if($request->report_wise_info === '1'){
-            	$customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')
-            		->pluck('id')
-            		->toArray();
+				$labour_details = array();
+				$part_details = array();
+				
+				$customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')
+						->pluck('id')
+						->toArray();
 
-                $repair_order_details = JobOrderRepairOrder::with([
-                    'repairOrder',
-                    'repairOrder.repairOrderType',
-                ])->get();
-                if ($repair_order_details->isNotEmpty()) {
-                    foreach ($repair_order_details as $key => $value) {
-                        $labour_details[$key]['code'] = $value->repairOrder->code;
-                        $labour_details[$key]['name'] = $value->repairOrder->name;
-                        $labour_details[$key]['type'] = $value->repairOrder->repairOrderType ? $value->repairOrder->repairOrderType->short_name : '-';
-                        $labour_details[$key]['qty'] = $value->qty;
-                        if ($value->repairOrder->is_editable == 1) {
-                            $labour_details[$key]['rate'] = $value->amount;
-                        } else {
-                            $labour_details[$key]['rate'] = $value->repairOrder->amount;
-                        }
+					if ($job_order->jobOrderRepairOrders) {
+						foreach ($job_order->jobOrderRepairOrders as $key => $value) {
+							$labour_details[$key]['code'] = $value->repairOrder->code;
+							$labour_details[$key]['name'] = $value->repairOrder->name;
+							$labour_details[$key]['type'] = $value->repairOrder->repairOrderType ? $value->repairOrder->repairOrderType->short_name : '-';
+							$labour_details[$key]['split_order_type'] = $value->splitOrderType ? $value->splitOrderType->code . "|" . $value->splitOrderType->name : '-';
 
-                        if ($value->is_free_service != 1 && (in_array($value->split_order_type_id, $customer_paid_type_id) || !$value->split_order_type_id) && !$value->removal_reason_id) {
-	                            $tax_amount = 0;
-	                            if ($value->repairOrder->taxCode) {
-	                                foreach ($value->repairOrder->taxCode->taxes as $tax_key => $tax) {
-	                                    $percentage_value = 0;
-	                                    if ($tax->type_id == $tax_type) {
-	                                        $percentage_value = ($value->amount * $tax->pivot->percentage) / 100;
-	                                        $percentage_value = number_format((float) $percentage_value, 2, '.', '');
-	                                    }
-	                                    $tax_amount += $percentage_value;
-	                                }
-	                               
-	                            } 
-	                            $labour_details[$key]['amount'] = ($value->amount + $tax_amount);
-                        } else {
-                            $labour_details[$key]['amount'] = '0.00';
-                        }
-                    }
-                }
+							$labour_details[$key]['qty'] = $value->qty;
+							// if ($value->repairOrder->is_editable == 1) {
+							//     $labour_details[$key]['rate'] = $value->amount;
+							// } else {
+							//     $labour_details[$key]['rate'] = $value->repairOrder->amount;
+							// }
 
-                $parts_details = JobOrderPart::with([
-                    'part',
-                    'part.taxCode',
-                ])->get();
-                if ($parts_details->isNotEmpty()) {
-                    foreach ($parts_details as $key => $value) {
-                        $part_details[$key]['code'] = $value->part->code;
-                        $part_details[$key]['name'] = $value->part->name;
-                        $part_details[$key]['type'] = $value->part->taxCode ? $value->part->taxCode->code : '-';
-                        $part_details[$key]['qty'] = $value->qty;
-                        $part_details[$key]['rate'] = $value->rate;
-                       
-                       if ($value->is_free_service != 1 && (in_array($value->split_order_type_id, $customer_paid_type_id) || !$value->split_order_type_id) && !$value->removal_reason_id) {
-                            $tax_amount = 0;
-                            if ($value->part->taxCode) {
-                                foreach ($value->part->taxCode->taxes as $tax_key => $tax) {
-                                    $percentage_value = 0;
-                                    if ($tax->type_id == $tax_type) {
-                                        $percentage_value = ($value->amount * $tax->pivot->percentage) / 100;
-                                        $percentage_value = number_format((float) $percentage_value, 2, '.', '');
-                                    }
-                                    $tax_amount += $percentage_value;
-                                }
-                            } 
-                           	$part_details[$key]['amount'] = ($value->amount + $tax_amount);
-                        } else {
-                            $part_details[$key]['amount'] = '0.00';
-                        }
-                    }
-                }
-            }
-    
-            $time_stamp = date('Y_m_d_h_i_s');
-            Excel::create('Job Card Report - ' . $time_stamp, function ($excel) use ($labours_header, $parts_header, $labour_details, $part_details) {
-                $excel->sheet('Labour', function ($sheet) use ($labours_header, $labour_details) {
-                    $sheet->fromArray($labour_details, null, 'A1');
-                    $sheet->row(1, $labours_header);
-                    $sheet->row(1, function ($row) {
-                        $row->setBackground('#bbc0c9');
-                        $row->setAlignment('center');
-                        $row->setFontSize(10);
-                        $row->setFontFamily('Work Sans');
-                        $row->setFontWeight('bold');
-                    });
-                    $sheet->cell('A:F', function ($row) {
-                        $row->setAlignment('center');
-                        $row->setFontFamily('Work Sans');
-                        $row->setFontSize(10);
-                    });
-                    $sheet->setAutoSize(true);
-                });
+							if ($value->is_free_service != 1 && (in_array($value->split_order_type_id, $customer_paid_type_id) || !$value->split_order_type_id) && !$value->removal_reason_id) {
+									$tax_amount = 0;
+									if ($value->repairOrder->taxCode) {
+										foreach ($value->repairOrder->taxCode->taxes as $tax_key => $tax) {
+											$percentage_value = 0;
+											if ($tax->type_id == $tax_type) {
+												$percentage_value = ($value->amount * $tax->pivot->percentage) / 100;
+												$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+											}
+											$tax_amount += $percentage_value;
+										}
+									
+									} 
+									$labour_details[$key]['amount'] = ($value->amount + $tax_amount);
+							} else {
+								$labour_details[$key]['amount'] = '0.00';
+							}
+						}
+					}
 
-                $excel->sheet('Parts', function ($sheet) use ($parts_header, $part_details) {
-                    $sheet->fromArray($part_details, null, 'A1');
-                    $sheet->row(1, $parts_header);
-                    $sheet->row(1, function ($row) {
-                        $row->setBackground('#bbc0c9');
-                        $row->setAlignment('center');
-                        $row->setFontSize(10);
-                        $row->setFontFamily('Work Sans');
-                        $row->setFontWeight('bold');
-                    });
-                    $sheet->cell('A:F', function ($row) {
-                        $row->setAlignment('center');
-                        $row->setFontFamily('Work Sans');
-                        $row->setFontSize(10);
-                    });
-                    $sheet->setAutoSize(true);
-                });
-            })->export('xlsx');
+					if ($job_order->jobOrderParts) {
+						foreach ($job_order->jobOrderParts as $key => $value) {
+							$part_details[$key]['code'] = $value->part->code;
+							$part_details[$key]['name'] = $value->part->name;
+							$part_details[$key]['type'] = $value->part->taxCode ? $value->part->taxCode->code : '-';
+							$part_details[$key]['split_order_type'] = $value->splitOrderType ? $value->splitOrderType->code . "|" . $value->splitOrderType->name : '-';
+							$part_details[$key]['qty'] = $value->qty;
+							// $part_details[$key]['rate'] = $value->rate;
+						
+						if ($value->is_free_service != 1 && (in_array($value->split_order_type_id, $customer_paid_type_id) || !$value->split_order_type_id) && !$value->removal_reason_id) {
+								$tax_amount = 0;
+								if ($value->part->taxCode) {
+									foreach ($value->part->taxCode->taxes as $tax_key => $tax) {
+										$percentage_value = 0;
+										if ($tax->type_id == $tax_type) {
+											$percentage_value = ($value->amount * $tax->pivot->percentage) / 100;
+											$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+										}
+										$tax_amount += $percentage_value;
+									}
+								} 
+								$part_details[$key]['amount'] = ($value->amount + $tax_amount);
+							} else {
+								$part_details[$key]['amount'] = '0.00';
+							}
+						}
+					}
+				
+				$labours_header = [
+					'Code',
+					'Name',
+					'Type',
+					'Quantity',
+					// 'Rate',
+					'Amount',
+				];
+			
+				$parts_header = [
+					'Code',
+					'Name',
+					'Type',
+					'Quantity',
+					// 'Rate',
+					'Amount',
+				];
+
+				$time_stamp = date('Y_m_d_h_i_s');
+				Excel::create('Report - ' . $time_stamp, function ($excel) use ($labours_header, $parts_header, $labour_details, $part_details) {
+					$excel->sheet('Labour', function ($sheet) use ($labours_header, $labour_details) {
+						$sheet->fromArray($labour_details, null, 'A1');
+						$sheet->row(1, $labours_header);
+						$sheet->row(1, function ($row) {
+							$row->setBackground('#bbc0c9');
+							$row->setAlignment('center');
+							$row->setFontSize(10);
+							$row->setFontFamily('Work Sans');
+							$row->setFontWeight('bold');
+						});
+						$sheet->cell('A:F', function ($row) {
+							$row->setAlignment('center');
+							$row->setFontFamily('Work Sans');
+							$row->setFontSize(10);
+						});
+						$sheet->setAutoSize(true);
+					});
+
+					$excel->sheet('Parts', function ($sheet) use ($parts_header, $part_details) {
+						$sheet->fromArray($part_details, null, 'A1');
+						$sheet->row(1, $parts_header);
+						$sheet->row(1, function ($row) {
+							$row->setBackground('#bbc0c9');
+							$row->setAlignment('center');
+							$row->setFontSize(10);
+							$row->setFontFamily('Work Sans');
+							$row->setFontWeight('bold');
+						});
+						$sheet->cell('A:F', function ($row) {
+							$row->setAlignment('center');
+							$row->setFontFamily('Work Sans');
+							$row->setFontSize(10);
+						});
+						$sheet->setAutoSize(true);
+					});
+				})->export('xlsx');
+			}
         } catch (Exception $e) {
             print_r($e);
         }
