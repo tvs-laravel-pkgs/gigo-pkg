@@ -224,6 +224,7 @@ class BatteryController extends Controller
             DB::raw('DATE_FORMAT(vehicle_batteries.manufactured_date,"%Y") as first_battery_manufactured_year'),
             'first_battery_amp_hour.name as first_battery_amp_hour',
             'first_battery_voltage.name as first_battery_voltage',
+            'battery_load_test_results.amp_hour','battery_load_test_results.battery_voltage',
             'first_battery_load_test.name as first_battery_load_test_status',
             'first_battery_hydrometer_test.name as first_battery_hydrometer_test_status',
             'first_battery_multimeter_test.name as first_battery_multimeter_test_status',
@@ -402,8 +403,8 @@ class BatteryController extends Controller
                 $battery_test_detail['first_battery_serial_number'] = $battery_load_test->first_battery_serial_number;
                 $battery_test_detail['first_battery_manufactured_month'] = $battery_load_test->first_battery_manufactured_month;
                 $battery_test_detail['first_battery_manufactured_year'] = $battery_load_test->first_battery_manufactured_year;
-                $battery_test_detail['first_battery_amp_hour'] = $battery_load_test->first_battery_amp_hour;
-                $battery_test_detail['first_battery_voltage'] = $battery_load_test->first_battery_voltage;
+                $battery_test_detail['first_battery_amp_hour'] = $battery_load_test->first_battery_amp_hour ? $battery_load_test->first_battery_amp_hour : $battery_load_test->amp_hour;
+                $battery_test_detail['first_battery_voltage'] = $battery_load_test->first_battery_voltage ? $battery_load_test->first_battery_voltage : $battery_load_test->battery_voltage;
                 $battery_test_detail['first_battery_load_test_status'] = $battery_load_test->first_battery_load_test_status;
                 $battery_test_detail['first_battery_hydrometer_test_status'] = $battery_load_test->first_battery_hydrometer_test_status;
                 $battery_test_detail['first_battery_multimeter_test_status'] = $battery_load_test->first_battery_multimeter_test_status;
