@@ -501,5 +501,6 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
         //Battery
         Route::post('/battery/get-form-data', 'BatteryController@getFormData');
         Route::post('/battery/save', 'BatteryController@save');
+        Route::post('/battery/payment/save', 'BatteryController@paymentSave');
     });
 });

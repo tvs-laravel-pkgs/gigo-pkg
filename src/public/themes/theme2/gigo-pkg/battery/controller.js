@@ -67,46 +67,49 @@ app.component('batteryList', {
                 },
             },
 
-            columns: [{
-                data: 'action',
-                class: 'action',
-                name: 'action',
-                searchable: false
-            },
-            {
-                data: 'date',
-                searchable: false
-            },
-            {
-                data: 'outlet_code',
-                name: 'outlets.code'
-            },
-            {
-                data: 'customer_name',
-                name: 'customers.name'
-            },
-            {
-                data: 'registration_number',
-                name: 'vehicles.registration_number'
-            },
-            {
-                data: 'battery_name',
-                name: 'battery_makes.name'
-            },
-            {
-                data: 'load_test_status',
-                name: 'load_test_statuses.name'
-            },
-            {
-                data: 'hydrometer_electrolyte_status',
-                name: 'hydrometer_electrolyte_statuses.name'
-            },
-            {
-                data: 'overall_status',
-                name: 'battery_load_test_statuses.name'
-            },
-
-
+            columns: [
+                {
+                    data: 'action',
+                    class: 'action',
+                    name: 'action',
+                    searchable: false
+                },
+                {
+                    data: 'date',
+                    searchable: false
+                },
+                {
+                    data: 'outlet_code',
+                    name: 'outlets.code'
+                },
+                {
+                    data: 'customer_name',
+                    name: 'customers.name'
+                },
+                {
+                    data: 'registration_number',
+                    name: 'vehicles.registration_number'
+                },
+                {
+                    data: 'battery_name',
+                    name: 'battery_makes.name'
+                },
+                {
+                    data: 'load_test_status',
+                    name: 'load_test_statuses.name'
+                },
+                {
+                    data: 'hydrometer_electrolyte_status',
+                    name: 'hydrometer_electrolyte_statuses.name'
+                },
+                {
+                    data: 'overall_status',
+                    name: 'battery_load_test_statuses.name'
+                },
+                {
+                    data: 'status',
+                    searchable: false
+                },
             ],
             "infoCallback": function (settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)
@@ -334,6 +337,66 @@ app.component('batteryView', {
         }
         $scope.fetchData();
 
+        $scope.showPaymentForm = function (battery) {
+            $('#payment_modal').modal('show');
+        }
+
+        //Save Payment Data 
+        $scope.saveBatteryPaymentData = function () {
+            var form_id = '#battery-payment-form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'battery_id': {
+                        required: true,
+                    },
+                    'invoice_number': {
+                        required: true,
+                    },
+                    'invoice_date': {
+                        required: true,
+                    },
+                    'invoice_amount': {
+                        required: true,
+                    },
+                },
+                messages: {},
+                invalidHandler: function (event, validator) {
+                    custom_noty('error', 'You have errors, Please check all fields');
+                },
+                submitHandler: function (form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.submit').button('loading');
+                    $.ajax({
+                        url: base_url + '/api/battery/payment/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
+                        .done(function (res) {
+                            $('.submit').button('reset');
+
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                return;
+                            }
+                            $('#payment_modal').modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                            custom_noty('success', res.message);
+                            // $location.path('/manual-vehicle-delivery/table-list');
+                            $window.location.reload();
+                            $scope.$apply();
+                        })
+                        .fail(function (xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
         //Scrollable Tabs
         setTimeout(function () {
             scrollableTabs();
@@ -368,7 +431,11 @@ app.component('batteryForm', {
         self.user = $scope.user = HelperService.getLoggedUser();
         self.customer_search_type = true;
         self.search_type = true;
-
+        self.is_battery_replaced = 1;
+        self.is_battery_buy_back = 1;
+        self.is_second_battery_replaced = 1;
+        self.is_second_battery_buy_back_opted = 1;
+        self.no_of_batteries = 1;
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
@@ -394,11 +461,70 @@ app.component('batteryForm', {
                     $scope.action = res.action;
                     $scope.user_info = res.user;
 
+                    if ($scope.battery.is_battery_replaced == 1) {
+                        self.is_battery_replaced = 1;
+                    } else {
+                        self.is_battery_replaced = 0;
+                    }
+                    if ($scope.battery.is_buy_back_opted == 1) {
+                        self.is_battery_buy_back = 1;
+                    } else {
+                        self.is_battery_buy_back = 0;
+                    }
+                    //Battery 2
+                    if ($scope.battery.is_second_battery_buy_back_opted == 1) {
+                        self.is_second_battery_buy_back_opted = 1;
+                    } else {
+                        self.is_second_battery_buy_back_opted = 0;
+                    }
+                    if ($scope.battery.is_second_battery_replaced == 1) {
+                        self.is_second_battery_replaced = 1;
+                    } else {
+                        self.is_second_battery_replaced = 0;
+                    }
+
+                    //For no of Batteries
+                    console.log($scope.battery.vehicle_battery);
+                    if ($scope.battery.vehicle_battery && $scope.battery.vehicle_battery.no_of_batteries == 2) {
+                        self.no_of_batteries = 2;
+                    } else {
+                        self.no_of_batteries = 1;
+                    }
+
+                    if (!$scope.battery.replaced_battery_make_id) {
+                        $scope.battery.replaced_battery_make_id = 4;
+                    }
+
                     $scope.customer = $scope.battery ? $scope.battery.vehicle_battery ? $scope.battery.vehicle_battery.customer : [] : [];
                     console.log($scope.customer);
 
                     $scope.vehicle = $scope.battery ? $scope.battery.vehicle_battery ? $scope.battery.vehicle_battery.vehicle : [] : [];
                     console.log($scope.vehicle);
+                    
+                    if($scope.battery){
+                        v1= $scope.battery.hydrometer_electrolyte_status_id;
+                        v2= $scope.battery.load_test_status_id;
+                        v3= $scope.battery.multimeter_test_status_id;
+
+                        v4= $scope.battery.second_battery_hydrometer_electrolyte_status_id;
+                        v5= $scope.battery.second_battery_load_test_status_id;
+                        v6= $scope.battery.second_battery_multimeter_test_status_id;
+
+                        $b1_replaced = $scope.battery.is_battery_replaced;
+                        $b2_replaced = $scope.battery.is_second_battery_replaced;
+
+                        $scope.battery_status_check(v1,v2,v3,v4,v5,v6,$b1_replaced,$b2_replaced);
+                     }else{
+                         v1 = null;
+                         v2 = null;
+                         v3 = null;
+                         v4 = null;
+                         v5 = null;
+                         v6 = null;
+                         $b1_replaced = null;
+                         $b2_replaced = null
+                        $scope.battery_status_check(v1,v2,v3,v4,v5,v6,$b1_replaced,$b2_replaced);
+                     }
 
                     /* Image Uploadify Funtion */
                     setTimeout(function () {
@@ -588,6 +714,156 @@ app.component('batteryForm', {
                 return [];
             }
         }
+        //Newly Added for overall status
+        $scope.battery_status_check=function(v1,v2,v3,v4,v5,v6,$b1_replaced,$b2_replaced){
+            //To Check Total Overall Status
+            var b1_overAll=1;   
+            var b2_overAll=1;
+            var no_of_batteries = $('input[name="no_of_batteries"]:checked').val();
+
+            if(v1 != null && v2 != null && v3 != null ){
+                    var val1 = v1;
+                    var val2 = v2;
+                    var val3 = v3;
+                    var b1_replace = $b1_replaced;
+                }else{
+                    var val1 = $('input[name="multimeter_test_status_id"]:checked').val();
+                    var val2 = $('input[name="load_test_status_id"]:checked').val();
+                    var val3 = $('input[name="hydrometer_electrolyte_status_id"]:checked').val();
+                    var b1_replace = $('input[name="is_battery_replaced"]:checked').val() || 0;
+            } 
+
+            if( v4 != null && v5 != null && v6 != null){
+                var b2val1 = v4;
+                var b2val2 = v5;
+                var b2val3 = v6;
+                var b2_replace = $b2_replaced;
+            }else{
+                var b2val1 = $('input[name="second_battery_multimeter_test_status_id"]:checked').val();
+                var b2val2 = $('input[name="second_battery_load_test_status_id"]:checked').val();
+                var b2val3 = $('input[name="second_battery_hydrometer_electrolyte_status_id"]:checked').val();
+                var b2_replace = $('input[name="is_second_battery_replaced"]:checked').val()  || 0;
+            }
+            //Battery 1
+            if( val1 == 1 && val2 == 1 && val3 == 1){
+                    $scope.battery.overall_status_id = 1;
+                    var b1_overAll=1;
+                }else{
+                    $scope.battery.overall_status_id= 2;
+                    var b1_overAll=0;
+                }
+            //Battery 2
+            if( b2val1 == 1 && b2val2 == 1 && b2val3 == 1){
+                $scope.battery.second_battery_overall_status_id= 1;
+                var b2_overAll=1;
+            }else{
+                $scope.battery.second_battery_overall_status_id= 2;
+                var b2_overAll=0;
+            }
+
+           if(no_of_batteries == 1){
+                if(b1_overAll == 1){//Found Ok
+                    if($scope.battery.vehicle_battery){
+                        $scope.battery.vehicle_battery.battery_status_id=12190;
+                    }else{
+                        $scope.battery.vehicle_battery=[];
+                        $scope.battery.vehicle_battery.battery_status_id=12190;
+                    }
+                }else{
+                    if($scope.battery.vehicle_battery){
+                        $scope.battery.vehicle_battery.battery_status_id=null;
+                    }else{
+                        $scope.battery.vehicle_battery=[];
+                        $scope.battery.vehicle_battery.battery_status_id=null;
+                    }
+                }
+
+           }else if(no_of_batteries == 2){
+                if( b1_overAll == 1 &&   b2_overAll == 1){//Found Ok
+                    if($scope.battery.vehicle_battery){
+                        $scope.battery.vehicle_battery.battery_status_id=12190;
+                    }else{
+                        $scope.battery.vehicle_battery=[];
+                        $scope.battery.vehicle_battery.battery_status_id=12190;
+                    };
+                }else if(b1_overAll == 0 &&   b2_overAll == 1){//Replace One Battery
+                    if($scope.battery.vehicle_battery){
+                        $scope.battery.vehicle_battery.battery_status_id=12181;
+                    }else{
+                        $scope.battery.vehicle_battery=[];
+                        $scope.battery.vehicle_battery.battery_status_id=12181;
+                    }
+
+                }else if(b1_overAll == 0 &&  b2_overAll == 0){//Replace Both Batteries
+                    if($scope.battery.vehicle_battery){
+                        $scope.battery.vehicle_battery.battery_status_id=12180;
+                    }else{
+                        $scope.battery.vehicle_battery=[];
+                        $scope.battery.vehicle_battery.battery_status_id=12180;
+                    }
+
+                }else if(b1_overAll == 1 &&  b2_overAll == 0){//Replace One Batteries
+                    if($scope.battery.vehicle_battery){
+                        $scope.battery.vehicle_battery.battery_status_id=12181;
+                    }else{
+                        $scope.battery.vehicle_battery=[];
+                        $scope.battery.vehicle_battery.battery_status_id=12181;
+                    }
+
+                }
+           }
+           if(b1_replace == 1){
+                if($scope.battery.vehicle_battery){
+                    $scope.battery.vehicle_battery.battery_status_id=12181;
+
+                }else{
+                    $scope.battery.vehicle_battery=[];
+                    $scope.battery.vehicle_battery.battery_status_id=12181;
+                }
+           }else{
+               if(b1_overAll == 1){
+                    if($scope.battery.vehicle_battery){
+                        $scope.battery.vehicle_battery.battery_status_id=12190;
+                    }else{
+                        $scope.battery.vehicle_battery=[];
+                        $scope.battery.vehicle_battery.battery_status_id=12190;
+                    }
+               }else{
+                    if($scope.battery.vehicle_battery){
+                        $scope.battery.vehicle_battery.battery_status_id=0;
+                    }else{
+                        $scope.battery.vehicle_battery=[];
+                        $scope.battery.vehicle_battery.battery_status_id=0;
+                    }
+               }
+           }
+        if(b1_replace == 1 && b2_replace == 0 || b1_replace == 0 && b2_replace == 1){
+            if($scope.battery.vehicle_battery){
+                $scope.battery.vehicle_battery.battery_status_id=12181;
+            }else{
+                $scope.battery.vehicle_battery=[];
+                $scope.battery.vehicle_battery.battery_status_id=12181;
+            }
+       }else if(b1_replace == 1 && b2_replace == 1){
+            if($scope.battery.vehicle_battery){
+                $scope.battery.vehicle_battery.battery_status_id=12180;
+            }else{
+                $scope.battery.vehicle_battery=[];
+                $scope.battery.vehicle_battery.battery_status_id=12180;
+            }
+       }else if(b1_replace == 0 && b2_replace == 0 && b1_overAll == 1 && b2_overAll == 1){
+            if($scope.battery.vehicle_battery){
+                $scope.battery.vehicle_battery.battery_status_id=12190;
+
+            }else{
+                $scope.battery.vehicle_battery=[];
+                $scope.battery.vehicle_battery.battery_status_id=12190;
+            }
+        }
+
+        $scope.$apply();
+
+        };
 
         //Save Form Data 
         $scope.saveBatteryStatus = function () {

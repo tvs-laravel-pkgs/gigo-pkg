@@ -1102,15 +1102,15 @@ class ManualVehicleDeliveryController extends Controller
                             ]);
                         }
 
-                        if (empty($request->transaction_attachments) || count($request->transaction_attachments) == 0) {
-                            return response()->json([
-                                'success' => false,
-                                'error' => 'Validation Error',
-                                'errors' => [
-                                    'Attachment Not Found!',
-                                ],
-                            ]);
-                        }
+                        // if (empty($request->transaction_attachments) || count($request->transaction_attachments) == 0) {
+                        //     return response()->json([
+                        //         'success' => false,
+                        //         'error' => 'Validation Error',
+                        //         'errors' => [
+                        //             'Attachment Not Found!',
+                        //         ],
+                        //     ]);
+                        // }
 
                         $job_order = JobOrder::with('gateLog')->find($request->job_order_id);
 

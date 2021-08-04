@@ -749,6 +749,8 @@ class GateInController extends Controller
                         $customer = Customer::where('code', ltrim($membership_data['al_dms_code'], '0'))->first();
                         if ($customer) {
                             $amc_customer->customer_id = $customer->id;
+                            $job_order->customer_id = $customer->id;
+                            $job_order->save();
                         }
                     }
 
