@@ -431,7 +431,7 @@ class DashboardController extends Controller
         $dashboard_data['state_list'] = $state_list;
         $dashboard_data['outlet_list'] = $outlet_list;
         $dashboard_data['filter_oulet_ids'] = $filter_oulet_ids;
-        $dashboard_data['filter_state_ids'] = $filter_state_ids;
+        $dashboard_data['filter_state_ids'] = isset($filter_state_ids) ? $filter_state_ids : [];
         // $dashboard_data['filter_oulet_ids'] = [];
         // $dashboard_data['filter_state_ids'] = [];
         $dashboard_data['filter_date_range'] = $filter_date_range;
