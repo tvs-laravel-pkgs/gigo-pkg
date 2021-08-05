@@ -63,6 +63,10 @@ class JobOrderRepairOrder extends Model {
 		return $this->belongsToMany('App\Tax', 'job_order_repair_order_tax', 'job_order_repair_order_id', 'tax_id')->withPivot(['percentage', 'amount']);
 	}
 
+	public function jobOrder() {
+		return $this->belongsTo('Abs\GigoPkg\JobOrder', 'job_order_id');
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];
