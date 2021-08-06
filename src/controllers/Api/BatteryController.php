@@ -19,6 +19,7 @@ use App\User;
 use App\Vehicle;
 use App\VehicleBattery;
 use App\VehicleOwner;
+use App\Part;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -655,6 +656,43 @@ class BatteryController extends Controller
                 $battery_result->is_second_battery_buy_back_opted = null;
                 $battery_result->second_battery_not_replaced_reason_id = $request->second_battery_not_replaced_reason_id;
             }
+
+            //First Battery Part
+            $first_battery_make = BatteryMake::where('id',$request->battery_make_id)->pluck('code')->first();
+            $first_battery_make = strtoupper($first_battery_make);
+
+            $first_battery_amp_hour = Config::where('id',$request->first_battery_amp_hour_id)->pluck('name')->first();
+
+            $first_battery_amp_hour = str_replace(' AH','',$first_battery_amp_hour);
+
+            //Second Battery Part
+            $second_battery_make = BatteryMake::where('id',$request->second_battery_make_id)->pluck('code')->first();
+            $second_battery_make = strtoupper($second_battery_make);
+
+            $second_battery_amp_hour = Config::where('id',$request->second_battery_amp_hour_id)->pluck('name')->first();
+
+            $second_battery_amp_hour = str_replace(' AH','',$second_battery_amp_hour);
+            
+            //First Battery part
+            if($request->battery_make_id == 1 || $request->battery_make_id == 2 || $request->battery_make_id == 4 ){
+                $first_battery_part_code = '001'.$first_battery_make.$first_battery_amp_hour;
+            }else{
+                $first_battery_part_code = '001OTHER'.$first_battery_amp_hour;
+            }
+
+            $first_battery_part_id = Part::where('code',$first_battery_part_code)->pluck('id')->first();
+
+            //Second Battery part
+            if($request->second_battery_make_id == 1 || $request->second_battery_make_id == 2 || $request->second_battery_make_id == 4 ){
+                $second_battery_part_code = '001'.$second_battery_make.$second_battery_amp_hour;
+            }else{
+                $second_battery_part_code = '001OTHER'.$second_battery_amp_hour;
+            }
+
+            $second_battery_part = Part::where('code',$second_battery_part_code)->pluck('id')->first();
+
+            $battery_result->part_id = isset($first_battery_part_id) ? $first_battery_part_id : null;
+            $battery_result->second_battery_part_id = isset($second_battery_part_id) ? $second_battery_part_id : null;
             $battery_result->save();
 
             DB::commit();
