@@ -1959,3 +1959,19 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 </script>
 <script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/battery/controller.js')}}'></script>
 
+<!-- GIGO Report -->
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
+		//Report
+		when('/mechanic/report', {
+			template: '<mechanic-report></mechanic-report>',
+			title: 'Mechanic Report',
+		});
+	}]);
+
+	//Report
+    var gigo_mechanic_report_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/report/mechanic-list.html')}}';
+</script>
+<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/report/controller.js')}}'></script>
+

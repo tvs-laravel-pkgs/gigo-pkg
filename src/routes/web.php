@@ -380,4 +380,6 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 
     Route::post('gigo/job-card/export', 'VehicleInwardController@export')->name('exportJobCardReport');
 
+    Route::post('gigo/mechanic/worklog/export', 'GigoReportController@mechanicWorkLogExport')->name('mechanicWorkLogExport');
+
 });

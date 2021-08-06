@@ -1363,3 +1363,12 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'Battery Status View',
     });
 }]);
+
+app.config(['$routeProvider', function($routeProvider) {
+    $routeProvider.
+    //Report
+    when('/mechanic/report', {
+        template: '<mechanic-report></mechanic-report>',
+        title: 'Mechanic Report',
+    });
+}]);

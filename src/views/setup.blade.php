@@ -120,6 +120,7 @@
     //Battery export
     var exportBatteryLoadTest = "{{route('exportBatteryLoadTest')}}";
     var exportJobCardReport = "{{route('exportJobCardReport')}}";
+    var exportMechanicReport = "{{route('mechanicWorkLogExport')}}";
 
 </script>
 <!-- <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-segment/controller.js')}}"></script>
@@ -431,6 +432,11 @@
     var battery_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/battery/list.html')}}';
     var battery_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/battery/form.html')}}';
     var battery_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/battery/view.html')}}';
+</script>
+
+<script type='text/javascript'>
+    //GIGO Report
+    var gigo_mechanic_report_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/report/mechanic-list.html')}}';
 </script>
 
 <script type='text/javascript'>
