@@ -9,6 +9,8 @@ use App\JobOrder;
 use App\Employee;
 use App\Part;
 use App\VehicleModel;
+use App\RepairOrderMechanic;
+use App\MechanicTimeLog;
 use App\JobOrderRepairOrder;
 use Auth;
 use DB;
@@ -46,13 +48,11 @@ class GigoReportController extends Controller {
                 $end_date = date('t-m-Y');
             }
 
-            $start = strtotime($start_date);
-		    $end = strtotime($end_date);
-
             $employees = Employee::select([
                 'users.id',
                 'employees.code as employee_code',
                 'users.name as employee_name',
+                'employees.outlet_id',
             ])
                 ->join('users', 'users.entity_id', 'employees.id')
                 ->join('outlets', 'outlets.id', 'employees.outlet_id')
@@ -63,12 +63,75 @@ class GigoReportController extends Controller {
             ->limit(10)
             ->get();
             
-            dd($employees);
+            // dd($employees);
+            $summary_details = array();
+            
+            
+            if($employees){
+                foreach($employees as $key => $employee){
+                    // dd($employee);
+                    $start = strtotime($start_date);
+		            $end = strtotime($end_date);
+                    while (date('Y-m-d', $start) <= date('Y-m-d', $end)) {
+                        // dump(date('Y-m-d', $start));
+                        dump($employee->id);
+                        $summary_detail['date'] = date('d-m-Y', $start);
+                        $summary_detail['employee_code'] = $employee->employee_code;
+                        $summary_detail['employee_name'] = $employee->employee_name;
+                        $summary_detail['total_hours'] = '';
+                        $summary_detail['working_hours'] = '';
+                        $summary_detail['user_id'] = $employee->id;
 
-            while (date('Y-m-d', $start) <= date('Y-m-d', $end)) {
-                // dump(date('Y-m-d', $start));
-                $start = strtotime("+1 day", $start);
+                        //Get Mechanic Worklog
+                        $mechanic_time_logs  = MechanicTimeLog::join('repair_order_mechanics','repair_order_mechanics.id','mechanic_time_logs.repair_order_mechanic_id')->where('mechanic_id',$employee->id)
+                        ->whereDate('mechanic_time_logs.start_date_time',date('Y-m-d', $start))
+                        ->whereNotNull('mechanic_time_logs.end_date_time')
+                        ->get();
+
+                        if($mechanic_time_logs){
+                            $duration_difference = []; 
+							$duration = [];
+
+                            foreach($mechanic_time_logs as $mechanic_time_log){
+
+                                $time1 = strtotime($mechanic_time_log->start_date_time);
+                                $time2 = strtotime($mechanic_time_log->end_date_time);
+                                if ($time2 < $time1) {
+                                    $time2 += 86400;
+                                }
+
+                                //TIME DURATION DIFFERENCE PARTICULAR MECHANIC DURATION
+                                $duration_difference[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
+
+                                //TOTAL DURATION FOR PARTICLUAR EMPLOEE
+                                $duration[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
+
+                                //OVERALL TOTAL WORKING DURATION
+                                $overall_total_duration[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
+
+                                $total_hours_worked = sum_mechanic_duration($duration_difference);
+
+                                $summary_detail['working_hours'] = $total_hours_worked;
+                                unset($duration_difference);
+                            }
+                        }
+
+                        $summary_detail['idle_hours'] = '';
+                        
+                        dump($summary_detail);
+                        $summary_details[] = $summary_detail;
+                        dump('---');
+
+                        $start = strtotime("+1 day", $start);
+                    }
+                }
+                // dd();
             }
+
+            dd('.....');
+            // dd($summary_details);
+
+            
 
             dd('---');
 
