@@ -12,8 +12,8 @@
     </div><!-- Page Header -->
     <!-- Page Main Content -->
     <div class="page-main-content form-content">
-        <form id="form">
-            <input type="hidden" name="verification_type" class="verification_type" id="verification_type" value="{{$ctrl.type}}">
+        <form method="POST" action="{{$ctrl.export_url}}">
+            <input type="hidden" name="_token" value="{{ $ctrl.csrf_token}}" />
             <div class="container">
                 <div class="row">
                     <div class="col-sm-12">
@@ -23,8 +23,8 @@
                                     <div class="form-group">
                                         <label>Date<span class="mandatory">*</span></label>
                                         <div class="input-group date">
-                                            <input class="form-control daterange" placeholder="01-08-2021 to 31-08-2021"
-                                                name="export_date" id="date_range" autocomplete="off" readonly>
+                                            <input class="form-control daterange required" placeholder="01-08-2021 to 31-08-2021"
+                                                name="export_date" id="date_range" autocomplete="off" readonly required>
                                             <span class="input-group-addon">
                                                 <img class="img-responsive"
                                                     src="./public/theme/img/content/calender-gray-icon.svg"

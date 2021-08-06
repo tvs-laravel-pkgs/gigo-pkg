@@ -25,6 +25,12 @@ class GigoReportController extends Controller {
 	 public function mechanicWorkLogExport(Request $request) {
 	 	dd($request->all());
         try {
+
+            if(!$request->export_date){
+                $response = 'Estimation Rejected successfully.';
+                $request->session()->flash('success', $response);
+            }
+
         	ob_end_clean();
 			ob_start();
 
