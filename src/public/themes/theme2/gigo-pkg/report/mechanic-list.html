@@ -12,7 +12,7 @@
     </div><!-- Page Header -->
     <!-- Page Main Content -->
     <div class="page-main-content form-content">
-        <form method="POST" action="{{$ctrl.export_url}}">
+        <form method="POST" name="mechanic_export_form" action="{{$ctrl.export_url}}">
             <input type="hidden" name="_token" value="{{ $ctrl.csrf_token}}" />
             <div class="container">
                 <div class="row">
@@ -36,7 +36,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label class="opacity-zero">Submit</label>
-                                        <button ng-click="submitForm()" class="btn btn-primary btn-square btn-md mr-10" id="submit">
+                                        <button type="submit" class="btn btn-primary btn-square btn-md mr-10" id="submit">
                                             Submit
                                         </button>
                                     </div><!-- Field -->

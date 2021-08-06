@@ -6,6 +6,7 @@ use App\Config;
 use App\Customer;
 use App\Http\Controllers\Controller;
 use App\JobOrder;
+use App\Employee;
 use App\Part;
 use App\VehicleModel;
 use App\JobOrderRepairOrder;
@@ -23,13 +24,53 @@ class GigoReportController extends Controller {
 	}
 
 	 public function mechanicWorkLogExport(Request $request) {
-	 	dd($request->all());
+	 	// dd($request->all());
         try {
 
-            if(!$request->export_date){
-                $response = 'Estimation Rejected successfully.';
-                $request->session()->flash('success', $response);
+            if ($request->export_date) {
+                $date_range = explode(' to ', $request->export_date);
+                // dd($date_range);
+                // $start_date = date('Y-m-d', strtotime($date_range[0]));
+                // $start_date = $start_date . ' 00:00:00';
+    
+                // $end_date = date('Y-m-d', strtotime($date_range[1]));
+                // $end_date = $end_date . ' 23:59:59';
+
+                $start_date = $date_range[0];    
+                $end_date = $date_range[1];
+
+            } else {
+                // $start_date = date('Y-m-01 00:00:00');
+                // $end_date = date('Y-m-t 23:59:59');
+                $start_date = date('01-m-Y');
+                $end_date = date('t-m-Y');
             }
+
+            $start = strtotime($start_date);
+		    $end = strtotime($end_date);
+
+            $employees = Employee::select([
+                'users.id',
+                'employees.code as employee_code',
+                'users.name as employee_name',
+            ])
+                ->join('users', 'users.entity_id', 'employees.id')
+                ->join('outlets', 'outlets.id', 'employees.outlet_id')
+                // ->where('employees.is_mechanic', 1)
+                ->where('users.user_type_id', 1) //EMPLOYEE
+                ->where('employees.outlet_id', 110)
+                ->orderBy('users.name', 'asc')
+            ->limit(10)
+            ->get();
+            
+            dd($employees);
+
+            while (date('Y-m-d', $start) <= date('Y-m-d', $end)) {
+                // dump(date('Y-m-d', $start));
+                $start = strtotime("+1 day", $start);
+            }
+
+            dd('---');
 
         	ob_end_clean();
 			ob_start();
