@@ -472,7 +472,7 @@ class JobCardController extends Controller
             }
 
             //Update Job Order status
-            JobOrder::where('id', $request->job_order_id)->update(['status_id' => 12220, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
+            JobOrder::where('id', $request->job_order_id)->update(['job_card_number' => $request->job_card_number,'status_id' => 12220, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
 
             //CREATE DIRECTORY TO STORAGE PATH
             $attachment_path = storage_path('app/public/gigo/job_card/attachments/');

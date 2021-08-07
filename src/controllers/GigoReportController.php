@@ -6,8 +6,11 @@ use App\Config;
 use App\Customer;
 use App\Http\Controllers\Controller;
 use App\JobOrder;
+use App\OutletShift;
+use App\EmployeeShift;
 use App\Employee;
 use App\Part;
+use App\AttendanceLog;
 use App\VehicleModel;
 use App\RepairOrderMechanic;
 use App\MechanicTimeLog;
@@ -31,19 +34,9 @@ class GigoReportController extends Controller {
 
             if ($request->export_date) {
                 $date_range = explode(' to ', $request->export_date);
-                // dd($date_range);
-                // $start_date = date('Y-m-d', strtotime($date_range[0]));
-                // $start_date = $start_date . ' 00:00:00';
-    
-                // $end_date = date('Y-m-d', strtotime($date_range[1]));
-                // $end_date = $end_date . ' 23:59:59';
-
                 $start_date = $date_range[0];    
                 $end_date = $date_range[1];
-
             } else {
-                // $start_date = date('Y-m-01 00:00:00');
-                // $end_date = date('Y-m-t 23:59:59');
                 $start_date = date('01-m-Y');
                 $end_date = date('t-m-Y');
             }
@@ -53,74 +46,234 @@ class GigoReportController extends Controller {
                 'employees.code as employee_code',
                 'users.name as employee_name',
                 'employees.outlet_id',
+                // 'employees.shift_id',
+                'employees.id as employee_id'
             ])
                 ->join('users', 'users.entity_id', 'employees.id')
                 ->join('outlets', 'outlets.id', 'employees.outlet_id')
-                // ->where('employees.is_mechanic', 1)
+                ->where('employees.is_mechanic', 1)
                 ->where('users.user_type_id', 1) //EMPLOYEE
                 ->where('employees.outlet_id', 110)
+                ->where('users.id', 191) //EMPLOYEE
                 ->orderBy('users.name', 'asc')
             ->limit(10)
             ->get();
             
             // dd($employees);
             $summary_details = array();
-            
+            $work_logs_details = array();
             
             if($employees){
                 foreach($employees as $key => $employee){
                     // dd($employee);
                     $start = strtotime($start_date);
 		            $end = strtotime($end_date);
+                    $overall_lunch_hours = []; 
+                    $overall_work_hours = []; 
+                    $overall_employee_work_hours = []; 
+                    $overall_idle_hours = []; 
                     while (date('Y-m-d', $start) <= date('Y-m-d', $end)) {
                         // dump(date('Y-m-d', $start));
-                        dump($employee->id);
+                        // dump(date("l",$start));
+                        // dump($employee->id);
                         $summary_detail['date'] = date('d-m-Y', $start);
                         $summary_detail['employee_code'] = $employee->employee_code;
                         $summary_detail['employee_name'] = $employee->employee_name;
+                        
                         $summary_detail['total_hours'] = '';
                         $summary_detail['working_hours'] = '';
+                        $summary_detail['idle_hours'] = '';
+                        
+                        //Get Employye SHift
+                        $employee_shift = EmployeeShift::join('shifts','shifts.id','employee_shifts.shift_id')->where('date',date('Y-m-d', $start))->where('employee_id',$employee->employee_id)->select('shifts.name as shift_name','employee_shifts.shift_id')->first();
+                        
+                        $lunch_hour = '00:00:00';
+                        $total_working_hours = '00:00:00';
+
+                        $punch_in_time = AttendanceLog::where('user_id',$employee->id)->whereDate('attendance_logs.date',date('Y-m-d', $start))->pluck('in_time')->first();
+
+                        if($employee_shift){
+                            //Outlet Shift
+                            if(date("l",$start) == 'Sunday'){
+                                $outlet_working_hours = OutletShift::where('shift_id',$employee_shift->shift_id)->where('outlet_id',$employee->outlet_id)->where('shift_type_id',12282)->first();
+                            }elseif(date("l",$start) == 'Saturday'){
+                                $outlet_working_hours = OutletShift::where('shift_id',$employee_shift->shift_id)->where('outlet_id',$employee->outlet_id)->where('shift_type_id',12281)->first();
+                            }else{
+                                $outlet_working_hours = OutletShift::where('shift_id',$employee_shift->shift_id)->where('outlet_id',$employee->outlet_id)->where('shift_type_id',12280)->first();
+                            }
+
+                            $outlet_shift_lunch_hours = OutletShift::where('shift_id',$employee_shift->shift_id)->where('outlet_id',$employee->outlet_id)->where('shift_type_id',12283)->first(); 
+                            
+                            if($outlet_shift_lunch_hours){
+                                $array1 = explode(':', $outlet_shift_lunch_hours->start_time);
+                                $array2 = explode(':', $outlet_shift_lunch_hours->end_time);
+                                $minutes1 = ($array1[0] * 60.0 + $array1[1]);
+                                $minutes2 = ($array2[0] * 60.0 + $array2[1]);
+                                $diff = $minutes2 - $minutes1;
+
+                                $lunch_hour = intdiv($diff, 60) . ':' . ($diff % 60) . ':00';
+
+                                $overall_lunch_hours[] = $lunch_hour;
+                            }
+
+                            if($outlet_working_hours){
+                                $array1 = explode(':', $outlet_working_hours->start_time);
+                                $array2 = explode(':', $outlet_working_hours->end_time);
+                                $minutes1 = ($array1[0] * 60.0 + $array1[1]);
+                                $minutes2 = ($array2[0] * 60.0 + $array2[1]);
+                                $diff = $minutes2 - $minutes1;
+
+                                $total_working_hours = intdiv($diff, 60) . ':' . ($diff % 60) . ':00';
+
+                                $summary_detail['total_hours'] = intdiv($diff, 60) . '.' . ($diff % 60);
+
+                                $overall_work_hours[] = $total_working_hours;
+                            }
+                        }
+                        
                         $summary_detail['user_id'] = $employee->id;
 
                         //Get Mechanic Worklog
-                        $mechanic_time_logs  = MechanicTimeLog::join('repair_order_mechanics','repair_order_mechanics.id','mechanic_time_logs.repair_order_mechanic_id')->where('mechanic_id',$employee->id)
+                        $mechanic_time_logs  = MechanicTimeLog::join('repair_order_mechanics','repair_order_mechanics.id','mechanic_time_logs.repair_order_mechanic_id')
+                        ->join('job_order_repair_orders','job_order_repair_orders.id','repair_order_mechanics.job_order_repair_order_id')
+                        ->join('repair_orders','repair_orders.id','job_order_repair_orders.repair_order_id')
+                        ->join('job_orders','job_orders.id','job_order_repair_orders.job_order_id')
+                        ->join('vehicles','vehicles.id','job_orders.vehicle_id')
+                        ->where('repair_order_mechanics.mechanic_id',$employee->id)
                         ->whereDate('mechanic_time_logs.start_date_time',date('Y-m-d', $start))
-                        ->whereNotNull('mechanic_time_logs.end_date_time')
+                        // ->whereNotNull('mechanic_time_logs.end_date_time')
+                        ->select('mechanic_time_logs.start_date_time','mechanic_time_logs.end_date_time','repair_order_mechanics.job_order_repair_order_id',
+                        'repair_orders.code','repair_orders.name','job_orders.job_card_number','vehicles.registration_number'
+                        )
                         ->get();
+                        
+                        // dd($mechanic_time_logs);
 
+                        $employee_work_hour = '00:00:00';
                         if($mechanic_time_logs){
                             $duration_difference = []; 
 							$duration = [];
 
                             foreach($mechanic_time_logs as $mechanic_time_log){
+                                $work_logs_detail = array();
+                                // dd($mechanic_time_log);
+                                // dd(date('h:i', strtotime($mechanic_time_log->start_date_time)));
+                                //Employee Detail Report
+                                $work_logs_detail['date'] = date('d-m-Y', $start);
+                                $work_logs_detail['employee_code'] = $employee->employee_code;
+                                $work_logs_detail['employee_name'] = $employee->employee_name;
+                                $work_logs_detail['shift'] = $employee_shift ? $employee_shift->shift_name : '';
+                                $work_logs_detail['punch_in_time'] = $punch_in_time;
+                                $work_logs_detail['rot_code'] = $mechanic_time_log->code;
+                                $work_logs_detail['rot_name'] = $mechanic_time_log->name;
+                                $work_logs_detail['job_card_number'] = $mechanic_time_log->job_card_number;
+                                $work_logs_detail['reg_number'] = $mechanic_time_log->registration_number;
+                                $work_logs_detail['start_time'] = date('h:i', strtotime($mechanic_time_log->start_date_time));
+                                $work_logs_detail['end_time'] = $mechanic_time_log->end_date_time ? date('h:i', strtotime($mechanic_time_log->end_date_time)) : '-';
+                                // $work_logs_detail['idle_hours'] = ;
+                                // $work_logs_detail['rot_hours'] = ;
+                                // $work_logs_detail['remarks'] = ;
 
-                                $time1 = strtotime($mechanic_time_log->start_date_time);
-                                $time2 = strtotime($mechanic_time_log->end_date_time);
-                                if ($time2 < $time1) {
-                                    $time2 += 86400;
+                                dd($work_logs_detail);
+                                if($mechanic_time_log->end_date_time){
+                                    $time1 = strtotime($mechanic_time_log->start_date_time);
+                                    $time2 = strtotime($mechanic_time_log->end_date_time);
+                                    if ($time2 < $time1) {
+                                        $time2 += 86400;
+                                    }
+
+                                    //TIME DURATION DIFFERENCE PARTICULAR MECHANIC DURATION
+                                    $duration_difference[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
+
+                                    //TOTAL DURATION FOR PARTICLUAR EMPLOEE
+                                    $duration[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
+
+                                    //OVERALL TOTAL WORKING DURATION
+                                    $overall_total_duration[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
+
+                                    $total_hours_worked = sum_mechanic_duration($duration_difference);
+
+                                    // $summary_detail['working_hours'] = $total_hours_worked;
+                                    unset($duration_difference);
                                 }
+                                
+                            }
 
-                                //TIME DURATION DIFFERENCE PARTICULAR MECHANIC DURATION
-                                $duration_difference[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
+                            //TOTAL WORKING HOURS PER EMPLOYEE
+                            $total_duration = sum_mechanic_duration($duration);
+                            $total_duration = date("H:i:s", strtotime($total_duration));
+                            $format_change = explode(':', $total_duration);
+                            $hour = $format_change[0];
+                            $minutes = $format_change[1];
+                            $seconds = $format_change[2];
 
-                                //TOTAL DURATION FOR PARTICLUAR EMPLOEE
-                                $duration[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
+                            $employee_work_hour = $hour . ':' . $minutes . ':' . $seconds;
+                            $overall_employee_work_hours[] = $employee_work_hour;
+                            $summary_detail['working_hours'] = $hour . '.' . $minutes;
+                            
+                            unset($duration);
 
-                                //OVERALL TOTAL WORKING DURATION
-                                $overall_total_duration[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
+                            // //Add Working & Lunch Hours
+                            // $array1 = explode(':', $employee_work_hour);
+                            // $array2 = explode(':', $lunch_hour);
 
-                                $total_hours_worked = sum_mechanic_duration($duration_difference);
+                            // $minutes1 = ($array1[0] * 60.0 + $array1[1]);
+                            // $minutes2 = ($array2[0] * 60.0 + $array2[1]);
+                            // $diff = $minutes2 + $minutes1;
 
-                                $summary_detail['working_hours'] = $total_hours_worked;
-                                unset($duration_difference);
+                            // $total_employee_working_hours = intdiv($diff, 60) . ':' . ($diff % 60) . ':00';
+
+                            if($total_working_hours != '00:00:00'){
+                                //Find Total Idle Hours
+                                $array1 = explode(':', $employee_work_hour);
+                                $array2 = explode(':', $total_working_hours);
+
+                                $minutes1 = ($array1[0] * 60.0 + $array1[1]);
+                                $minutes2 = ($array2[0] * 60.0 + $array2[1]);
+                                $diff = $minutes2 - $minutes1;
+                                // $total_idle_hours = intdiv($diff, 60) . ':' . ($diff % 60) . ':00';
+                                $total_idle_hours = intdiv($diff, 60) . '.' . ($diff % 60);
+                                $summary_detail['idle_hours'] = $total_idle_hours;
+
+                                $overall_idle_hours[] = intdiv($diff, 60) . ':' . ($diff % 60) . ':00';;
                             }
                         }
 
-                        $summary_detail['idle_hours'] = '';
-                        
-                        dump($summary_detail);
                         $summary_details[] = $summary_detail;
-                        dump('---');
+
+                        //Add Employees Overall Total
+                        if(date('Y-m-d', $start) == date('Y-m-d', $end)){
+                            $summary_detail = [];
+                            $summary_detail['date'] = 'Grand Total';
+                            $summary_detail['employee_code'] = '';
+                            $summary_detail['employee_name'] = '';                            
+
+                            //TOTAL OVERALL HOURS PER EMPLOYEE
+                            $total_duration = sum_mechanic_duration($overall_work_hours);
+                            $format_change = explode(':', $total_duration);
+                            $hour = $format_change[0];
+                            $minutes = $format_change[1];
+                            $seconds = $format_change[2];
+                            $summary_detail['total_hours'] = $hour . '.' . $minutes;
+
+                            //TOTAL OVERALL WORKING HOURS PER EMPLOYEE
+                            $total_duration = sum_mechanic_duration($overall_employee_work_hours);
+                            $format_change = explode(':', $total_duration);
+                            $hour = $format_change[0];
+                            $minutes = $format_change[1];
+                            $seconds = $format_change[2];
+                            $summary_detail['working_hours'] = $hour . '.' . $minutes;
+
+                            //TOTAL OVERALL IDLE HOURS PER EMPLOYEE
+                            $total_duration = sum_mechanic_duration($overall_idle_hours);
+                            $format_change = explode(':', $total_duration);
+                            $hour = $format_change[0];
+                            $minutes = $format_change[1];
+                            $seconds = $format_change[2];
+                            $summary_detail['idle_hours'] = $hour . '.' . $minutes;
+
+                            $summary_details[] = $summary_detail;
+                        }
 
                         $start = strtotime("+1 day", $start);
                     }
@@ -128,8 +281,8 @@ class GigoReportController extends Controller {
                 // dd();
             }
 
-            dd('.....');
-            // dd($summary_details);
+            dump('.....');
+            dd($summary_details);
 
             
 
