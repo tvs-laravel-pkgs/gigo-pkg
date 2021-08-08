@@ -714,6 +714,10 @@ app.config(['$routeProvider', function($routeProvider) {
     when('/inward-vehicle/customer-detail-view/:job_order_id', {
         template: '<inward-vehicle-customer-detail-view></inward-vehicle-customer-detail-view>',
         title: 'Inward Vehicle - Customer Detail View',
+    }).
+    when('/inward-vehicle/floor-supervisor/:job_order_id', {
+        template: '<inward-vehicle-floor-supervisor></inward-vehicle-floor-supervisor>',
+        title: 'Inward Vehicle - Floor Supervisor',
     });
 }]);
 

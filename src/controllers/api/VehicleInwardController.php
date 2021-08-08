@@ -306,6 +306,7 @@ class VehicleInwardController extends Controller
                 'gateInSecuritySign',
                 'gateOutDriverSign',
                 'gateOutSecuritySign',
+                'serviceAdviser',
             ])
                 ->select([
                     'job_orders.*',
@@ -324,7 +325,6 @@ class VehicleInwardController extends Controller
                     ],
                 ]);
             }
-
             //GET CAMPAIGNS
             $nameSpace = '\\App\\';
             $entity = 'JobOrderCampaign';
@@ -645,8 +645,16 @@ class VehicleInwardController extends Controller
             $extras = [
                 'inspection_results' => Config::getDropDownList($params), //VEHICLE INSPECTION RESULTS
                 'inward_cancel_status' => $inward_cancel_status,
+                'service_advisor_list' => collect(User::select([
+                    'users.id',
+                    DB::RAW('CONCAT(users.ecode," / ",users.name) as name'),
+                ])
+                        ->where('users.user_type_id', 1) //EMPLOYEE
+                        ->where('users.company_id', Auth::user()->company_id)
+                        ->where('users.working_outlet_id', $job_order->outlet_id)
+                        ->get())->prepend(['id' => '', 'name' => 'Select Service Advisor']),
             ];
-
+            
             $inventory_params['field_type_id'] = [11, 12];
 
             //PDF
@@ -2759,6 +2767,7 @@ class VehicleInwardController extends Controller
                         ->where('users.user_type_id', 1)->where('users.company_id', Auth::user()->company_id)
                         ->where('employees.outlet_id', Auth::user()->employee->outlet_id)->select('users.id',
                         DB::RAW('CONCAT(users.ecode," / ",users.name) as name'))->get())->prepend(['id' => '', 'name' => 'Select Employee']),
+                'floor_superviser_list' => collect(Employee::where('id',2377)->get())->prepend(['id' => '', 'name' => 'Select Floor Supervisor']),
             ];
 
             //Job card details need to get future
@@ -7967,4 +7976,44 @@ class VehicleInwardController extends Controller
     //         ]);
     //     }
     // }
+    
+    public function serviceAdvisorSave(Request $request){
+        // dd($request->all());
+        try {
+            $validator = Validator::make($request->all(), [
+                'service_advisor_id' => [
+                    'required_if:assign_service_advisor ,==, 1',
+                    'integer',
+                ],
+               
+            ]);
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => $validator->errors()->all(),
+                ]);
+            }
+
+        DB::beginTransaction();
+
+        $job_order = JobOrder::find($request->job_order_id);
+        $job_order->service_advisor_id = $request->service_advisor_id;
+        $job_order->save();
+        DB::commit();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Service Advisor Added Successfully',
+        ]);
+
+        }catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+            ]);
+        }
+        
+    
+    }
 }

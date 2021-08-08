@@ -513,6 +513,7 @@ app.component('inwardVehicleView', {
                     $scope.extras = res.extras;
                     $scope.vehicle_inspection_item_groups = res.vehicle_inspection_item_groups;
                     $scope.inventory_list = res.inventory_list;
+                    self.assign_service_advisor = 0;
 
                     if ($scope.job_order.amc_status == 1 || $scope.job_order.amc_status == 0) {
                         self.warrany_status = 1;
@@ -533,6 +534,7 @@ app.component('inwardVehicleView', {
                     }
 
                     self.inward_cancel = 0;
+                    self.assign_service_advisor = 0;
 
                     //PDF
                     $scope.total_estimate = res.job_order.total_estimate;
@@ -666,6 +668,62 @@ app.component('inwardVehicleView', {
                         })
                         .fail(function (xhr) {
                             $scope.button_action(id, 2);
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+        //Added For Service Advisor Save
+        $scope.saveServiceAdvisor = function (){
+            var form_id = '#service_advisor_form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    // 'rot_type_id': {
+                    //     required: true,
+                    // },
+                    // 'rot_id': {
+                    //     required: true,
+                    // },
+                    // 'split_order_type_id': {
+                    //     required: true,
+                    // },
+                },
+                messages: {
+
+                },
+                invalidHandler: function (event, validator) {
+                    custom_noty('error', 'You have errors, Please check all tabs');
+                },
+                submitHandler: function (form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $.ajax({
+                        url: base_url + '/api/vehicle-inward/service-advisor/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
+                    .done(function (res) {
+                            if (res.success == true) {
+                                custom_noty('success', res.message);
+                                $location.path('/inward-vehicle/table-list');
+                                $scope.$apply();
+                            } else {
+                                if (!res.success == true) {
+                                    $('.submit').button('reset');
+                                    showErrorNoty(res);
+                                } else {
+                                    $('.submit').button('reset');
+                                    $location.path('/inward-vehicle/table-list');
+                                    $scope.$apply();
+                                }
+                            }
+                        })
+                        .fail(function (xhr) {
+                            $scope.button_action(id, 2);
+                            $('.submit').button('reset');
                             custom_noty('error', 'Something went wrong at server');
                         });
                 }
@@ -5355,7 +5413,6 @@ app.component('inwardVehicleUpdatejcForm', {
         self.user = $scope.user = HelperService.getLoggedUser();
 
         $scope.job_order_id = $routeParams.job_order_id;
-
         //FETCH DATA
         $scope.fetchData = function () {
             $.ajax({
@@ -5376,6 +5433,7 @@ app.component('inwardVehicleUpdatejcForm', {
                     $scope.job_order = res.job_order;
                     $scope.taxes = res.taxes;
                     $scope.tax_count = res.tax_count;
+                    $scope.extras = res.extras;
                     $scope.$apply();
                 })
                 .fail(function (xhr) {

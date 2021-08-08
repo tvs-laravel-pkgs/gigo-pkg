@@ -283,6 +283,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
         Route::post('vehicle-inward/estimate/get-form-data', 'VehicleInwardController@getEstimateFormData');
         Route::post('vehicle-inward/estimate/save', 'VehicleInwardController@saveEstimate');
 
+        //ADDED FOR FLOORSUPERVISOR-SAVE -> Added By B Surya
+        Route::post('vehicle-inward/service-advisor/save', 'VehicleInwardController@serviceAdvisorSave');
+
         //ESTIMATION DENIED GET FORM DATA AND SAVE
         Route::post('vehicle-inward/estimation-denied/get-form-data', 'VehicleInwardController@getEstimationDeniedFormData');
         Route::post('vehicle-inward/estimation-denied/save', 'VehicleInwardController@saveEstimateDenied');

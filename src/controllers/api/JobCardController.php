@@ -281,6 +281,11 @@ class JobCardController extends Controller
                 'roadTestPreferedBy.employee',
             ])
                 ->find($r->id);
+
+            $extras = [
+                'floor_supervisor_list' => collect(Employee::where('id',2377)->get())->prepend(['id' => '', 'name' => 'Select Floor Supervisor']),
+            ];
+
             if (!$job_order) {
                 return response()->json([
                     'success' => false,
@@ -399,6 +404,7 @@ class JobCardController extends Controller
                 'success' => true,
                 'job_order' => $job_order,
                 'taxes' => $taxes,
+                'extras' => $extras,
                 'tax_count' => count($taxes),
             ]);
         } catch (Exception $e) {
@@ -434,6 +440,9 @@ class JobCardController extends Controller
                     'required',
                     'date_format:"d-m-Y',
                 ],
+                'floor_supervisor' => [
+                'required',
+                ],
             ]);
 
             if ($validator->fails()) {
@@ -464,6 +473,7 @@ class JobCardController extends Controller
                     $job_card->job_card_number = $request->job_card_number;
                     $job_card->date = date('Y-m-d', strtotime($request->job_card_date));
                     $job_card->outlet_id = $job_order->outlet_id;
+                    $job_card->floor_supervisor_id = $request->floor_supervisor_id;
                     $job_card->status_id = 8220; //Floor Supervisor not Assigned
                     $job_card->company_id = Auth::user()->company_id;
                     $job_card->created_by = Auth::user()->id;
@@ -472,7 +482,11 @@ class JobCardController extends Controller
             }
 
             //Update Job Order status
+
             JobOrder::where('id', $request->job_order_id)->update(['job_card_number' => $request->job_card_number,'status_id' => 12220, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
+
+            JobOrder::where('id', $request->job_order_id)->update(['status_id' => 12220, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now(),'floor_supervisor_id' => $request->floor_supervisor_id]);
+
 
             //CREATE DIRECTORY TO STORAGE PATH
             $attachment_path = storage_path('app/public/gigo/job_card/attachments/');

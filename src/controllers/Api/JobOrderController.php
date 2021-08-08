@@ -172,10 +172,15 @@ class JobOrderController extends Controller {
 			}
 
 			$job_order->attachment_path = 'storage/app/public/gigo/job_card/attachments';
+			$extras = [
+                'floor_supervisor_list' => collect(Employee::where('id',2377)->get())
+						->prepend(['id' => '', 'name' => 'Select Floor Supervisor']),
+            ];
 
 			return response()->json([
 				'success' => true,
 				'job_order' => $job_order,
+				'extras' => $extras,
 			]);
 		} catch (Exception $e) {
 			return response()->json([

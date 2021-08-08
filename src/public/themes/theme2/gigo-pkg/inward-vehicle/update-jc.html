@@ -99,6 +99,27 @@
                                                                 </div><!-- Input Group -->
                                                             </div><!-- Feild -->
                                                         </div><!-- Column -->
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label>
+                                                                Select Floor Supervisor
+                                                                    <sup class="mandatory">
+                                                                        *
+                                                                    </sup>
+                                                                </label>
+                                                                <md-select ng-model="job_order.floor_supervisor_id" placeholder="Select Floor Supervisor" data-md-container-class="selectdemoSelectHeader">
+                                                                    <md-select-header class="demo-select-header">
+                                                                        <input ng-model="searchType" type="search" placeholder="Search for Floor Supervisor." class="demo-header-searchbox md-text">
+                                                                    </md-select-header>
+                                                                    <md-optgroup>
+                                                                        <md-option ng-value="option" ng-repeat="option in extras.floor_supervisor_list | filter:searchType">
+                                                                            {{option.code}}
+                                                                        </md-option>
+                                                                    </md-optgroup>
+                                                                </md-select>
+                                                                <input type="hidden" name="floor_supervisor" value="{{job_order.floor_supervisor_id.id}}">
+                                                            </div><!-- Feild -->
+                                                        </div>
                                                         <div class="col-md-12">
                                                             <div class="input-text form-group">
                                                                 <label>Job Card Photo <sup class="mandatory">*</sup></label>
