@@ -680,15 +680,12 @@ app.component('inwardVehicleView', {
             var v = jQuery(form_id).validate({
                 ignore: '',
                 rules: {
-                    // 'rot_type_id': {
-                    //     required: true,
-                    // },
-                    // 'rot_id': {
-                    //     required: true,
-                    // },
-                    // 'split_order_type_id': {
-                    //     required: true,
-                    // },
+                    'job_order_id': {
+                        required: true,
+                    },
+                    'service_advisor_id': {
+                        required: true,
+                    },
                 },
                 messages: {
 
@@ -5479,6 +5476,9 @@ app.component('inwardVehicleUpdatejcForm', {
                         },
                     },
                     'job_card_date': {
+                        required: true,
+                    },
+                    'floor_supervisor_id': {
                         required: true,
                     },
                 },

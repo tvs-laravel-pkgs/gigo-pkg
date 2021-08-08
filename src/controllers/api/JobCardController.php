@@ -283,9 +283,20 @@ class JobCardController extends Controller
                 ->find($r->id);
 
             $extras = [
-                'floor_supervisor_list' => collect(Employee::where('id',2377)->get())->prepend(['id' => '', 'name' => 'Select Floor Supervisor']),
+                'floor_supervisor_list' => collect(User::select([
+                    'users.id',
+                    DB::RAW('CONCAT(users.ecode," / ",users.name) as name'),
+                ])
+                        ->join('role_user','role_user.user_id','users.id')
+                        ->join('permission_role','permission_role.role_id','role_user.role_id')
+                        ->where('permission_role.permission_id', 5608) 
+                        ->where('users.user_type_id', 1) //EMPLOYEE
+                        ->where('users.company_id', $job_order->company_id)
+                        ->where('users.working_outlet_id', $job_order->outlet_id)
+                        ->groupBy('users.id')
+                        ->orderBy('users.name','asc')
+                        ->get())->prepend(['id' => '', 'name' => 'Select Floor Supervisor']),
             ];
-
             if (!$job_order) {
                 return response()->json([
                     'success' => false,
@@ -440,8 +451,10 @@ class JobCardController extends Controller
                     'required',
                     'date_format:"d-m-Y',
                 ],
-                'floor_supervisor' => [
-                'required',
+                'floor_supervisor_id' => [
+                    'required',
+                    'exists:users,id',
+                    'integer',
                 ],
             ]);
 
@@ -482,11 +495,10 @@ class JobCardController extends Controller
             }
 
             //Update Job Order status
+            JobOrder::where('id', $request->job_order_id)->update(['job_card_number' => $request->job_card_number,'status_id' => 12220, 'floor_supervisor_id' => $request->floor_supervisor_id, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
 
-            JobOrder::where('id', $request->job_order_id)->update(['job_card_number' => $request->job_card_number,'status_id' => 12220, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
-
-            JobOrder::where('id', $request->job_order_id)->update(['status_id' => 12220, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now(),'floor_supervisor_id' => $request->floor_supervisor_id]);
-
+            //Update Gatelog
+            GateLog::where('job_order_id', $request->job_order_id)->update(['floor_supervisor_id' => $request->floor_supervisor_id,'updated_at' => Carbon::now()]);
 
             //CREATE DIRECTORY TO STORAGE PATH
             $attachment_path = storage_path('app/public/gigo/job_card/attachments/');

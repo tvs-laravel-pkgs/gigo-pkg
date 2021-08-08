@@ -649,9 +649,14 @@ class VehicleInwardController extends Controller
                     'users.id',
                     DB::RAW('CONCAT(users.ecode," / ",users.name) as name'),
                 ])
+                        ->join('role_user','role_user.user_id','users.id')
+                        ->join('permission_role','permission_role.role_id','role_user.role_id')
+                        ->where('permission_role.permission_id', 5601) 
                         ->where('users.user_type_id', 1) //EMPLOYEE
-                        ->where('users.company_id', Auth::user()->company_id)
+                        ->where('users.company_id', $job_order->company_id)
                         ->where('users.working_outlet_id', $job_order->outlet_id)
+                        ->groupBy('users.id')
+                        ->orderBy('users.name','asc')
                         ->get())->prepend(['id' => '', 'name' => 'Select Service Advisor']),
             ];
             
@@ -7980,32 +7985,68 @@ class VehicleInwardController extends Controller
     public function serviceAdvisorSave(Request $request){
         // dd($request->all());
         try {
-            $validator = Validator::make($request->all(), [
-                'service_advisor_id' => [
-                    'required_if:assign_service_advisor ,==, 1',
-                    'integer',
-                ],
-               
-            ]);
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Validation Error',
-                    'errors' => $validator->errors()->all(),
+
+            if($request->type_id == 2){
+                $validator = Validator::make($request->all(), [
+                    'service_advisor_id' => [
+                        'required_if:assign_service_advisor ,==, 1',
+                        'integer',
+                    ],
+                   
                 ]);
+                if ($validator->fails()) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => $validator->errors()->all(),
+                    ]);
+                }
+
+                DB::beginTransaction();
+
+                $job_order = JobOrder::find($request->job_order_id);
+                $job_order->service_advisor_id = $request->service_advisor_id;
+                $job_order->save();
+
+                DB::commit();
+
+                $message = 'Floor Supervisor updated Successfully';
+            }else{
+                $validator = Validator::make($request->all(), [
+                    'service_advisor_id' => [
+                        'required_if:assign_service_advisor ,==, 1',
+                        'integer',
+                    ],
+                    'job_order_id' => [
+                        'required',
+                        'integer',
+                        'exists:job_orders,id',
+                    ],
+                ]);
+                if ($validator->fails()) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => $validator->errors()->all(),
+                    ]);
+                }
+
+                DB::beginTransaction();
+
+                $job_order = JobOrder::find($request->job_order_id);
+                $job_order->service_advisor_id = $request->service_advisor_id;
+                $job_order->save();
+
+                $job_order->gateLog()->update(['service_advisor_id' => $request->service_advisor_id]);
+
+                DB::commit();
+
+                $message = 'Service Advisor updated Successfully';
             }
-
-        DB::beginTransaction();
-
-        $job_order = JobOrder::find($request->job_order_id);
-        $job_order->service_advisor_id = $request->service_advisor_id;
-        $job_order->save();
-        DB::commit();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Service Advisor Added Successfully',
-        ]);
+                return response()->json([
+                    'success' => true,
+                    'message' => $message,
+                ]);
 
         }catch (\Exception $e) {
             return response()->json([

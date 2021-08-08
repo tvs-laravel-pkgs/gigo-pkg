@@ -68,6 +68,11 @@
                                         Gate In Details
                                     </a>
                                 </li>
+                                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-estimate-view') && (job_order.status_id == 8463 || job_order.status_id == 8469 || job_order.status_id == 8471 || job_order.status_id == 8472 || job_order.status_id == 8473 ||job_order.status_id == 8474)">
+                                    <a data-target="#service_advisor" data-toggle="tab" aria-expanded="true" class="filter">
+                                        Service Advisor
+                                    </a>
+                                </li>
                                 <li ng-if="$ctrl.hasPermission('inward-job-card-tab-vehicle-details-view')">
                                     <a class="filter" data-target="#vehicle_details" data-toggle="tab" aria-expanded="true">
                                         Vehicle Details
@@ -128,11 +133,6 @@
                                     </a>
                                 </li>
                                 <li ng-if="$ctrl.hasPermission('inward-job-card-tab-estimate-view') && (job_order.status_id != 8472)">
-                                    <a data-target="#service_advisor" data-toggle="tab" aria-expanded="true" class="filter">
-                                        Service Advisor
-                                    </a>
-                                </li>
-                                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-estimate-view') && (job_order.status_id != 8472)">
                                     <a data-target="#estimate_details" data-toggle="tab" aria-expanded="true" class="filter">
                                         Estimate
                                     </a>
@@ -150,11 +150,6 @@
                                 <li ng-if="$ctrl.hasPermission('inward-job-card-tab-vehicle-details-view') && (job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8476) && extras.inward_cancel_status == 0">
                                     <a data-target="#cancel_inward" data-toggle="tab" aria-expanded="true" class="filter">
                                         Inward Cancel
-                                    </a>
-                                </li>
-                                <li>
-                                    <a data-target="#reports" data-toggle="tab" aria-expanded="true" class="filter">
-                                        Reports
                                     </a>
                                 </li>
                             </ul>
@@ -2272,28 +2267,60 @@
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
-                        <div class="tab-pane fade" id="reports" data-animation="fadeInUp" data-animation-delay="300">
+                        <div class="tab-pane fade" id="service_advisor" data-animation="fadeInUp" data-animation-delay="300">
                             <div class="tab-pane-wrap">
-                                <div class="row">
-                                    <form id="job_card_report_form" autocomplete="off" action="{{$ctrl.export_job_card_report_url}}" method="post">
-                                    <input type="hidden" name="_token" value="{{ $ctrl.csrf_token}}" />
-                                    <input type="hidden" name="report_job_order_id" value="{{$ctrl.report_job_order_id}}">
-
+                                <form id="service_advisor_form">
+                                    <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+                                    <input type="hidden" name="type_id" value="1">
+                                    <div class="row">
                                         <div class="col-md-12">
-                                            <h5 class="color-primary mb-10"><b>Report</b></h5>
+                                            <h5 class="color-primary mb-10">
+                                                <b>
+                                                    Service Advisor
+                                                </b>
+                                            </h5>
                                             <hr class="hr-15">
                                             <div class="row">
-                                                <div class="col-md-2">
+                                                <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>
-                                                            Report Type ?
+                                                            Change  Service Advisor
                                                         </label>
                                                         <div class="common-radio-button type-4">
-                                                            <input type="radio" id="schedule_wise" name="report_wise_info" ng-checked="true" ng-model="$ctrl.schedule_wise" ng-value="1">
-                                                            <label for="schedule_wise">Schedule</label>
-                                                            <input type="radio" id="individual_wise" name="report_wise_info" ng-model="$ctrl.individual_wise" ng-value="2">
-                                                            <label for="individual_wise">Individual</label>
+                                                            <input type="radio" id="service_advisor_assign" name="assign_service_advisor" ng-model="$ctrl.assign_service_advisor" ng-value="1">
+                                                            <label for="service_advisor_assign">Yes</label>
+                                                            <input type="radio" id="service_advisor_not_assign" name="assign_service_advisor" ng-model="$ctrl.assign_service_advisor" ng-value="0">
+                                                            <label for="service_advisor_not_assign">No</label>
                                                         </div>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Current Service Advisor 
+                                                        </label>
+                                                        <input type="text" class="form-control" value="{{job_order.service_adviser.ecode}} / {{job_order.service_adviser.name}}" readonly>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-4" ng-if="$ctrl.assign_service_advisor">
+                                                    <div class="form-group">
+                                                        <label>
+                                                        Select Service Advisor
+                                                            <sup class="mandatory">
+                                                                *
+                                                            </sup>
+                                                        </label>
+                                                        <md-select ng-model="job_order.service_advisor_id" placeholder="Service Advisor" data-md-container-class="selectdemoSelectHeader">
+                                                            <md-select-header class="demo-select-header">
+                                                                <input ng-model="searchSA" type="search" placeholder="Search for Service Advisor" class="demo-header-searchbox md-text">
+                                                            </md-select-header>
+                                                            <md-optgroup>
+                                                                <md-option ng-value="option" ng-repeat="option in extras.service_advisor_list | filter:searchSA">
+                                                                    {{option.name}}
+                                                                </md-option>
+                                                            </md-optgroup>
+                                                        </md-select>
+                                                        <input type="hidden" name="service_advisor_id" class="required" value="{{job_order.service_advisor_id.id}}">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
@@ -2302,82 +2329,14 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <button type="submit" class="btn btn-red report_export">
-                                                        Export
-                                                    </button>
+                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                    <input type="submit" name="add_service_advisor" ng-if="$ctrl.assign_service_advisor" ng-click="saveServiceAdvisor()" class="btn btn-red" value="Save">
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
-                                    </form>
-                                </div><!-- Row -->
+                                    </div><!-- Row -->
+                                </form>
                             </div><!-- Tab Pane Wrap -->
-                        </div><!-- Tabe Pane -->
-                        <div class="tab-pane fade" id="service_advisor" data-animation="fadeInUp" data-animation-delay="300">
-                            <form id="service_advisor_form" autocomplete="off">
-                                <input type="hidden" name="job_order_id" value="{{job_order.id}}">
-                                <div class="tab-pane-wrap">
-                                    <div class="row">
-                                        <h5 class="color-primary mb-10">
-                                            <b>
-                                            Service Advisor
-                                            </b>
-                                        </h5>
-                                        <hr class="hr-15"><!-- Separater -->
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label>
-                                                    Assign  Service Advisor
-                                                </label>
-                                                <div class="common-radio-button type-4">
-                                                    <input type="radio" id="service_advisor_assign" name="assign_service_advisor" ng-model="$ctrl.assign_service_advisor" ng-value="1">
-                                                    <label for="service_advisor_assign">Yes</label>
-                                                    <input type="radio" id="service_advisor_not_assign" name="assign_service_advisor" ng-model="$ctrl.assign_service_advisor" ng-value="0">
-                                                    <label for="service_advisor_not_assign">No</label>
-                                                </div>
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-8" ng-if="$ctrl.assign_service_advisor">
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>
-                                                        Assigned Service Advisor 
-                                                    </label>
-                                                    <input type="text" name="assigned_service_advisor"  class="form-control" value="{{job_order.service_adviser.name}}" readonly>
-                                                </div><!-- Feild -->
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>
-                                                    Select Service Advisor
-                                                        <sup class="mandatory">
-                                                            *
-                                                        </sup>
-                                                    </label>
-                                                    <md-select ng-model="job_order.service_advisor_id" placeholder="Service Advisor" data-md-container-class="selectdemoSelectHeader">
-                                                        <md-select-header class="demo-select-header">
-                                                            <input ng-model="searchType" type="search" placeholder="Search for Service Advisor" class="demo-header-searchbox md-text">
-                                                        </md-select-header>
-                                                        <md-optgroup>
-                                                            <md-option ng-value="option" ng-repeat="option in extras.service_advisor_list | filter:searchType">
-                                                                {{option.name}}
-                                                            </md-option>
-                                                        </md-optgroup>
-                                                    </md-select>
-                                                    <input type="hidden" name="service_advisor_id" value="{{job_order.service_advisor_id.id}}">
-                                                </div><!-- Feild -->
-                                            </div><!--Col md 8-->
-                                            </div><!-- Row -->
-                                        </div><!-- Column -->
-                                        <div class="tab-pane-footer">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <input type="submit" name="add_service_advisor" ng-if="$ctrl.assign_service_advisor" ng-click="saveServiceAdvisor()" class="btn btn-secondary-dark btn-min-wdth btn-next" value="Save">
-                                                </div>
-                                            </div>
-                                        </div><!-- Tab Footer -->
-                                </div><!-- Tab Pane Wrap -->
-                            </form>
                         </div><!-- Tabe Pane -->
                     </div><!-- Tab Content -->
                 </div><!-- Tab Form Body -->

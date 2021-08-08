@@ -107,17 +107,17 @@
                                                                         *
                                                                     </sup>
                                                                 </label>
-                                                                <md-select ng-model="job_order.floor_supervisor_id" placeholder="Select Floor Supervisor" data-md-container-class="selectdemoSelectHeader">
+                                                                <md-select ng-model="job_order.job_card.floor_supervisor_id" placeholder="Select Floor Supervisor" data-md-container-class="selectdemoSelectHeader">
                                                                     <md-select-header class="demo-select-header">
                                                                         <input ng-model="searchType" type="search" placeholder="Search for Floor Supervisor." class="demo-header-searchbox md-text">
                                                                     </md-select-header>
                                                                     <md-optgroup>
-                                                                        <md-option ng-value="option" ng-repeat="option in extras.floor_supervisor_list | filter:searchType">
-                                                                            {{option.code}}
+                                                                        <md-option ng-value="option.id" ng-repeat="option in extras.floor_supervisor_list | filter:searchType">
+                                                                            {{option.name}}
                                                                         </md-option>
                                                                     </md-optgroup>
                                                                 </md-select>
-                                                                <input type="hidden" name="floor_supervisor" value="{{job_order.floor_supervisor_id.id}}">
+                                                                <input type="hidden" name="floor_supervisor_id" class="required" value="{{job_order.job_card.floor_supervisor_id}}">
                                                             </div><!-- Feild -->
                                                         </div>
                                                         <div class="col-md-12">
