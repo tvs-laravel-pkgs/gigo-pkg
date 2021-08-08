@@ -2322,6 +2322,20 @@ class GigoPkgPermissionSeeder extends Seeder
                 'name' => 'export-battery-result',
                 'display_name' => 'Export',
             ],
+
+            //GIGO REPORTs
+            [
+                'display_order' => 100,
+                'parent' => 'gigo-pages',
+                'name' => 'gigo-reports',
+                'display_name' => 'Reports',
+            ],
+            [
+                'display_order' => 3,
+                'parent' => 'gigo-reports',
+                'name' => 'mechanic-worklog',
+                'display_name' => 'Mechanic Work Log',
+            ],
         ];
         Permission::createFromArrays($permissions);
     }
