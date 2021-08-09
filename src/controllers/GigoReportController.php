@@ -392,7 +392,7 @@ class GigoReportController extends Controller {
 					});
 					$sheet->setAutoSize(true);
 				});
-			})->export('html');
+			})->export('xlsx');
 
         } catch (Exception $e) {
             print_r($e);
