@@ -451,11 +451,11 @@ class JobCardController extends Controller
                     'required',
                     'date_format:"d-m-Y',
                 ],
-                'floor_supervisor_id' => [
-                    'required',
-                    'exists:users,id',
-                    'integer',
-                ],
+                // 'floor_supervisor_id' => [
+                //     'required',
+                //     'exists:users,id',
+                //     'integer',
+                // ],
             ]);
 
             if ($validator->fails()) {
