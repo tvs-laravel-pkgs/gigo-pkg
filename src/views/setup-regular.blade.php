@@ -1345,6 +1345,11 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        template: '<job-card-part-indent-form></job-card-part-indent-form>',
 	        title: 'Job Card Part Indent',
 	    }).
+		 //Added To Change Floor Supervisor
+		when('/job-card/change-floor-supervisor/:job_card_id', {
+			template: '<job-card-change-floor-supervisor-form></job-card-change-floor-supervisor-form>',
+			title: 'Change Floor Supervisor',
+		}).
 	    when('/gigo-pkg/job-card/schedule-maintenance/:job_card_id', {
 	        template: '<job-card-schedule-maintenance-form></job-card-schedule-maintenance-form>',
 	        title: 'Job Card Scheduled Maintenance',
@@ -1442,6 +1447,10 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var job_card_parts_labour_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/labour.html')}}';
     var job_card_parts_part_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/part.html')}}';
     var job_card_estimate_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/estimate.html')}}';
+
+	//Newly Added For Floor-Supervisor-Template By B.Surya from 09-08-2021
+    var job_card_floor_supervisor_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/floor-supervisor-form.html')}}';
+	
     var job_card_estimate_status_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/estimate-status.html')}}';
     var job_card_gatein_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/gatein-detail.html')}}';
     var job_card_vehicle_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/vehicle-detail.html')}}';

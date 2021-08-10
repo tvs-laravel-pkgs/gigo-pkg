@@ -958,6 +958,11 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'Job Card Part Indent',
 
     }).
+    //Added To Change Floor Supervisor
+    when('/job-card/change-floor-supervisor/:job_card_id', {
+        template: '<job-card-change-floor-supervisor-form></job-card-change-floor-supervisor-form>',
+        title: 'Job Card Floor Supervisor Change',
+    }).
     when('/job-card/schedule-maintenance/:job_card_id', {
         template: '<job-card-schedule-maintenance-form></job-card-schedule-maintenance-form>',
         title: 'Job Card Scheduled Maintenance',

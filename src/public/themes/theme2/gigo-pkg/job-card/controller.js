@@ -4000,7 +4000,93 @@ app.component('jobCardFloatingForm', {
         }, 1000);
     }
 });
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+//Chnage Floor Supervisor Change
+app.component('jobCardChangeFloorSupervisorForm', {
+    templateUrl: job_card_floor_supervisor_template_url,
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        self.angular_routes = angular_routes;
+        self.view_only_part_indent = self.hasPermission('view-only-parts-indent');
 
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+        $scope.job_card_id = $routeParams.job_card_id;
+        //FETCH DATA
+        $scope.fetchData = function () {
+            $.ajax({
+                url: base_url + '/api/jobcard/floor-supervisor-get-details/get',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_card_id
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
+                .done(function (res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    console.log(res);
+                    $scope.job_card_id = $routeParams.job_card_id;
+                    $scope.job_card = res.job_card;
+                    $scope.extras = res.extras;
+
+                    $scope.$apply();
+                })
+                .fail(function (xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function () {
+            scrollableTabs();
+        }, 1000);
+
+
+        $scope.saveFloorSupervisor = function () {
+            var form_id = '#floor_supervisor_change_form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'type_id': {
+                        required: true,
+                    },
+                },
+                submitHandler: function (form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $.ajax({
+                        url: base_url + '/api/vehicle-inward/service-advisor/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
+                        .done(function (res) {
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            
+                            $scope.fetchData();
+                        })
+                        .fail(function (xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+    }
+});
 //---------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------
 //SCHEDULES

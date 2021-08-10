@@ -418,6 +418,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
         Route::post('jobcard/inventory/get', 'JobCardController@getInventory');
         Route::post('jobcard/capture-voc/get', 'JobCardController@getCaptureVoc');
 
+        //FloorSupervisor-Get-Details Added by B.Surya from 09-08-2021
+        Route::post('jobcard/floor-supervisor-get-details/get', 'JobCardController@floorSupervisorGetDetails');
+
         //Material-GatePass Details Save
         Route::post('save-material-gate-pass-detail', 'JobCardController@saveMaterialGatePassDetail');
 

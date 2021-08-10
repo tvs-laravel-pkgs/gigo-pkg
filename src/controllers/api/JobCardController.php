@@ -7167,4 +7167,48 @@ class JobCardController extends Controller
         $decrypted = openssl_decrypt(base64_decode($data), $method, $encryption_key, OPENSSL_RAW_DATA, $iv);
         return $decrypted;
     }
+
+    //Newly Added for floor supervisor
+    public function floorSupervisorGetDetails(Request $request){
+        // dd($request->all());
+            $job_card = JobCard::with([
+                    'floorSupervisor'
+                ])
+            ->select([
+                'job_cards.*',
+                DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
+                DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
+            ])
+            ->find($request->id);
+
+        $extras = [
+            'floor_supervisor_list' => collect(User::select([
+                'users.id',
+                DB::RAW('CONCAT(users.ecode," / ",users.name) as name'),
+            ])
+                    ->join('role_user','role_user.user_id','users.id')
+                    ->join('permission_role','permission_role.role_id','role_user.role_id')
+                    ->where('permission_role.permission_id', 5608) 
+                    ->where('users.user_type_id', 1) //EMPLOYEE
+                    ->where('users.company_id', $job_card->company_id)
+                    ->where('users.working_outlet_id', $job_card->outlet_id)
+                    ->groupBy('users.id')
+                    ->orderBy('users.name','asc')
+                    ->get())->prepend(['id' => '', 'name' => 'Select Floor Supervisor']),
+        ];
+
+        if (!$job_card) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Validation Error',
+                'errors' => ['Job Card Not Found!'],
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'job_card' => $job_card,
+            'extras' => $extras,
+        ]);
+    }
 }

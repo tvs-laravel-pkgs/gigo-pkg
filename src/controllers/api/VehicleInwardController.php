@@ -7988,8 +7988,8 @@ class VehicleInwardController extends Controller
 
             if($request->type_id == 2){
                 $validator = Validator::make($request->all(), [
-                    'service_advisor_id' => [
-                        'required_if:assign_service_advisor ,==, 1',
+                    'floor_supervisor_id' => [
+                        'required_if:floor_supervisor_change_required ,==, 1',
                         'integer',
                     ],
                    
@@ -8004,9 +8004,9 @@ class VehicleInwardController extends Controller
 
                 DB::beginTransaction();
 
-                $job_order = JobOrder::find($request->job_order_id);
-                $job_order->service_advisor_id = $request->service_advisor_id;
-                $job_order->save();
+                $job_card = JobCard::find($request->job_card_id);
+                $job_card->floor_supervisor_id = $request->floor_supervisor_id;
+                $job_card->save();
 
                 DB::commit();
 
