@@ -32,6 +32,9 @@ class GigoReportController extends Controller {
 	 	// dd($request->all());
         try {
 
+            ini_set('max_execution_time', 0);
+			ini_set('memory_limit', -1);
+
             if ($request->export_date) {
                 $date_range = explode(' to ', $request->export_date);
                 $start_date = $date_range[0];    
@@ -54,7 +57,8 @@ class GigoReportController extends Controller {
                 ->where('employees.is_mechanic', 1)
                 ->where('users.user_type_id', 1) //EMPLOYEE
                 ->where('employees.outlet_id', 110)
-                // ->where('users.id', 191) //EMPLOYEE
+                // ->where('employees.outlet_id', Auth::user()->working_outlet_id)
+                // ->whereIn('users.id', [191,192,194]) //EMPLOYEE
                 ->orderBy('users.name', 'asc')
             ->get();
             
@@ -90,7 +94,7 @@ class GigoReportController extends Controller {
                         $total_working_hours = '00:00:00';
 
                         $punch_in_time = AttendanceLog::where('user_id',$employee->id)->whereDate('attendance_logs.date',date('Y-m-d', $start))->pluck('in_time')->first();
-
+                        $summary_detail['total_hours'] = '00.00';
                         if($employee_shift){
                             //Outlet Shift
                             if(date("l",$start) == 'Sunday'){
@@ -176,7 +180,7 @@ class GigoReportController extends Controller {
 								$work_logs_detail['job_card_number'] = $mechanic_time_log->job_card_number;
 								$work_logs_detail['reg_number'] = $mechanic_time_log->registration_number;
                                 $work_logs_detail['start_time'] = date('h:i', strtotime($mechanic_time_log->start_date_time));
-                                $work_logs_detail['end_time'] = $mechanic_time_log->end_date_time ? date('h:i', strtotime($mechanic_time_log->end_date_time)) : '-';
+                                $work_logs_detail['end_time'] = $mechanic_time_log->end_date_time ? date('h:i', strtotime($mechanic_time_log->end_date_time)) : '';
                                 // $work_logs_detail['idle_hours'] = ;
 
                                 // dd($work_logs_detail);
@@ -219,6 +223,11 @@ class GigoReportController extends Controller {
                                     $work_logs_detail['remarks'] = $mechanic_time_log->status_id == 8265 ? 'Lunch' : 'Work Hours';
 
 									$work_logs_details[] = $work_logs_detail;
+                                }else{
+                                    $work_logs_detail['rot_hours'] = '';
+                                    $work_logs_detail['remarks'] = 'Work InProgress';
+
+									$work_logs_details[] = $work_logs_detail;
                                 }
                             }
 
@@ -257,7 +266,6 @@ class GigoReportController extends Controller {
                                 // $total_idle_hours = intdiv($diff, 60) . ':' . ($diff % 60) . ':00';
                                 $total_idle_hours = intdiv($diff, 60) . '.' . ($diff % 60);
                                 $summary_detail['idle_hours'] = $total_idle_hours;
-
                                 $overall_idle_hours[] = intdiv($diff, 60) . ':' . ($diff % 60) . ':00';;
                             }
                         }else{
@@ -273,9 +281,25 @@ class GigoReportController extends Controller {
 							$work_logs_detail['start_time'] = '';
 							$work_logs_detail['end_time'] = '';
 							// $work_logs_detail['idle_hours'] = ;
-							$work_logs_detail['remarks'] = '';
 							$work_logs_detail['rot_hours'] = '';
+							$work_logs_detail['remarks'] = '';
 							$work_logs_details[] = $work_logs_detail;
+                            
+                            $summary_detail['working_hours'] = '00.00';
+                            $summary_detail['idle_hours'] = $summary_detail['total_hours'];
+
+                            if($total_working_hours != '00:00:00'){
+                                //Find Total Idle Hours
+                                $array1 = explode(':', $employee_work_hour);
+                                $array2 = explode(':', $total_working_hours);
+                                $minutes1 = ($array1[0] * 60.0 + $array1[1]);
+                                $minutes2 = ($array2[0] * 60.0 + $array2[1]);
+                                $diff = $minutes2 - $minutes1;
+                                // $total_idle_hours = intdiv($diff, 60) . ':' . ($diff % 60) . ':00';
+                                $total_idle_hours = intdiv($diff, 60) . '.' . ($diff % 60);
+                                $summary_detail['idle_hours'] = $total_idle_hours;
+                                $overall_idle_hours[] = intdiv($diff, 60) . ':' . ($diff % 60) . ':00';;
+                            }
 						}
 
                         $summary_details[] = $summary_detail;
@@ -326,9 +350,6 @@ class GigoReportController extends Controller {
 
         	ob_end_clean();
 			ob_start();
-
-			ini_set('max_execution_time', 0);
-			ini_set('memory_limit', -1);
 
             $summary_header = [
 				'Date',
