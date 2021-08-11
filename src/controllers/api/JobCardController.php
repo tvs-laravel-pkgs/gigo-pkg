@@ -4469,8 +4469,8 @@ class JobCardController extends Controller
                         }
                     }
 
-                    // $total_amount = $tax_amount + $labour->amount;
-                    $total_amount = $labour->amount;
+                    $total_amount = $tax_amount + $labour->amount;
+                    // $total_amount = $labour->amount;
                     $total_amount = number_format((float) $total_amount, 2, '.', '');
                     $labour_amount += $total_amount;
                 }
@@ -4482,21 +4482,22 @@ class JobCardController extends Controller
                 if ($parts->is_free_service != 1 && (in_array($parts->split_order_type_id, $customer_paid_type) || !$parts->split_order_type_id)) {
                     $total_amount = 0;
 
-                    $tax_amount = 0;
-                    if ($parts->part->taxCode) {
-                        if (count($parts->part->taxCode->taxes) > 0) {
-                            foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
-                                $percentage_value = 0;
-                                if ($value->type_id == $tax_type) {
-                                    $percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
-                                    $percentage_value = number_format((float) $percentage_value, 2, '.', '');
-                                }
-                                $tax_amount += $percentage_value;
-                            }
-                        }
-                    }
+                    // $tax_amount = 0;
+                    // if ($parts->part->taxCode) {
+                    //     if (count($parts->part->taxCode->taxes) > 0) {
+                    //         foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
+                    //             $percentage_value = 0;
+                    //             if ($value->type_id == $tax_type) {
+                    //                 $percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
+                    //                 $percentage_value = number_format((float) $percentage_value, 2, '.', '');
+                    //             }
+                    //             $tax_amount += $percentage_value;
+                    //         }
+                    //     }
+                    // }
 
-                    $total_amount = $tax_amount + $parts->amount;
+                    // $total_amount = $tax_amount + $parts->amount;
+                    $total_amount = $parts->amount;
                     $total_amount = number_format((float) $total_amount, 2, '.', '');
                     $parts_amount += $total_amount;
                 }
