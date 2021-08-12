@@ -161,6 +161,11 @@ class JobCard extends BaseModel
         return $this->hasMany('App\FloatingGatePass');
     }
 
+    public function floorSupervisor()
+    {
+        return $this->belongsTo('App\User', 'floor_supervisor_id');
+    }
+
     // Query Scopes --------------------------------------------------------------
 
     public function scopeFilterSearch($query, $term)

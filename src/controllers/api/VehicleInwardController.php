@@ -4108,19 +4108,19 @@ class VehicleInwardController extends Controller
                 if ($parts->is_free_service != 1 && (in_array($parts->split_order_type_id, $customer_paid_type) || !$parts->split_order_type_id)) {
                     $total_amount = 0;
 
-                    $tax_amount = 0;
-                    if ($parts->part->taxCode) {
-                        if (count($parts->part->taxCode->taxes) > 0) {
-                            foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
-                                $percentage_value = 0;
-                                if ($value->type_id == $tax_type) {
-                                    $percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
-                                    $percentage_value = number_format((float) $percentage_value, 2, '.', '');
-                                }
-                                $tax_amount += $percentage_value;
-                            }
-                        }
-                    }
+                    // $tax_amount = 0;
+                    // if ($parts->part->taxCode) {
+                    //     if (count($parts->part->taxCode->taxes) > 0) {
+                    //         foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
+                    //             $percentage_value = 0;
+                    //             if ($value->type_id == $tax_type) {
+                    //                 $percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
+                    //                 $percentage_value = number_format((float) $percentage_value, 2, '.', '');
+                    //             }
+                    //             $tax_amount += $percentage_value;
+                    //         }
+                    //     }
+                    // }
 
                     // $total_amount = $tax_amount + $parts->amount;
                     $total_amount = $parts->amount;
@@ -8260,8 +8260,8 @@ class VehicleInwardController extends Controller
 
             if($request->type_id == 2){
                 $validator = Validator::make($request->all(), [
-                    'service_advisor_id' => [
-                        'required_if:assign_service_advisor ,==, 1',
+                    'floor_supervisor_id' => [
+                        'required_if:floor_supervisor_change_required ,==, 1',
                         'integer',
                     ],
                    
@@ -8276,9 +8276,9 @@ class VehicleInwardController extends Controller
 
                 DB::beginTransaction();
 
-                $job_order = JobOrder::find($request->job_order_id);
-                $job_order->service_advisor_id = $request->service_advisor_id;
-                $job_order->save();
+                $job_card = JobCard::find($request->job_card_id);
+                $job_card->floor_supervisor_id = $request->floor_supervisor_id;
+                $job_card->save();
 
                 DB::commit();
 

@@ -1050,6 +1050,11 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var inward_vehicle_vehicle_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/vehicle-detail-view.html')}}';
     var inward_vehicle_customer_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/customer-detail-view.html')}}';
 
+	//GIGO Support TEMPLATES
+    var gigo_support_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gigo-support/list.html')}}';
+	var gigo_support_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gigo-support/view.html')}}';
+	var gigo_support_customer_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gigo-support/customer-detail.html')}}';
+
 
     //PARTIALS
     var job_order_header_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/job-order-header.html')}}';
@@ -1346,6 +1351,11 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        template: '<job-card-part-indent-form></job-card-part-indent-form>',
 	        title: 'Job Card Part Indent',
 	    }).
+		 //Added To Change Floor Supervisor
+		when('/job-card/change-floor-supervisor/:job_card_id', {
+			template: '<job-card-change-floor-supervisor-form></job-card-change-floor-supervisor-form>',
+			title: 'Change Floor Supervisor',
+		}).
 	    when('/gigo-pkg/job-card/schedule-maintenance/:job_card_id', {
 	        template: '<job-card-schedule-maintenance-form></job-card-schedule-maintenance-form>',
 	        title: 'Job Card Scheduled Maintenance',
@@ -1443,6 +1453,10 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var job_card_parts_labour_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/labour.html')}}';
     var job_card_parts_part_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/part.html')}}';
     var job_card_estimate_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/estimate.html')}}';
+
+	//Newly Added For Floor-Supervisor-Template By B.Surya from 09-08-2021
+    var job_card_floor_supervisor_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/floor-supervisor-form.html')}}';
+	
     var job_card_estimate_status_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/estimate-status.html')}}';
     var job_card_gatein_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/gatein-detail.html')}}';
     var job_card_vehicle_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/vehicle-detail.html')}}';
@@ -1971,6 +1985,29 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 		});
 	}]);
 
+//GIGO SUPPORT URLS
+app.config(['$routeProvider', function($routeProvider) {
+    $routeProvider.
+    //Gigo Support List
+    when('/gigo-support/table-list', {
+        template: '<gigo-support-list></gigo-support-list>',
+        title: 'Gigo Support List',
+    })
+	when('/gigo-support-list/card-list', {
+		template: '<gigo-support-card-list></gigo-support-card-list>',
+		title: 'Gigo Support - Card List',
+	}).
+	 when('/gigo-support/view/:job_order_id', {
+        template: '<gigo-support-view></gigo-support-view>',
+        title: 'Gigo Support Inward Vehicle - View',
+    }).
+	 when('/gigo-support/customer-detail/:job_order_id/:type_id?', {
+		template: '<gigo-support-customer-detail></gigo-support-customer-detail>',
+		title: 'Inward Vehicle - Customer Detail',
+	})
+    ;
+
+}]);
 	//Report
     var gigo_mechanic_report_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/report/mechanic-list.html')}}';
 </script>

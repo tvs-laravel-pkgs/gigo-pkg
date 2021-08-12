@@ -4469,8 +4469,8 @@ class JobCardController extends Controller
                         }
                     }
 
-                    // $total_amount = $tax_amount + $labour->amount;
-                    $total_amount = $labour->amount;
+                    $total_amount = $tax_amount + $labour->amount;
+                    // $total_amount = $labour->amount;
                     $total_amount = number_format((float) $total_amount, 2, '.', '');
                     $labour_amount += $total_amount;
                 }
@@ -4482,21 +4482,22 @@ class JobCardController extends Controller
                 if ($parts->is_free_service != 1 && (in_array($parts->split_order_type_id, $customer_paid_type) || !$parts->split_order_type_id)) {
                     $total_amount = 0;
 
-                    $tax_amount = 0;
-                    if ($parts->part->taxCode) {
-                        if (count($parts->part->taxCode->taxes) > 0) {
-                            foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
-                                $percentage_value = 0;
-                                if ($value->type_id == $tax_type) {
-                                    $percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
-                                    $percentage_value = number_format((float) $percentage_value, 2, '.', '');
-                                }
-                                $tax_amount += $percentage_value;
-                            }
-                        }
-                    }
+                    // $tax_amount = 0;
+                    // if ($parts->part->taxCode) {
+                    //     if (count($parts->part->taxCode->taxes) > 0) {
+                    //         foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
+                    //             $percentage_value = 0;
+                    //             if ($value->type_id == $tax_type) {
+                    //                 $percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
+                    //                 $percentage_value = number_format((float) $percentage_value, 2, '.', '');
+                    //             }
+                    //             $tax_amount += $percentage_value;
+                    //         }
+                    //     }
+                    // }
 
-                    $total_amount = $tax_amount + $parts->amount;
+                    // $total_amount = $tax_amount + $parts->amount;
+                    $total_amount = $parts->amount;
                     $total_amount = number_format((float) $total_amount, 2, '.', '');
                     $parts_amount += $total_amount;
                 }
@@ -7166,5 +7167,49 @@ class JobCardController extends Controller
 
         $decrypted = openssl_decrypt(base64_decode($data), $method, $encryption_key, OPENSSL_RAW_DATA, $iv);
         return $decrypted;
+    }
+
+    //Newly Added for floor supervisor
+    public function floorSupervisorGetDetails(Request $request){
+        // dd($request->all());
+            $job_card = JobCard::with([
+                    'floorSupervisor'
+                ])
+            ->select([
+                'job_cards.*',
+                DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
+                DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
+            ])
+            ->find($request->id);
+
+        $extras = [
+            'floor_supervisor_list' => collect(User::select([
+                'users.id',
+                DB::RAW('CONCAT(users.ecode," / ",users.name) as name'),
+            ])
+                    ->join('role_user','role_user.user_id','users.id')
+                    ->join('permission_role','permission_role.role_id','role_user.role_id')
+                    ->where('permission_role.permission_id', 5608) 
+                    ->where('users.user_type_id', 1) //EMPLOYEE
+                    ->where('users.company_id', $job_card->company_id)
+                    ->where('users.working_outlet_id', $job_card->outlet_id)
+                    ->groupBy('users.id')
+                    ->orderBy('users.name','asc')
+                    ->get())->prepend(['id' => '', 'name' => 'Select Floor Supervisor']),
+        ];
+
+        if (!$job_card) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Validation Error',
+                'errors' => ['Job Card Not Found!'],
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'job_card' => $job_card,
+            'extras' => $extras,
+        ]);
     }
 }

@@ -8,6 +8,11 @@
                         Job Order 
                     </a>
                 </li> -->
+                <li ng-class="{active:active_tab == 'floor-supervisor'}">
+                    <a class="filter" href=".#!/job-card/change-floor-supervisor/{{job_card_id}}">
+                        Change Floor Supervisor
+                    </a>
+                </li>
                 <li ng-class="{active:active_tab == 'schedule-maintendance'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-scheduled-maintenance-view')">
                     <a class="filter" href=".#!/job-card/schedule-maintenance/{{job_card_id}}">
                         Scheduled Maintenance

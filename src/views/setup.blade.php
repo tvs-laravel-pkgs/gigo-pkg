@@ -512,6 +512,11 @@
     var inward_vehicle_vehicle_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/vehicle-detail-view.html')}}';
     var inward_vehicle_customer_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/customer-detail-view.html')}}';
 
+    //GIGO Support 
+    var gigo_support_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gigo-support/list.html')}}';
+    var gigo_support_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gigo-support/card-list.html')}}';
+    var gigo_support_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gigo-support/view.html')}}';
+	var gigo_support_customer_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gigo-support/customer-detail.html')}}';
 
     //PARTIALS
     // var job_order_common_part_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/common-part-modal.html')}}';
@@ -637,6 +642,10 @@
     var job_card_payable_labour_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/labour.html')}}';
     var job_card_payable_part_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/part.html')}}';
     var job_card_estimate_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/estimate.html')}}';
+
+    //Newly Added For Floor-Supervisor-Template By B.Surya from 09-08-2021
+    var job_card_floor_supervisor_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/floor-supervisor-form.html')}}';
+
     var job_card_estimate_status_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/estimate-status.html')}}';
     var job_card_gatein_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/gatein-detail.html')}}';
     var job_card_vehicle_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/vehicle-detail.html')}}';

@@ -962,6 +962,11 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'Job Card Part Indent',
 
     }).
+    //Added To Change Floor Supervisor
+    when('/job-card/change-floor-supervisor/:job_card_id', {
+        template: '<job-card-change-floor-supervisor-form></job-card-change-floor-supervisor-form>',
+        title: 'Job Card Floor Supervisor Change',
+    }).
     when('/job-card/schedule-maintenance/:job_card_id', {
         template: '<job-card-schedule-maintenance-form></job-card-schedule-maintenance-form>',
         title: 'Job Card Scheduled Maintenance',
@@ -1379,4 +1384,18 @@ app.config(['$routeProvider', function($routeProvider) {
         template: '<mechanic-report></mechanic-report>',
         title: 'Mechanic Report',
     });
+}]);
+
+//GIGO SUPPORT
+app.config(['$routeProvider', function($routeProvider) {
+    $routeProvider.
+    when('/gigo-support/table-list', {
+        template: '<gigo-support-list></gigo-support-list>',
+        title: 'Gigo Support List',
+    }).
+    when('/gigo-support/view/:job_order_id', {
+        template: '<gigo-support-view></gigo-support-view>',
+        title: 'Gigo Support Inward Vehicle - View',
+    })
+    ;
 }]);
