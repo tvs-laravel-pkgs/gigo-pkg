@@ -4849,7 +4849,7 @@ class JobCardController extends Controller
 
                 $message = 'Dear Customer, Kindly click on this link to approve for Revised TVS job order ' . $short_url . $number . ' : ' . $vehicle_no . ' - TVS';
 
-                $msg = sendSMSNotification($customer_mobile, $message);
+                $msg = sendOTPSMSNotification($customer_mobile, $message);
 
                 //Update JobOrder Estimate
                 $job_order_estimate = JobOrderEstimate::where('job_order_id', $job_order->id)->orderBy('id', 'DESC')->first();
@@ -4891,7 +4891,7 @@ class JobCardController extends Controller
 
                 $message = 'OTP is ' . $otp_no . ' for Revised Job Order Estimation. Please show this SMS to Our Floor Supervisor to verify your Revised Job Order Estimate - TVS';
 
-                $msg = sendSMSNotification($customer_mobile, $message);
+                $msg = sendOTPSMSNotification($customer_mobile, $message);
 
                 return response()->json([
                     'success' => true,
