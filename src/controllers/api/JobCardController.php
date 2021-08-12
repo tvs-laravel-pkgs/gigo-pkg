@@ -3105,7 +3105,7 @@ class JobCardController extends Controller
 
             $message = 'Dear Customer, Kindly click on this link to pay for the TVS job order ' . $short_url . ' Vehicle Reg Number : ' . $vehicle_no . ' - TVS';
 
-            $msg = sendSMSNotification($customer_mobile, $message);
+            $msg = sendOTPSMSNotification($customer_mobile, $message);
 
             DB::commit();
 
