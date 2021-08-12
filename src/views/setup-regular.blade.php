@@ -1049,6 +1049,11 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var inward_vehicle_vehicle_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/vehicle-detail-view.html')}}';
     var inward_vehicle_customer_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/customer-detail-view.html')}}';
 
+	//GIGO Support TEMPLATES
+    var gigo_support_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gigo-support/list.html')}}';
+	var gigo_support_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gigo-support/view.html')}}';
+	var gigo_support_customer_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gigo-support/customer-detail.html')}}';
+
 
     //PARTIALS
     var job_order_header_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/job-order-header.html')}}';
@@ -1979,6 +1984,29 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 		});
 	}]);
 
+//GIGO SUPPORT URLS
+app.config(['$routeProvider', function($routeProvider) {
+    $routeProvider.
+    //Gigo Support List
+    when('/gigo-support/table-list', {
+        template: '<gigo-support-list></gigo-support-list>',
+        title: 'Gigo Support List',
+    })
+	when('/gigo-support-list/card-list', {
+		template: '<gigo-support-card-list></gigo-support-card-list>',
+		title: 'Gigo Support - Card List',
+	}).
+	 when('/gigo-support/view/:job_order_id', {
+        template: '<gigo-support-view></gigo-support-view>',
+        title: 'Gigo Support Inward Vehicle - View',
+    }).
+	 when('/gigo-support/customer-detail/:job_order_id/:type_id?', {
+		template: '<gigo-support-customer-detail></gigo-support-customer-detail>',
+		title: 'Inward Vehicle - Customer Detail',
+	})
+    ;
+
+}]);
 	//Report
     var gigo_mechanic_report_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/report/mechanic-list.html')}}';
 </script>

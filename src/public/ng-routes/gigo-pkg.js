@@ -1381,3 +1381,17 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'Mechanic Report',
     });
 }]);
+
+//GIGO SUPPORT
+app.config(['$routeProvider', function($routeProvider) {
+    $routeProvider.
+    when('/gigo-support/table-list', {
+        template: '<gigo-support-list></gigo-support-list>',
+        title: 'Gigo Support List',
+    }).
+    when('/gigo-support/view/:job_order_id', {
+        template: '<gigo-support-view></gigo-support-view>',
+        title: 'Gigo Support Inward Vehicle - View',
+    })
+    ;
+}]);

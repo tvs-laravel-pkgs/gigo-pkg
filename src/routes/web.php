@@ -382,4 +382,12 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 
     Route::post('gigo/mechanic/worklog/export', 'GigoReportController@mechanicWorkLogExport')->name('mechanicWorkLogExport');
 
+    //GIGO SUPPORT
+    Route::get('gigo-support/get-list', 'GigoSupportController@getGateInList')->name('gigoSupportList');
+    Route::get('gigo-support/view/{id}', 'GigoSupportController@view')->name('gigoSupportView');
+    Route::post('gigo-support/form-save', 'GigoSupportController@save')->name('gigoSupportSave');
+    Route::post('gigo-support/vehicle-model/get-search-list', 'GigoSupportController@getVehicleModelSearchList')->name('gigoSupportGetVehicleModel');
+    Route::post('gigo-support/customer/get-search-list', 'GigoSupportController@getCustomerSearchList')->name('gigoSupportCustomerSearchList');
+    Route::get('gigo-support/get-filter-data', 'GigoSupportController@getVehicleInwardFilter')->name('gigoSupportGetVehicleInwardFilter');
+
 });
