@@ -274,6 +274,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
         Route::post('vehicle-inward/job_order-part/get-form-data', 'VehicleInwardController@getJobOrderPartData');
         Route::post('vehicle-inward/add-part/save', 'VehicleInwardController@saveAddtionalPart');
 
+        Route::post('vehicle-inward/add-bulk-part/save', 'VehicleInwardController@saveBulkPart');
+
         Route::post('vehicle-inward/addtional-rot-part/save', 'VehicleInwardController@saveAddtionalRotPart');
 
         //SEND REQUEST TO STOCK INCHARGE FOR ADD PART
