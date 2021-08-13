@@ -274,6 +274,10 @@ app.component('inwardVehicleTableList', {
                 name: 'action',
                 searchable: false
             },
+              {
+                data: 'status',
+                name: 'configs.name'
+            },
             {
                 data: 'date',
                 searchable: false
@@ -306,11 +310,6 @@ app.component('inwardVehicleTableList', {
                 data: 'number',
                 name: 'gate_logs.number'
             },
-            {
-                data: 'status',
-                name: 'configs.name'
-            },
-
             ],
             "infoCallback": function (settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)

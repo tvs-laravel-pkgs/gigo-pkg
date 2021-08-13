@@ -20,6 +20,9 @@ use App\JobOrderPaymentDetail;
 use App\JobOrderWarrantyDetail;
 use App\MailConfiguration;
 use App\Mail\VehicleDeliveryRequestMail;
+use App\Mail\VehicleDeliveryPureWarrentyRequestMail;
+use App\Mail\VehicleDeliverySalesProvMail;
+use App\Mail\VehicleDeliveryAlAmcMail;
 use App\Outlet;
 use App\Payment;
 use App\PaymentMode;
@@ -1072,9 +1075,304 @@ class ManualVehicleDeliveryController extends Controller
 
                         DB::commit();
 
+                         //Send Mail for user
+                         $this->vehiceSalesProvMail($job_order->id, $type = 1);
+
                         $message = "Vehicle delivery request saved successfully!";
 
-                    } else {
+                    } elseif($request->billing_type_id == 11521){
+
+                        $validator = Validator::make($request->all(), [
+                            'job_order_id' => [
+                                'required',
+                                'integer',
+                                'exists:job_orders,id',
+                            ],
+                            'job_card_number' => [
+                                'required',
+                            ],
+                            'warranty_date' => [
+                                'required',
+                            ],
+                            'warranty_parts_amount' => [
+                                'required',
+                            ],
+                            'warranty_labour_amount' => [
+                                'required',
+                            ],
+                            'warranty_number' => [
+                                'unique:job_order_warranty_details,number,' . $request->job_order_id . ',job_order_id',
+                            ],
+                        ]);
+
+                        if ($validator->fails()) {
+                            return response()->json([
+                                'success' => false,
+                                'error' => 'Validation Error',
+                                'errors' => $validator->errors()->all(),
+                            ]);
+                        }
+
+                        $job_order = JobOrder::with('gateLog')->find($request->job_order_id);
+                        if (!$job_order) {
+                            return response()->json([
+                                'success' => false,
+                                'error' => 'Validation Error',
+                                'errors' => [
+                                    'Job Order Not Found!',
+                                ],
+                            ]);
+                        }
+
+                        if (!$job_order->customer_id) {
+                            return response()->json([
+                                'success' => false,
+                                'error' => 'Validation Error',
+                                'errors' => [
+                                    'Customer Not Found!',
+                                ],
+                            ]);
+                        }
+
+                        $gate_in_date = $job_order->gateLog->gate_in_date;
+                        $gate_in_date = date('d-m-Y', strtotime($gate_in_date));
+
+                        if (strtotime($gate_in_date) > strtotime($request->warranty_date)) {
+                            return response()->json([
+                                'success' => false,
+                                'error' => 'Validation Error',
+                                'errors' => [
+                                    'Warranty Date should be greater than Gate In Date',
+                                ],
+                            ]);
+                        }
+
+                        DB::beginTransaction();
+
+                        //Save Warranty Detail
+                        $warranty_detail = JobOrderWarrantyDetail::firstorNew(['job_order_id' => $job_order->id]);
+                        $warranty_detail->number = $request->warranty_number;
+                        $warranty_detail->labour_amount = $request->warranty_labour_amount;
+                        $warranty_detail->parts_amount = $request->warranty_parts_amount;
+                        $warranty_detail->warranty_date = date('Y-m-d', strtotime($request->warranty_date));
+                        $warranty_detail->save();
+
+                        $job_order->billing_type_id = $request->billing_type_id;
+                        $job_order->job_card_number = $request->job_card_number;
+                        $job_order->inward_cancel_reason_id = null;
+                        $job_order->inward_cancel_reason = null;
+                        $job_order->vehicle_payment_status = null;
+                        $job_order->pending_reason_id = null;
+                        $job_order->jv_customer_id = null;
+                        $job_order->pending_remarks = null;
+                        $job_order->vehicle_delivery_requester_id = Auth::user()->id;
+                        $job_order->vehicle_delivery_request_remarks = null;
+                        $job_order->approver_id = null;
+                        $job_order->approved_remarks = null;
+                        $job_order->approved_date_time = null;
+                        $job_order->warranty_reason = $request->warranty_reason;
+                        $job_order->status_id = 8470;
+                        $job_order->labour_discount_amount = null;
+                        $job_order->part_discount_amount = null;
+                        $job_order->is_aggregate_work = null;
+                        $job_order->tvs_one_approval_status_id = null;
+                        $job_order->updated_by_id = Auth::user()->id;
+                        $job_order->updated_at = Carbon::now();
+                        $job_order->save();
+
+                        $job_order->aggregateWork()->sync([]);
+
+                        $gate_pass = $this->generateGatePass($job_order);
+
+                        // $amc_aggregate_coupon = AmcAggregateCoupon::where('job_order_id', $job_order->id)->update(['job_order_id' => null, 'status_id' => 1]);
+
+                        //Delete previous receipt
+                        // $remove_receipt = Receipt::where('receipt_of_id', 7622)->where('entity_id', $job_order->id)->forceDelete();
+
+                        //Delete previous Invoice
+                        // $remove_invoice = GigoManualInvoice::where('invoiceable_type', 'App\JobOrder')->where('invoiceable_id', $job_order->id)->forceDelete();
+
+                        //Delete previous payment
+                        // $remove_payment = JobOrderPaymentDetail::where('job_order_id', $job_order->id)->forceDelete();
+                    
+                        //CREATE DIRECTORY TO STORAGE PATH
+                        $attachment_path = storage_path('app/public/gigo/job_order/attachments/');
+                        Storage::makeDirectory($attachment_path, 0777);
+
+                        //MULTIPLE ATTACHMENT REMOVAL
+                        $attachment_removal_ids = json_decode($request->attachment_removal_ids);
+                        if (!empty($attachment_removal_ids)) {
+                            Attachment::whereIn('id', $attachment_removal_ids)->forceDelete();
+                        }
+                        //ATTACHEMENTS
+                        if (!empty($request->transaction_attachments)) {
+                            foreach ($request->transaction_attachments as $key => $transaction_attachment) {
+                                $value = rand(1, 20);
+                                $image = $transaction_attachment;
+
+                                $file_name_with_extension = $image->getClientOriginalName();
+                                $file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
+                                $extension = $image->getClientOriginalExtension();
+                                $name = $job_order->id . '_Transcation_Attachment_' . date('Y_m_d_h_i_s') . '_' . $value . '.' . $extension;
+
+                                $transaction_attachment->move(storage_path('app/public/gigo/job_order/attachments/'), $name);
+                                $attachement = new Attachment;
+                                $attachement->attachment_of_id = 227; //Job order
+                                $attachement->attachment_type_id = 11342; //GIGO Transcation Attachment
+                                $attachement->entity_id = $job_order->id;
+                                $attachement->name = $name;
+                                $attachement->save();
+                            }
+                        }
+
+                        DB::commit();
+
+                        //Send Mail for user
+                        $this->vehicePureWarrentyMail($job_order->id, $type = 1);
+                        $message = "Vehicle delivery request saved successfully!";
+                    
+        
+                        return response()->json([
+                            'success' => true,
+                            'message' => $message,
+                        ]);
+
+
+                    } elseif($request->billing_type_id == 11522){
+                        $validator = Validator::make($request->all(), [
+                            'job_order_id' => [
+                                'required',
+                                'integer',
+                                'exists:job_orders,id',
+                            ],
+                            'billing_type_id' => [
+                                'required',
+                                'integer',
+                                'exists:configs,id',
+                            ],
+                            'warranty_reason' => [
+                                'required',
+                            ],
+                            'job_card_number' => [
+                                'required',
+                            ],
+                        ]);
+
+                        if ($validator->fails()) {
+                            return response()->json([
+                                'success' => false,
+                                'error' => 'Validation Error',
+                                'errors' => $validator->errors()->all(),
+                            ]);
+                        }
+
+                        $job_order = JobOrder::with('gateLog')->find($request->job_order_id);
+
+                        if (!$job_order) {
+                            return response()->json([
+                                'success' => false,
+                                'error' => 'Validation Error',
+                                'errors' => [
+                                    'Job Order Not Found!',
+                                ],
+                            ]);
+                        }
+
+                        if (!$job_order->customer_id) {
+                            return response()->json([
+                                'success' => false,
+                                'error' => 'Validation Error',
+                                'errors' => [
+                                    'Customer Not Found!',
+                                ],
+                            ]);
+                        }
+
+                        DB::beginTransaction();
+
+                        $job_order->billing_type_id = $request->billing_type_id;
+                        $job_order->job_card_number = $request->job_card_number;
+                        $job_order->inward_cancel_reason_id = null;
+                        $job_order->inward_cancel_reason = null;
+                        $job_order->vehicle_payment_status = null;
+                        $job_order->pending_reason_id = null;
+                        $job_order->jv_customer_id = null;
+                        $job_order->pending_remarks = null;
+                        $job_order->vehicle_delivery_requester_id = Auth::user()->id;
+                        $job_order->vehicle_delivery_request_remarks = null;
+                        $job_order->approver_id = null;
+                        $job_order->approved_remarks = null;
+                        $job_order->approved_date_time = null;
+                        $job_order->warranty_reason = $request->warranty_reason;
+                        $job_order->status_id = 8470;
+                        $job_order->labour_discount_amount = null;
+                        $job_order->part_discount_amount = null;
+                        $job_order->is_aggregate_work = null;
+                        $job_order->tvs_one_approval_status_id = null;
+                        $job_order->updated_by_id = Auth::user()->id;
+                        $job_order->updated_at = Carbon::now();
+                        $job_order->save();
+
+                        $job_order->aggregateWork()->sync([]);
+
+                        $amc_aggregate_coupon = AmcAggregateCoupon::where('job_order_id', $job_order->id)->update(['job_order_id' => null, 'status_id' => 1]);
+
+                        //CREATE DIRECTORY TO STORAGE PATH
+                        $attachment_path = storage_path('app/public/gigo/job_order/attachments/');
+                        Storage::makeDirectory($attachment_path, 0777);
+
+                        //MULTIPLE ATTACHMENT REMOVAL
+                        $attachment_removal_ids = json_decode($request->attachment_removal_ids);
+                        if (!empty($attachment_removal_ids)) {
+                            Attachment::whereIn('id', $attachment_removal_ids)->forceDelete();
+                        }
+
+                        if (!empty($request->transaction_attachments)) {
+                            foreach ($request->transaction_attachments as $key => $transaction_attachment) {
+                                $value = rand(1, 20);
+                                $image = $transaction_attachment;
+
+                                $file_name_with_extension = $image->getClientOriginalName();
+                                $file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
+                                $extension = $image->getClientOriginalExtension();
+                                $name = $job_order->id . '_Transcation_Attachment_' . date('Y_m_d_h_i_s') . '_' . $value . '.' . $extension;
+
+                                $transaction_attachment->move(storage_path('app/public/gigo/job_order/attachments/'), $name);
+                                $attachement = new Attachment;
+                                $attachement->attachment_of_id = 227; //Job order
+                                $attachement->attachment_type_id = 11342; //GIGO Transcation Attachment
+                                $attachement->entity_id = $job_order->id;
+                                $attachement->name = $name;
+                                $attachement->save();
+                            }
+                        }
+
+                        $gate_pass = $this->generateGatePass($job_order);
+
+                        //Delete previous receipt
+                        // $remove_receipt = Receipt::where('receipt_of_id', 7622)->where('entity_id', $job_order->id)->forceDelete();
+
+                        //Delete previous Invoice
+                        $remove_invoice = GigoManualInvoice::where('invoiceable_type', 'App\JobOrder')->where('invoiceable_id', $job_order->id)->forceDelete();
+
+                        //Delete previous payment
+                        $remove_payment = JobOrderPaymentDetail::where('job_order_id', $job_order->id)->forceDelete();
+
+                        DB::commit();
+
+                        //Send Mail for user
+                        $this->vehicePureAmcAlMail($job_order->id, $type = 1);
+                        $message = "Vehicle delivery request saved successfully!";
+
+                         return response()->json([
+                            'success' => true,
+                            'message' => $message,
+                        ]);
+
+
+
+                    }
+                    else {
                         $validator = Validator::make($request->all(), [
                             'job_order_id' => [
                                 'required',
@@ -1641,13 +1939,13 @@ class ManualVehicleDeliveryController extends Controller
             $user_details = MailConfiguration::where('config_id', 3011)->pluck('to_email')->first();
             $to_email = explode(',', $user_details);
             if (!$user_details || count($to_email) == 0) {
-                $to_email = ['0' => 'parthiban@uitoux.in'];
+                $to_email = ['0' => 'surya@uitoux.in'];
             }
 
             $user_details = MailConfiguration::where('config_id', 3011)->pluck('cc_email')->first();
             $cc_email = explode(',', $user_details);
             if (!$user_details || count($cc_email) == 0) {
-                $cc_email = ['0' => 'parthiban@uitoux.in'];
+                $cc_email = ['0' => 'surya@uitoux.in'];
             }
 
             $outlet = $job_order->outlet->ax_name ? $job_order->outlet->ax_name : $job_order->outlet->name;
@@ -1893,5 +2191,261 @@ class ManualVehicleDeliveryController extends Controller
                 ],
             ]);
         }
+    }
+
+    //New Mail 
+    public function vehicePureWarrentyMail($job_order_id, $type){
+        // dd($job_order_id, $type);
+        $job_order = JobOrder::with([
+            'vehicle',
+            'vehicle.model',
+            'vehicle.currentOwner.customer',
+            'vehicle.currentOwner.customer.address',
+            'vehicle.currentOwner.customer.address.country',
+            'vehicle.currentOwner.customer.address.state',
+            'vehicle.currentOwner.customer.address.city',
+            'vehicle.currentOwner.ownershipType',
+            'outlet',
+            'gateLog',
+            'gateLog.createdBy',
+            'gateLog.driverAttachment',
+            'gateLog.kmAttachment',
+            'gateLog.vehicleAttachment',
+            'gateLog.chassisAttachment',
+            'manualDeliveryLabourInvoice',
+            'manualDeliveryPartsInvoice',
+            // 'manualDeliveryReceipt',
+            'status',
+            'outlet',
+            'vehicleDeliveryRequestUser',
+            'warrantyDetail'
+        ])
+            ->select([
+                'job_orders.*',
+                DB::raw('DATE_FORMAT(job_orders.created_at,"%d-%m-%Y") as date'),
+                DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+            ])
+            ->find($job_order_id);
+        if ($job_order) {
+            $user_details = MailConfiguration::where('config_id', 3011)->pluck('to_email')->first();
+            $to_email = explode(',', $user_details);
+            if (!$user_details || count($to_email) == 0) {
+                $to_email = ['0' => 'surya@uitoux.in'];
+            }
+
+            $user_details = MailConfiguration::where('config_id', 3011)->pluck('cc_email')->first();
+            $cc_email = explode(',', $user_details);
+            if (!$user_details || count($cc_email) == 0) {
+                $cc_email = ['0' => 'surya@uitoux.in'];
+            }
+
+            $outlet = $job_order->outlet->ax_name ? $job_order->outlet->ax_name : $job_order->outlet->name;
+
+            $subject = 'GIGO ' . $outlet . ' - ' . $job_order->vehicle->currentOwner->customer->name . ' vehicle need approval for delivery';
+
+            if ($type == 2) {
+                $to_email = [];
+                $user = User::where('id', $job_order->vehicle_delivery_requester_id)->first();
+                $cc_email = [];
+                if ($user && $user->email) {
+                    $to_email = ['0' => $user->email];
+                }
+                if ($job_order->status_id == 8478) {
+                    $subject = 'GIGO ' . $outlet . ' - ' . $job_order->vehicle->currentOwner->customer->name . ' vehicle approved for delivery';
+                } else {
+                    $subject = 'GIGO ' . $outlet . ' - ' . $job_order->vehicle->currentOwner->customer->name . ' vehicle rejected for delivery';
+                }
+            }
+            // dd($subject);
+            if ($to_email) {
+                // $cc_email = [];
+                $approver_view_url = url('/') . '/#!/manual-vehicle-delivery/view/' . $job_order->id;
+                $arr['job_order'] = $job_order;
+                // $arr['subject'] = 'GIGO – Need approval for Vehicle Delivery';
+                $arr['subject'] = $subject;
+                $arr['to_email'] = $to_email;
+                $arr['cc_email'] = $cc_email;
+                $arr['type'] = $type;
+                $arr['approver_view_url'] = $approver_view_url;
+
+                $MailInstance = new VehicleDeliveryPureWarrentyRequestMail($arr);
+                $Mail = Mail::send($MailInstance);
+            }
+        }
+    }
+
+    public function vehiceSalesProvMail($job_order_id, $type){
+        $job_order = JobOrder::with([
+            'vehicle',
+            'vehicle.model',
+            'vehicle.currentOwner.customer',
+            'vehicle.currentOwner.customer.address',
+            'vehicle.currentOwner.customer.address.country',
+            'vehicle.currentOwner.customer.address.state',
+            'vehicle.currentOwner.customer.address.city',
+            'vehicle.currentOwner.ownershipType',
+            'outlet',
+            'gateLog',
+            'gateLog.createdBy',
+            'gateLog.driverAttachment',
+            'gateLog.kmAttachment',
+            'gateLog.vehicleAttachment',
+            'gateLog.chassisAttachment',
+            'manualDeliveryLabourInvoice',
+            'manualDeliveryPartsInvoice',
+            // 'manualDeliveryReceipt',
+            'status',
+            'outlet',
+            'vehicleDeliveryRequestUser',
+        ])
+            ->select([
+                'job_orders.*',
+                DB::raw('DATE_FORMAT(job_orders.created_at,"%d-%m-%Y") as date'),
+                DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+            ])
+            ->find($job_order_id);
+
+        $total_amount = $job_order->manualDeliveryLabourInvoice->amount + $job_order->manualDeliveryPartsInvoice->amount;
+
+        //Total Discount Amount
+        $discount_amount = ($job_order->labour_discount_amount > 0 ? $job_order->labour_discount_amount : 0) + ($job_order->part_discount_amount > 0 ? $job_order->part_discount_amount : 0);
+
+        $job_order->customer_to_paid_amount = $total_amount - $discount_amount;
+
+        $total_amount = number_format($total_amount, 2);
+        $job_order->total_amount = $total_amount;
+
+        $discount_amount = number_format($discount_amount, 2);
+        $job_order->discount_amount = $discount_amount;
+        // dd($total_amount, $discount_amount);
+
+        if ($job_order) {
+            $user_details = MailConfiguration::where('config_id', 3011)->pluck('to_email')->first();
+            $to_email = explode(',', $user_details);
+            if (!$user_details || count($to_email) == 0) {
+                $to_email = ['0' => 'surya@uitoux.in'];
+            }
+
+            $user_details = MailConfiguration::where('config_id', 3011)->pluck('cc_email')->first();
+            $cc_email = explode(',', $user_details);
+            if (!$user_details || count($cc_email) == 0) {
+                $cc_email = ['0' => 'surya@uitoux.in'];
+            }
+
+            $outlet = $job_order->outlet->ax_name ? $job_order->outlet->ax_name : $job_order->outlet->name;
+
+            $subject = 'GIGO ' . $outlet . ' - ' . $job_order->vehicle->currentOwner->customer->name . ' vehicle need approval for delivery';
+
+            if ($type == 2) {
+                $to_email = [];
+                $user = User::where('id', $job_order->vehicle_delivery_requester_id)->first();
+                $cc_email = [];
+                if ($user && $user->email) {
+                    $to_email = ['0' => $user->email];
+                }
+                if ($job_order->status_id == 8478) {
+                    $subject = 'GIGO ' . $outlet . ' - ' . $job_order->vehicle->currentOwner->customer->name . ' vehicle approved for delivery';
+                } else {
+                    $subject = 'GIGO ' . $outlet . ' - ' . $job_order->vehicle->currentOwner->customer->name . ' vehicle rejected for delivery';
+                }
+            }
+            // dd($subject);
+            if ($to_email) {
+                // $cc_email = [];
+                $approver_view_url = url('/') . '/#!/manual-vehicle-delivery/view/' . $job_order->id;
+                $arr['job_order'] = $job_order;
+                // $arr['subject'] = 'GIGO – Need approval for Vehicle Delivery';
+                $arr['subject'] = $subject;
+                $arr['to_email'] = $to_email;
+                $arr['cc_email'] = $cc_email;
+                $arr['type'] = $type;
+                $arr['approver_view_url'] = $approver_view_url;
+
+                $MailInstance = new VehicleDeliverySalesProvMail($arr);
+                $Mail = Mail::send($MailInstance);
+            }
+        }
+    }
+
+    public function vehicePureAmcAlMail($job_order_id, $type){
+        // dd($job_order_id, $type);
+        $job_order = JobOrder::with([
+            'vehicle',
+            'vehicle.model',
+            'vehicle.currentOwner.customer',
+            'vehicle.currentOwner.customer.address',
+            'vehicle.currentOwner.customer.address.country',
+            'vehicle.currentOwner.customer.address.state',
+            'vehicle.currentOwner.customer.address.city',
+            'vehicle.currentOwner.ownershipType',
+            'outlet',
+            'gateLog',
+            'gateLog.createdBy',
+            'gateLog.driverAttachment',
+            'gateLog.kmAttachment',
+            'gateLog.vehicleAttachment',
+            'gateLog.chassisAttachment',
+            'manualDeliveryLabourInvoice',
+            'manualDeliveryPartsInvoice',
+            // 'manualDeliveryReceipt',
+            'status',
+            'outlet',
+            'vehicleDeliveryRequestUser',
+        ])
+            ->select([
+                'job_orders.*',
+                DB::raw('DATE_FORMAT(job_orders.created_at,"%d-%m-%Y") as date'),
+                DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+            ])
+            ->find($job_order_id);
+     
+
+        if ($job_order) {
+            $user_details = MailConfiguration::where('config_id', 3011)->pluck('to_email')->first();
+            $to_email = explode(',', $user_details);
+            if (!$user_details || count($to_email) == 0) {
+                $to_email = ['0' => 'surya@uitoux.in'];
+            }
+
+            $user_details = MailConfiguration::where('config_id', 3011)->pluck('cc_email')->first();
+            $cc_email = explode(',', $user_details);
+            if (!$user_details || count($cc_email) == 0) {
+                $cc_email = ['0' => 'surya@uitoux.in'];
+            }
+
+            $outlet = $job_order->outlet->ax_name ? $job_order->outlet->ax_name : $job_order->outlet->name;
+
+            $subject = 'GIGO ' . $outlet . ' - ' . $job_order->vehicle->currentOwner->customer->name . ' vehicle need approval for delivery';
+
+            if ($type == 2) {
+                $to_email = [];
+                $user = User::where('id', $job_order->vehicle_delivery_requester_id)->first();
+                $cc_email = [];
+                if ($user && $user->email) {
+                    $to_email = ['0' => $user->email];
+                }
+                if ($job_order->status_id == 8478) {
+                    $subject = 'GIGO ' . $outlet . ' - ' . $job_order->vehicle->currentOwner->customer->name . ' vehicle approved for delivery';
+                } else {
+                    $subject = 'GIGO ' . $outlet . ' - ' . $job_order->vehicle->currentOwner->customer->name . ' vehicle rejected for delivery';
+                }
+            }
+            // dd($subject);
+            if ($to_email) {
+                // $cc_email = [];
+                $approver_view_url = url('/') . '/#!/manual-vehicle-delivery/view/' . $job_order->id;
+                $arr['job_order'] = $job_order;
+                // $arr['subject'] = 'GIGO – Need approval for Vehicle Delivery';
+                $arr['subject'] = $subject;
+                $arr['to_email'] = $to_email;
+                $arr['cc_email'] = $cc_email;
+                $arr['type'] = $type;
+                $arr['approver_view_url'] = $approver_view_url;
+
+                $MailInstance = new VehicleDeliveryAlAmcMail($arr);
+                $Mail = Mail::send($MailInstance);
+            }
+        }
+
     }
 }

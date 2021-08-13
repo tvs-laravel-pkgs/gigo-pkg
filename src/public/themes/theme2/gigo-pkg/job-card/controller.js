@@ -64,6 +64,7 @@ app.component('jobCardTableList', {
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
+                { data: 'status', searchable: false },
                 { data: 'created_at', },
                 { data: 'outlet_code', name: 'outlets.code' },
                 { data: 'job_card_number', name: 'job_cards.job_card_number' },
@@ -72,7 +73,7 @@ app.component('jobCardTableList', {
                 { data: 'job_order_type', name: 'service_order_types.name' },
                 { data: 'quote_type', name: 'quote_types.name' },
                 { data: 'service_type', name: 'service_types.name' },
-                { data: 'status', searchable: false },
+              
 
             ],
             "infoCallback": function (settings, start, end, max, total, pre) {
