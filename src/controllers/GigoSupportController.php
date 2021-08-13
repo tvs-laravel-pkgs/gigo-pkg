@@ -129,17 +129,14 @@ class GigoSupportController extends Controller {
 			->where('job_orders.company_id', Auth::user()->company_id)
 		;
 
-		if (!Entrust::can('view-overall-outlets-vehicle-inward')) {
-			if (Entrust::can('view-mapped-outlet-vehicle-inward')) {
+		if (!Entrust::can('gigo-support-all-outlet')) {
+			if (Entrust::can('gigo-support-mapped-outlet')) {
 				$outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
 				array_push($outlet_ids, Auth::user()->employee->outlet_id);
 				$vehicle_inwards->whereIn('job_orders.outlet_id', $outlet_ids);
-			} else if (Entrust::can('view-own-outlet-vehicle-inward')) {
-				$vehicle_inwards->where('job_orders.outlet_id', Auth::user()->employee->outlet_id)
-					->whereRaw("IF (`job_orders`.`status_id` = '8460', `job_orders`.`service_advisor_id` IS  NULL, `job_orders`.`service_advisor_id` = '" . $request->service_advisor_id . "')");
-			} else {
-				$vehicle_inwards->where('job_orders.service_advisor_id', Auth::user()->id);
-			}
+			} else{
+				$vehicle_inwards->where('job_orders.outlet_id', Auth::user()->employee->outlet_id);
+			} 
 		}
 
 		$vehicle_inwards->groupBy('job_orders.id');
@@ -160,12 +157,6 @@ class GigoSupportController extends Controller {
 				$img1_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/view.svg');
 				$output = '';
 				$output .= '<a href="#!/gigo-support/view/' . $vehicle_inward->id . '" id = "" title="View"><img src="' . $img1 . '" alt="View" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
-				if ($vehicle_inward->status_id == 8460) {
-					$output .= '<a href="#!/inward-vehicle/vehicle-detail/' . $vehicle_inward->id . '" id = "" title="Initiate" class="btn btn-secondary-dark btn-xs">Initiate</a>';
-				}
-				if ($vehicle_inward->status_id == 8461 && $vehicle_inward->is_customer_agreed == 1) {
-					$output .= '<a href="#!/inward-vehicle/update-jc/form/' . $vehicle_inward->id . '" id = "" title="Update JC" class="btn btn-secondary-dark btn-xs">Update JC</a>';
-				}
 				return $output;
 			})
 			->make(true);

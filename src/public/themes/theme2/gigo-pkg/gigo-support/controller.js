@@ -444,7 +444,6 @@ app.component('gigoSupportView', {
 
         //Added For Vehicle Detail Save
         $scope.saveVehicleDetails = function (){
-            alert();
             var form_id = '#vehicle_details_form';
             console.log(form_id);
             var form_valid = $(form_id).valid();
