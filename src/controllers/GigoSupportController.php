@@ -354,6 +354,9 @@ class GigoSupportController extends Controller {
 						'integer',
 						'exists:job_orders,id',
 					],
+					'customer_id' => [
+						'required',
+					],
 					'is_registered' => [
 						'required',
 						'integer',
@@ -436,6 +439,9 @@ class GigoSupportController extends Controller {
 						'integer',
 						'exists:configs,id',
 						// 'unique:vehicle_owners,ownership_id,' . $request->id . ',customer_id,vehicle_id,' . $vehicle->id,
+					],
+					'customer_id' => [
+						'required',
 					],
 					// 'code' => [
 					//     'required',
@@ -560,6 +566,31 @@ class GigoSupportController extends Controller {
 
 		}else{//Order Details
 			try {
+				$validator = Validator::make($request->all(), [
+					'job_order_id' => [
+						'required',
+						'integer',
+						'exists:job_orders,id',
+					],
+					'customer_id' => [
+						'required',
+					],
+					'service_contact_no' => [
+						'required',
+						'min:10',
+						'max:10',
+						'string',
+					],
+				
+				]);
+	
+				if ($validator->fails()) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
+					]);
+				}
 
 				DB::beginTransaction();
 
@@ -573,16 +604,7 @@ class GigoSupportController extends Controller {
 						],
 					]);
 				}
-				$validator = Validator::make($request->all(), [
-					'service_contact_no' => [
-						'required',
-						'min:10',
-						'max:10',
-						'string',
-					],
-					
-				]);
-			
+				
 				$job_order->contact_number = $request->service_contact_no;
 				$job_order->save();
 

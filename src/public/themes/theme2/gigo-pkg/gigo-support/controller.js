@@ -252,7 +252,7 @@ app.component('gigoSupportList', {
 //---------------------------------------------------------------------------------------
 app.component('gigoSupportView', {
     templateUrl: gigo_support_view_template_url,
-    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element,CustomerSvc) {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
@@ -270,6 +270,8 @@ app.component('gigoSupportView', {
         console.log($routeParams);
         $scope.job_order_id = $routeParams.job_order_id;
         self.is_sold = 1;
+
+        self.customer_search_type = true;
 
         $scope.customerView = 1;
         $scope.customerEdit = 0;
@@ -318,6 +320,10 @@ app.component('gigoSupportView', {
             $scope.country_list = response.data.country_list;
             $scope.state_list = response.data.state_list;
             $scope.trade_plate_number_list = response.data.trade_plate_number_list;
+
+            if( $scope.job_order.contact_number == null){
+                $("#order_detail_save").hide();
+             }
             
             self.otps = response.data.otps;
             self.country = $scope.job_order.vehicle.current_owner.customer.address.country;
@@ -337,6 +343,54 @@ app.component('gigoSupportView', {
     }
 
     $scope.fetchData();
+
+    $scope.searchCustomer = function (query) {
+        return new Promise(function (resolve, reject) {
+            CustomerSvc.options({
+                filter: {
+                    search: query
+                }
+            })
+                .then(function (response) {
+                    resolve(response.data.options);
+                });
+        });
+    }
+
+    $scope.customerChanged = function (customer) {
+        $scope.customer = {};
+
+        CustomerSvc.read(customer.id)
+            .then(function (response) {
+                console.log(response);
+                $scope.customer = response.data.customer;
+                $country_id = response.data.customer.primary_address ? response.data.customer.primary_address.country_id : '1';
+                if (typeof response.data.customer.primary_address != null && typeof response.data.customer.primary_address != 'string') {
+                    $scope.customer.address = response.data.customer.primary_address;
+                }
+                $scope.countryChanged();
+            });
+    }
+
+
+         $scope.countryChanged = function (country_id) {
+            if (!$scope.customer) {
+                self.state = $scope.job_order.state;
+            } else {
+                self.state = $scope.customer.address.state;
+            }
+            // $scope.$apply();
+        }
+        //Added for order detail save button show or hide
+        $("#service_contact_no").keyup(function () { 
+            if ($(this).val().length >= 10) {
+               $("#order_detail_save").show();
+            }
+            else {
+               $("#order_detail_save").hide();
+            }
+         });
+        
 
         //==========================TAB CHANGE FUNCTION======================================
         var currentTab = 0;

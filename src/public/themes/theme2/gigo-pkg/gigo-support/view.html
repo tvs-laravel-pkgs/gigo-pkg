@@ -461,7 +461,7 @@
                                                     <div class="form-group">
                                                         <label>
                                                             Mobile
-                                                            Number{{job_order.vehicle.current_owner.customer.mobile_no}}
+                                                            Number
                                                             <sup class="mandatory">*</sup>
                                                         </label>
                                                         <input type="text" class="form-control" minlength="10"
@@ -795,10 +795,12 @@
                                                                                 <sup class="mandatory">*</sup>
                                                                             </label>
                                                                             <input type="text"
+                                                                                id="service_contact_no"
                                                                                 class="form-control required"
-                                                                                value="{{job_order.contact_number}}"" ng-model="
+                                                                                value="{{job_order.contact_number}}" ng-model="
                                                                                 job_order.contact_number"
                                                                                 name="service_contact_no"
+                                                                                maxlength="10"
                                                                                 placeholder="Enter Short Name"
                                                                                 autofocus />
                                                                         </div><!-- Feild -->
@@ -1002,7 +1004,7 @@
                                             <div class="col-md-12">
                                                 <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                 <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                <input type="submit" name="save_vehicle_details"
+                                                <input type="submit" name="save_order_details" id="order_detail_save"
                                                     ng-click="saveOrderDetils()" class="btn btn-red" value="Save">
                                             </div><!-- Column -->
                                         </div><!-- Row -->
