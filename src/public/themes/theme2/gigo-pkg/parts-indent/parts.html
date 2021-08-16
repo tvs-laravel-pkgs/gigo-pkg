@@ -122,6 +122,9 @@ input[type=number] {
                                                             <button type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showPartForm(false)" ng-if="!job_order.part_intent_confirmed_date &&  job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227 && job_order.job_card.status_id != 8228 && job_order.job_card.status_id != 8231">
                                                                 Add Part
                                                             </button>
+                                                            <!-- <a href=".#!/part-indent/add-bulk-part/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
+                                                                Add Bulk Parts
+                                                            </a> -->
                                                             <a ng-if="job_order.job_card && (job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8228 && job_order.job_card.status_id != 8231) && part_details.length > 0 " href=".#!/part-indent/issue-part/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
                                                                 Issue Part
                                                             </a>

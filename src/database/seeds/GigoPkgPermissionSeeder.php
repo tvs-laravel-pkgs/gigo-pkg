@@ -2336,6 +2336,32 @@ class GigoPkgPermissionSeeder extends Seeder
                 'name' => 'mechanic-worklog',
                 'display_name' => 'Mechanic Work Log',
             ],
+
+            //GIGO Support
+            [
+                'display_order' => 100,
+                'parent' => 'gigo-pages',
+                'name' => 'gigo-support',
+                'display_name' => 'Support',
+            ],
+            [
+                'display_order' => 1,
+                'parent' => 'gigo-support',
+                'name' => 'gigo-support-all-outlet',
+                'display_name' => 'View All Outlet',
+            ],
+            [
+                'display_order' => 2,
+                'parent' => 'gigo-support',
+                'name' => 'gigo-support-own-outlet',
+                'display_name' => 'View Own Outlet',
+            ],
+            [
+                'display_order' => 2,
+                'parent' => 'gigo-support',
+                'name' => 'gigo-support-mapped-outlet',
+                'display_name' => 'View Mapped Outlet',
+            ],
         ];
         Permission::createFromArrays($permissions);
     }

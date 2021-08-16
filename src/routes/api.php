@@ -274,6 +274,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
         Route::post('vehicle-inward/job_order-part/get-form-data', 'VehicleInwardController@getJobOrderPartData');
         Route::post('vehicle-inward/add-part/save', 'VehicleInwardController@saveAddtionalPart');
 
+        Route::post('vehicle-inward/add-bulk-part/save', 'VehicleInwardController@saveBulkPart');
+
         Route::post('vehicle-inward/addtional-rot-part/save', 'VehicleInwardController@saveAddtionalRotPart');
 
         //SEND REQUEST TO STOCK INCHARGE FOR ADD PART
@@ -417,6 +419,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
         Route::post('jobcard/order-detial/get', 'JobCardController@getOrderDetail');
         Route::post('jobcard/inventory/get', 'JobCardController@getInventory');
         Route::post('jobcard/capture-voc/get', 'JobCardController@getCaptureVoc');
+
+        //FloorSupervisor-Get-Details Added by B.Surya from 09-08-2021
+        Route::post('jobcard/floor-supervisor-get-details/get', 'JobCardController@floorSupervisorGetDetails');
 
         //Material-GatePass Details Save
         Route::post('save-material-gate-pass-detail', 'JobCardController@saveMaterialGatePassDetail');

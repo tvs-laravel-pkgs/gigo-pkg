@@ -1,0 +1,1067 @@
+<!-- Content Wrap -->
+<style type="text/css">
+    .strikethrough {
+        text-decoration: line-through;
+    }
+</style>
+<div class="content-wrap cndn-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/gigo-support/table-list" type="button" class="btn-back btn-img"><img
+                            class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content title-block">
+                    <h1 class="title"><b>GIGO Support Edit</b></h1>
+                    <p class="subtitle">GIGO Support / View</p>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <!-- <form id="inward_vehicle_form" autocomplete="off"> -->
+        <input type="hidden" name="id" value="{{$ctrl.job_order.id}}">
+        <div class="page-tab-form pb-70">
+            <div class="page-tab-form-top">
+                <div class="page-tab-form-top-left">
+                    <div class="page-tab-form-top-left-title">General Info</div>
+                    <div class="page-tab-form-top-left-link">
+                        <a class="btn-link-arrow side-tab-toggle">
+                            <i class="ionicons ion-md-arrow-round-back"></i>
+                            <i class="ionicons ion-md-arrow-round-forward"></i>
+                        </a>
+                    </div>
+                    <div class="page-tab-form-top-left-info">
+                        <span class="page-tab-form-top-left-info-content">
+                            <b>
+                                {{job_order.vehicle.registration_number}}
+                            </b>
+                            <span ng-if="job_order.vehicle.model.model_number">
+                                | {{job_order.vehicle.model.model_number}}
+                            </span>
+                            <span ng-if="job_order.driver_name">
+                                | {{job_order.driver_name}}
+                            </span>
+                            | {{job_order.date}}, {{job_order.time}}
+                        </span>
+                    </div>
+                </div><!-- Page Tab Form Top Left -->
+                <div class="page-tab-form-top-right">
+                    <div class="page-tab-form-top-right-info">
+                            Status : {{job_order.status.name}}
+                        </div>
+                </div><!-- Page Tab Form Top Right -->
+            </div><!-- Page Tab Form Top -->
+            <div class="tab-form-wrap type-2 side-tab-open">
+                <div class="tab-form-header side-tab-open">
+                    <div class="tab-header">
+                        <!-- Filters -->
+                        <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300">
+                            <ul class="nav nav-pills cndn-tabs">
+                                <li class="active">
+                                    <a class="filter active" data-target="#vehicle_details" data-toggle="tab"
+                                        aria-expanded="true">
+                                        Vehicle Details
+                                    </a>
+                                </li>
+                                <li>
+                                    <a data-target="#customer_details" data-toggle="tab" aria-expanded="true"
+                                        class="filter">
+                                        Customer Details
+                                    </a>
+                                </li>
+                                <li>
+                                    <a data-target="#order_details" data-toggle="tab" aria-expanded="true"
+                                        class="filter">
+                                        Order Details
+                                    </a>
+                                </li>
+                                <li>
+                                    <a data-target="#otps" data-toggle="tab" aria-expanded="true"
+                                        class="filter">
+                                        Otps
+                                    </a>
+                                </li>
+                            </ul>
+                        </div><!-- Filters -->
+                    </div><!-- Tab Header -->
+                </div><!-- Tab Form Header -->
+                <div class="tab-form-body side-tab-open">
+                    <div class="tab-content">
+                        <!-- TAB PANEL -->
+                        <div class="tab-pane fade in active" id="vehicle_details" data-animation="fadeInUp"
+                            data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12" ng-if="vehicleDetailView == 1">
+                                        <h5 class="color-primary mb-10"><b>Vehicle Details</b></h5>
+                                        <ul class="view-row mb-no">
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">
+                                                    Registration Type
+                                                </span>
+                                                <span class="view-data-list-value">
+                                                    <b ng-if="job_order.vehicle.is_registered == 1">
+                                                        Registered Vehicle
+                                                    </b>
+                                                    <b ng-if="job_order.vehicle.is_registered != 1">
+                                                        Un-Registered Vehicle
+                                                    </b>
+                                                </span>
+                                            </li>
+                                            <li class="view-col-3" ng-if="job_order.vehicle.is_registered == 1">
+                                                <span class="view-col-label">
+                                                    Registration No
+                                                </span>
+                                                <span class="view-col-value">
+                                                    <b>
+                                                        {{job_order.vehicle.registration_number}}
+                                                    </b>
+                                                </span>
+                                            </li>
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">
+                                                    Vehicle Model
+                                                </span>
+                                                <span class="view-col-value">
+                                                    <b>
+                                                        {{job_order.vehicle.model.model_name}}
+                                                        /{{job_order.vehicle.model.model_number}}
+                                                    </b>
+                                                </span>
+                                            </li>
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">
+                                                    Engine Number
+                                                </span>
+                                                <span class="view-col-value">
+                                                    {{job_order.vehicle.engine_number}}
+                                                </span>
+                                            </li>
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">
+                                                    Chassis / VIN Number
+                                                </span>
+                                                <span class="view-data-list-value">
+                                                    <b>
+                                                        {{job_order.vehicle.chassis_number}}
+                                                    </b>
+                                                </span>
+                                            </li>
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">
+                                                    Is Sold ?
+                                                </span>
+                                                <span class="view-data-list-value">
+                                                    <b ng-if="job_order.vehicle.is_sold == 1">
+                                                        Yes
+                                                    </b>
+                                                    <b ng-if="job_order.vehicle.is_sold != 1">
+                                                        No
+                                                    </b>
+                                                </span>
+                                            </li>
+                                            <li class="view-col-3" ng-if="job_order.vehicle.is_sold == 1">
+                                                <span class="view-col-label">
+                                                    Sold Date
+                                                </span>
+                                                <span class="view-col-value">
+                                                    {{job_order.vehicle.sold_date}}
+                                                </span>
+                                            </li>
+                                        </ul>
+                                    </div><!-- Column -->
+                                    <div class="col-md-12" ng-if="vehicleDetailEdit == 1">
+                                        <form id="vehicle_details_form">
+                                            <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+                                            <input type="hidden" name="type_id" value="1">
+                                            <h5 class="color-primary mb-10">
+                                                <b>
+                                                    Vehicle Details
+                                                </b>
+                                            </h5>
+                                            <hr class="hr-15"><!-- Separater -->
+                                            <input type="hidden" name="id" value="{{job_order.vehicle.id}}">
+                                            <div class="row" id="vehicle_edit">
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Registration Type <sup class="mandatory">*</sup></label>
+                                                        <div class="common-radio-button type-4">
+                                                            <input type="radio" id="registered" name="is_registered"
+                                                                ng-model="job_order.vehicle.is_registered" ng-value="1"
+                                                                ng-checked="job_order.is_registered == 1">
+                                                            <label for="registered">Registered</label>
+                                                            <input type="radio" id="unregistered" name="is_registered"
+                                                                ng-model="job_order.vehicle.is_registered" ng-value="0">
+                                                            <label for="unregistered">Un Registered</label>
+                                                        </div>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Registration Number
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <input type="text" class="form-control registration_number required"
+                                                            minlength="8" maxlength="13"
+                                                            placeholder="Enter Registration No" autocomplete="off"
+                                                            ng-model="job_order.vehicle.registration_number"
+                                                            name="registration_number"
+                                                            oninput="this.value = this.value.toUpperCase()" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Vehicle Model
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <md-autocomplete
+                                                            md-items="option in $ctrl.searchVehicleModel($ctrl.modelSearchText)"
+                                                            md-selected-item="job_order.vehicle.model"
+                                                            md-selected-item-change="selectedVehicleModel(job_order.vehicle.model.id)"
+                                                            md-search-text="$ctrl.modelSearchText"
+                                                            md-item-text="option.model_name" md-min-length="3"
+                                                            placeholder="Vehicle Model Name" md-autofocus>
+                                                            <md-item-template>
+                                                                <span>
+                                                                    {{option.model_name}} / {{option.number}}
+                                                                </span>
+                                                            </md-item-template>
+                                                            <md-not-found>
+                                                                No Vehicle Model matching "{{$ctrl.modelSearchText}}"
+                                                                were found.
+                                                            </md-not-found>
+                                                        </md-autocomplete>
+                                                        <input type="hidden" name="model_id"
+                                                            value="{{job_order.vehicle.model.id}}">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Engine Number
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <input type="text" class="form-control" minlength="7"
+                                                            placeholder="Enter Engine No" autocomplete="off"
+                                                            ng-model="job_order.vehicle.engine_number"
+                                                            name="engine_number" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Chassis / VIN Number
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <input type="text" class="form-control required" minlength="8"
+                                                            maxlength="17" placeholder="Enter Chasis No"
+                                                            autocomplete="off"
+                                                            ng-model="job_order.vehicle.chassis_number"
+                                                            name="chassis_number" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Is Sold ? <sup class="mandatory">*</sup></label>
+                                                        <div class="common-radio-button type-4">
+                                                            <input type="radio" id="sold" name="is_sold"
+                                                                ng-model="$ctrl.is_sold" ng-value="1">
+                                                            <label for="sold">Yes</label>
+                                                            <input type="radio" id="not_sold" name="is_sold"
+                                                                ng-model="$ctrl.is_sold" ng-value="0">
+                                                            <label for="not_sold">No</label>
+                                                        </div>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3" ng-if="$ctrl.is_sold == 1">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Sold Date
+                                                            <sup class="mandatory">
+                                                                *
+                                                            </sup>
+                                                        </label>
+                                                        <div class="input-group date" data-provide="datepicker"
+                                                            data-date-end-date="0d">
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Select Sold Date"
+                                                                ng-model="job_order.vehicle.sold_date"
+                                                                name="sold_date" />
+                                                            <div class="input-group-addon">
+                                                                <img class="img-responsive"
+                                                                    src="./public/theme/img/content/calender-gray-icon.svg"
+                                                                    alt="Calendar Image" />
+                                                            </div>
+                                                        </div><!-- Input Group -->
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                            </div><!-- Row -->
+                                    </div>
+                                        <button ng-hide="vehicleDetailEdit == 1"
+                                            class="btn btn-secondary-dark btn-md btn-square"
+                                            ng-click="toEditVehicle()">Edit</button>
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a ng-hide="vehicleDetailEdit == 1"
+                                                        class="btn btn-nxt btn-secondary-dark btn-min-wdth">Next</a>
+                                                    <input type="button" name="cancel_save_vehicle_details"
+                                                        ng-if="vehicleDetailEdit == 1" ng-click="toCancelEditVehicle()"
+                                                        class="btn btn-red" value="Cancel">
+                                                    <input type="submit" name="save_vehicle_details"
+                                                        ng-if="vehicleDetailEdit == 1" ng-click="saveVehicleDetails()"
+                                                        class="btn btn-red" value="Save">
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </form>
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                        <div class="tab-pane fade" id="customer_details" data-animation="fadeInUp"
+                            data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12" ng-if="customerView == 1">
+                                        <h5 class="color-primary mb-10"><b>Customer Details</b></h5>
+                                        <ul class="view-row mb-no">
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">
+                                                    Code
+                                                </span>
+                                                <span class="view-data-list-value">
+                                                    <b>
+                                                        {{job_order.vehicle.current_owner.customer.code}}
+                                                    </b>
+                                                </span>
+                                            </li>
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">
+                                                    Name
+                                                </span>
+                                                <span class="view-data-list-value">
+                                                    <b>
+                                                        {{job_order.vehicle.current_owner.customer.name}}
+                                                    </b>
+                                                </span>
+                                            </li>
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">
+                                                    Mobile No
+                                                </span>
+                                                <span class="view-col-value">
+                                                    <b>
+                                                        {{job_order.vehicle.current_owner.customer.mobile_no}}
+                                                    </b>
+                                                </span>
+                                            </li>
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">
+                                                    Email
+                                                </span>
+                                                <span class="view-col-value">
+                                                    <b>
+                                                        {{job_order.vehicle.current_owner.customer.email}}
+                                                    </b>
+                                                </span>
+                                            </li>
+                                            <li class="view-col-3 ptb-2">
+                                                <span class="view-col-label">
+                                                    Address
+                                                </span>
+                                                <span class="view-col-value">
+                                                    {{job_order.vehicle.current_owner.customer.address.address_line1}},{{job_order.vehicle.current_owner.customer.address.address_line2}},{{job_order.vehicle.current_owner.customer.address.city.name}},{{job_order.vehicle.current_owner.customer.address.state.name}},{{job_order.vehicle.current_owner.customer.address.pincode}},{{job_order.vehicle.current_owner.customer.address.country.name}}.
+                                                </span>
+                                            </li>
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">
+                                                    GST No
+                                                </span>
+                                                <span class="view-col-value">
+                                                    {{job_order.vehicle.current_owner.customer.gst_number}}
+                                                </span>
+                                            </li>
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">
+                                                    PAN
+                                                    <!-- No -->
+                                                </span>
+                                                <span class="view-data-list-value">
+                                                    <b>
+                                                        {{job_order.vehicle.current_owner.customer.pan_number}}
+                                                    </b>
+                                                </span>
+                                            </li>
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">
+                                                    Ownership
+                                                </span>
+                                                <span class="view-data-list-value">
+                                                    <b>
+                                                        {{job_order.vehicle.current_owner.ownership_type.name}}
+                                                    </b>
+                                                </span>
+                                            </li>
+                                            <li class="view-col-3" ng-if="job_order.total_due_amount > 0">
+                                                <span class="view-col-label">
+                                                    Customer Due Amount
+                                                </span>
+                                                <span class="view-data-list-value mandatory">
+                                                    <b>
+                                                        <img class="img-responsive img-inline"
+                                                            src="./public/theme/img/table/cndn/table-rupee.svg"
+                                                            alt="Rupee" /> {{job_order.total_due_amount | number:2}}
+                                                    </b>
+                                                </span>
+                                            </li>
+                                        </ul>
+                                    </div><!-- Column -->
+                                    <div class="col-md-12" ng-if="customerEdit == 1">
+                                        <form id="customer_details_form">
+                                            <input type="hidden" name="type_id" value="2">
+                                            <h5 class="color-primary mb-10">
+                                                <b>
+                                                    Customer Details
+                                                </b>
+                                            </h5>
+                                            <hr class="hr-15"><!-- Separater -->
+                                            <div id="customer-detail">
+                                            </div> <!-- customer-detail -->
+                                            <div class="row">
+                                                <input type="hidden" name="customer_id" value="{{customer.id}}">
+                                                <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Code
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <input type="text" class="form-control required"
+                                                            placeholder="Enter Code" autocomplete="off"
+                                                            ng-model="customer.code" name="code" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Name
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <input type="text" class="form-control" placeholder="Enter Name"
+                                                            autocomplete="off" ng-model="customer.name" name="name" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Mobile
+                                                            Number
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <input type="text" class="form-control" minlength="10"
+                                                            maxlength="10"
+                                                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                                            placeholder="Enter Mobile No" autocomplete="off"
+                                                            maxlength="10" ng-model="customer.mobile_no"
+                                                            name="mobile_no" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Email
+                                                        </label>
+                                                        <input type="text" class="form-control"
+                                                            placeholder="Enter Email" autocomplete="off"
+                                                            ng-model="customer.email" name="email" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Address Line 1
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <input type="text" class="form-control"
+                                                            placeholder="Enter Address" autocomplete="off"
+                                                            ng-model="customer.address.address_line1"
+                                                            name="address_line1" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Address Line 2
+                                                        </label>
+                                                        <input type="text" class="form-control"
+                                                            placeholder="Enter Address" autocomplete="off"
+                                                            maxlength="64" ng-model="customer.address.address_line2"
+                                                            name="address_line2" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Country
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <md-select ng-model="$ctrl.country" placeholder="Select Country"
+                                                            data-md-container-class="selectdemoSelectHeader"
+                                                            ng-model-options="{trackBy: '$value.id' }"
+                                                            ng-change="countryChanged($ctrl.country.id)">
+                                                            <md-select-header class="demo-select-header">
+                                                                <input ng-model="searchCountry" type="search"
+                                                                    placeholder="Search for a country.."
+                                                                    class="demo-header-searchbox md-text"
+                                                                    ng-keydown="$event.stopPropagation()">
+                                                            </md-select-header>
+                                                            <md-optgroup>
+                                                                <md-option ng-value="country"
+                                                                    ng-repeat="country in country_list | filter:searchCountry">
+                                                                    {{country.name}}
+                                                                </md-option>
+                                                            </md-optgroup>
+                                                        </md-select>
+                                                        <input type="hidden" name="country_id"
+                                                            value="{{$ctrl.country.id}}">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            State
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <md-select ng-model="$ctrl.state" placeholder="Select State"
+                                                            data-md-container-class="selectdemoSelectHeader"
+                                                            ng-model-options="{trackBy: '$value.id' }">
+                                                            <md-select-header class="demo-select-header">
+                                                                <input ng-model="searchState" type="search"
+                                                                    placeholder="Search for a state.."
+                                                                    class="demo-header-searchbox md-text"
+                                                                    ng-keydown="$event.stopPropagation()">
+                                                            </md-select-header>
+                                                            <md-optgroup>
+                                                                <md-option ng-value="state"
+                                                                    ng-repeat="state in state_list | filter:searchState">
+                                                                    {{state.name}}
+                                                                </md-option>
+                                                            </md-optgroup>
+                                                        </md-select>
+                                                        <input type="hidden" name="state_id" value="{{$ctrl.state.id}}">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            City
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <md-autocomplete
+                                                            md-items="option in $ctrl.searchCity($ctrl.citySearchText)"
+                                                            md-selected-item="customer.address.city"
+                                                            md-search-text="$ctrl.citySearchText"
+                                                            md-item-text="option.name" md-min-length="3"
+                                                            placeholder="City Name" md-autofocus>
+                                                            <md-item-template>
+                                                                <span>
+                                                                    {{option.name}}
+                                                                </span>
+                                                            </md-item-template>
+                                                            <md-not-found>
+                                                                No City matching "{{$ctrl.citySearchText}}" were found.
+                                                            </md-not-found>
+                                                        </md-autocomplete>
+                                                        <input type="hidden" id="city_id" name="city_id"
+                                                            value="{{customer.address.city.id}}">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            PIN Code
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <input type="text" class="form-control" minlength="6"
+                                                            maxlength="6"
+                                                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                                            maxlength="6" placeholder="Enter PIN Code"
+                                                            autocomplete="off" ng-model="customer.address.pincode"
+                                                            name="pincode" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            GST No
+                                                        </label>
+                                                        <input type="text" class="form-control" minlength="15"
+                                                            maxlength="15"
+                                                            value=" {{job_order.vehicle.current_owner.customer.pan_number}}"
+                                                            placeholder="Enter GST No" autocomplete="off"
+                                                            ng-model="customer.gst_number" name="gst_number" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            PAN
+                                                            <!-- No -->
+                                                        </label>
+                                                        <input type="text" class="form-control" placeholder="Enter PAN"
+                                                            autocomplete="off" ng-model="customer.pan_number"
+                                                            minlength="10" maxlength="10" name="pan_number" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Ownership
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <md-select ng-model="ownership_type_id"
+                                                            placeholder="Select Ownership"
+                                                            data-md-container-class="selectdemoSelectHeader">
+                                                            <md-select-header class="demo-select-header">
+                                                                <input ng-model="searchOwnership" type="search"
+                                                                    placeholder="Search for a ownership.."
+                                                                    class="demo-header-searchbox md-text"
+                                                                    ng-keydown="$event.stopPropagation()">
+                                                            </md-select-header>
+                                                            <md-optgroup>
+                                                                <md-option ng-value="ownership_type.id"
+                                                                    ng-repeat="ownership_type in ownership_type_list | filter:searchOwnership">
+                                                                    {{ownership_type.name}}
+                                                                </md-option>
+                                                            </md-optgroup>
+                                                        </md-select>
+                                                        <input type="hidden" name="ownership_type_id"
+                                                            value="{{ownership_type_id}}">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                            </div><!-- Row -->
+                                    </div><!-- Column -->
+                                    <button ng-hide="customerEdit == 1" class="btn btn-secondary-dark btn-md btn-square"
+                                        ng-click="toEditCustomer()">Edit</button>
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a ng-hide="customerEdit == 1"
+                                                    class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <a ng-hide="customerEdit == 1"
+                                                    class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                <input type="button" name="cancel_save_customer_details"
+                                                    ng-if="customerEdit == 1" ng-click="toCancelEditCustomer()"
+                                                    class="btn btn-red" value="Cancel">
+                                                <input type="submit" name="save_customer_details"
+                                                    ng-if="customerEdit == 1" ng-click="saveCustomer()"
+                                                    class="btn btn-red" value="Save">
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </form>
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                        <div class="tab-pane fade" id="order_details" data-animation="fadeInUp"
+                            data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h5 class="color-primary mb-10"><b>Order Details</b></h5>
+                                        <hr class="hr-15"><!-- Separater -->
+                                        <div class="panel-group" id="accordion">
+                                            <div class="panel panel-default type-3">
+                                                <div class="panel-heading">
+                                                    <a class="panel-title in" data-toggle="collapse"
+                                                        data-parent="#accordion" data-target="#collapse1">
+                                                        Driver Details
+                                                        <span class="arrow"></span>
+                                                    </a>
+                                                </div>
+                                                <div id="collapse1" class="panel-collapse collapse in">
+                                                    <div class="panel-body">
+                                                        <div class="view-details mb-no">
+                                                            <ul class="view-row pb-none">
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Name
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <b>
+                                                                            {{job_order.driver_name}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Mobile No
+                                                                    </span>
+                                                                    <span class="view-col-value">
+                                                                        <b>
+                                                                            {{job_order.driver_mobile_number}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                            </ul>
+                                                        </div><!-- View Data -->
+                                                        <!-- <a class="btn btn-secondary-dark btn-md btn-square"
+                                                            href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}"
+                                                            ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-order-details-edit')">
+                                                            Edit
+                                                        </a> -->
+                                                    </div><!-- Panel Body -->
+                                                </div><!-- Panel Collapse -->
+                                            </div><!-- Panel -->
+                                            <div class="panel panel-default type-3">
+
+                                                <div class="panel-heading">
+                                                    <a class="panel-title" data-toggle="collapse"
+                                                        data-parent="#accordion" data-target="#collapse2">
+                                                        Job Order Details
+                                                        <span class="arrow"></span>
+                                                    </a>
+                                                </div>
+                                                <div id="collapse2" class="panel-collapse collapse">
+                                                    <div class="panel-body">
+                                                        <div class="view-details mb-no">
+                                                            <ul class="view-row pb-none">
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Job Order Type
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <b>
+                                                                            {{job_order.type.name}}
+                                                                        </b></span>
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Quote Type
+                                                                    </span>
+                                                                    <span class="view-col-value">
+                                                                        <b>
+                                                                            {{job_order.quote_type.name}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Service Schedule
+                                                                    </span>
+                                                                    <span class="view-col-value">
+                                                                        <b>
+                                                                            {{job_order.service_type.name}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3"
+                                                                    ng-if="job_order.km_reading_type.id == 8040">
+                                                                    <span class="view-col-label">
+                                                                        KM Reading
+                                                                    </span>
+                                                                    <span class="view-col-value">
+                                                                        <b>
+                                                                            {{job_order.km_reading}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3"
+                                                                    ng-if="job_order.km_reading_type.id == 8041">
+                                                                    <span class="view-col-label">
+                                                                        HR Reading
+                                                                    </span>
+                                                                    <span class="view-col-value">
+                                                                        <b>
+                                                                            {{job_order.hr_reading}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <form id="order_detail_form">
+                                                                        <input type="hidden" name="customer_id"
+                                                                            value="{{customer.id}}">
+                                                                        <input type="hidden" name="job_order_id"
+                                                                            value="{{job_order.id}}">
+                                                                        <div class="input-text form-group">
+                                                                            <label>
+                                                                                Service Contact No.
+                                                                                <sup class="mandatory">*</sup>
+                                                                            </label>
+                                                                            <input type="text"
+                                                                                id="service_contact_no"
+                                                                                class="form-control required"
+                                                                                value="{{job_order.contact_number}}" ng-model="
+                                                                                job_order.contact_number"
+                                                                                name="service_contact_no"
+                                                                                maxlength="10"
+                                                                                placeholder="Enter Short Name"
+                                                                                autofocus />
+                                                                        </div><!-- Feild -->
+                                                                </li>
+                                                                <li class="view-col-3"
+                                                                    ng-if="job_order.is_appointment == 1">
+                                                                    <span class="view-col-label">
+                                                                        Is Appointment ?
+                                                                    </span>
+                                                                    <span class="view-col-value">
+                                                                        <b>
+                                                                            Yes
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3"
+                                                                    ng-if="job_order.is_appointment != 1">
+                                                                    <span class="view-col-label">
+                                                                        Is Appointment ?
+                                                                    </span>
+                                                                    <span class="view-col-value">
+                                                                        <b>
+                                                                            No
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3"
+                                                                    ng-if="job_order.is_appointment == 1">
+                                                                    <span class="view-col-label">
+                                                                        CRE Name
+                                                                    </span>
+                                                                    <span class="view-col-value">
+                                                                        <b>
+                                                                            {{job_order.cre_name}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3"
+                                                                    ng-if="job_order.is_appointment == 1">
+                                                                    <span class="view-col-label">
+                                                                        Call Date
+                                                                    </span>
+                                                                    <span class="view-col-value">
+                                                                        <b>
+                                                                            {{job_order.call_date}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                            </ul>
+                                                        </div><!-- View Data -->
+                                                        <!-- <a class="btn btn-secondary-dark btn-md btn-square"
+                                                            href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}"
+                                                            ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-order-details-edit')">
+                                                            Edit
+                                                        </a> -->
+                                                    </div><!-- Panel Body -->
+                                                </div><!-- Panel Collapse -->
+                                            </div><!-- Panel -->
+                                            <div class="panel panel-default type-3">
+                                                <div class="panel-heading">
+                                                    <a class="panel-title" data-toggle="collapse"
+                                                        data-parent="#accordion" data-target="#collapse3">
+                                                        Previous Job Card Details
+                                                        <span class="arrow"></span>
+                                                    </a>
+                                                </div>
+                                                <div id="collapse3" class="panel-collapse collapse">
+                                                    <div class="panel-body"
+                                                        ng-if="job_order.vehicle.last_job_order && job_order.vehicle.last_job_order.job_card">
+                                                        <div class="view-details mb-no">
+                                                            <ul class="view-row pb-none">
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Job Card No
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <b>
+                                                                            {{job_order.vehicle.last_job_order.job_card.job_card_number}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Date & Time
+                                                                    </span>
+                                                                    <span class="view-col-value">
+                                                                        <b>
+                                                                            {{job_order.vehicle.last_job_order.job_card.created_at}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        KM Reading
+                                                                    </span>
+                                                                    <span class="view-col-value">
+                                                                        <b>
+                                                                            {{job_order.vehicle.last_job_order.km_reading}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label"></span>
+                                                                    <span class="view-col-value"><b></b></span>
+                                                                </li>
+                                                            </ul>
+                                                        </div><!-- View Data -->
+                                                        <!-- <a href=".#!/job-card/view/{{job_order.vehicle.last_job_order.job_card.id}}" class="btn btn-secondary-dark btn-md btn-square">View</a> -->
+                                                        <a href=".#!/job-card/bay-view/{{job_order.vehicle.last_job_order.job_card.id}}"
+                                                            target="_blank"
+                                                            class="btn btn-secondary-dark btn-md btn-square">View</a>
+                                                        <a href=".#!/vehicle/view/{{job_order.vehicle.id}}"
+                                                            class="btn btn-secondary-dark btn-md btn-square">
+                                                            View History
+                                                        </a>
+                                                    </div><!-- Panel Body -->
+                                                    <div class="panel-body"
+                                                        ng-if="!job_order.vehicle.last_job_order || !job_order.vehicle.last_job_order.job_card">
+                                                        No Previous Job Card Details Found
+                                                    </div><!-- Panel Body -->
+                                                </div><!-- Panel Collapse -->
+                                            </div><!-- Panel -->
+                                            <div class="panel panel-default type-3">
+                                                <div class="panel-heading">
+                                                    <a class="panel-title" data-toggle="collapse"
+                                                        data-parent="#accordion" data-target="#collapse4">
+                                                        Documents
+                                                        <span class="arrow"></span>
+                                                    </a>
+                                                </div>
+                                                <div id="collapse4" class="panel-collapse collapse">
+                                                    <div class="panel-body">
+                                                        <div class="view-details mb-no">
+                                                            <ul class="view-row pb-none">
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Licence Expiry Date
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <b>
+                                                                            {{job_order.driver_license_expiry_date}}
+                                                                        </b></span>
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Insurance Expiry Date
+                                                                    </span>
+                                                                    <span class="view-col-value">
+                                                                        <b>
+                                                                            {{job_order.insurance_expiry_date }}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                            </ul>
+                                                        </div><!-- View Data -->
+                                                        <div class="mb-15"></div><!-- Spacing -->
+                                                        <div class="multi-docs">
+                                                            <table class="table-info">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td class="text-center">Driver License</td>
+                                                                        <td></td>
+                                                                        <td class="text-center">Insurance</td>
+                                                                        <td></td>
+                                                                        <td class="text-center">RC Book</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td><img ng-if="job_order.driver_license_attachment"
+                                                                                class="img-responsive"
+                                                                                src="storage/app/public/gigo/job_order/attachments/{{job_order.driver_license_attachment.name}}"
+                                                                                alt="Driver License"
+                                                                                ng-if="job_order.driver_license_attachment">
+                                                                        </td>
+                                                                        <td></td>
+                                                                        <td><img ng-if="job_order.insurance_attachment"
+                                                                                class="img-responsive"
+                                                                                src="storage/app/public/gigo/job_order/attachments/{{job_order.insurance_attachment.name}}"
+                                                                                alt="Insurance" /></td>
+                                                                        <td>&nbsp;&nbsp;</td>
+                                                                        <td><img ng-if="job_order.rc_book_attachment"
+                                                                                class="img-responsive"
+                                                                                src="storage/app/public/gigo/job_order/attachments/{{job_order.rc_book_attachment.name}}"
+                                                                                alt="RC Book" /></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                        <div class="mb-10"></div><!-- Spacing -->
+                                                        <!-- <a class="btn btn-secondary-dark btn-md btn-square"
+                                                            href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}"
+                                                            ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-order-details-edit')">
+                                                            Edit
+                                                        </a> -->
+                                                    </div><!-- Panel Body -->
+                                                </div><!-- Panel Collapse -->
+                                            </div><!-- Panel -->
+                                        </div><!-- Panel Group -->
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                <input type="submit" name="save_order_details" id="order_detail_save"
+                                                    ng-click="saveOrderDetils()" class="btn btn-red" value="Save">
+                                            </div><!-- Column -->
+                                        </div><!-- Row -->
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </form>
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                        <div class="tab-pane fade" id="otps" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <h5 class="color-primary mb-10">
+                                        <b>
+                                           Received Otps
+                                        </b>
+                                    </h5>
+                                    <hr class="hr-15">
+                                    <div class="col-md-12">
+                                        <table class="table table-inside-form type-2 table-border-2 white-space-unset"
+                                            id="example-datatable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Outlet</th>
+                                                    <th>Job Order No</th>
+                                                    <th>Type</th>
+                                                    <th>Otp</th>
+                                                    <th>Generated By</th>
+                                                    <th>Created At</th>
+                                                    <th>Expired At</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="otp in $ctrl.otps">
+                                                    <td>{{otp.outlet_code}}</td>
+                                                    <td>{{otp.job_order_number}}</td>
+                                                    <td>{{otp.otp_type}}</td>
+                                                    <td>{{otp.otp_no}}</td>
+                                                    <td>{{otp.generatd_by}}</td>
+                                                    <td>{{otp.created_at}}</td>
+                                                    <td>{{otp.expired_at}}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                            </div><!-- Column -->
+                                        </div><!-- Row -->
+                                    </div><!-- Tab Footer -->
+                                </div><!-- row -->
+                            </div><!-- tab-pane-wrap -->
+                        </div><!-- otp tab pan -->
+                    </div><!-- Tab Content -->
+                </div><!-- Tab Form Body -->
+            </div><!-- Tab Form Wrap -->
+        </div><!-- Page Form -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap
