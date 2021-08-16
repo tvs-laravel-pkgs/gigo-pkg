@@ -8,7 +8,7 @@
                         Job Order 
                     </a>
                 </li> -->
-                <li ng-class="{active:active_tab == 'floor-supervisor'}">
+                <li ng-class="{active:active_tab == 'floor-supervisor'}"  ng-if="$ctrl.hasPermission('inward-job-card-tab-split-order') && (job_card.status_id == 8221 || job_card.status_id == 8222 || job_card.status_id == 8223">
                     <a class="filter" href=".#!/job-card/change-floor-supervisor/{{job_card_id}}">
                         Change Floor Supervisor
                     </a>
