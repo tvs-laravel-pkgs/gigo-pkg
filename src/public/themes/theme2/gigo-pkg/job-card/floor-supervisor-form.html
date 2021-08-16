@@ -40,6 +40,14 @@
                                             </h5>
                                             <hr class="hr-15">
                                             <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Current Floor Supervisor 
+                                                        </label>
+                                                        <input type="text" class="form-control" value="{{job_card.floor_supervisor.ecode}} / {{job_card.floor_supervisor.name}}" readonly>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
                                                 <div class="col-md-3" id="floor_supervisor_change_required_id">
                                                     <div class="form-group">
                                                         <label>
@@ -56,14 +64,6 @@
                                                             </label>
                                                         </div>
                                                         <div id="errorRoadTestRequired"></div>
-                                                    </div><!-- Feild -->
-                                                </div><!-- Column -->
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>
-                                                            Current Floor Supervisor 
-                                                        </label>
-                                                        <input type="text" class="form-control" value="{{job_card.floor_supervisor.ecode}} / {{job_card.floor_supervisor.name}}" readonly>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-4" ng-if="floor_supervisor_change_required == 1">

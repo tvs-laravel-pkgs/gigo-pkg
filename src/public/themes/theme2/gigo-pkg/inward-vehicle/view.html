@@ -2281,6 +2281,14 @@
                                             </h5>
                                             <hr class="hr-15">
                                             <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Current Service Advisor 
+                                                        </label>
+                                                        <input type="text" class="form-control" value="{{job_order.service_adviser.ecode}} / {{job_order.service_adviser.name}}" readonly>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>
@@ -2292,14 +2300,6 @@
                                                             <input type="radio" id="service_advisor_not_assign" name="assign_service_advisor" ng-model="$ctrl.assign_service_advisor" ng-value="0">
                                                             <label for="service_advisor_not_assign">No</label>
                                                         </div>
-                                                    </div><!-- Feild -->
-                                                </div><!-- Column -->
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>
-                                                            Current Service Advisor 
-                                                        </label>
-                                                        <input type="text" class="form-control" value="{{job_order.service_adviser.ecode}} / {{job_order.service_adviser.name}}" readonly>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-4" ng-if="$ctrl.assign_service_advisor">
