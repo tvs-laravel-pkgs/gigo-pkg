@@ -4,7 +4,7 @@ namespace Abs\GigoPkg;
 
 
 use App\Http\Controllers\Controller;
-
+use App\Http\Controllers\WpoSoapController;
 use App\Address;
 use App\Config;
 use App\Country;
@@ -14,6 +14,12 @@ use App\Otp;
 use App\State;
 use App\VehicleModel;
 use App\Vehicle;
+use Abs\AmcPkg\AmcPolicy;
+use App\ApiLog;
+use App\User;
+use Abs\GigoPkg\AmcAggregateCoupon;
+use Abs\GigoPkg\AmcCustomer;
+use Abs\GigoPkg\AmcMember;
 use Auth;
 use DB;
 use Entrust;
@@ -25,9 +31,13 @@ use Validator;
 
 class GigoSupportController extends Controller {
 
-	public function __construct() {
-		$this->data['theme'] = config('custom.theme');
-	}
+	public function __construct(WpoSoapController $getSoap = null)
+    {
+        $this->data['theme'] = config('custom.theme');
+        $this->getSoap = $getSoap;
+        $this->success_code = 200;
+        $this->permission_denied_code = 401;
+    }
 
 	public function getVehicleInwardFilter() {
 		$params = [
@@ -292,12 +302,13 @@ class GigoSupportController extends Controller {
 
 	public function save(Request $request){
 		//  dd($request->all());
-	
-		if($request->type_id == 1){//Vehicle Details
+		
+		//Vehicle Details
+		if($request->type_id == 1){
 			try {
 				//REMOVE WHITE SPACE BETWEEN REGISTRATION NUMBER
 				$request->registration_number = str_replace(' ', '', $request->registration_number);
-	
+
 				//REGISTRATION NUMBER VALIDATION
 				$error = '';
 				if ($request->registration_number) {
@@ -389,6 +400,13 @@ class GigoSupportController extends Controller {
 						'string',
 						'unique:vehicles,chassis_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 					],
+					// 'vin_number' => [
+					//     'required',
+					//     'min:17',
+					//     'max:17',
+					//     'string',
+					//     'unique:vehicles,vin_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+					// ],
 				]);
 	
 				if ($validator->fails()) {
@@ -398,13 +416,129 @@ class GigoSupportController extends Controller {
 						'errors' => $validator->errors()->all(),
 					]);
 				}
+
 				DB::beginTransaction();
+				
+				$job_order = JobOrder::find($request->job_order_id);
+
 				$request['registration_number'] = $request->registration_number ? str_replace('-', '', $request->registration_number) : null;
 				$vehicle = Vehicle::find($request->id);
 				$vehicle->updated_by_id = Auth::id();
 				$vehicle->updated_at = Carbon::now();
+				
 				$vehicle->fill($request->all());
-				$vehicle->save();
+				if ($vehicle->currentOwner) {
+					$vehicle->status_id = 8142; //COMPLETED
+					$job_order->customer_id = $vehicle->currentOwner->customer_id;
+					$job_order->inwardProcessChecks()->where('tab_id', 8701)->update(['is_form_filled' => 1]);
+				} else {
+					$vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
+				}
+				
+				if ($job_order && !$job_order->service_policy_id) {
+					if ($vehicle->chassis_number) {
+						$soap_number = $vehicle->chassis_number;
+					} elseif ($vehicle->engine_number) {
+						$soap_number = $vehicle->engine_number;
+					} else {
+						$soap_number = $vehicle->registration_number;
+					}
+	
+					$membership_data = $this->getSoap->GetTVSONEVehicleDetails($soap_number);
+	
+					//Save API Response
+					$api_log = new ApiLog;
+					$api_log->type_id = 11781;
+					$api_log->entity_number = $soap_number;
+					$api_log->entity_id = $vehicle->id;
+					$api_log->url = 'https: //tvsapp.tvs.in/tvsone/tvsoneapi/WebService1.asmx?wsdl';
+					$api_log->src_data = 'https: //tvsapp.tvs.in/tvsone/tvsoneapi/WebService1.asmx?wsdl';
+					$api_log->response_data = json_encode(array($membership_data));
+					$api_log->user_id = Auth::user()->id;
+					// $api_log->status_id = isset($membership_data) ? $membership_data['success'] == 'true' ? 11271 : 11272 : 11272;
+					$api_log->status_id = 11271;
+					$api_log->errors = null;
+					$api_log->created_by_id = Auth::user()->id;
+					$api_log->save();
+	
+					if ($membership_data && $membership_data['success'] == 'true') {
+						// dump($membership_data);
+						$amc_customer_id = null;
+						if ($membership_data['tvs_one_customer_code']) {
+							$amc_customer = AmcCustomer::firstOrNew(['tvs_one_customer_code' => $membership_data['tvs_one_customer_code']]);
+	
+							if (!$amc_customer->customer_id) {
+								$customer = Customer::where('code', ltrim($membership_data['al_dms_code'], '0'))->first();
+								if ($customer) {
+									$amc_customer->customer_id = $customer->id;
+								}
+							}
+	
+							if ($amc_customer->exists) {
+								$amc_customer->updated_by_id = Auth::user()->id;
+								$amc_customer->updated_at = Carbon::now();
+							} else {
+								$amc_customer->created_by_id = Auth::user()->id;
+								$amc_customer->created_at = Carbon::now();
+								$amc_customer->updated_at = null;
+							}
+	
+							$amc_customer->save();
+	
+							$amc_customer_id = $amc_customer->id;
+	
+							//Save Aggregate Coupons
+							if ($membership_data['aggregate_coupon']) {
+								$aggregate_coupons = explode(',', $membership_data['aggregate_coupon']);
+								if (count($aggregate_coupons) > 0) {
+									foreach ($aggregate_coupons as $aggregate_coupon) {
+										$coupon = AmcAggregateCoupon::firstOrNew(['coupon_code' => str_replace(' ', '', $aggregate_coupon)]);
+										if ($coupon->exists) {
+											$coupon->updated_by_id = Auth::user()->id;
+											$coupon->updated_at = Carbon::now();
+										} else {
+											$coupon->created_by_id = Auth::user()->id;
+											$coupon->created_at = Carbon::now();
+											$coupon->updated_at = null;
+											$coupon->status_id = 1;
+										}
+										$coupon->amc_customer_id = $amc_customer->id;
+										$coupon->save();
+									}
+								}
+							}
+						}
+	
+						$amc_policy = AmcPolicy::firstOrNew(['company_id' => Auth::user()->company_id, 'name' => $membership_data['membership_name'], 'type' => $membership_data['membership_type']]);
+						if ($amc_policy->exists) {
+							$amc_policy->updated_by_id = Auth::user()->id;
+							$amc_policy->updated_at = Carbon::now();
+						} else {
+							$amc_policy->created_by_id = Auth::user()->id;
+							$amc_policy->created_at = Carbon::now();
+						}
+						$amc_policy->save();
+	
+						$amc_member = AmcMember::firstOrNew(['company_id' => Auth::user()->company_id, 'entity_type_id' => 11180, 'vehicle_id' => $vehicle->id, 'policy_id' => $amc_policy->id, 'number' => $membership_data['membership_number']]);
+	
+						if ($amc_member->exists) {
+							$amc_member->updated_by_id = Auth::user()->id;
+							$amc_member->updated_at = Carbon::now();
+						} else {
+							$amc_member->created_by_id = Auth::user()->id;
+							$amc_member->created_at = Carbon::now();
+						}
+	
+						$amc_member->start_date = date('Y-m-d', strtotime($membership_data['start_date']));
+						$amc_member->expiry_date = date('Y-m-d', strtotime($membership_data['end_date']));
+						$amc_member->amc_customer_id = $amc_customer_id;
+	
+						$amc_member->save();
+	
+						$job_order->service_policy_id = $amc_member->id;
+						$job_order->save();
+					}
+				}
 
 				DB::commit();
 	
@@ -420,23 +554,44 @@ class GigoSupportController extends Controller {
 					'errors' => ['Exception Error' => $e->getMessage()],
 				]);
 			}
-		
-				
-
 		}else if($request->type_id == 2){//Customer Details
 			try {
-
 				DB::beginTransaction();
+				
+				$job_order = JobOrder::find($request->job_order_id);
+				if (!$job_order) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'Job Order Not Found!',
+						],
+					]);
+				}
+	
+				$vehicle = $job_order->vehicle;
+	
+				if (!$vehicle) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'Vehicle Not Found!',
+						],
+					]);
+				}
+
+				$error_messages = [
+					'ownership_type_id.unique' => "Ownership ID is already taken",
+					// 'code.unique' => "Cusotmer Code is already taken",
+				];
 	
 				$validator = Validator::make($request->all(), [
 					'ownership_type_id' => [
 						'required',
 						'integer',
 						'exists:configs,id',
-						// 'unique:vehicle_owners,ownership_id,' . $request->id . ',customer_id,vehicle_id,' . $vehicle->id,
-					],
-					'customer_id' => [
-						'required',
+						'unique:vehicle_owners,ownership_id,' . $request->customer_id . ',customer_id,vehicle_id,' . $vehicle->id,
 					],
 					// 'code' => [
 					//     'required',
@@ -504,7 +659,7 @@ class GigoSupportController extends Controller {
 						'min:10',
 						'max:10',
 					],
-				]);
+				], $error_messages);
 	
 				if ($validator->fails()) {
 					return response()->json([
@@ -513,7 +668,7 @@ class GigoSupportController extends Controller {
 						'errors' => $validator->errors()->all(),
 					]);
 				}
-	
+				
 				$customer = Customer::saveCustomer($request->all());
 			
 				$address = Address::firstOrNew([
@@ -525,20 +680,21 @@ class GigoSupportController extends Controller {
 				// dd($address);
 				$address->fill($request->all());
 				$address->save();
-
-				// $vehicle_owner = VehicleOwner::firstOrNew([
-                //     'vehicle_id' => $vehicle->id,
-                //     'customer_id' => $customer->id,
-                // ]);
-                // $vehicle_owner->from_date = Carbon::now();
-                // $vehicle_owner->updated_by_id = Auth::user()->id;
-                // $vehicle_owner->updated_at = Carbon::now();
-            
-
-				// $vehicle_owner->customer_id = $customer->id;
-				// $vehicle_owner->ownership_id = $request->ownership_type_id;
-				// $vehicle_owner->save();
 				
+				$vehicle_owner = VehicleOwner::firstOrNew([
+					'vehicle_id' => $vehicle->id,
+					'customer_id' => $customer->id,
+				]);
+				$vehicle_owner->from_date = Carbon::now();
+				$vehicle_owner->updated_by_id = Auth::user()->id;
+				$vehicle_owner->updated_at = Carbon::now();
+				$vehicle_owner->customer_id = $customer->id;
+				$vehicle_owner->ownership_id = $request->ownership_type_id;
+				$vehicle_owner->save();
+
+				$job_order->customer_id = $customer->id;
+	            // $job_order->address_id = $address->id;
+    	        $job_order->save();
 	
 				DB::commit();
 	
@@ -556,9 +712,6 @@ class GigoSupportController extends Controller {
 					],
 				]);
 			}
-
-
-
 		}else{//Order Details
 			try {
 				$validator = Validator::make($request->all(), [
@@ -619,10 +772,6 @@ class GigoSupportController extends Controller {
 					],
 				]);
 			}
-
-
 		}
-
 	}
-
 }
