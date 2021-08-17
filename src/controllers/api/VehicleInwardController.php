@@ -7704,7 +7704,7 @@ class VehicleInwardController extends Controller
 
                         $uploads_directory = storage_path('app/public/gigo/job_order/');
 
-                        $upload_filename = $uploads_directory . $filename;
+                        $upload_filename = $uploads_directory . $file_name;
 
                         $new_filename = $request->job_order_id."_customer_esign.jpg";
 
