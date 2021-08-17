@@ -7627,6 +7627,41 @@ class VehicleInwardController extends Controller
                     $attachment->created_by = Auth()->user()->id;
                     $attachment->created_at = Carbon::now();
                     $attachment->save();
+
+                    if($extension == 'png'){
+                        $attachment_path = storage_path('app/public/gigo/job_order/');
+                        Storage::makeDirectory($attachment_path, 0777);
+
+                        $uploads_directory = storage_path('app/public/gigo/job_order/');
+
+                        $upload_filename = $uploads_directory . $name;
+
+                        $new_filename = $request->job_order_id."_customer_esign.jpg";
+
+                        $converted_filename = $uploads_directory . $new_filename;
+
+                        $new_pic = imagecreatefrompng($upload_filename);
+
+                        // Create a new true color image with the same size
+                        $w = imagesx($new_pic);
+                        $h = imagesy($new_pic);
+                        $white = imagecreatetruecolor($w, $h);
+
+                        // Fill the new image with white background
+                        $bg = imagecolorallocate($white, 255, 255, 255);
+                        imagefill($white, 0, 0, $bg);
+
+                        // Copy original transparent image onto the new image
+                        imagecopy($white, $new_pic, 0, 0, 0, 0, $w, $h);
+
+                        $new_pic = $white;
+
+                        imagejpeg($new_pic, $converted_filename);
+                        imagedestroy($new_pic);
+
+                        $attachment->name = $new_filename;
+                        $attachement->save();
+                    }
                 }
             }
 
