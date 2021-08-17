@@ -44,15 +44,15 @@
                                         <table class="table table-dark-grey">
                                             <thead>
                                                 <tr>
-                                                    <th class="text-center" style="width: 5%;">Action</th>
-                                                    <th class="text-center" style="width: 20%;">Part Code</th>
-                                                    <th style="width: 15%;">Part Description</th>
-                                                    <th style="width: 5%;">Available Quantity</th>
-                                                    <th style="width: 20%;">Split Order Type</th>
-                                                    <th style="width: 5%;">Quantity</th>
-                                                    <th style="width: 10%;">MRP</th>
+                                                    <th class="text-center">Action</th>
+                                                    <th class="text-center">Part Code</th>
+                                                    <th>Part Description</th>
+                                                    <th>Available</th>
+                                                    <th>Split Order Type</th>
+                                                    <th style="min-width:70px;width:70px;">Quantity</th>
+                                                    <th style="min-width:100px;width:100px;">MRP</th>
                                                     <!-- <th style="width: 10%;">UOM</th> -->
-                                                    <th style="width: 10%;">Amount</th>
+                                                    <th style="min-width: 50px;">Amount</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -62,7 +62,7 @@
                                                             <img class="img-responsive" src="./public/theme/img/table/cndn/delete.svg" alt="Delete" />
                                                         </button>
                                                     </td>
-                                                    <td>
+                                                    <td> 
                                                         <md-autocomplete md-selected-item="part_detail.part" md-search-text="partSearchKey" md-items="part in searchParts(partSearchKey)" md-item-text="part.code" md-min-length="3" md-escape-options="clear" md-selected-item-change="onPartSelect(index,part)" md-input-id="userAutoCompleteId" placeholder="Search Part" md-search-text-change="onPartTextChange(index)">
                                                                     <md-item-template>
                                                                         <span>
@@ -100,20 +100,19 @@
                                                         <input type="hidden" id="" name="parts[{{index}}][split_order_type_id]" value="{{part_detail.split_order_type.id}}">
                                                     </td>
                                                     <td>
-                                                        <input type="text" name="parts[{{index}}][part_qty]" ng-model="part_detail.part_qty" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control required" placeholder="Ex: 2" autocomplete="off" ng-keyup="onKeyUpQuantity()" />
+                                                        <input type="text" name="parts[{{index}}][part_qty]" ng-model="part_detail.part_qty" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control required" placeholder="Ex: 2" maxlength="2" autocomplete="off" ng-keyup="onKeyUpQuantity()" style="min-width:70px;width:70px;"/>
 
                                                     </td>
-                                                    <td>
-                                                        <span ng-if="part_detail.mrp_change == 0">{{part_detail.part_mrp}}
-                                                            <input type="hidden" name="parts[{{index}}][part_mrp]" value="{{part_detail.part_mrp}}" />
+                                                    <td style="min-width:100px;width:100px;">
+                                                        <span style="min-width:100px;" ng-if="part_detail.mrp_change == 0">{{part_detail.part_mrp}}
+                                                            <input type="hidden" name="parts[{{index}}][part_mrp]" value="{{part_detail.part_mrp}}" ng-if="part_detail.mrp_change == 0"/>
                                                         </span>
-
-                                                        <input type="text" ng-if="part_detail.mrp_change == 1" name="parts[{{index}}][part_mrp]" ng-model="part_detail.part_mrp" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" autocomplete="off" />
+                                                        <input type="text" ng-if="part_detail.mrp_change == 1" name="parts[{{index}}][part_mrp]" maxlength="6" ng-model="part_detail.part_mrp" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" autocomplete="off" ng-keyup="onKeyUpQuantity()" style="min-width:100px;width:100px;"/>
                                                     </td>
                                                     <!-- <td>
                                                         <input type="text" name="parts[{{index}}][part_uom]" ng-model="part_detail.part_uom" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="UOM" autocomplete="off" readonly />
                                                     </td> -->
-                                                    <td>
+                                                    <td style="min-width:50px;width:70px;">
                                                         <span>{{part_detail.part_total_amount}}</span>
                                                         <!-- <input type="text" name="parts[{{index}}][part_total_amount]" ng-model="part_detail.part_total_amount" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" autocomplete="off" readonly /> -->
                                                         <input type="hidden" name="parts[{{index}}][part_total_amount]" value="{{part_detail.part_total_amount}}" />
