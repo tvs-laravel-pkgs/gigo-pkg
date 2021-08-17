@@ -7616,15 +7616,15 @@ class VehicleInwardController extends Controller
                     $image = $request->customer_e_sign;
                     $extension = $image->getClientOriginalExtension();
                     $signature_extension = $extension;
-                    $name = $request->job_order_id . '_customer_esign.'. $extension;
-                    $image->move(storage_path('app/public/gigo/job_order/'), $name);
+                    $file_name = $request->job_order_id . '_customer_esign.'. $extension;
+                    $image->move(storage_path('app/public/gigo/job_order/'), $file_name);
 
                     //SAVE ATTACHMENT
                     $attachment = new Attachment;
                     $attachment->attachment_of_id = 227; //JOB ORDER
                     $attachment->attachment_type_id = 253; //CUSTOMER E SIGN
                     $attachment->entity_id = $request->job_order_id;
-                    $attachment->name = $name;
+                    $attachment->name = $file_name;
                     $attachment->created_by = Auth()->user()->id;
                     $attachment->created_at = Carbon::now();
                     $attachment->save();
@@ -7704,9 +7704,7 @@ class VehicleInwardController extends Controller
 
                         $uploads_directory = storage_path('app/public/gigo/job_order/');
 
-                        $name = $request->job_order_id."_customer_esign.png";
-
-                        $upload_filename = $uploads_directory . $name;
+                        $upload_filename = $uploads_directory . $filename;
 
                         $new_filename = $request->job_order_id."_customer_esign.jpg";
 
