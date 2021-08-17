@@ -7615,7 +7615,7 @@ class VehicleInwardController extends Controller
                 if (!empty($request->customer_e_sign)) {
                     $image = $request->customer_e_sign;
                     $extension = $image->getClientOriginalExtension();
-                    $name = $request->job_order_id . '_customer_esign'. $extension;
+                    $name = $request->job_order_id . '_customer_esign.'. $extension;
                     $image->move(storage_path('app/public/gigo/job_order/attachments/'), $name);
 
                     //SAVE ATTACHMENT
