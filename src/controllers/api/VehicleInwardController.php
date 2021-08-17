@@ -7615,8 +7615,9 @@ class VehicleInwardController extends Controller
                 if (!empty($request->customer_e_sign)) {
                     $image = $request->customer_e_sign;
                     $extension = $image->getClientOriginalExtension();
+                    $signature_extension = $extension;
                     $name = $request->job_order_id . '_customer_esign.'. $extension;
-                    $image->move(storage_path('app/public/gigo/job_order/attachments/'), $name);
+                    $image->move(storage_path('app/public/gigo/job_order/'), $name);
 
                     //SAVE ATTACHMENT
                     $attachment = new Attachment;
@@ -7627,41 +7628,6 @@ class VehicleInwardController extends Controller
                     $attachment->created_by = Auth()->user()->id;
                     $attachment->created_at = Carbon::now();
                     $attachment->save();
-
-                    if($extension == 'png'){
-                        $attachment_path = storage_path('app/public/gigo/job_order/');
-                        Storage::makeDirectory($attachment_path, 0777);
-
-                        $uploads_directory = storage_path('app/public/gigo/job_order/');
-
-                        $upload_filename = $uploads_directory . $name;
-
-                        $new_filename = $request->job_order_id."_customer_esign.jpg";
-
-                        $converted_filename = $uploads_directory . $new_filename;
-
-                        $new_pic = imagecreatefrompng($upload_filename);
-
-                        // Create a new true color image with the same size
-                        $w = imagesx($new_pic);
-                        $h = imagesy($new_pic);
-                        $white = imagecreatetruecolor($w, $h);
-
-                        // Fill the new image with white background
-                        $bg = imagecolorallocate($white, 255, 255, 255);
-                        imagefill($white, 0, 0, $bg);
-
-                        // Copy original transparent image onto the new image
-                        imagecopy($white, $new_pic, 0, 0, 0, 0, $w, $h);
-
-                        $new_pic = $white;
-
-                        imagejpeg($new_pic, $converted_filename);
-                        imagedestroy($new_pic);
-
-                        $attachment->name = $new_filename;
-                        $attachement->save();
-                    }
                 }
             }
 
@@ -7730,6 +7696,44 @@ class VehicleInwardController extends Controller
                 imagedestroy($new_pic);
 
                 $attachment = Attachment::where('attachment_of_id', 227)->where('attachment_type_id', 253)->where('entity_id', $request->job_order_id)->update(['name' => $new_filename]);
+            }else{
+                if (!empty($request->customer_e_sign)) {
+                    if($signature_extension == 'png'){
+                        $attachment_path = storage_path('app/public/gigo/job_order/');
+                        Storage::makeDirectory($attachment_path, 0777);
+
+                        $uploads_directory = storage_path('app/public/gigo/job_order/');
+
+                        $name = $request->job_order_id."_customer_esign.png";
+
+                        $upload_filename = $uploads_directory . $name;
+
+                        $new_filename = $request->job_order_id."_customer_esign.jpg";
+
+                        $converted_filename = $uploads_directory . $new_filename;
+
+                        $new_pic = imagecreatefrompng($upload_filename);
+
+                        // Create a new true color image with the same size
+                        $w = imagesx($new_pic);
+                        $h = imagesy($new_pic);
+                        $white = imagecreatetruecolor($w, $h);
+
+                        // Fill the new image with white background
+                        $bg = imagecolorallocate($white, 255, 255, 255);
+                        imagefill($white, 0, 0, $bg);
+
+                        // Copy original transparent image onto the new image
+                        imagecopy($white, $new_pic, 0, 0, 0, 0, $w, $h);
+
+                        $new_pic = $white;
+
+                        imagejpeg($new_pic, $converted_filename);
+                        imagedestroy($new_pic);
+
+                        $attachment = Attachment::where('attachment_of_id', 227)->where('attachment_type_id', 253)->where('entity_id', $request->job_order_id)->update(['name' => $new_filename]);
+                    }
+                }
             }
             return response()->json([
                 'success' => true,
