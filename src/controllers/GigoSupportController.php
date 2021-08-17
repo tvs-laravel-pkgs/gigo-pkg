@@ -354,9 +354,6 @@ class GigoSupportController extends Controller {
 						'integer',
 						'exists:job_orders,id',
 					],
-					'customer_id' => [
-						'required',
-					],
 					'is_registered' => [
 						'required',
 						'integer',
@@ -407,10 +404,8 @@ class GigoSupportController extends Controller {
 				$vehicle->updated_by_id = Auth::id();
 				$vehicle->updated_at = Carbon::now();
 				$vehicle->fill($request->all());
-			
-				
 				$vehicle->save();
-	
+
 				DB::commit();
 	
 				return response()->json([

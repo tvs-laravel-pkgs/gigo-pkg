@@ -3741,14 +3741,6 @@ class VehicleInwardController extends Controller
                 $job_card->updated_at = Carbon::now();
                 $job_card->save();
 
-                Bay::where('job_order_id', $job_card->job_order_id)
-                ->update([
-                    'status_id' => 8240, //Free
-                    'job_order_id' => null, //Free
-                    'updated_by_id' => Auth::user()->id,
-                    'updated_at' => Carbon::now(),
-                ]);
-
                 DB::commit();
 
                 return response()->json([
@@ -6845,7 +6837,7 @@ class VehicleInwardController extends Controller
 
             $message = 'OTP is ' . $otp_no . ' for Job Order Estimate. Please show this SMS to Our Service Advisor to verify your Job Order Estimate - TVS';
 
-            $msg = sendSMSNotification($customer_mobile, $message);
+            $msg = sendOTPSMSNotification($customer_mobile, $message);
 
             return response()->json([
                 'success' => true,
@@ -7030,7 +7022,7 @@ class VehicleInwardController extends Controller
 
             $message = 'Dear Customer, Kindly click on this link to approve for TVS job order ' . $short_url . $number . ' : ' . $vehicle_no . ' - TVS';
 
-            $msg = sendSMSNotification($customer_mobile, $message);
+            $msg = sendOTPSMSNotification($customer_mobile, $message);
 
             //Update JobOrder Estimate
             $job_order_estimate = JobOrderEstimate::where('job_order_id', $job_order->id)->orderBy('id', 'DESC')->first();
@@ -7282,7 +7274,7 @@ class VehicleInwardController extends Controller
 
                 $message = 'Dear Customer, Kindly click on this link to pay for the TVS job order ' . $short_url . '. Vehicle Reg Number : ' . $job_order->vehicle->registration_number . ' - TVS';
 
-                $msg = sendSMSNotification($mobile_number, $message);
+                $msg = sendOTPSMSNotification($mobile_number, $message);
 
                 $success_message = 'Estimation Details Sent to Customer Successfully';
 
