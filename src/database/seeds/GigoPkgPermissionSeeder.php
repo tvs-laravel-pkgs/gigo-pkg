@@ -2052,6 +2052,12 @@ class GigoPkgPermissionSeeder extends Seeder
                 'name' => 'otp-own-outlet',
                 'display_name' => 'View Own Outlet',
             ],
+            [
+                'display_order' => 3,
+                'parent' => 'otp',
+                'name' => 'otp-mapped-outlet',
+                'display_name' => 'View Mapped Outlet',
+            ],
 
             //GIGO Dashboard
             [
