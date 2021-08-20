@@ -6708,7 +6708,9 @@ class VehicleInwardController extends Controller
 
                 }
             }
-
+            if(!$job_order->customer_id){
+                $job_order->customer_id = $job_order->vehicle->currentOwner->customer->id;
+            }
             $job_order->estimated_amount = $request->estimated_amount;
             $estimated_delivery_date = $request->est_delivery_date . ' ' . $request->est_delivery_time;
             $job_order->estimated_delivery_date = date('Y-m-d H:i:s', strtotime($estimated_delivery_date));
