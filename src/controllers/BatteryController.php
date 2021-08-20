@@ -184,7 +184,7 @@ class BatteryController extends Controller
             ->make(true);
     }
 
-    public function export(Request $request)
+    public function exportOld2(Request $request)
     {
         ob_end_clean();
         // dd($request->all());
@@ -491,6 +491,216 @@ class BatteryController extends Controller
                 // });
 
             });
+            $excel->setActiveSheetIndex(0);
+        })->export('xlsx');
+    }
+
+    public function export(Request $request)
+    {
+        ob_end_clean();
+        ini_set('max_execution_time', 0);
+
+        if (!empty($request->export_date)) {
+            $date_range = explode(' to ', $request->export_date);
+            $start_date = date('Y-m-d', strtotime($date_range[0]));
+            $start_date = $start_date . ' 00:00:00';
+
+            $end_date = date('Y-m-d', strtotime($date_range[1]));
+            $end_date = $end_date . ' 23:59:59';
+        } else {
+            $start_date = date('Y-m-01 00:00:00');
+            $end_date = date('Y-m-t 23:59:59');
+        }
+
+        $vehicle_battery = VehicleBattery::with([
+                'batteryStatus',
+                'customer',
+                'customer.address',
+                'customer.address.country',
+                'customer.address.state',
+                'customer.address.city',
+                'vehicle',
+                'vehicle.model',
+                'vehicle.kmReadingType',
+                'outlet',
+                'batteryLoadTestResult' => function($query) {
+                    $query->orderBy('battery_type','ASC');
+                },
+                'batteryLoadTestResult.batteryMake',
+                'batteryLoadTestResult.batteryAmphour',
+                'batteryLoadTestResult.batteryVoltage',
+                'batteryLoadTestResult.multimeterTestStatus',
+                'batteryLoadTestResult.batteryLoadTestStatus',
+                'batteryLoadTestResult.loadTestStatus',
+                'batteryLoadTestResult.hydrometerElectrolyteStatus',
+                'batteryLoadTestResult.replacedBatteryMake',
+                'batteryLoadTestResult.batteryNotReplacedReason',
+            ])
+
+        ->whereDate('created_at', '>=', $start_date)
+        ->whereDate('created_at', '<=', $end_date);
+        if ($request->export_customer_id && $request->export_customer_id != '<%$ctrl.export_customer_id%>') {
+            $vehicle_battery->where('customer_id', $request->export_customer_id);
+        }
+
+        if (!Entrust::can('view-all-outlet-battery-result')) {
+            if (Entrust::can('view-mapped-outlet-battery-result')) {
+                $outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
+                array_push($outlet_ids, Auth::user()->employee->outlet_id);
+                $vehicle_battery->whereIn('outlet_id', $outlet_ids);
+            } else {
+                $vehicle_battery->where('outlet_id', Auth::user()->working_outlet_id);
+            }
+        }
+        $vehicle_battery = $vehicle_battery->get();
+
+        $vehicle_battery_details = array();
+        $header = [
+            'Outlet Code',
+            'Outlet Name',
+            'Date',
+            'Registration Number',
+            'Chassis Number',
+            'Engine Number',
+            'KM Reading Type',
+            'KM / HRS Reading',
+            'Date of Sale',
+            'Customer Code',
+            'Customer Name',
+            'Customer Mobile',
+            'First Battery Make',
+            'First Battery Serial Number',
+            'First Battery Manufactured Month',
+            'First Battery Manufactured Year',
+            'First Battery AMP Hour',
+            'First Battery Volt',
+            'First Battery Load Test',
+            'First Battery Hydrometer Electrolyte',
+            'First Battery Multimeter Status',
+            'First Battery Overall Status',
+            'First Battery Replaced Status',
+            'First Battery Replaced Battery Make',
+            'First Battery Replaced Battery Serial Number',
+            'Is First Battery Buy Back Opted',
+            'First Battery Not Replaced Reason',
+            'Second Battery Make',
+            'Second Battery Serial Number',
+            'Second Battery Manufactured Month',
+            'Second Battery Manufactured Year',
+            'Second Battery AMP Hour',
+            'Second Battery Volt',
+            'Second Battery Load Test',
+            'Second Battery Hydrometer Electrolyte',
+            'Second Battery Multimeter Status',
+            'Second Battery Overall Status',
+            'Second Battery Replaced Status',
+            'Second Battery Replaced Battery Make',
+            'Second Battery Replaced Battery Serial Number',
+            'Is Second Battery Buy Back Opted',
+            'Second Battery Not Replaced Reason',
+            'Job Card Number',
+            'Job Card Date',
+            'Invoice Number',
+            'Invoice Date',
+            'Invoice Amount',
+            'Overall Status',
+            'Remarks',
+        ];
+
+        // dd(count($vehicle_battery));
+        foreach ($vehicle_battery as $key1 => $value) {
+            $vehicle_battery_details[$key1] = [
+                    isset($value->outlet->code) ? $value->outlet->code : '',
+                    isset($value->outlet->name) ? $value->outlet->name : '',
+                    date("d-m-Y", strtotime($value->created_at)),
+                    isset($value->vehicle->registration_number) ? $value->vehicle->registration_number: '',
+                    isset($value->vehicle->chassis_number) ? $value->vehicle->chassis_number: '',
+                    isset($value->vehicle->engine_number) ? $value->vehicle->engine_number: '',
+                    isset($value->vehicle->kmReadingType->name) ? $value->vehicle->kmReadingType->name : '',
+                    isset($value->vehicle->km_reading) ? $value->vehicle->km_reading : '',
+                    isset($value->vehicle->sold_date) ? date("d-m-Y", strtotime($value->vehicle->sold_date)) : '',    
+                    isset($value->customer->code) ? $value->customer->code : '',
+                    isset($value->customer->name) ? $value->customer->name : '',
+                    isset($value->customer->mobile_no) ? $value->customer->mobile_no : '',
+                ];
+
+                if($value->batteryLoadTestResult->isNotEmpty()){
+                    $battery_load_test_result_count = count($value->batteryLoadTestResult);
+
+                    foreach ($value->batteryLoadTestResult as $battery_load_test_result_data) {
+                        if($battery_load_test_result_data->battery_type == 1 || $battery_load_test_result_data->battery_type == 2){
+                            //FIRST BATTERY (OR) SECOND BATTERY
+                            array_push($vehicle_battery_details[$key1],  isset($battery_load_test_result_data->batteryMake->name) ? $battery_load_test_result_data->batteryMake->name : '');
+                            array_push($vehicle_battery_details[$key1], $battery_load_test_result_data->battery_serial_number);
+
+                            if(!empty($battery_load_test_result_data->manufactured_date)){
+                                $manufactured_date = strtotime($battery_load_test_result_data->manufactured_date);
+                                $month = date("M", $manufactured_date);
+                                $year = date("Y", $manufactured_date);
+                            }else{
+                                $month = '';
+                                $year = '';
+                            }
+                            
+                            array_push($vehicle_battery_details[$key1], $month);
+                            array_push($vehicle_battery_details[$key1], $year);
+                            array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->batteryAmphour->name) ? $battery_load_test_result_data->batteryAmphour->name :'');
+                            array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->batteryVoltage->name) ? $battery_load_test_result_data->batteryVoltage->name :'');
+                            array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->loadTestStatus->name) ? $battery_load_test_result_data->loadTestStatus->name :'');
+                            array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->hydrometerElectrolyteStatus->name) ? $battery_load_test_result_data->hydrometerElectrolyteStatus->name :'');
+                            array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->multimeterTestStatus->name) ? $battery_load_test_result_data->multimeterTestStatus->name :'');
+                            array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->batteryLoadTestStatus->name) ? $battery_load_test_result_data->batteryLoadTestStatus->name :'');
+
+                            if ($battery_load_test_result_data->is_battery_replaced == 1) {
+                                $battery_replaced_status = 'Yes';
+                            } elseif ($battery_load_test_result_data->is_battery_replaced == 2) {
+                                $battery_replaced_status = 'No';
+                            } else {
+                                $battery_replaced_status = '';
+                            }
+                            array_push($vehicle_battery_details[$key1], $battery_replaced_status);
+                            array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->replacedBatteryMake->name) ? $battery_load_test_result_data->replacedBatteryMake->name :'');
+                            array_push($vehicle_battery_details[$key1], $battery_load_test_result_data->replaced_battery_serial_number);
+
+                            if ($battery_load_test_result_data->is_buy_back_opted == 1) {
+                                $is_buy_back_opted = 'Yes';
+                            } elseif ($battery_load_test_result_data->is_buy_back_opted == 2) {
+                                $is_buy_back_opted = 'No';
+                            } else {
+                                $is_buy_back_opted = '';
+                            }
+                            array_push($vehicle_battery_details[$key1], $is_buy_back_opted);
+                            array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->batteryNotReplacedReason->name) ? $battery_load_test_result_data->batteryNotReplacedReason->name :'');
+                        }
+                    }
+                }
+
+                if(!empty($battery_load_test_result_count) && $battery_load_test_result_count == 1){
+                    $repeat = 15;
+                    for ($i = 0; $i < $repeat; $i++) {
+                        array_push($vehicle_battery_details[$key1], '');
+                    }
+                }
+
+                array_push($vehicle_battery_details[$key1], $value->job_card_number);
+                array_push($vehicle_battery_details[$key1], date("d-m-Y", strtotime($value->job_card_date)));
+                array_push($vehicle_battery_details[$key1], isset($value->vehicle->invoice_number) ? $value->vehicle->invoice_number : '');
+                array_push($vehicle_battery_details[$key1], date("d-m-Y", strtotime($value->invoice_date)));
+                array_push($vehicle_battery_details[$key1], $value->invoice_amount);
+                array_push($vehicle_battery_details[$key1], isset($value->batteryStatus->name) ? $value->batteryStatus->name : '');
+                array_push($vehicle_battery_details[$key1],  $value->remarks);
+        }
+
+
+        $time_stamp = date('Y_m_d_h_i_s');
+        Excel::create('Battery Details - ' . $time_stamp, function ($excel) use ($header, $vehicle_battery_details) {
+                $excel->sheet('Summary', function ($sheet) use ($header, $vehicle_battery_details) {
+                    $sheet->fromArray($vehicle_battery_details, null, 'A1');
+                    $sheet->row(1, $header);
+                    $sheet->row(1, function ($row) {
+                        $row->setBackground('#07c63a');
+                    });
+                });
             $excel->setActiveSheetIndex(0);
         })->export('xlsx');
     }
