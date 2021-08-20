@@ -2011,7 +2011,7 @@ app.config(['$routeProvider', function($routeProvider) {
 	//Report
     var gigo_mechanic_report_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/report/mechanic-list.html')}}';
 </script>
-<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/report/controller.js')}}'></script>
+<script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/report/controller.js')}}"></script>
 
 <!-- GIGO Import -->
 <script type='text/javascript'>
@@ -2021,6 +2021,10 @@ app.config(['$routeProvider', function($routeProvider) {
 			template: '<gigo-import-list></gigo-import-list>',
 			title: 'Import List',
 		}).
+		when('/gigo-import/form/:id',{
+			template:'<gigo-import-form></gigo-import-form>',
+			title:'GIGO Import',
+		});
 	}]);
 
 	var import_gigo_template_url  = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/import/list.html')}}';
