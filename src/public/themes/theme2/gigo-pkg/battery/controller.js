@@ -802,6 +802,26 @@ app.component('batteryForm', {
                 console.log("self.battery_load_tests")
                 console.log(self.battery_load_tests)
                 if(self.battery_load_tests[1]){
+
+                    var test = self.battery_load_tests[1];
+                    test.id = '';
+                    test.battery_make_id = '';
+                    test.battery_serial_number = '';
+                    test.battery_amp_hour_id = '';
+                    test.battery_voltage_id = '';
+                    test.manufactured_date = '';
+                    test.multimeter_test_status_id = '';
+                    test.load_test_status_id = '';
+                    test.hydrometer_electrolyte_status_id = '';
+                    test.overall_status_id = '';                                
+                    test.is_battery_replaced = 0;
+                    test.replaced_battery_make_id = '';
+                    test.replaced_battery_serial_number = '';
+                    test.is_buy_back_opted = 0;
+                    test.battery_not_replaced_reason_id = '';
+                    test.hide_battery_section = '';
+
+                    $scope.onChangeBatteryTestStatus(0);
                     self.battery_load_tests[1].hide_battery_section = true;
                 }
             }else if(no_of_batteries == 2){
