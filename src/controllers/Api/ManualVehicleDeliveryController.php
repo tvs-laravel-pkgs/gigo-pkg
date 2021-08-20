@@ -371,7 +371,11 @@ class ManualVehicleDeliveryController extends Controller
 
         //Check Vehicle Membership
         // $vehicle_membership = AmcMember::join('amc_policies', 'amc_policies.id', 'amc_members.policy_id')->whereIn('amc_policies.name', ['TVS ONE', 'TVS CARE'])->where('amc_members.vehicle_id', $job_order->vehicle_id)->first();
-        $vehicle_membership = AmcMember::where('vehicle_id', $job_order->vehicle_id)->orderBy('id','desc')->first();
+        if($job_order->amcMember){
+            $vehicle_membership = AmcMember::where('id', $job_order->amcMember->id)->orderBy('id','desc')->first();
+        }else{
+            $vehicle_membership = AmcMember::where('vehicle_id', $job_order->vehicle_id)->orderBy('id','desc')->first();
+        }
 
         if ($vehicle_membership) {
             if (strtotime($invoice_date) > strtotime($vehicle_membership->expiry_date)) {
