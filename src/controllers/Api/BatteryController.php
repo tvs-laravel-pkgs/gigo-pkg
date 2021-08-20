@@ -32,69 +32,44 @@ class BatteryController extends Controller
 
     public function getFormData(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         if ($request->id) {
-            // $battery = BatteryLoadTestResult::with([
-            //     'vehicleBattery',
-            //     'vehicleBattery.batteryMake',
-            //     'vehicleBattery.customer',
-            //     'vehicleBattery.customer.address',
-            //     'vehicleBattery.customer.address.country',
-            //     'vehicleBattery.customer.address.state',
-            //     'vehicleBattery.customer.address.city',
-            //     'vehicleBattery.vehicle',
-            //     'vehicleBattery.vehicle.model',
-            //     'outlet',
-            //     'batteryLoadTestStatus',
-            //     'loadTestStatus',
-            //     'hydrometerElectrolyteStatus',
-            //     'replacedBatteryMake',
-            //     'batteryNotReplacedReason',
-            //     'multimeterTestStatus',
-            //     'secondBatteryMultimeterTestStatus',
-            //     'vehicleBattery.batteryStatus',
-            //     'vehicleBattery.secondBatteryMake',
-            //     'secondBatteryAmphour',
-            //     'firstBatteryAmphour',
-            //     'firstBatteryVoltage',
-            //     'secondBatteryVoltage',
-            //     'secondBatteryLoadTestStatus',
-            //     'secondBatteryHydrometerElectrolyteStatus',
-            //     'secondReplacedBatteryMake',
-            //     'secondBatteryOverallLoadTestStatus',
-            //     'secondBatteryNotReplacedReason',
-            // ])->find($request->id);
-
-
-            $battery = VehicleBattery::with([
-                'batteryStatus',
-                'customer',
-                'customer.address',
-                'customer.address.country',
-                'customer.address.state',
-                'customer.address.city',
-                'vehicle',
-                'vehicle.model',
+            $battery = BatteryLoadTestResult::with([
+                'vehicleBattery',
+                'vehicleBattery.batteryMake',
+                'vehicleBattery.customer',
+                'vehicleBattery.customer.address',
+                'vehicleBattery.customer.address.country',
+                'vehicleBattery.customer.address.state',
+                'vehicleBattery.customer.address.city',
+                'vehicleBattery.vehicle',
+                'vehicleBattery.vehicle.model',
                 'outlet',
-                'batteryLoadTestResult',
-                'batteryLoadTestResult.batteryMake',
-                'batteryLoadTestResult.batteryAmphour',
-                'batteryLoadTestResult.batteryVoltage',
-                'batteryLoadTestResult.multimeterTestStatus',
-                'batteryLoadTestResult.batteryLoadTestStatus',
-                'batteryLoadTestResult.loadTestStatus',
-                'batteryLoadTestResult.hydrometerElectrolyteStatus',
-                'batteryLoadTestResult.replacedBatteryMake',
-                'batteryLoadTestResult.batteryNotReplacedReason',
+                'batteryLoadTestStatus',
+                'loadTestStatus',
+                'hydrometerElectrolyteStatus',
+                'replacedBatteryMake',
+                'batteryNotReplacedReason',
+                'multimeterTestStatus',
+                'secondBatteryMultimeterTestStatus',
+                'vehicleBattery.batteryStatus',
+                'vehicleBattery.secondBatteryMake',
+                'secondBatteryAmphour',
+                'firstBatteryAmphour',
+                'firstBatteryVoltage',
+                'secondBatteryVoltage',
+                'secondBatteryLoadTestStatus',
+                'secondBatteryHydrometerElectrolyteStatus',
+                'secondReplacedBatteryMake',
+                'secondBatteryOverallLoadTestStatus',
+                'secondBatteryNotReplacedReason',
             ])->find($request->id);
-
             $action = 'Edit';
 
             $user = User::with(['outlet'])->find($battery->created_by_id);
 
         } else {
-            // $battery = new BatteryLoadTestResult;
-            $battery = new VehicleBattery;
+            $battery = new BatteryLoadTestResult;
             $action = 'New';
 
             $user = User::with(['outlet'])->find(Auth::user()->id);
