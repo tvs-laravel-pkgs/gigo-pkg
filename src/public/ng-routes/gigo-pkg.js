@@ -1374,6 +1374,15 @@ app.config(['$routeProvider', function($routeProvider) {
     when('/battery/view/:id', {
         template: '<battery-view></battery-view>',
         title: 'Battery Status View',
+    }).
+    //Import
+    when('/gigo-import/list',{
+        template:'<gigo-import-list></gigo-import-list>',
+        title:'GIGO Import',
+    }).
+    when('/gigo-import/form/:id',{
+        template:'<gigo-import-form></gigo-import-form>',
+        title:'GIGO Import',
     });
 }]);
 

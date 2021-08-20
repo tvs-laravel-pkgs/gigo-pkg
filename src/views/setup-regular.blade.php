@@ -1877,7 +1877,7 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 			template: '<manual-vehicle-delivery-list></manual-vehicle-delivery-list>',
 			title: 'Manual Vehicle Delivery',
 		}).
-		
+
 		when('/manual-vehicle-delivery/form/:id', {
 			template: '<manual-vehicle-delivery-form></manual-vehicle-delivery-form>',
 			title: 'Manual Vehicle Delivery Form',
@@ -2013,3 +2013,16 @@ app.config(['$routeProvider', function($routeProvider) {
 </script>
 <script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/report/controller.js')}}'></script>
 
+<!-- GIGO Import -->
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
+		when('/gigo-import/list', {
+			template: '<gigo-import-list></gigo-import-list>',
+			title: 'Import List',
+		}).
+	}]);
+
+	var import_gigo_template_url  = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/import/list.html')}}';
+</script>
+<script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/import/controller.js')}}"></script>
