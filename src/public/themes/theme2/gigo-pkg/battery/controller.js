@@ -809,14 +809,6 @@ app.component('batteryForm', {
             }
         };
 
-        $scope.onChangeNumberOfBattery= function(){
-            var no_of_batteries = $('input[name="no_of_batteries"]:checked').val();
-            if(no_of_batteries == 1){
-                // self.battery_load_tests[1] = [];
-                // $scope.onChangeBatteryTestStatus(0);
-            }
-        }
-
         //Save Form Data 
         $scope.saveBatteryStatus = function () {
             var form_id = '#battery_status_form';
