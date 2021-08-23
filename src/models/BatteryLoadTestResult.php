@@ -59,6 +59,11 @@ class BatteryLoadTestResult extends BaseModel
         return $this->attributes['registration_number'] = $registration_number;
     }
 
+    public function getManufacturedDateAttribute($value)
+    {
+        return empty($value) ? '' : date('d-m-Y', strtotime($value));
+    }
+    
     public function vehicleBattery()
     {
         return $this->belongsTo('App\VehicleBattery', 'vehicle_battery_id');
