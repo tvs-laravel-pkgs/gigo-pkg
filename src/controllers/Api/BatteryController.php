@@ -45,8 +45,8 @@ class BatteryController extends Controller
                 'vehicle.model',
                 'outlet',
                 'batteryLoadTestResult',
-                'batteryLoadTestResult.batteryMake',
-                // 'batteryMake',
+                // 'batteryLoadTestResult.batteryMake',
+                'batteryMake',
                 'batteryLoadTestResult.batteryAmphour',
                 'batteryLoadTestResult.batteryVoltage',
                 'batteryLoadTestResult.multimeterTestStatus',
@@ -487,13 +487,13 @@ class BatteryController extends Controller
                 //GENERATE NUMBER
                 $generateJONumber = SerialNumberGroup::generateNumber(164, $financial_year->id, $branch->state_id, $branch->id);
                 if (!$generateJONumber['success']) {
-                    return response()->json([
-                        'success' => false,
-                        'error' => 'Validation Error',
-                        'errors' => [
-                            'No Battery Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
-                        ],
-                    ]);
+                    // return response()->json([
+                    //     'success' => false,
+                    //     'error' => 'Validation Error',
+                    //     'errors' => [
+                    //         'No Battery Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
+                    //     ],
+                    // ]);
                 }
 
                 $error_messages_2 = [
@@ -502,10 +502,10 @@ class BatteryController extends Controller
                 ];
 
                 $validator_2 = Validator::make($generateJONumber, [
-                    'number' => [
-                        'required',
-                        'unique:vehicle_batteries,number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
-                    ],
+                    // 'number' => [
+                    //     'required',
+                    //     'unique:vehicle_batteries,number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+                    // ],
                 ], $error_messages_2);
 
                 if ($validator_2->fails()) {
@@ -516,7 +516,7 @@ class BatteryController extends Controller
                     ]);
                 }
 
-                $vehicle_battery->number = $generateJONumber['number'];
+                // $vehicle_battery->number = $generateJONumber['number'];
 
             }
 

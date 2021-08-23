@@ -99,6 +99,11 @@ class BatteryLoadTestResult extends BaseModel
     }
 
     //Battery Amphour
+    public function batteryAmphour()
+    {
+        return $this->belongsTo('App\Config', 'battery_amp_hour_id');
+    }
+
     public function firstBatteryAmphour()
     {
         return $this->belongsTo('App\Config', 'first_battery_amp_hour_id');
@@ -108,6 +113,11 @@ class BatteryLoadTestResult extends BaseModel
         return $this->belongsTo('App\Config', 'second_battery_amp_hour_id');
     }
     //Battery Voltage
+    public function batteryVoltage()
+    {
+        return $this->belongsTo('App\Config', 'battery_voltage_id');
+    }
+
     public function firstBatteryVoltage()
     {
         return $this->belongsTo('App\Config', 'first_battery_battery_voltage_id');
