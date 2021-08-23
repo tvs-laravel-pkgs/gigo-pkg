@@ -18,6 +18,7 @@ class BatteryLoadTestResultsU1 extends Migration
             $table->unsignedTinyInteger('battery_type')->default(1)->after('battery_make_id');
             $table->date('manufactured_date')->nullable()->after('battery_type');
             $table->string('battery_serial_number', 40)->nullable()->after('manufactured_date');
+            $table->text('remarks')->nullable()->change();
 
             $table->dropForeign('first_battery_amp_hour_id_foreign');
             $table->dropForeign('first_battery_battery_voltage_id_foreign');
