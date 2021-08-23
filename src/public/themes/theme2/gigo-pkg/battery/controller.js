@@ -804,6 +804,8 @@ app.component('batteryForm', {
             });
             if(new_battery_replaced_yes_count){
                 $scope.onChangeBatteryReplaceStatus();
+            }else{
+                self.show_job_card_details_section = false;
             }
         }
 
