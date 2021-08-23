@@ -666,6 +666,7 @@ class BatteryController extends Controller
             'Customer Code',
             'Customer Name',
             'Customer Mobile',
+            'Number Of Batteries',
             'First Battery Make',
             'First Battery Serial Number',
             'First Battery Manufactured Month',
@@ -720,6 +721,7 @@ class BatteryController extends Controller
                     isset($value->customer->code) ? $value->customer->code : '',
                     isset($value->customer->name) ? $value->customer->name : '',
                     isset($value->customer->mobile_no) ? $value->customer->mobile_no : '',
+                    isset($value->batteryLoadTestResult) ? count($value->batteryLoadTestResult) : '',
                 ];
 
                 if($value->batteryLoadTestResult->isNotEmpty()){
@@ -799,7 +801,7 @@ class BatteryController extends Controller
                     });
                 });
             $excel->setActiveSheetIndex(0);
-        })->export('csv');
+        })->export('xlsx');
     }
 
     public function exportOld(Request $request)
