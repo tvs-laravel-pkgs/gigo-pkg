@@ -508,6 +508,7 @@ app.component('batteryForm', {
                     }else{
                         self.battery_load_tests = self.battery.battery_load_test_result;
                         if(self.battery_load_tests && (self.battery_load_tests).length == 1 ){
+                            //FOR SEC BATTERY
                            self.battery_load_tests.push({
                                 id: '',
                                 battery_make_id: '',
@@ -524,15 +525,9 @@ app.component('batteryForm', {
                                 replaced_battery_serial_number: '',
                                 is_buy_back_opted: 0,
                                 battery_not_replaced_reason_id: '',
-                                hide_battery_section: '',
-                        
+                                hide_battery_section: true,
                            }); 
                         }
-
-                        $.each(self.battery_load_tests, function( index, value ) {
-                            value.hide_battery_section = '';
-                            $scope.onChangeBatteryTestStatus(index);
-                        });
                     }
 
                     //For no of Batteries
@@ -547,7 +542,7 @@ app.component('batteryForm', {
                     console.log($scope.vehicle);
                     if(self.battery){
                         setTimeout(function () {
-                            $scope.battery_status_check();
+                            // $scope.battery_status_check();
                         }, 800);
                      }else{
                         $scope.battery_status_check();
@@ -752,27 +747,7 @@ app.component('batteryForm', {
                 battery_load_test.overall_status_id = '';
             }
 
-            var battery_status_found_ok_count = 0;
-            $.each(self.battery_load_tests, function( index, value ) {
-                if(value.overall_status_id == 1){
-                    battery_status_found_ok_count ++;
-                }
-            });
-
-            if(battery_status_found_ok_count == 2){
-                $scope.onChangeBatteryStatus();
-            }
-
-            var new_battery_replaced_yes_count = 0;
-            $.each(self.battery_load_tests, function( index, value ) {
-                if(value.is_battery_replaced == 1){
-                    new_battery_replaced_yes_count ++;
-                }
-            });
-
-            if(new_battery_replaced_yes_count){
-                $scope.onChangeBatteryReplaceStatus();
-            }
+            $scope.onChangeBatteryStatus();
         }
 
         $scope.onChangeBatteryStatus = function(){
@@ -793,20 +768,10 @@ app.component('batteryForm', {
             if(battery_status_found_ok_count == 2){
                 self.battery.battery_status_id = 12190; //FOUND OK
             }else{
-                self.battery.battery_status_id = '';
+                self.battery.battery_status_id = ''; 
             }
 
-            var new_battery_replaced_yes_count = 0;
-            $.each(self.battery_load_tests, function( index, value ) {
-                if(value.is_battery_replaced == 1){
-                    new_battery_replaced_yes_count ++;
-                }
-            });
-            if(new_battery_replaced_yes_count){
-                $scope.onChangeBatteryReplaceStatus();
-            }else{
-                self.show_job_card_details_section = false;
-            }
+            $scope.onChangeBatteryReplaceStatus();
         }
 
         $scope.onChangeBatteryReplaceStatus = function(){
@@ -831,7 +796,7 @@ app.component('batteryForm', {
                 self.show_job_card_details_section = false;
                 self.battery.job_card_number = '';
                 self.battery.job_card_date = '';
-                self.battery.battery_status_id = '';
+                // self.battery.battery_status_id = '';
             }
         }
 

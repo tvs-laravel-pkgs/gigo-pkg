@@ -59,6 +59,12 @@ class BatteryController extends Controller
 
             $action = 'Edit';
 
+            if(!empty($battery->batteryLoadTestResult)){
+                foreach ($battery->batteryLoadTestResult as $key => $value) {
+                    $value->hide_battery_section = false;
+                }    
+            }
+
             $user = User::with(['outlet'])->find($battery->created_by_id);
             // $battery_load_test_details = $battery->;
         } else {
@@ -456,6 +462,11 @@ class BatteryController extends Controller
                 $vehicle_battery = VehicleBattery::find($request->vehicle_battery_id);
                 $vehicle_battery->updated_by_id = Auth::user()->id;
                 $vehicle_battery->updated_at = Carbon::now();
+
+                BatteryLoadTestResult::where('vehicle_battery_id', $request->vehicle_battery_id)->update([
+                    'deleted_at' => Carbon::now(),
+                ]);
+
             } else {
                 $vehicle_battery = new VehicleBattery;
                 $vehicle_battery->outlet_id = Auth::user()->employee->outlet_id;
@@ -543,9 +554,10 @@ class BatteryController extends Controller
             foreach ($request->battery_load_test_detail as $key => $battery_load_test) {
                 // dump($battery_load_test);
                 if (isset($battery_load_test['id']) && !empty($battery_load_test['id'])) {
-                    $battery_result = BatteryLoadTestResult::find($battery_load_test['id']);
+                    $battery_result = BatteryLoadTestResult::withTrashed()->find($battery_load_test['id']);
                     $battery_result->updated_by_id = Auth::user()->id;
                     $battery_result->updated_at = Carbon::now();
+                    $battery_result->deleted_at = null;
                 } else {
                     $battery_result = new BatteryLoadTestResult;
                     $battery_result->created_by_id = Auth::user()->id;
