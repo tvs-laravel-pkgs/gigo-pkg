@@ -90,21 +90,21 @@ app.component('batteryList', {
                     data: 'registration_number',
                     name: 'vehicles.registration_number'
                 },
+                // {
+                //     data: 'battery_name',
+                //     name: 'battery_makes.name'
+                // },
+                // {
+                //     data: 'load_test_status',
+                //     name: 'load_test_statuses.name'
+                // },
+                // {
+                //     data: 'hydrometer_electrolyte_status',
+                //     name: 'hydrometer_electrolyte_statuses.name'
+                // },
                 {
-                    data: 'battery_name',
-                    name: 'battery_makes.name'
-                },
-                {
-                    data: 'load_test_status',
-                    name: 'load_test_statuses.name'
-                },
-                {
-                    data: 'hydrometer_electrolyte_status',
-                    name: 'hydrometer_electrolyte_statuses.name'
-                },
-                {
-                    data: 'overall_status',
-                    name: 'battery_load_test_statuses.name'
+                    data: 'battery_status',
+                    name: 'configs.name'
                 },
                 {
                     data: 'status',
@@ -413,7 +413,7 @@ app.component('batteryView', {
 
 app.component('batteryForm', {
     templateUrl: battery_form_template_url,
-    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect, CustomerSvc) {
         //for md-select search
         $element.find('input').on('keydown', function (ev) {
             ev.stopPropagation();
@@ -671,23 +671,23 @@ app.component('batteryForm', {
             }
         }
 
-        // $scope.customerChanged = function (customer) {
-        //     if (customer.id) {
-        //         self.customer_search_type = false;
-        //         $scope.customer = [];
-        //         CustomerSvc.read(customer.id)
-        //             .then(function (response) {
-        //                 console.log(response);
-        //                 $scope.customer = response.data.customer;
-        //                 $country_id = response.data.customer.primary_address ? response.data.customer.primary_address.country_id : '1';
-        //                 if (typeof response.data.customer.primary_address != null && typeof response.data.customer.primary_address != 'string') {
-        //                     $scope.customer.address = response.data.customer.primary_address;
-        //                 }
-        //                 $scope.countryChanged();
-        //                 // $scope.$apply();
-        //             });
-        //     }
-        // }
+        $scope.customerChanged = function (customer) {
+            if (customer.id) {
+                self.customer_search_type = false;
+                $scope.customer = [];
+                CustomerSvc.read(customer.id)
+                    .then(function (response) {
+                        console.log(response);
+                        $scope.customer = response.data.customer;
+                        $country_id = response.data.customer.primary_address ? response.data.customer.primary_address.country_id : '1';
+                        if (typeof response.data.customer.primary_address != null && typeof response.data.customer.primary_address != 'string') {
+                            $scope.customer.address = response.data.customer.primary_address;
+                        }
+                        $scope.countryChanged();
+                        // $scope.$apply();
+                    });
+            }
+        }
 
         $scope.countryChanged = function (country_id) {
             setTimeout(function () {
