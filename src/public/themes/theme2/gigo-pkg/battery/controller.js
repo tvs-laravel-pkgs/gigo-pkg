@@ -502,7 +502,7 @@ app.component('batteryForm', {
                                 replaced_battery_serial_number: '',
                                 is_buy_back_opted: 0,
                                 battery_not_replaced_reason_id: '',
-                                hide_battery_section: '',
+                                hide_battery_section: true,
                             },
                         );
                     }else{
