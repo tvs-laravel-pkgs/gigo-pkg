@@ -743,8 +743,10 @@ app.component('batteryForm', {
             var battery_load_test = self.battery_load_tests[index];
             if(battery_load_test.multimeter_test_status_id == 1 && battery_load_test.load_test_status_id == 1 && battery_load_test.hydrometer_electrolyte_status_id == 1){
                 battery_load_test.overall_status_id = 1; //FOUND OK
-            }else if(battery_load_test.multimeter_test_status_id || battery_load_test.load_test_status_id ||battery_load_test.hydrometer_electrolyte_status_id){
+            }else if(battery_load_test.multimeter_test_status_id || battery_load_test.load_test_status_id || battery_load_test.hydrometer_electrolyte_status_id){
                 battery_load_test.overall_status_id = 2; //NEED TO REPLACE BATTERY
+            }else{
+                battery_load_test.overall_status_id = '';
             }
             $scope.onChangeBatteryStatus();
         }
@@ -781,7 +783,7 @@ app.component('batteryForm', {
                 }
             });
 
-            if(new_battery_replaced_yes_count > 0){
+            if(new_battery_replaced_yes_count){
                 self.show_job_card_details_section = true;
 
                 if(new_battery_replaced_yes_count == 2){
@@ -793,6 +795,7 @@ app.component('batteryForm', {
                 self.show_job_card_details_section = false;
                 self.battery.job_card_number = '';
                 self.battery.job_card_date = '';
+                 self.battery.battery_status_id = '';
             }
         }
 
