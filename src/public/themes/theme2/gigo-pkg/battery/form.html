@@ -657,11 +657,11 @@
                                                             data-animation="fadeInLeft" data-animation-delay="300">
                                                             <ul class="nav nav-pills editDetails-tabs">
                                                                 <li class="active battery_one_tab"><a class="btn-pills"
-                                                                        data-target="#battery1" role="tab"
+                                                                        data-target="#battery0" role="tab"
                                                                         data-toggle="tab" aria-expanded="true">Battery
                                                                         1</a></li>
                                                                 <li ng-if="$ctrl.no_of_batteries == 2" class="battery_two_tab"><a
-                                                                        data-target="#battery2" role="tab"
+                                                                        data-target="#battery1" role="tab"
                                                                         data-toggle="tab" aria-expanded="true"
                                                                         class="btn-pills">Battery 2</a></li>
                                                             </ul>
@@ -676,9 +676,9 @@
                                                                     <div class="tab-page-body">
                                                                         <div class="tab-content">
                                                                                     
-                                                                                <div ng-repeat="(index,battery_load_test) in $ctrl.battery_load_tests" ng-class="{active : index == 0}" class="tab-pane" id="battery{{index + 1 }}" data-animation="fadeInUp" data-animation-delay="300">
+                                                                                <div ng-repeat="(index,battery_load_test) in $ctrl.battery_load_tests" ng-class="{active : index == 0}" class="tab-pane" id="battery{{index}}" data-animation="fadeInUp" data-animation-delay="300">
                                                                                 <div class="tab-pane-wrap" ng-if="!battery_load_test.hide_battery_section">
-                                                                                <input type="hidden" name="battery_load_test_detail[{{index + 1}}][id]" value="{{battery_load_test.id}}">
+                                                                                <input type="hidden" name="battery_load_test_detail[{{index}}][id]" value="{{battery_load_test.id}}">
                                                                                     <div class="row">
                                                                                         <div class="col-md-12"
                                                                                             style="padding-left: 0px;">
@@ -691,14 +691,14 @@
                                                                                                         <a class="panel-title"
                                                                                                             data-toggle="collapse"
                                                                                                             data-parent="#accordion"
-                                                                                                            data-target="#battery_details_collapse{{index + 1}}">
+                                                                                                            data-target="#battery_details_collapse{{index}}">
                                                                                                             Battery
                                                                                                             Details
                                                                                                             <span
                                                                                                                 class="arrow"></span>
                                                                                                         </a>
                                                                                                     </div>
-                                                                                                    <div id="battery_details_collapse{{index + 1}}"
+                                                                                                    <div id="battery_details_collapse{{index}}"
                                                                                                         class="panel-collapse collapse in">
                                                                                                         <div
                                                                                                             class="panel-body">
@@ -736,7 +736,7 @@
                                                                                                                         </md-select>
                                                                                                                         <input
                                                                                                                             type="hidden"
-                                                                                                                            class="required" name="battery_load_test_detail[{{index + 1}}][battery_make_id]"
+                                                                                                                            class="required" name="battery_load_test_detail[{{index}}][battery_make_id]"
                                                                                                                             
                                                                                                                             value="{{battery_load_test.battery_make_id}}">
                                                                                                                     </div>
@@ -759,7 +759,7 @@
                                                                                                                             maxlength="30"
                                                                                                                             placeholder="Enter Serial Number"
                                                                                                                             autocomplete="off"
-                                                                                                                            name="battery_load_test_detail[{{index + 1}}][battery_serial_number]"
+                                                                                                                            name="battery_load_test_detail[{{index}}][battery_serial_number]"
                                                                                                                             ng-model="battery_load_test.battery_serial_number"
                                                                                                                             onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')" ng-required = "battery_load_test.is_buy_back_opted == 1"/>
                                                                                                                     </div>
@@ -799,7 +799,7 @@
                                                                                                                         <input
                                                                                                                             type="hidden"
                                                                                                                             class="required"
-                                                                                                                            name="battery_load_test_detail[{{index + 1}}][battery_amp_hour_id]"
+                                                                                                                            name="battery_load_test_detail[{{index}}][battery_amp_hour_id]"
                                                                                                                             value="{{battery_load_test.battery_amp_hour_id}}">
                                                                                                                     </div>
                                                                                                                     <!-- Feild -->
@@ -839,7 +839,7 @@
                                                                                                                         <input
                                                                                                                             type="hidden"
                                                                                                                             class="required"
-                                                                                                                            name="battery_load_test_detail[{{index + 1}}][battery_voltage_id]"
+                                                                                                                            name="battery_load_test_detail[{{index}}][battery_voltage_id]"
                                                                                                                             value="{{battery_load_test.battery_voltage_id}}">
                                                                                                                     </div>
                                                                                                                     <!-- Feild -->
@@ -862,7 +862,7 @@
                                                                                                                             data-provide="datepicker">
                                                                                                                             <input
                                                                                                                                 type="text"
-                                                                                                                                name="battery_load_test_detail[{{index + 1}}][manufactured_date]"
+                                                                                                                                name="battery_load_test_detail[{{index}}][manufactured_date]"
                                                                                                                                 value="{{battery_load_test.manufactured_date}}"
                                                                                                                                 class="form-control required"
                                                                                                                                 readonly
@@ -892,14 +892,14 @@
                                                                                                         <a class="panel-title"
                                                                                                             data-toggle="collapse"
                                                                                                             data-parent="#accordion"
-                                                                                                            data-target="#battery_test_result_collapse{{index + 1}}">
+                                                                                                            data-target="#battery_test_result_collapse{{index}}">
                                                                                                             Battery Test
                                                                                                             Results
                                                                                                             <span
                                                                                                                 class="arrow"></span>
                                                                                                         </a>
                                                                                                     </div>
-                                                                                                    <div id="battery_test_result_collapse{{index + 1}}"
+                                                                                                    <div id="battery_test_result_collapse{{index}}"
                                                                                                         class="panel-collapse collapse in">
                                                                                                         <div
                                                                                                             class="panel-body">
@@ -919,42 +919,42 @@
                                                                                                                                 class="color-radio-item">
                                                                                                                                 <input
                                                                                                                                     type="radio"
-                                                                                                                                    id="multimeter_radio_good{{index+1}}"
-                                                                                                                                    name="battery_load_test_detail[{{index + 1}}][multimeter_test_status_id]"
+                                                                                                                                    id="multimeter_radio_good{{index}}"
+                                                                                                                                    name="battery_load_test_detail[{{index}}][multimeter_test_status_id]"
                                                                                                                                     value="1"
                                                                                                                                     ng-value="1"
                                                                                                                                     ng-checked="battery_load_test.multimeter_test_status_id == 1"
                                                                                                                                     ng-change="onChangeBatteryTestStatus(index)" ng-model="battery_load_test.multimeter_test_status_id" />
                                                                                                                                 <label
-                                                                                                                                    for="multimeter_radio_good{{index + 1}}"
+                                                                                                                                    for="multimeter_radio_good{{index}}"
                                                                                                                                     class="radio-good"></label>
                                                                                                                             </div>
                                                                                                                             <div
                                                                                                                                 class="color-radio-item">
                                                                                                                                 <input
                                                                                                                                     type="radio"
-                                                                                                                                    id="multimeter_radio_average{{index + 1}}"
-                                                                                                                                    name="battery_load_test_detail[{{index + 1}}][multimeter_test_status_id]"
+                                                                                                                                    id="multimeter_radio_average{{index}}"
+                                                                                                                                    name="battery_load_test_detail[{{index}}][multimeter_test_status_id]"
                                                                                                                                     value="2"
                                                                                                                                     ng-value="2"
                                                                                                                                     ng-checked="battery_load_test.multimeter_test_status_id == 2"
                                                                                                                                     ng-change="onChangeBatteryTestStatus(index)" ng-model="battery_load_test.multimeter_test_status_id" />
                                                                                                                                 <label
-                                                                                                                                    for="multimeter_radio_average{{index + 1}}"
+                                                                                                                                    for="multimeter_radio_average{{index}}"
                                                                                                                                     class="radio-average"></label>
                                                                                                                             </div>
                                                                                                                             <div
                                                                                                                                 class="color-radio-item">
                                                                                                                                 <input
                                                                                                                                     type="radio"
-                                                                                                                                    id="multimeter_radio_bad{{index+1}}"
-                                                                                                                                    name="battery_load_test_detail[{{index + 1}}][multimeter_test_status_id]"
+                                                                                                                                    id="multimeter_radio_bad{{index}}"
+                                                                                                                                    name="battery_load_test_detail[{{index}}][multimeter_test_status_id]"
                                                                                                                                     value="3"
                                                                                                                                     ng-value="3"
                                                                                                                                     ng-checked="battery_load_test.multimeter_test_status_id == 3"
                                                                                                                                     ng-change="onChangeBatteryTestStatus(index)" ng-model="battery_load_test.multimeter_test_status_id" />
                                                                                                                                 <label
-                                                                                                                                    for="multimeter_radio_bad{{index + 1}}"
+                                                                                                                                    for="multimeter_radio_bad{{index}}"
                                                                                                                                     class="radio-bad"></label>
                                                                                                                             </div>
                                                                                                                         </div>
@@ -975,42 +975,42 @@
                                                                                                                                 class="color-radio-item">
                                                                                                                                 <input
                                                                                                                                     type="radio"
-                                                                                                                                    id="load_radio_good{{index + 1}}"
-                                                                                                                                    name="battery_load_test_detail[{{index + 1}}][load_test_status_id]"
+                                                                                                                                    id="load_radio_good{{index}}"
+                                                                                                                                    name="battery_load_test_detail[{{index}}][load_test_status_id]"
                                                                                                                                     value="1"
                                                                                                                                     ng-value="1"
                                                                                                                                     ng-checked="battery_load_test.load_test_status_id == 1"
                                                                                                                                     ng-change="onChangeBatteryTestStatus(index)" ng-model="battery_load_test.load_test_status_id"  />
                                                                                                                                 <label
-                                                                                                                                    for="load_radio_good{{index + 1}}"
+                                                                                                                                    for="load_radio_good{{index}}"
                                                                                                                                     class="radio-good"></label>
                                                                                                                             </div>
                                                                                                                             <div
                                                                                                                                 class="color-radio-item">
                                                                                                                                 <input
                                                                                                                                     type="radio"
-                                                                                                                                    id="load_radio_average{{index + 1}}"
-                                                                                                                                    name="battery_load_test_detail[{{index + 1}}][load_test_status_id]"
+                                                                                                                                    id="load_radio_average{{index}}"
+                                                                                                                                    name="battery_load_test_detail[{{index}}][load_test_status_id]"
                                                                                                                                     value="2"
                                                                                                                                     ng-value="2"
                                                                                                                                     ng-checked="battery_load_test.load_test_status_id == 2"
                                                                                                                                     ng-change="onChangeBatteryTestStatus(index)" ng-model="battery_load_test.load_test_status_id"  />
                                                                                                                                 <label
-                                                                                                                                    for="load_radio_average{{index + 1}}"
+                                                                                                                                    for="load_radio_average{{index}}"
                                                                                                                                     class="radio-average"></label>
                                                                                                                             </div>
                                                                                                                             <div
                                                                                                                                 class="color-radio-item">
                                                                                                                                 <input
                                                                                                                                     type="radio"
-                                                                                                                                    id="load_radio_bad{{index + 1}}"
-                                                                                                                                    name="battery_load_test_detail[{{index + 1}}][load_test_status_id]"
+                                                                                                                                    id="load_radio_bad{{index}}"
+                                                                                                                                    name="battery_load_test_detail[{{index}}][load_test_status_id]"
                                                                                                                                     value="3"
                                                                                                                                     ng-value="3"
                                                                                                                                     ng-checked="battery_load_test.load_test_status_id == 3"
                                                                                                                                     ng-change="onChangeBatteryTestStatus(index)" ng-model="battery_load_test.load_test_status_id"  />
                                                                                                                                 <label
-                                                                                                                                    for="load_radio_bad{{index + 1}}"
+                                                                                                                                    for="load_radio_bad{{index}}"
                                                                                                                                     class="radio-bad"></label>
                                                                                                                             </div>
                                                                                                                         </div>
@@ -1034,42 +1034,42 @@
                                                                                                                                     class="color-radio-item">
                                                                                                                                     <input
                                                                                                                                         type="radio"
-                                                                                                                                        id="hydro_radio_good{{index + 1}}"
-                                                                                                                                        name="battery_load_test_detail[{{index + 1}}][hydrometer_electrolyte_status_id]"
+                                                                                                                                        id="hydro_radio_good{{index}}"
+                                                                                                                                        name="battery_load_test_detail[{{index}}][hydrometer_electrolyte_status_id]"
                                                                                                                                         value="1"
                                                                                                                                         ng-value="1"
                                                                                                                                         ng-checked="battery_load_test.hydrometer_electrolyte_status_id == 1"
                                                                                                                                         ng-change="onChangeBatteryTestStatus(index)" ng-model="battery_load_test.hydrometer_electrolyte_status_id"  />
                                                                                                                                     <label
-                                                                                                                                        for="hydro_radio_good{{index + 1}}"
+                                                                                                                                        for="hydro_radio_good{{index}}"
                                                                                                                                         class="radio-good"></label>
                                                                                                                                 </div>
                                                                                                                                 <div
                                                                                                                                     class="color-radio-item">
                                                                                                                                     <input
                                                                                                                                         type="radio"
-                                                                                                                                        id="hydro_radio_average{{index+1}}"
-                                                                                                                                        name="battery_load_test_detail[{{index + 1}}][hydrometer_electrolyte_status_id]"
+                                                                                                                                        id="hydro_radio_average{{index}}"
+                                                                                                                                        name="battery_load_test_detail[{{index}}][hydrometer_electrolyte_status_id]"
                                                                                                                                         value="2"
                                                                                                                                         ng-value="2"
                                                                                                                                         ng-checked="battery_load_test.hydrometer_electrolyte_status_id == 2"
                                                                                                                                         ng-change="onChangeBatteryTestStatus(index)" ng-model="battery_load_test.hydrometer_electrolyte_status_id"  />
                                                                                                                                     <label
-                                                                                                                                        for="hydro_radio_average{{index + 1}}"
+                                                                                                                                        for="hydro_radio_average{{index}}"
                                                                                                                                         class="radio-average"></label>
                                                                                                                                 </div>
                                                                                                                                 <div
                                                                                                                                     class="color-radio-item">
                                                                                                                                     <input
                                                                                                                                         type="radio"
-                                                                                                                                        id="hydro_radio_bad{{index + 1}}"
-                                                                                                                                        name="battery_load_test_detail[{{index + 1}}][hydrometer_electrolyte_status_id]"
+                                                                                                                                        id="hydro_radio_bad{{index}}"
+                                                                                                                                        name="battery_load_test_detail[{{index}}][hydrometer_electrolyte_status_id]"
                                                                                                                                         value="3"
                                                                                                                                         ng-value="3"
                                                                                                                                         ng-checked="battery_load_test.hydrometer_electrolyte_status_id == 3"
                                                                                                                                         ng-change="onChangeBatteryTestStatus(index)" ng-model="battery_load_test.hydrometer_electrolyte_status_id"  />
                                                                                                                                     <label
-                                                                                                                                        for="hydro_radio_bad{{index + 1}}"
+                                                                                                                                        for="hydro_radio_bad{{index}}"
                                                                                                                                         class="radio-bad"></label>
                                                                                                                                 </div>
                                                                                                                             </div>
@@ -1112,7 +1112,7 @@
                                                                                                                         <input
                                                                                                                             type="hidden"
                                                                                                                             class="required"
-                                                                                                                            name="battery_load_test_detail[{{index + 1}}][overall_status_id]"
+                                                                                                                            name="battery_load_test_detail[{{index}}][overall_status_id]"
                                                                                                                             value="{{battery_load_test.overall_status_id}}">
                                                                                                                     </div>
                                                                                                                     <!-- Feild -->
@@ -1132,25 +1132,25 @@
                                                                                                                             class="common-radio-button type-4">
                                                                                                                             <input
                                                                                                                                 type="radio"
-                                                                                                                                id="is_battery_replaced_yes{{index + 1}}"
-                                                                                                                                name="battery_load_test_detail[{{index + 1}}][is_battery_replaced]"
+                                                                                                                                id="is_battery_replaced_yes{{index}}"
+                                                                                                                                name="battery_load_test_detail[{{index}}][is_battery_replaced]"
                                                                                                                                 ng-model="battery_load_test.is_battery_replaced"
                                                                                                                                 ng-value="1"
                                                                                                                                 ng-change="onChangeBatteryReplaceStatus()">
                                                                                                                             <label
-                                                                                                                                for="is_battery_replaced_yes{{index + 1}}">
+                                                                                                                                for="is_battery_replaced_yes{{index}}">
                                                                                                                                 Yes<span
                                                                                                                                     class="rd-focused"></span>
                                                                                                                             </label>
                                                                                                                             <input
                                                                                                                                 type="radio"
-                                                                                                                                id="is_battery_replaced_no{{index + 1}}"
-                                                                                                                                name="battery_load_test_detail[{{index + 1}}][is_battery_replaced]"
+                                                                                                                                id="is_battery_replaced_no{{index}}"
+                                                                                                                                name="battery_load_test_detail[{{index}}][is_battery_replaced]"
                                                                                                                                 ng-model="battery_load_test.is_battery_replaced"
                                                                                                                                 ng-value="0"
                                                                                                                                 ng-change="onChangeBatteryReplaceStatus()">
                                                                                                                             <label
-                                                                                                                                for="is_battery_replaced_no{{index + 1}}">
+                                                                                                                                for="is_battery_replaced_no{{index}}">
                                                                                                                                 No<span
                                                                                                                                     class="rd-focused"></span>
                                                                                                                             </label>
@@ -1192,7 +1192,7 @@
                                                                                                                         <input
                                                                                                                             type="hidden"
                                                                                                                             class="required"
-                                                                                                                            name="battery_load_test_detail[{{index + 1}}][replaced_battery_make_id]"
+                                                                                                                            name="battery_load_test_detail[{{index}}][replaced_battery_make_id]"
                                                                                                                             value="{{battery_load_test.replaced_battery_make_id}}">
                                                                                                                     </div>
                                                                                                                     <!-- Feild -->
@@ -1216,7 +1216,7 @@
                                                                                                                             maxlength="30"
                                                                                                                             placeholder="Enter Serial Number"
                                                                                                                             autocomplete="off"
-                                                                                                                            name="battery_load_test_detail[{{index + 1}}][replaced_battery_serial_number]"
+                                                                                                                            name="battery_load_test_detail[{{index}}][replaced_battery_serial_number]"
                                                                                                                             ng-model="battery_load_test.replaced_battery_serial_number"
                                                                                                                             onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')" />
                                                                                                                     </div>
@@ -1237,23 +1237,23 @@
                                                                                                                             class="common-radio-button type-4">
                                                                                                                             <input
                                                                                                                                 type="radio"
-                                                                                                                                id="is_battery_buy_back_yes{{index + 1}}"
-                                                                                                                                name="battery_load_test_detail[{{index + 1}}][is_buy_back_opted]"
+                                                                                                                                id="is_battery_buy_back_yes{{index}}"
+                                                                                                                                name="battery_load_test_detail[{{index}}][is_buy_back_opted]"
                                                                                                                                 ng-model="battery_load_test.is_buy_back_opted"
                                                                                                                                 ng-value="1">
                                                                                                                             <label
-                                                                                                                                for="is_battery_buy_back_yes{{index + 1}}">
+                                                                                                                                for="is_battery_buy_back_yes{{index}}">
                                                                                                                                 Yes<span
                                                                                                                                     class="rd-focused"></span>
                                                                                                                             </label>
                                                                                                                             <input
                                                                                                                                 type="radio"
-                                                                                                                                id="is_battery_buy_back_no{{index + 1}}"
-                                                                                                                                name="battery_load_test_detail[{{index + 1}}][is_buy_back_opted]"
+                                                                                                                                id="is_battery_buy_back_no{{index}}"
+                                                                                                                                name="battery_load_test_detail[{{index}}][is_buy_back_opted]"
                                                                                                                                 ng-model="battery_load_test.is_buy_back_opted"
                                                                                                                                 ng-value="0">
                                                                                                                             <label
-                                                                                                                                for="is_battery_buy_back_no{{index + 1}}">
+                                                                                                                                for="is_battery_buy_back_no{{index}}">
                                                                                                                                 No<span
                                                                                                                                     class="rd-focused"></span>
                                                                                                                             </label>
@@ -1296,7 +1296,7 @@
                                                                                                                         <input
                                                                                                                             type="hidden"
                                                                                                                             class="form-control required"
-                                                                                                                            name="battery_load_test_detail[{{index + 1}}][battery_not_replaced_reason_id]"
+                                                                                                                            name="battery_load_test_detail[{{index}}][battery_not_replaced_reason_id]"
                                                                                                                             value="{{battery_load_test.battery_not_replaced_reason_id}}">
                                                                                                                     </div>
                                                                                                                 </li>

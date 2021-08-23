@@ -331,7 +331,7 @@ class BatteryController extends Controller
                             'success' => false,
                             'error' => 'Validation Error',
                             'errors' => [
-                                'Battery ' . ($key). ' : '.implode($battery_load_test_validator->errors()->all(), ''),
+                                'Battery ' . ($key + 1). ' : '.implode($battery_load_test_validator->errors()->all(), ''),
                             ]
                         ]);
                     }
@@ -559,7 +559,7 @@ class BatteryController extends Controller
                 $battery_result->manufactured_date = date('Y-m-d', strtotime($battery_load_test['manufactured_date']));
                 $battery_result->battery_serial_number = $battery_load_test['battery_serial_number'];
 
-                $battery_result->battery_type = $key;
+                $battery_result->battery_type = $key + 1;
                 $battery_result->load_test_status_id = $battery_load_test['load_test_status_id'];
                 $battery_result->hydrometer_electrolyte_status_id = $battery_load_test['hydrometer_electrolyte_status_id'];
                 $battery_result->overall_status_id = $battery_load_test['overall_status_id'];

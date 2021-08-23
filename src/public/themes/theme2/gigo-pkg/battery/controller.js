@@ -751,7 +751,28 @@ app.component('batteryForm', {
             }else{
                 battery_load_test.overall_status_id = '';
             }
-            $scope.onChangeBatteryStatus();
+
+            var battery_status_found_ok_count = 0;
+            $.each(self.battery_load_tests, function( index, value ) {
+                if(value.overall_status_id == 1){
+                    battery_status_found_ok_count ++;
+                }
+            });
+
+            if(battery_status_found_ok_count == 2){
+                $scope.onChangeBatteryStatus();
+            }
+
+            var new_battery_replaced_yes_count = 0;
+            $.each(self.battery_load_tests, function( index, value ) {
+                if(value.is_battery_replaced == 1){
+                    new_battery_replaced_yes_count ++;
+                }
+            });
+
+            if(new_battery_replaced_yes_count){
+                $scope.onChangeBatteryReplaceStatus();
+            }
         }
 
         $scope.onChangeBatteryStatus = function(){
@@ -774,7 +795,16 @@ app.component('batteryForm', {
             }else{
                 self.battery.battery_status_id = '';
             }
-            $scope.onChangeBatteryReplaceStatus();
+
+            var new_battery_replaced_yes_count = 0;
+            $.each(self.battery_load_tests, function( index, value ) {
+                if(value.is_battery_replaced == 1){
+                    new_battery_replaced_yes_count ++;
+                }
+            });
+            if(new_battery_replaced_yes_count){
+                $scope.onChangeBatteryReplaceStatus();
+            }
         }
 
         $scope.onChangeBatteryReplaceStatus = function(){
@@ -785,6 +815,7 @@ app.component('batteryForm', {
                     new_battery_replaced_yes_count ++;
                 }
             });
+
 
             if(new_battery_replaced_yes_count){
                 self.show_job_card_details_section = true;
@@ -798,7 +829,7 @@ app.component('batteryForm', {
                 self.show_job_card_details_section = false;
                 self.battery.job_card_number = '';
                 self.battery.job_card_date = '';
-                 self.battery.battery_status_id = '';
+                self.battery.battery_status_id = '';
             }
         }
 
@@ -808,27 +839,28 @@ app.component('batteryForm', {
                 console.log("self.battery_load_tests")
                 console.log(self.battery_load_tests)
                 if(self.battery_load_tests[1]){
-
-                    var test = self.battery_load_tests[1];
-                    test.id = '';
-                    test.battery_make_id = '';
-                    test.battery_serial_number = '';
-                    test.battery_amp_hour_id = '';
-                    test.battery_voltage_id = '';
-                    test.manufactured_date = '';
-                    test.multimeter_test_status_id = '';
-                    test.load_test_status_id = '';
-                    test.hydrometer_electrolyte_status_id = '';
-                    test.overall_status_id = '';                                
-                    test.is_battery_replaced = 0;
-                    test.replaced_battery_make_id = '';
-                    test.replaced_battery_serial_number = '';
-                    test.is_buy_back_opted = 0;
-                    test.battery_not_replaced_reason_id = '';
-                    test.hide_battery_section = '';
+                    $.each(self.battery_load_tests, function( index, value ) {
+                        if(index == 1){
+                            value.id = '';
+                            value.battery_make_id = '';
+                            value.battery_serial_number = '';
+                            value.battery_amp_hour_id = '';
+                            value.battery_voltage_id = '';
+                            value.manufactured_date = '';
+                            value.multimeter_test_status_id = '';
+                            value.load_test_status_id = '';
+                            value.hydrometer_electrolyte_status_id = '';
+                            value.overall_status_id = '';                                
+                            value.is_battery_replaced = 0;
+                            value.replaced_battery_make_id = '';
+                            value.replaced_battery_serial_number = '';
+                            value.is_buy_back_opted = 0;
+                            value.battery_not_replaced_reason_id = '';
+                            value.hide_battery_section = true;
+                        }
+                    });
 
                     $scope.onChangeBatteryTestStatus(0);
-                    self.battery_load_tests[1].hide_battery_section = true;
                 }
             }else if(no_of_batteries == 2){
                self.battery_load_tests[1].hide_battery_section = false;
