@@ -64,6 +64,11 @@ class BatteryLoadTestResult extends BaseModel
         return $this->belongsTo('App\VehicleBattery', 'vehicle_battery_id');
     }
 
+    public function batteryMake()
+    {
+        return $this->belongsTo('App\BatteryMake', 'battery_make_id');
+    }
+
     public function outlet()
     {
         return $this->belongsTo('App\Outlet', 'outlet_id');

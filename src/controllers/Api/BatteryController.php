@@ -45,8 +45,8 @@ class BatteryController extends Controller
                 'vehicle.model',
                 'outlet',
                 'batteryLoadTestResult',
-                // 'batteryLoadTestResult.batteryMake',
-                'batteryMake',
+                'batteryLoadTestResult.batteryMake',
+                // 'batteryMake',
                 'batteryLoadTestResult.batteryAmphour',
                 'batteryLoadTestResult.batteryVoltage',
                 'batteryLoadTestResult.multimeterTestStatus',
@@ -103,7 +103,6 @@ class BatteryController extends Controller
         $this->data['success'] = true;
 
         return response()->json($this->data);
-
     }
 
     public function paymentSave(Request $request)
@@ -412,6 +411,8 @@ class BatteryController extends Controller
 
             if ($request->sold_date) {
                 $vehicle->sold_date = date('Y-m-d', strtotime($request->sold_date));
+            }else{
+                $vehicle->sold_date = null;
             }
 
             $vehicle->engine_number = $request->engine_number;
@@ -529,7 +530,11 @@ class BatteryController extends Controller
 
             //To save job card details in vehicle_battery
             $vehicle_battery->job_card_number = $request->job_card_number;
-            $vehicle_battery->job_card_date = date('Y-m-d', strtotime($request->job_card_date));
+            if($request->job_card_number){
+                $vehicle_battery->job_card_date = date('Y-m-d', strtotime($request->job_card_date));
+            }else{
+                $vehicle_battery->job_card_date =  null;
+            }
             $vehicle_battery->remarks = $request->over_all_status_remarks;
             $vehicle_battery->save();
             // dump($vehicle_battery);
