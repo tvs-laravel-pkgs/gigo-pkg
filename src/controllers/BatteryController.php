@@ -715,7 +715,7 @@ class BatteryController extends Controller
                     isset($value->vehicle->chassis_number) ? $value->vehicle->chassis_number: '',
                     isset($value->vehicle->engine_number) ? $value->vehicle->engine_number: '',
                     isset($value->vehicle->kmReadingType->name) ? $value->vehicle->kmReadingType->name : '',
-                    isset($value->vehicle->km_reading) ? $value->vehicle->km_reading : '',
+                    isset($value->vehicle->km_reading) ? $value->vehicle->km_reading : $value->vehicle->hr_reading,
                     isset($value->vehicle->sold_date) ? date("d-m-Y", strtotime($value->vehicle->sold_date)) : '',    
                     isset($value->customer->code) ? $value->customer->code : '',
                     isset($value->customer->name) ? $value->customer->name : '',
@@ -742,8 +742,8 @@ class BatteryController extends Controller
                             
                             array_push($vehicle_battery_details[$key1], $month);
                             array_push($vehicle_battery_details[$key1], $year);
-                            array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->batteryAmphour->name) ? $battery_load_test_result_data->batteryAmphour->name :'');
-                            array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->batteryVoltage->name) ? $battery_load_test_result_data->batteryVoltage->name :'');
+                            array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->batteryAmphour->name) ? $battery_load_test_result_data->batteryAmphour->name : $battery_load_test_result_data->amp_hour);
+                            array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->batteryVoltage->name) ? $battery_load_test_result_data->batteryVoltage->name :$battery_load_test_result_data->battery_voltage);
                             array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->loadTestStatus->name) ? $battery_load_test_result_data->loadTestStatus->name :'');
                             array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->hydrometerElectrolyteStatus->name) ? $battery_load_test_result_data->hydrometerElectrolyteStatus->name :'');
                             array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->multimeterTestStatus->name) ? $battery_load_test_result_data->multimeterTestStatus->name :'');
@@ -781,14 +781,13 @@ class BatteryController extends Controller
                 }
 
                 array_push($vehicle_battery_details[$key1], $value->job_card_number);
-                array_push($vehicle_battery_details[$key1], date("d-m-Y", strtotime($value->job_card_date)));
-                array_push($vehicle_battery_details[$key1], isset($value->vehicle->invoice_number) ? $value->vehicle->invoice_number : '');
-                array_push($vehicle_battery_details[$key1], date("d-m-Y", strtotime($value->invoice_date)));
+                array_push($vehicle_battery_details[$key1], $value->job_card_number ? date("d-m-Y", strtotime($value->job_card_date)) : '');
+                array_push($vehicle_battery_details[$key1], isset($value->invoice_number) ? $value->invoice_number : '');
+                array_push($vehicle_battery_details[$key1], $value->invoice_number ? date("d-m-Y", strtotime($value->invoice_date)) : '');
                 array_push($vehicle_battery_details[$key1], $value->invoice_amount);
                 array_push($vehicle_battery_details[$key1], isset($value->batteryStatus->name) ? $value->batteryStatus->name : '');
                 array_push($vehicle_battery_details[$key1],  $value->remarks);
         }
-
 
         $time_stamp = date('Y_m_d_h_i_s');
         Excel::create('Battery Details - ' . $time_stamp, function ($excel) use ($header, $vehicle_battery_details) {
@@ -800,7 +799,7 @@ class BatteryController extends Controller
                     });
                 });
             $excel->setActiveSheetIndex(0);
-        })->export('xlsx');
+        })->export('csv');
     }
 
     public function exportOld(Request $request)

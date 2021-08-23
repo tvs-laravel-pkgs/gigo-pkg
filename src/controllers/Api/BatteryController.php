@@ -535,6 +535,7 @@ class BatteryController extends Controller
             }else{
                 $vehicle_battery->job_card_date =  null;
             }
+            $vehicle_battery->invoice_date =  null;
             $vehicle_battery->remarks = $request->over_all_status_remarks;
             $vehicle_battery->save();
             // dump($vehicle_battery);
