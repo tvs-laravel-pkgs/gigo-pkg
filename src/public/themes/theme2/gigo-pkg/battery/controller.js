@@ -313,15 +313,18 @@ app.component('batteryView', {
                     }
 
                     $scope.battery = res.battery;
+                    self.battery_load_tests = res.battery.battery_load_test_result;
                     $scope.extras = res.extras;
                     $scope.user_info = res.user;
                     self.country = res.extras.country;
                     $scope.action = res.action;
 
-                    $scope.customer = $scope.battery ? $scope.battery.vehicle_battery ? $scope.battery.vehicle_battery.customer : [] : [];
+                    // $scope.customer = $scope.battery ? $scope.battery.vehicle_battery ? $scope.battery.vehicle_battery.customer : [] : [];
+                    $scope.customer = $scope.battery ? ( $scope.battery.customer ? $scope.battery.customer : [] ) : [];
                     console.log($scope.customer);
 
-                    $scope.vehicle = $scope.battery ? $scope.battery.vehicle_battery ? $scope.battery.vehicle_battery.vehicle : [] : [];
+                    // $scope.vehicle = $scope.battery ? $scope.battery.vehicle_battery ? $scope.battery.vehicle_battery.vehicle : [] : [];
+                    $scope.vehicle = $scope.battery ? ( $scope.battery.vehicle ? $scope.battery.vehicle : [] ) : [];
                     console.log($scope.vehicle);
 
                     /* Image Uploadify Funtion */
