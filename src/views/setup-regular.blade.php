@@ -1982,6 +1982,10 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 		when('/mechanic/report', {
 			template: '<mechanic-report></mechanic-report>',
 			title: 'Mechanic Report',
+		}).
+		when('/attendance/report', {
+			template: '<attendance-report></attendance-report>',
+			title: 'Attendance Report',
 		});
 	}]);
 
