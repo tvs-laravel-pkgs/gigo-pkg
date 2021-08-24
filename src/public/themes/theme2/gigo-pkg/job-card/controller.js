@@ -4005,7 +4005,7 @@ app.component('jobCardFloatingForm', {
 //Chnage Floor Supervisor Change
 app.component('jobCardChangeFloorSupervisorForm', {
     templateUrl: job_card_floor_supervisor_template_url,
-    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $route) {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         self.angular_routes = angular_routes;
@@ -4075,7 +4075,9 @@ app.component('jobCardChangeFloorSupervisorForm', {
                             }
                             custom_noty('success', res.message);
                             
-                            $scope.fetchData();
+                            // $scope.fetchData();
+                            $route.reload();
+                            $scope.$apply();
                         })
                         .fail(function (xhr) {
                             $('.submit').button('reset');

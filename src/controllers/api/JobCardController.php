@@ -7173,8 +7173,14 @@ class JobCardController extends Controller
     public function floorSupervisorGetDetails(Request $request){
         // dd($request->all());
             $job_card = JobCard::with([
-                    'floorSupervisor'
-                ])
+                'jobOrder',
+                'jobOrder.type',
+                'jobOrder.serviceType',
+                'jobOrder.vehicle',
+                'jobOrder.vehicle.model',
+                'status',    
+                'floorSupervisor',
+            ])
             ->select([
                 'job_cards.*',
                 DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
