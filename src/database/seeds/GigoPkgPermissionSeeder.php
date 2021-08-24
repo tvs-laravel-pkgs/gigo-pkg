@@ -2368,6 +2368,14 @@ class GigoPkgPermissionSeeder extends Seeder
                 'name' => 'gigo-support-mapped-outlet',
                 'display_name' => 'View Mapped Outlet',
             ],
+
+            //GIGO Import
+            [
+                'display_order' => 2,
+                'parent' => 'gigo-pages',
+                'name' => 'gigo-sap-import',
+                'display_name' => 'SAP Import',
+            ],
         ];
         Permission::createFromArrays($permissions);
     }
