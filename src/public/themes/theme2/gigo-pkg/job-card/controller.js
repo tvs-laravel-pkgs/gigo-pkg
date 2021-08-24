@@ -68,6 +68,7 @@ app.component('jobCardTableList', {
                 { data: 'status', searchable: false },
                 { data: 'outlet_code', name: 'outlets.code' },
                 { data: 'job_card_number', name: 'job_cards.job_card_number' },
+                { data: 'bay_name', name: 'bays.name' },
                 { data: 'registration_number', name: 'vehicles.registration_number' },
                 { data: 'customer_name', name: 'customers.name' },
                 { data: 'job_order_type', name: 'service_order_types.name' },
