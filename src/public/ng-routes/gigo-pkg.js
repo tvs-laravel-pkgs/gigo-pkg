@@ -1392,6 +1392,10 @@ app.config(['$routeProvider', function($routeProvider) {
     when('/mechanic/report', {
         template: '<mechanic-report></mechanic-report>',
         title: 'Mechanic Report',
+    }).
+    when('/attendance/report', {
+        template: '<attendance-report></attendance-report>',
+        title: 'Attendance Report',
     });
 }]);
 
