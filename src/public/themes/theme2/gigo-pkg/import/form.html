@@ -1,0 +1,32 @@
+<div class="content-wrap cndn-wrap">
+    <div class="page-main-content list-page-content">
+        <div class="container">
+            <div class="row">
+                <form id="import-form" enctype="multipart/form-data">
+                <input type="hidden" name="type_id" value="{{$ctrl.type_id}}">
+                <div class="col-md-offset-3 col-md-6">
+                    <div class="page-form">
+                        <p class="text-center">{{$ctrl.impoty_type.name}}</p>
+                        <div class="form-group">
+                            <div class="file-upload-wrapper">
+                                <input type="file" name="excel_file" id="excel_file" class="file-upload-field" autocomplete="off" placeholder="Enter Click to upload" onchange="angular.element(this).scope().fileNameChanged(this)" ng-model="$ctrl.po_import_file"/>
+                            </div><!-- File Upload Wrapper -->
+                            <span id="error_text" class="error_text"></span>
+                        </div><!-- Feild -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <a class="btn-link" id="po_item_template" href="{{$ctrl.import_cron_job_template_base_path}}/{{$ctrl.impoty_type.template_file}}" download><img class="img-responsive import-img" src="./public/theme/img/content/download-red.svg" alt="Upload Image" /> Download Template</a>
+                            </div><!-- Column -->
+                            <div class="col-md-6">
+                                <div class="text-right">
+                                    <button class="btn btn-primary" type="submit" id="upload">Upload</button>
+                                </div>
+                            </div><!-- Column -->
+                        </div><!-- Row -->
+                    </div><!-- Page Form -->
+                </div><!-- Column -->
+                </form>               
+            </div><!-- Row -->
+        </div><!-- Container -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->

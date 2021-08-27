@@ -434,6 +434,14 @@ class GigoSupportController extends Controller {
 				} else {
 					$vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
 				}
+				$vehicle->model_id = $request->model_id;
+				if($request->sold_date){
+					$vehicle->sold_date = date('Y-m-d', strtotime($request->sold_date));
+				}else{
+					$vehicle->sold_date = null;
+				}
+
+				$vehicle->save();
 				
 				if ($job_order && !$job_order->service_policy_id) {
 					if ($vehicle->chassis_number) {
@@ -536,9 +544,9 @@ class GigoSupportController extends Controller {
 						$amc_member->save();
 	
 						$job_order->service_policy_id = $amc_member->id;
-						$job_order->save();
 					}
 				}
+				$job_order->save();
 
 				DB::commit();
 	

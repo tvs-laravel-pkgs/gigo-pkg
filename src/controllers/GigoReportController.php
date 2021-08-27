@@ -419,4 +419,96 @@ class GigoReportController extends Controller {
             print_r($e);
         }
     }
+
+    public function attendanceLogExport(Request $request) {
+        // dd($request->all());
+        try {
+
+            ini_set('max_execution_time', 0);
+            ini_set('memory_limit', -1);
+
+            if (!empty($request->export_date)) {
+                $date_range = explode(' to ', $request->export_date);
+                $report_start_date = date('Y-m-d', strtotime(trim($date_range[0])));
+                $report_end_date = date('Y-m-d', strtotime(trim($date_range[1])));
+            } else {
+                $report_start_date = date('Y-m-d', strtotime(date('01-m-Y')));
+                $report_end_date = date('Y-m-d', strtotime(date('t-m-Y')));
+            }
+
+            $attendance_logs = AttendanceLog::select([
+                'employees.id as employee_id',
+                'employees.code as employee_code',
+                'users.name as employee_name',
+                'outlets.code as outlet_code',
+                'outlets.name as outlet_name',
+                'outlets.ax_name as outlet_ax_name',
+                'attendance_logs.in_date_time as punch_in_date',
+                'attendance_logs.out_date_time as punch_out_date',
+            ])
+            ->join('users', 'users.id', 'attendance_logs.user_id')
+            ->join('employees', 'employees.id', 'users.entity_id')
+            ->join('outlets', 'outlets.id', 'employees.outlet_id')
+            ->where('users.user_type_id', 1) //EMPLOYEE
+            ->whereBetween('attendance_logs.date', [$report_start_date, $report_end_date])
+            ->get();
+            
+            $attendance_details = array();            
+            if($attendance_logs){
+                foreach($attendance_logs as $key => $attendance_log){
+                    $employee_shift = EmployeeShift::join('shifts','shifts.id','employee_shifts.shift_id')
+                        ->whereBetween('date', [$report_start_date, $report_end_date])
+                        ->where('employee_id', $attendance_log->employee_id)
+                        ->select('shifts.name as shift_name','employee_shifts.shift_id')
+                        ->first();
+                    $attendance_details[] = [
+                        $attendance_log->employee_code,                        
+                        $attendance_log->employee_name,                        
+                        $attendance_log->outlet_code,                        
+                        !empty($attendance_log->outlet_ax_name) ? $attendance_log->outlet_ax_name : $attendance_log->outlet_name,
+                        !empty($employee_shift->shift_name) ? $employee_shift->shift_name : '',
+                        !empty($attendance_log->punch_in_date) ? date('d-m-Y', strtotime($attendance_log->punch_in_date)) : '',
+                        !empty($attendance_log->punch_out_date) ? date('d-m-Y', strtotime($attendance_log->punch_out_date)) : '',
+                    ];    
+                }
+            }
+
+            ob_end_clean();
+            ob_start();
+
+            $header = [
+                'Employee Code',
+                'Employee Name',
+                'Outlet Code',
+                'Outlet Name',
+                'Shift',
+                'Punch In Date',
+                'Punch Out Date',
+            ];
+
+            $time_stamp = date('Y_m_d_h_i_s');
+            Excel::create('Attendance Report - ' . $time_stamp, function ($excel) use ($header, $attendance_details) {
+                $excel->sheet('Logs', function ($sheet) use ($header, $attendance_details) {
+                    $sheet->fromArray($attendance_details, null, 'A1');
+                    $sheet->row(1, $header);
+                    $sheet->row(1, function ($row) {
+                        $row->setBackground('#bbc0c9');
+                        $row->setAlignment('center');
+                        $row->setFontSize(10);
+                        $row->setFontFamily('Work Sans');
+                        $row->setFontWeight('bold');
+                    });
+                    $sheet->cell('A:G', function ($row) {
+                        $row->setAlignment('center');
+                        $row->setFontFamily('Work Sans');
+                        $row->setFontSize(10);
+                    });
+                    $sheet->setAutoSize(true);
+                });
+            })->export('xlsx');
+
+        } catch (Exception $e) {
+            print_r($e);
+        }
+    }
 }

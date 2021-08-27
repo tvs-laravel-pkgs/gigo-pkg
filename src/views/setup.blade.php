@@ -124,6 +124,8 @@
     var exportJobCardReport = "{{route('exportJobCardReport')}}";
     var exportMechanicReport = "{{route('mechanicWorkLogExport')}}";
 
+    var exportAttendanceReport = "{{route('attendanceLogExport')}}";
+
 </script>
 <!-- <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-segment/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-primary-application/controller.js')}}"></script>
@@ -439,6 +441,13 @@
 <script type='text/javascript'>
     //GIGO Report
     var gigo_mechanic_report_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/report/mechanic-list.html')}}';
+
+    var gigo_attendance_report_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/report/attendance-list.html')}}';
+</script>
+<script type='text/javascript'>
+    //GIGO Import
+     var import_gigo_template_url  = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/import/list.html')}}';
+     var import_gigo_form_template_url  = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/import/form.html')}}';
 </script>
 
 <script type='text/javascript'>

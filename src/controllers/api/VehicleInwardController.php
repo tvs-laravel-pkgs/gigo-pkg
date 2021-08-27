@@ -3418,6 +3418,15 @@ class VehicleInwardController extends Controller
                         $job_order_part->status_id = 8200; //Customer Approval Pending
                         $job_order_part->is_customer_approved = 0;
                         $job_order_part->save();
+
+                        if($job_order->is_sms_notification != 1){
+                            if($job_order->serviceAdviser && $job_order->serviceAdviser->contact_number){
+                                $message = 'New ROT / Parts added to the Job Card number '.$job_order->jobCard->job_card_number.', get a revised estimate approval from the customer and update in GIGO - TVS';
+                                $msg = sendOTPSMSNotification($job_order->serviceAdviser->contact_number, $message);
+                            }
+                            $job_order->is_sms_notification = 1;
+                            $job_order->save();
+                        }
                     }
                 } else {
                     // $job_order_part->is_customer_approved = 1;
@@ -3425,6 +3434,9 @@ class VehicleInwardController extends Controller
                     JobOrderPart::where('job_order_id', $job_order->id)->where('is_customer_approved', 0)->where('status_id', 8200)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8201, 'updated_at' => Carbon::now()]);
 
                     JobOrderRepairOrder::where('job_order_id', $job_order->id)->where('is_customer_approved', 0)->where('status_id', 8180)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8181, 'updated_at' => Carbon::now()]);
+
+                    $job_order->is_sms_notification = 0;
+                    $job_order->save();
                 }
             }
 
@@ -3672,6 +3684,15 @@ class VehicleInwardController extends Controller
                             $job_order_part->status_id = 8200; //Customer Approval Pending
                             $job_order_part->is_customer_approved = 0;
                             $job_order_part->save();
+
+                            if($job_order->is_sms_notification != 1){
+                                if($job_order->serviceAdviser && $job_order->serviceAdviser->contact_number){
+                                    $message = 'New ROT / Parts added to the Job Card number '.$job_order->jobCard->job_card_number.', get a revised estimate approval from the customer and update in GIGO - TVS';
+                                    $msg = sendOTPSMSNotification($job_order->serviceAdviser->contact_number, $message);
+                                }
+                                $job_order->is_sms_notification = 1;
+                                $job_order->save();
+                            }
                         }
                     } else {
                         // $job_order_part->is_customer_approved = 1;
@@ -3695,6 +3716,9 @@ class VehicleInwardController extends Controller
                                 'status_id' => 8181,
                                 'updated_at' => Carbon::now()
                             ]);
+
+                        $job_order->is_sms_notification = 0;
+                        $job_order->save();
                     }
                 }
             }
@@ -4001,6 +4025,15 @@ class VehicleInwardController extends Controller
                         $job_order_repair_order->status_id = 8180; //Customer Approval Pending
                         $job_order_repair_order->is_customer_approved = 0;
                         $job_order_repair_order->save();
+
+                        if($job_order->is_sms_notification != 1){
+                            if($job_order->serviceAdviser && $job_order->serviceAdviser->contact_number){
+                                $message = 'New ROT / Parts added to the Job Card number '.$job_order->jobCard->job_card_number.', get a revised estimate approval from the customer and update in GIGO - TVS';
+                                $msg = sendOTPSMSNotification($job_order->serviceAdviser->contact_number, $message);
+                            }
+                            $job_order->is_sms_notification = 1;
+                            $job_order->save();
+                        }
                     }
                 } else {
                     // $job_order_repair_order->is_customer_approved = 1;
@@ -4008,6 +4041,9 @@ class VehicleInwardController extends Controller
                     JobOrderPart::where('job_order_id', $job_order->id)->where('is_customer_approved', 0)->where('status_id', 8200)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8201, 'updated_at' => Carbon::now()]);
 
                     JobOrderRepairOrder::where('job_order_id', $job_order->id)->where('is_customer_approved', 0)->where('status_id', 8180)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8181, 'updated_at' => Carbon::now()]);
+
+                    $job_order->is_sms_notification = 0;
+                    $job_order->save();
                 }
 
             }
@@ -6708,7 +6744,9 @@ class VehicleInwardController extends Controller
 
                 }
             }
-
+            if(!$job_order->customer_id){
+                $job_order->customer_id = $job_order->vehicle->currentOwner->customer->id;
+            }
             $job_order->estimated_amount = $request->estimated_amount;
             $estimated_delivery_date = $request->est_delivery_date . ' ' . $request->est_delivery_time;
             $job_order->estimated_delivery_date = date('Y-m-d H:i:s', strtotime($estimated_delivery_date));
