@@ -457,7 +457,7 @@ class GigoReportController extends Controller {
                 ->where('employees.outlet_id', 110)
                 // ->where('employees.outlet_id', Auth::user()->working_outlet_id)
                 // ->whereIn('users.id', [191,192,194]) //EMPLOYEE
-                ->where('employees.id',11684) //HAVE TO COMMENT
+                // ->where('employees.id',11684) //HAVE TO COMMENT
                 ->orderBy('users.name', 'asc')
             ->get();
             
