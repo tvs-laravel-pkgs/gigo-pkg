@@ -537,21 +537,21 @@ class GigoReportController extends Controller {
                                 $minutes2 = ($array2[0] * 60.0 + $array2[1]);
                                 $diff = $minutes2 - $minutes1;
                                 // dump($diff);
-                                                                if ($diff > 0) {
-                                                                        $total_working_hours = intdiv($diff, 60) . ':' . ($diff % 60) . ':00';
-                                                                        $summary_detail['total_hours'] = sprintf("%02d", intdiv($diff, 60)) . '.' . (sprintf("%02d", $diff % 60));
-                            
-                                                                } elseif ($diff == 0) {
-                                                                } else {
-                                    $to_time = strtotime("2021-08-07 ".$outlet_working_hours->end_time);
-                                    $from_time = strtotime("2021-08-06 ".$outlet_working_hours->start_time);
-                                                                        $diff = round(abs($to_time - $from_time) / 60,2);
+                                    if ($diff > 0) {
+                                            $total_working_hours = intdiv($diff, 60) . ':' . ($diff % 60) . ':00';
+                                            $summary_detail['total_hours'] = sprintf("%02d", intdiv($diff, 60)) . '.' . (sprintf("%02d", $diff % 60));
 
-                                                                        $total_working_hours = intdiv($diff, 60) . ':' . ($diff % 60) . ':00';
-                                                                        // $summary_detail['total_hours'] = intdiv($diff, 60) . '.' . ($diff % 60);
-                                    $summary_detail['total_hours'] = sprintf("%02d", intdiv($diff, 60)) . '.' . (sprintf("%02d", $diff % 60));
+                                    } elseif ($diff == 0) {
+                                    } else {
+                                        $to_time = strtotime("2021-08-07 ".$outlet_working_hours->end_time);
+                                        $from_time = strtotime("2021-08-06 ".$outlet_working_hours->start_time);
+                                        $diff = round(abs($to_time - $from_time) / 60,2);
+
+                                        $total_working_hours = intdiv($diff, 60) . ':' . ($diff % 60) . ':00';
+                                        // $summary_detail['total_hours'] = intdiv($diff, 60) . '.' . ($diff % 60);
+                                        $summary_detail['total_hours'] = sprintf("%02d", intdiv($diff, 60)) . '.' . (sprintf("%02d", $diff % 60));
                                                                 }
-                                $overall_work_hours[] = $total_working_hours;
+                                        $overall_work_hours[] = $total_working_hours;
                             }
                         }
                         // dd($summary_detail);
@@ -574,27 +574,27 @@ class GigoReportController extends Controller {
 
                         $employee_work_hour = '00:00:00';
 
-                                                //Employee Detailed Report
-                                                $work_logs_detail = array();
+                        //Employee Detailed Report
+                        $work_logs_detail = array();
 
                         if(count($mechanic_time_logs) > 0){
                             $duration_difference = []; 
                             $lunch_difference = []; 
-                                                        $duration = [];
+                            $duration = [];
                                                         // dump($mechanic_time_logs);
                             foreach($mechanic_time_logs as $mechanic_time_log){
                                 // dd($mechanic_time_log);
-                                                                $work_logs_detail['outlet_code'] = $employee->employee_outlet_code;
+                                $work_logs_detail['outlet_code'] = $employee->employee_outlet_code;
                                 $work_logs_detail['outlet_name'] = $employee->employee_outlet_ax_name ? $employee->employee_outlet_ax_name : $employee->employee_outlet_name;
                                 $work_logs_detail['date'] = date('d-m-Y', $start);
-                                                                $work_logs_detail['employee_code'] = $employee->employee_code;
-                                                                $work_logs_detail['employee_name'] = $employee->employee_name;
-                                                                
-                                                                $work_logs_detail['rot_code'] = $mechanic_time_log->code;
-                                                                $work_logs_detail['rot_name'] = $mechanic_time_log->name;
+                                $work_logs_detail['employee_code'] = $employee->employee_code;
+                                $work_logs_detail['employee_name'] = $employee->employee_name;
+                                
+                                $work_logs_detail['rot_code'] = $mechanic_time_log->code;
+                                $work_logs_detail['rot_name'] = $mechanic_time_log->name;
                                 $work_logs_detail['actual_rot_hours'] = $mechanic_time_log->hours;
-                                                                $work_logs_detail['job_card_number'] = $mechanic_time_log->job_card_number;
-                                                                $work_logs_detail['reg_number'] = $mechanic_time_log->registration_number;
+                                $work_logs_detail['job_card_number'] = $mechanic_time_log->job_card_number;
+                                $work_logs_detail['reg_number'] = $mechanic_time_log->registration_number;
                                 $work_logs_detail['start_time'] = date('h:i', strtotime($mechanic_time_log->start_date_time));
                                 $work_logs_detail['end_time'] = $mechanic_time_log->end_date_time ? date('h:i', strtotime($mechanic_time_log->end_date_time)) : '';
                                 // $work_logs_detail['idle_hours'] = ;
@@ -638,12 +638,12 @@ class GigoReportController extends Controller {
 
                                     $work_logs_detail['remarks'] = $mechanic_time_log->status_id == 8265 ? 'Lunch' : 'Work Hours';
 
-                                                                        $work_logs_details[] = $work_logs_detail;
+                                    $work_logs_details[] = $work_logs_detail;
                                 }else{
                                     $work_logs_detail['rot_hours'] = '';
                                     $work_logs_detail['remarks'] = 'Work InProgress';
 
-                                                                        $work_logs_details[] = $work_logs_detail;
+                                    $work_logs_details[] = $work_logs_detail;
                                 }
                             }
 
@@ -687,20 +687,20 @@ class GigoReportController extends Controller {
                         }else{
                             $work_logs_detail['outlet_code'] = $employee->employee_outlet_code;
                             $work_logs_detail['outlet_name'] = $employee->employee_outlet_ax_name ? $employee->employee_outlet_ax_name : $employee->employee_outlet_name;
-                                                        $work_logs_detail['date'] = date('d-m-Y', $start);
-                                                        $work_logs_detail['employee_code'] = $employee->employee_code;
-                                                        $work_logs_detail['employee_name'] = $employee->employee_name;
-                                                        $work_logs_detail['rot_code'] = '';
-                                                        $work_logs_detail['rot_name'] = '';
+                            $work_logs_detail['date'] = date('d-m-Y', $start);
+                            $work_logs_detail['employee_code'] = $employee->employee_code;
+                            $work_logs_detail['employee_name'] = $employee->employee_name;
+                            $work_logs_detail['rot_code'] = '';
+                            $work_logs_detail['rot_name'] = '';
                             $work_logs_detail['actual_rot_hours'] = '';
-                                                        $work_logs_detail['job_card_number'] = '';
-                                                        $work_logs_detail['reg_number'] = '';
-                                                        $work_logs_detail['start_time'] = '';
-                                                        $work_logs_detail['end_time'] = '';
-                                                        // $work_logs_detail['idle_hours'] = ;
-                                                        $work_logs_detail['rot_hours'] = '';
-                                                        $work_logs_detail['remarks'] = '';
-                                                        $work_logs_details[] = $work_logs_detail;
+                            $work_logs_detail['job_card_number'] = '';
+                            $work_logs_detail['reg_number'] = '';
+                            $work_logs_detail['start_time'] = '';
+                            $work_logs_detail['end_time'] = '';
+                            // $work_logs_detail['idle_hours'] = ;
+                            $work_logs_detail['rot_hours'] = '';
+                            $work_logs_detail['remarks'] = '';
+                            $work_logs_details[] = $work_logs_detail;
                             
                             $summary_detail['working_hours'] = '00.00';
                             $summary_detail['idle_hours'] = $summary_detail['total_hours'];
@@ -777,76 +777,76 @@ class GigoReportController extends Controller {
             // dd($summary_details);
 
                 ob_end_clean();
-                        ob_start();
+                ob_start();
 
             $summary_header = [
-                                'Date',
-                                'Employee Code',
-                                'Employee Name',
+                'Date',
+                'Employee Code',
+                'Employee Name',
                 'Shift',
                 'PunchIn Time',
                 'Punch Out Time',
-                                'Total Hours',
-                                'Working Hours',
-                                'Lunch Hours',
+                'Total Hours',
+                'Working Hours',
+                'Lunch Hours',
                 'Idle Hours',
-                        ];
+            ];
                 
-                        $detail_worklog_header = [
-                                'Outlet Code',
-                'Outlet Name',
-                'Date',
-                                'Employee Code',
-                                'Employee Name',
-                                'ROT Code',
-                                'ROT Name',
-                'Actual ROT Hours',
-                                'JobCard Number',
-                                'Registration Number',
-                                'Start Time',
-                                'End Time',
-                                'ROT Hours',
-                                'Remarks',
-                        ];
+            $detail_worklog_header = [
+                    'Outlet Code',
+                    'Outlet Name',
+                    'Date',
+                    'Employee Code',
+                    'Employee Name',
+                    'ROT Code',
+                    'ROT Name',
+                    'Actual ROT Hours',
+                    'JobCard Number',
+                    'Registration Number',
+                    'Start Time',
+                    'End Time',
+                    'ROT Hours',
+                    'Remarks',
+            ];
 
-                        $time_stamp = date('Y_m_d_h_i_s');
-                        Excel::create('Mechanic Report - ' . $time_stamp, function ($excel) use ($summary_header, $detail_worklog_header, $summary_details, $work_logs_details) {
-                                $excel->sheet('Summary', function ($sheet) use ($summary_header, $summary_details) {
-                                        $sheet->fromArray($summary_details, null, 'A1');
-                                        $sheet->row(1, $summary_header);
-                                        $sheet->row(1, function ($row) {
-                                                $row->setBackground('#bbc0c9');
-                                                $row->setAlignment('center');
-                                                $row->setFontSize(10);
-                                                $row->setFontFamily('Work Sans');
-                                                $row->setFontWeight('bold');
-                                        });
-                                        $sheet->cell('A:F', function ($row) {
-                                                $row->setAlignment('center');
-                                                $row->setFontFamily('Work Sans');
-                                                $row->setFontSize(10);
-                                        });
-                                        $sheet->setAutoSize(true);
-                                });
+            $time_stamp = date('Y_m_d_h_i_s');
+            Excel::create('Mechanic Report - ' . $time_stamp, function ($excel) use ($summary_header, $detail_worklog_header, $summary_details, $work_logs_details) {
+                    $excel->sheet('Summary', function ($sheet) use ($summary_header, $summary_details) {
+                            $sheet->fromArray($summary_details, null, 'A1');
+                            $sheet->row(1, $summary_header);
+                            $sheet->row(1, function ($row) {
+                                    $row->setBackground('#bbc0c9');
+                                    $row->setAlignment('center');
+                                    $row->setFontSize(10);
+                                    $row->setFontFamily('Work Sans');
+                                    $row->setFontWeight('bold');
+                            });
+                            $sheet->cell('A:F', function ($row) {
+                                    $row->setAlignment('center');
+                                    $row->setFontFamily('Work Sans');
+                                    $row->setFontSize(10);
+                            });
+                            $sheet->setAutoSize(true);
+                    });
 
-                                $excel->sheet('Detailed Report', function ($sheet) use ($detail_worklog_header, $work_logs_details) {
-                                        $sheet->fromArray($work_logs_details, null, 'A1');
-                                        $sheet->row(1, $detail_worklog_header);
-                                        $sheet->row(1, function ($row) {
-                                                $row->setBackground('#bbc0c9');
-                                                $row->setAlignment('center');
-                                                $row->setFontSize(10);
-                                                $row->setFontFamily('Work Sans');
-                                                $row->setFontWeight('bold');
-                                        });
-                                        $sheet->cell('A:F', function ($row) {
-                                                $row->setAlignment('center');
-                                                $row->setFontFamily('Work Sans');
-                                                $row->setFontSize(10);
-                                        });
-                                        $sheet->setAutoSize(true);
-                                });
-                        })->export('xlsx');
+                    $excel->sheet('Detailed Report', function ($sheet) use ($detail_worklog_header, $work_logs_details) {
+                            $sheet->fromArray($work_logs_details, null, 'A1');
+                            $sheet->row(1, $detail_worklog_header);
+                            $sheet->row(1, function ($row) {
+                                    $row->setBackground('#bbc0c9');
+                                    $row->setAlignment('center');
+                                    $row->setFontSize(10);
+                                    $row->setFontFamily('Work Sans');
+                                    $row->setFontWeight('bold');
+                            });
+                            $sheet->cell('A:F', function ($row) {
+                                    $row->setAlignment('center');
+                                    $row->setFontFamily('Work Sans');
+                                    $row->setFontSize(10);
+                            });
+                            $sheet->setAutoSize(true);
+                    });
+            })->export('xlsx');
 
         } catch (Exception $e) {
             print_r($e);
