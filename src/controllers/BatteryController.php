@@ -53,26 +53,19 @@ class BatteryController extends Controller
             $end_date = date('Y-m-t 23:59:59');
         }
 
-        $battery_list = BatteryLoadTestResult::join('vehicle_batteries', 'vehicle_batteries.id', 'battery_load_test_results.vehicle_battery_id')
-            ->join('customers', 'customers.id', 'vehicle_batteries.customer_id')
+        $battery_list = VehicleBattery::join('customers', 'customers.id', 'vehicle_batteries.customer_id')
             ->join('vehicles', 'vehicles.id', 'vehicle_batteries.vehicle_id')
-            ->join('battery_makes', 'battery_makes.id', 'vehicle_batteries.battery_make_id')
             ->join('outlets', 'outlets.id', 'vehicle_batteries.outlet_id')
-            ->join('load_test_statuses', 'load_test_statuses.id', 'battery_load_test_results.load_test_status_id')
-            ->join('hydrometer_electrolyte_statuses', 'hydrometer_electrolyte_statuses.id', 'battery_load_test_results.hydrometer_electrolyte_status_id')
-            ->join('battery_load_test_statuses', 'battery_load_test_statuses.id', 'battery_load_test_results.overall_status_id')
+            ->leftJoin('configs', 'configs.id', 'vehicle_batteries.battery_status_id')
             ->select(
-                'battery_load_test_results.id',
+                'vehicle_batteries.id',
                 'vehicle_batteries.job_card_number',
                 'vehicle_batteries.invoice_number',
                 'customers.name as customer_name',
-                'battery_makes.name as battery_name',
                 'vehicles.registration_number',
                 'outlets.code as outlet_code',
-                'load_test_statuses.name as load_test_status',
-                'hydrometer_electrolyte_statuses.name as hydrometer_electrolyte_status',
-                'battery_load_test_statuses.name as overall_status', 'hydrometer_electrolyte_status_id', 'load_test_status_id',
-                DB::raw('DATE_FORMAT(battery_load_test_results.created_at,"%d/%m/%Y, %h:%i %p") as date')
+                'configs.name as battery_status',
+                DB::raw('DATE_FORMAT(vehicle_batteries.created_at,"%d/%m/%Y, %h:%i %p") as date')
             )
 
             ->where(function ($query) use ($request) {
@@ -92,65 +85,28 @@ class BatteryController extends Controller
                     $query->where('vehicle_batteries.battery_make_id', $request->battery_make_id);
                 }
             })
-
-            ->where(function ($query) use ($request) {
-                if (!empty($request->load_test_status_id) && $request->load_test_status_id != '<%$ctrl.load_test_status_id%>') {
-                    $query->where('battery_load_test_results.load_test_status_id', $request->load_test_status_id);
-                }
-            })
-
-            ->where(function ($query) use ($request) {
-                if (!empty($request->hydro_status_id) && $request->hydro_status_id != '<%$ctrl.hydro_status_id%>') {
-                    $query->where('battery_load_test_results.hydrometer_electrolyte_status_id', $request->hydro_status_id);
-                }
-            })
-
-            ->where(function ($query) use ($request) {
-                if (!empty($request->overall_status_id) && $request->overall_status_id != '<%$ctrl.overall_status_id%>') {
-                    $query->where('battery_load_test_results.overall_status_id', $request->overall_status_id);
-                }
-            })
-
-            ->where('battery_load_test_results.company_id', Auth::user()->company_id)
+            ->where('vehicle_batteries.company_id', Auth::user()->company_id)
         // ->get()
         ;
 
         // dd($battery_list);
         if ($request->date_range) {
-            $battery_list->whereDate('battery_load_test_results.created_at', '>=', $start_date)->whereDate('battery_load_test_results.created_at', '<=', $end_date);
+            $battery_list->whereDate('vehicle_batteries.created_at', '>=', $start_date)->whereDate('vehicle_batteries.created_at', '<=', $end_date);
         }
 
         if (!Entrust::can('view-all-outlet-battery-result')) {
             if (Entrust::can('view-mapped-outlet-battery-result')) {
                 $outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
                 array_push($outlet_ids, Auth::user()->employee->outlet_id);
-                $battery_list->whereIn('battery_load_test_results.outlet_id', $outlet_ids);
+                $battery_list->whereIn('vehicle_batteries.outlet_id', $outlet_ids);
             } else {
-                $battery_list->where('battery_load_test_results.outlet_id', Auth::user()->working_outlet_id);
+                $battery_list->where('vehicle_batteries.outlet_id', Auth::user()->working_outlet_id);
             }
         }
 
-        $battery_list->orderBy('battery_load_test_results.created_at', 'DESC');
+        $battery_list->orderBy('vehicle_batteries.created_at', 'DESC');
 
         return Datatables::of($battery_list)
-            ->editColumn('load_test_status', function ($battery_list) {
-                $status = 'yellow';
-                if ($battery_list->load_test_status_id == 1) {
-                    $status = 'green';
-                } elseif ($battery_list->load_test_status_id == 3) {
-                    $status = 'red';
-                }
-                return '<span class="text-' . $status . '">' . $battery_list->load_test_status . '</span>';
-            })
-            ->editColumn('hydrometer_electrolyte_status', function ($battery_list) {
-                $status = 'yellow';
-                if ($battery_list->hydrometer_electrolyte_status_id == 1) {
-                    $status = 'green';
-                } elseif ($battery_list->hydrometer_electrolyte_status_id == 3) {
-                    $status = 'red';
-                }
-                return '<span class="text-' . $status . '">' . $battery_list->hydrometer_electrolyte_status . '</span>';
-            })
             ->editColumn('status', function ($battery_list) {
                 if ($battery_list->job_card_number) {
                     if ($battery_list->invoice_number) {
@@ -182,9 +138,151 @@ class BatteryController extends Controller
                 return $output;
             })
             ->make(true);
+
+        // if ($request->date_range) {
+        //     $date_range = explode(' to ', $request->date_range);
+        //     $start_date = date('Y-m-d', strtotime($date_range[0]));
+        //     $start_date = $start_date . ' 00:00:00';
+
+        //     $end_date = date('Y-m-d', strtotime($date_range[1]));
+        //     $end_date = $end_date . ' 23:59:59';
+        // } else {
+        //     $start_date = date('Y-m-01 00:00:00');
+        //     $end_date = date('Y-m-t 23:59:59');
+        // }
+
+        // $battery_list = BatteryLoadTestResult::join('vehicle_batteries', 'vehicle_batteries.id', 'battery_load_test_results.vehicle_battery_id')
+        //     ->join('customers', 'customers.id', 'vehicle_batteries.customer_id')
+        //     ->join('vehicles', 'vehicles.id', 'vehicle_batteries.vehicle_id')
+        //     ->join('battery_makes', 'battery_makes.id', 'vehicle_batteries.battery_make_id')
+        //     ->join('outlets', 'outlets.id', 'vehicle_batteries.outlet_id')
+        //     ->join('load_test_statuses', 'load_test_statuses.id', 'battery_load_test_results.load_test_status_id')
+        //     ->join('hydrometer_electrolyte_statuses', 'hydrometer_electrolyte_statuses.id', 'battery_load_test_results.hydrometer_electrolyte_status_id')
+        //     ->join('battery_load_test_statuses', 'battery_load_test_statuses.id', 'battery_load_test_results.overall_status_id')
+        //     ->select(
+        //         'battery_load_test_results.id',
+        //         'vehicle_batteries.job_card_number',
+        //         'vehicle_batteries.invoice_number',
+        //         'customers.name as customer_name',
+        //         'battery_makes.name as battery_name',
+        //         'vehicles.registration_number',
+        //         'outlets.code as outlet_code',
+        //         'load_test_statuses.name as load_test_status',
+        //         'hydrometer_electrolyte_statuses.name as hydrometer_electrolyte_status',
+        //         'battery_load_test_statuses.name as overall_status', 'hydrometer_electrolyte_status_id', 'load_test_status_id',
+        //         DB::raw('DATE_FORMAT(battery_load_test_results.created_at,"%d/%m/%Y, %h:%i %p") as date')
+        //     )
+
+        //     ->where(function ($query) use ($request) {
+        //         if (!empty($request->reg_no)) {
+        //             $query->where('vehicles.registration_number', 'LIKE', '%' . $request->reg_no . '%');
+        //         }
+        //     })
+
+        //     ->where(function ($query) use ($request) {
+        //         if (!empty($request->customer_id)) {
+        //             $query->where('vehicle_batteries.customer_id', $request->customer_id);
+        //         }
+        //     })
+
+        //     ->where(function ($query) use ($request) {
+        //         if (!empty($request->battery_make_id) && $request->battery_make_id != '<%$ctrl.battery_make_id%>') {
+        //             $query->where('vehicle_batteries.battery_make_id', $request->battery_make_id);
+        //         }
+        //     })
+
+        //     ->where(function ($query) use ($request) {
+        //         if (!empty($request->load_test_status_id) && $request->load_test_status_id != '<%$ctrl.load_test_status_id%>') {
+        //             $query->where('battery_load_test_results.load_test_status_id', $request->load_test_status_id);
+        //         }
+        //     })
+
+        //     ->where(function ($query) use ($request) {
+        //         if (!empty($request->hydro_status_id) && $request->hydro_status_id != '<%$ctrl.hydro_status_id%>') {
+        //             $query->where('battery_load_test_results.hydrometer_electrolyte_status_id', $request->hydro_status_id);
+        //         }
+        //     })
+
+        //     ->where(function ($query) use ($request) {
+        //         if (!empty($request->overall_status_id) && $request->overall_status_id != '<%$ctrl.overall_status_id%>') {
+        //             $query->where('battery_load_test_results.overall_status_id', $request->overall_status_id);
+        //         }
+        //     })
+
+        //     ->where('battery_load_test_results.company_id', Auth::user()->company_id)
+        // // ->get()
+        // ;
+
+        // // dd($battery_list);
+        // if ($request->date_range) {
+        //     $battery_list->whereDate('battery_load_test_results.created_at', '>=', $start_date)->whereDate('battery_load_test_results.created_at', '<=', $end_date);
+        // }
+
+        // if (!Entrust::can('view-all-outlet-battery-result')) {
+        //     if (Entrust::can('view-mapped-outlet-battery-result')) {
+        //         $outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
+        //         array_push($outlet_ids, Auth::user()->employee->outlet_id);
+        //         $battery_list->whereIn('battery_load_test_results.outlet_id', $outlet_ids);
+        //     } else {
+        //         $battery_list->where('battery_load_test_results.outlet_id', Auth::user()->working_outlet_id);
+        //     }
+        // }
+
+        // $battery_list->orderBy('battery_load_test_results.created_at', 'DESC');
+
+        // return Datatables::of($battery_list)
+        //     ->editColumn('load_test_status', function ($battery_list) {
+        //         $status = 'yellow';
+        //         if ($battery_list->load_test_status_id == 1) {
+        //             $status = 'green';
+        //         } elseif ($battery_list->load_test_status_id == 3) {
+        //             $status = 'red';
+        //         }
+        //         return '<span class="text-' . $status . '">' . $battery_list->load_test_status . '</span>';
+        //     })
+        //     ->editColumn('hydrometer_electrolyte_status', function ($battery_list) {
+        //         $status = 'yellow';
+        //         if ($battery_list->hydrometer_electrolyte_status_id == 1) {
+        //             $status = 'green';
+        //         } elseif ($battery_list->hydrometer_electrolyte_status_id == 3) {
+        //             $status = 'red';
+        //         }
+        //         return '<span class="text-' . $status . '">' . $battery_list->hydrometer_electrolyte_status . '</span>';
+        //     })
+        //     ->editColumn('status', function ($battery_list) {
+        //         if ($battery_list->job_card_number) {
+        //             if ($battery_list->invoice_number) {
+        //                 return '<span class="text-green">Completed</span>';
+        //             } else {
+        //                 return '<span class="text-green">Invoice Details Not Updated</span>';
+        //             }
+        //         } else {
+        //             return '<span class="text-green">Completed</span>';
+        //         }
+        //     })
+        //     ->addColumn('action', function ($battery_list) {
+        //         $view_img = asset('public/themes/' . $this->data['theme'] . '/img/content/table/view.svg');
+        //         $edit_img = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
+
+        //         $status_img = asset('public/theme/img/table/add-new-invoice.svg');
+        //         $status_img_hover = asset('public/theme/img/table/add-hover.svg');
+
+        //         $output = '';
+
+        //         if (Entrust::can('edit-battery-result')) {
+        //             $output .= '<a href="#!/battery/form/' . $battery_list->id . '" id = "" title="Form"><img src="' . $edit_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $edit_img . '" onmouseout=this.src="' . $edit_img . '"></a>';
+        //         }
+
+        //         if (Entrust::can('view-battery-result')) {
+        //             $output .= '<a href="#!/battery/view/' . $battery_list->id . '" id = "" title="View"><img src="' . $view_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $view_img . '" onmouseout=this.src="' . $view_img . '"></a>';
+        //         }
+
+        //         return $output;
+        //     })
+        //     ->make(true);
     }
 
-    public function export(Request $request)
+    public function exportOld2(Request $request)
     {
         ob_end_clean();
         // dd($request->all());
@@ -491,6 +589,217 @@ class BatteryController extends Controller
                 // });
 
             });
+            $excel->setActiveSheetIndex(0);
+        })->export('xlsx');
+    }
+
+    public function export(Request $request)
+    {
+        ob_end_clean();
+        ini_set('max_execution_time', 0);
+
+        if (!empty($request->export_date)) {
+            $date_range = explode(' to ', $request->export_date);
+            $start_date = date('Y-m-d', strtotime($date_range[0]));
+            $start_date = $start_date . ' 00:00:00';
+
+            $end_date = date('Y-m-d', strtotime($date_range[1]));
+            $end_date = $end_date . ' 23:59:59';
+        } else {
+            $start_date = date('Y-m-01 00:00:00');
+            $end_date = date('Y-m-t 23:59:59');
+        }
+
+        $vehicle_battery = VehicleBattery::with([
+                'batteryStatus',
+                'customer',
+                'customer.address',
+                'customer.address.country',
+                'customer.address.state',
+                'customer.address.city',
+                'vehicle',
+                'vehicle.model',
+                'vehicle.kmReadingType',
+                'outlet',
+                'batteryLoadTestResult' => function($query) {
+                    $query->orderBy('battery_type','ASC');
+                },
+                'batteryLoadTestResult.batteryMake',
+                'batteryLoadTestResult.batteryAmphour',
+                'batteryLoadTestResult.batteryVoltage',
+                'batteryLoadTestResult.multimeterTestStatus',
+                'batteryLoadTestResult.batteryLoadTestStatus',
+                'batteryLoadTestResult.loadTestStatus',
+                'batteryLoadTestResult.hydrometerElectrolyteStatus',
+                'batteryLoadTestResult.replacedBatteryMake',
+                'batteryLoadTestResult.batteryNotReplacedReason',
+            ])
+
+        ->whereDate('created_at', '>=', $start_date)
+        ->whereDate('created_at', '<=', $end_date);
+        if ($request->export_customer_id && $request->export_customer_id != '<%$ctrl.export_customer_id%>') {
+            $vehicle_battery->where('customer_id', $request->export_customer_id);
+        }
+
+        if (!Entrust::can('view-all-outlet-battery-result')) {
+            if (Entrust::can('view-mapped-outlet-battery-result')) {
+                $outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
+                array_push($outlet_ids, Auth::user()->employee->outlet_id);
+                $vehicle_battery->whereIn('outlet_id', $outlet_ids);
+            } else {
+                $vehicle_battery->where('outlet_id', Auth::user()->working_outlet_id);
+            }
+        }
+        $vehicle_battery = $vehicle_battery->get();
+
+        $vehicle_battery_details = array();
+        $header = [
+            'Outlet Code',
+            'Outlet Name',
+            'Date',
+            'Registration Number',
+            'Chassis Number',
+            'Engine Number',
+            'KM Reading Type',
+            'KM / HRS Reading',
+            'Date of Sale',
+            'Customer Code',
+            'Customer Name',
+            'Customer Mobile',
+            'Number Of Batteries',
+            'First Battery Make',
+            'First Battery Serial Number',
+            'First Battery Manufactured Month',
+            'First Battery Manufactured Year',
+            'First Battery AMP Hour',
+            'First Battery Volt',
+            'First Battery Load Test',
+            'First Battery Hydrometer Electrolyte',
+            'First Battery Multimeter Status',
+            'First Battery Overall Status',
+            'First Battery Replaced Status',
+            'First Battery Replaced Battery Make',
+            'First Battery Replaced Battery Serial Number',
+            'Is First Battery Buy Back Opted',
+            'First Battery Not Replaced Reason',
+            'Second Battery Make',
+            'Second Battery Serial Number',
+            'Second Battery Manufactured Month',
+            'Second Battery Manufactured Year',
+            'Second Battery AMP Hour',
+            'Second Battery Volt',
+            'Second Battery Load Test',
+            'Second Battery Hydrometer Electrolyte',
+            'Second Battery Multimeter Status',
+            'Second Battery Overall Status',
+            'Second Battery Replaced Status',
+            'Second Battery Replaced Battery Make',
+            'Second Battery Replaced Battery Serial Number',
+            'Is Second Battery Buy Back Opted',
+            'Second Battery Not Replaced Reason',
+            'Job Card Number',
+            'Job Card Date',
+            'Invoice Number',
+            'Invoice Date',
+            'Invoice Amount',
+            'Overall Status',
+            'Remarks',
+        ];
+
+        // dd(count($vehicle_battery));
+        foreach ($vehicle_battery as $key1 => $value) {
+            $vehicle_battery_details[$key1] = [
+                    isset($value->outlet->code) ? $value->outlet->code : '',
+                    isset($value->outlet->name) ? $value->outlet->name : '',
+                    date("d-m-Y", strtotime($value->created_at)),
+                    isset($value->vehicle->registration_number) ? $value->vehicle->registration_number: '',
+                    isset($value->vehicle->chassis_number) ? $value->vehicle->chassis_number: '',
+                    isset($value->vehicle->engine_number) ? $value->vehicle->engine_number: '',
+                    isset($value->vehicle->kmReadingType->name) ? $value->vehicle->kmReadingType->name : '',
+                    isset($value->vehicle->km_reading) ? $value->vehicle->km_reading : $value->vehicle->hr_reading,
+                    isset($value->vehicle->sold_date) ? date("d-m-Y", strtotime($value->vehicle->sold_date)) : '',    
+                    isset($value->customer->code) ? $value->customer->code : '',
+                    isset($value->customer->name) ? $value->customer->name : '',
+                    isset($value->customer->mobile_no) ? $value->customer->mobile_no : '',
+                    isset($value->batteryLoadTestResult) ? count($value->batteryLoadTestResult) : '',
+                ];
+
+                if($value->batteryLoadTestResult->isNotEmpty()){
+                    $battery_load_test_result_count = count($value->batteryLoadTestResult);
+
+                    foreach ($value->batteryLoadTestResult as $battery_load_test_result_data) {
+                        if($battery_load_test_result_data->battery_type == 1 || $battery_load_test_result_data->battery_type == 2){
+                            //FIRST BATTERY (OR) SECOND BATTERY
+                            array_push($vehicle_battery_details[$key1],  isset($battery_load_test_result_data->batteryMake->name) ? $battery_load_test_result_data->batteryMake->name : '');
+                            array_push($vehicle_battery_details[$key1], $battery_load_test_result_data->battery_serial_number);
+
+                            if(!empty($battery_load_test_result_data->manufactured_date)){
+                                $manufactured_date = strtotime($battery_load_test_result_data->manufactured_date);
+                                $month = date("M", $manufactured_date);
+                                $year = date("Y", $manufactured_date);
+                            }else{
+                                $month = '';
+                                $year = '';
+                            }
+                            
+                            array_push($vehicle_battery_details[$key1], $month);
+                            array_push($vehicle_battery_details[$key1], $year);
+                            array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->batteryAmphour->name) ? $battery_load_test_result_data->batteryAmphour->name : $battery_load_test_result_data->amp_hour);
+                            array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->batteryVoltage->name) ? $battery_load_test_result_data->batteryVoltage->name :$battery_load_test_result_data->battery_voltage);
+                            array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->loadTestStatus->name) ? $battery_load_test_result_data->loadTestStatus->name :'');
+                            array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->hydrometerElectrolyteStatus->name) ? $battery_load_test_result_data->hydrometerElectrolyteStatus->name :'');
+                            array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->multimeterTestStatus->name) ? $battery_load_test_result_data->multimeterTestStatus->name :'');
+                            array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->batteryLoadTestStatus->name) ? $battery_load_test_result_data->batteryLoadTestStatus->name :'');
+
+                            if ($battery_load_test_result_data->is_battery_replaced == 1) {
+                                $battery_replaced_status = 'Yes';
+                            } elseif ($battery_load_test_result_data->is_battery_replaced == 2) {
+                                $battery_replaced_status = 'No';
+                            } else {
+                                $battery_replaced_status = '';
+                            }
+                            array_push($vehicle_battery_details[$key1], $battery_replaced_status);
+                            array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->replacedBatteryMake->name) ? $battery_load_test_result_data->replacedBatteryMake->name :'');
+                            array_push($vehicle_battery_details[$key1], $battery_load_test_result_data->replaced_battery_serial_number);
+
+                            if ($battery_load_test_result_data->is_buy_back_opted == 1) {
+                                $is_buy_back_opted = 'Yes';
+                            } elseif ($battery_load_test_result_data->is_buy_back_opted == 2) {
+                                $is_buy_back_opted = 'No';
+                            } else {
+                                $is_buy_back_opted = '';
+                            }
+                            array_push($vehicle_battery_details[$key1], $is_buy_back_opted);
+                            array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->batteryNotReplacedReason->name) ? $battery_load_test_result_data->batteryNotReplacedReason->name :'');
+                        }
+                    }
+                }
+
+                if(!empty($battery_load_test_result_count) && $battery_load_test_result_count == 1){
+                    $repeat = 15;
+                    for ($i = 0; $i < $repeat; $i++) {
+                        array_push($vehicle_battery_details[$key1], '');
+                    }
+                }
+
+                array_push($vehicle_battery_details[$key1], $value->job_card_number);
+                array_push($vehicle_battery_details[$key1], $value->job_card_number ? date("d-m-Y", strtotime($value->job_card_date)) : '');
+                array_push($vehicle_battery_details[$key1], isset($value->invoice_number) ? $value->invoice_number : '');
+                array_push($vehicle_battery_details[$key1], $value->invoice_number ? date("d-m-Y", strtotime($value->invoice_date)) : '');
+                array_push($vehicle_battery_details[$key1], $value->invoice_amount);
+                array_push($vehicle_battery_details[$key1], isset($value->batteryStatus->name) ? $value->batteryStatus->name : '');
+                array_push($vehicle_battery_details[$key1],  $value->remarks);
+        }
+
+        $time_stamp = date('Y_m_d_h_i_s');
+        Excel::create('Battery Details - ' . $time_stamp, function ($excel) use ($header, $vehicle_battery_details) {
+                $excel->sheet('Summary', function ($sheet) use ($header, $vehicle_battery_details) {
+                    $sheet->fromArray($vehicle_battery_details, null, 'A1');
+                    $sheet->row(1, $header);
+                    $sheet->row(1, function ($row) {
+                        $row->setBackground('#07c63a');
+                    });
+                });
             $excel->setActiveSheetIndex(0);
         })->export('xlsx');
     }
