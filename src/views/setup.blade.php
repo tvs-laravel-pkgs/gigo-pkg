@@ -125,6 +125,7 @@
     var exportMechanicReport = "{{route('mechanicWorkLogExport')}}";
 
     var exportAttendanceReport = "{{route('attendanceLogExport')}}";
+    var exportJobOrderReport = "{{route('jobOrderExport')}}";
 
 </script>
 <!-- <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-segment/controller.js')}}"></script>
@@ -441,8 +442,8 @@
 <script type='text/javascript'>
     //GIGO Report
     var gigo_mechanic_report_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/report/mechanic-list.html')}}';
-
     var gigo_attendance_report_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/report/attendance-list.html')}}';
+    var gigo_job_order_report_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/report/job-order-list.html')}}';
 </script>
 <script type='text/javascript'>
     //GIGO Import

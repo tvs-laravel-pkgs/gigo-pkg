@@ -383,6 +383,7 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
     Route::post('gigo/mechanic/worklog/export', 'GigoReportController@mechanicWorkLogExport')->name('mechanicWorkLogExport');
 
     Route::post('gigo/attendance-log/export', 'GigoReportController@attendanceLogExport')->name('attendanceLogExport');
+    Route::post('gigo/job-order/export', 'GigoReportController@jobOrderExport')->name('jobOrderExport');
 
     //GIGO SUPPORT
     Route::get('gigo-support/get-list', 'GigoSupportController@getGateInList')->name('gigoSupportList');

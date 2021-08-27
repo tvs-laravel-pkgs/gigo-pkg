@@ -1986,7 +1986,11 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 		when('/attendance/report', {
 			template: '<attendance-report></attendance-report>',
 			title: 'Attendance Report',
-		});
+		}).
+		when('/job-order/report', {
+        	template: '<job-order-report></job-order-report>',
+        	title: 'Job Order Report',
+    	});
 	}]);
 
 //GIGO SUPPORT URLS
