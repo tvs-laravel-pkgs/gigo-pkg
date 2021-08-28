@@ -30,7 +30,7 @@ class GigoReportController extends Controller {
 		$this->data['theme'] = config('custom.theme');
 	}
 
-	 public function mechanicWorkLogExport(Request $request) {
+	 public function mechanicWorkLogExportOld(Request $request) {
 	 	// dd($request->all());
         try {
 
@@ -423,12 +423,12 @@ class GigoReportController extends Controller {
     }
 
     //BY KARTHICK R
-    public function mechanicWorkLogExportUpdatedFunction(Request $request) {
+    public function mechanicWorkLogExport(Request $request) {
         // dd($request->all());
         try {
 
             ini_set('max_execution_time', 0);
-                        ini_set('memory_limit', -1);
+            ini_set('memory_limit', -1);
 
             if ($request->export_date) {
                 $date_range = explode(' to ', $request->export_date);
@@ -454,12 +454,19 @@ class GigoReportController extends Controller {
                 ->join('outlets', 'outlets.id', 'employees.outlet_id')
                 ->where('employees.is_mechanic', 1)
                 ->where('users.user_type_id', 1) //EMPLOYEE
-                ->where('employees.outlet_id', 110)
                 // ->where('employees.outlet_id', Auth::user()->working_outlet_id)
-                // ->whereIn('users.id', [191,192,194]) //EMPLOYEE
-                // ->where('employees.id',11684) //HAVE TO COMMENT
-                ->orderBy('users.name', 'asc')
-            ->get();
+                ->orderBy('users.name', 'asc');
+
+                if (!Entrust::can('gigo-report-all-outlet')) {
+                    if (Entrust::can('gigo-report-mapped-outlet')) {
+                        $outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
+                        array_push($outlet_ids, Auth::user()->employee->outlet_id);
+                        $employees->whereIn('employees.outlet_id', $outlet_ids);
+                    }else {
+                        $employees->where('employees.outlet_id', Auth::user()->working_outlet_id);
+                    }
+                }
+            $employees = $employees->get();
             
             // dd($employees);
             $summary_details = array();
@@ -469,7 +476,7 @@ class GigoReportController extends Controller {
                 foreach($employees as $key => $employee){
                     // dd($employee);
                     $start = strtotime($start_date);
-                            $end = strtotime($end_date);
+                    $end = strtotime($end_date);
                     $overall_lunch_hours = []; 
                     $overall_work_hours = []; 
                     $overall_employee_work_hours = []; 
@@ -480,11 +487,12 @@ class GigoReportController extends Controller {
                         // dump($employee->id);
                         //Get Employye SHift
                         $employee_shift = EmployeeShift::join('shifts','shifts.id','employee_shifts.shift_id')->where('date',date('Y-m-d', $start))->where('employee_id',$employee->employee_id)->select('shifts.name as shift_name','employee_shifts.shift_id')->first();
+                        $punch_in_time = AttendanceLog::where('user_id',$employee->id)->whereDate('attendance_logs.date',date('Y-m-d', $start))->orderBy('id','asc')->pluck('in_time')->first();
 
-                        $punch_in_time = AttendanceLog::where('user_id',$employee->id)->whereDate('attendance_logs.date',date('Y-m-d', $start))->pluck('in_time')->first();
+                        $punch_out_time = AttendanceLog::where('user_id', $employee->id)->whereDate('attendance_logs.date',date('Y-m-d', $start))->orderBy('id','desc')->pluck('out_time')->first();
 
-                        $punch_out_time = AttendanceLog::where('user_id', $employee->id)->whereDate('attendance_logs.date',date('Y-m-d', $start))->pluck('out_time')->first();
-
+                        $summary_detail['outlet_code'] = $employee->employee_outlet_code;
+                        $summary_detail['outlet_name'] = $employee->employee_outlet_ax_name ? $employee->employee_outlet_ax_name : $employee->employee_outlet_name;
                         $summary_detail['date'] = date('d-m-Y', $start);
                         $summary_detail['employee_code'] = $employee->employee_code;
                         $summary_detail['employee_name'] = $employee->employee_name;
@@ -498,7 +506,6 @@ class GigoReportController extends Controller {
                         
                         $lunch_hour = '00:00:00';
                         $total_working_hours = '00:00:00';
-
                         
                         $summary_detail['total_hours'] = '00.00';
                         if($employee_shift){
@@ -511,47 +518,47 @@ class GigoReportController extends Controller {
                                 $outlet_working_hours = OutletShift::where('shift_id',$employee_shift->shift_id)->where('outlet_id',$employee->outlet_id)->where('shift_type_id',12280)->first();
                             }
 
-                            $outlet_shift_lunch_hours = OutletShift::where('shift_id',$employee_shift->shift_id)->where('outlet_id',$employee->outlet_id)->where('shift_type_id',12283)->first(); 
+                            // $outlet_shift_lunch_hours = OutletShift::where('shift_id',$employee_shift->shift_id)->where('outlet_id',$employee->outlet_id)->where('shift_type_id',12283)->first(); 
                             
-                            if($outlet_shift_lunch_hours){
-                                $array1 = explode(':', $outlet_shift_lunch_hours->start_time);
-                                $array2 = explode(':', $outlet_shift_lunch_hours->end_time);
-                                $minutes1 = ($array1[0] * 60.0 + $array1[1]);
-                                $minutes2 = ($array2[0] * 60.0 + $array2[1]);
-                                $diff = $minutes2 - $minutes1;
+                            // if($outlet_shift_lunch_hours){
+                            //     $array1 = explode(':', $outlet_shift_lunch_hours->start_time);
+                            //     $array2 = explode(':', $outlet_shift_lunch_hours->end_time);
+                            //     $minutes1 = ($array1[0] * 60.0 + $array1[1]);
+                            //     $minutes2 = ($array2[0] * 60.0 + $array2[1]);
+                            //     $diff = $minutes2 - $minutes1;
 
-                                $lunch_hour = intdiv($diff, 60) . ':' . ($diff % 60) . ':00';
-                                // $summary_detail['lunch_hours'] = $lunch_hour;
+                            //     $lunch_hour = intdiv($diff, 60) . ':' . ($diff % 60) . ':00';
+                            //     // $summary_detail['lunch_hours'] = $lunch_hour;
 
-                                $overall_lunch_hours[] = $lunch_hour;
+                            //     $overall_lunch_hours[] = $lunch_hour;
 
-                                $lunch_hour = intdiv($diff, 60) . '.' . ($diff % 60);
-                                $summary_detail['lunch_hours'] = $lunch_hour;
+                            //     $lunch_hour = intdiv($diff, 60) . '.' . ($diff % 60);
+                            //     $summary_detail['lunch_hours'] = $lunch_hour;
 
-                            }
+                            // }
 
-                            if($outlet_working_hours){
+                            if($outlet_working_hours && $punch_in_time){
                                 $array1 = explode(':', $outlet_working_hours->start_time);
                                 $array2 = explode(':', $outlet_working_hours->end_time);
                                 $minutes1 = ($array1[0] * 60.0 + $array1[1]);
                                 $minutes2 = ($array2[0] * 60.0 + $array2[1]);
                                 $diff = $minutes2 - $minutes1;
                                 // dump($diff);
-                                    if ($diff > 0) {
-                                            $total_working_hours = intdiv($diff, 60) . ':' . ($diff % 60) . ':00';
-                                            $summary_detail['total_hours'] = sprintf("%02d", intdiv($diff, 60)) . '.' . (sprintf("%02d", $diff % 60));
+                                if ($diff > 0) {
+                                    $total_working_hours = intdiv($diff, 60) . ':' . ($diff % 60) . ':00';
+                                    $summary_detail['total_hours'] = sprintf("%02d", intdiv($diff, 60)) . '.' . (sprintf("%02d", $diff % 60));
 
-                                    } elseif ($diff == 0) {
-                                    } else {
-                                        $to_time = strtotime("2021-08-07 ".$outlet_working_hours->end_time);
-                                        $from_time = strtotime("2021-08-06 ".$outlet_working_hours->start_time);
-                                        $diff = round(abs($to_time - $from_time) / 60,2);
+                                } elseif ($diff == 0) {
+                                } else {
+                                    $to_time = strtotime("2021-08-07 ".$outlet_working_hours->end_time);
+                                    $from_time = strtotime("2021-08-06 ".$outlet_working_hours->start_time);
+                                    $diff = round(abs($to_time - $from_time) / 60,2);
 
-                                        $total_working_hours = intdiv($diff, 60) . ':' . ($diff % 60) . ':00';
-                                        // $summary_detail['total_hours'] = intdiv($diff, 60) . '.' . ($diff % 60);
-                                        $summary_detail['total_hours'] = sprintf("%02d", intdiv($diff, 60)) . '.' . (sprintf("%02d", $diff % 60));
-                                                                }
-                                        $overall_work_hours[] = $total_working_hours;
+                                    $total_working_hours = intdiv($diff, 60) . ':' . ($diff % 60) . ':00';
+                                    // $summary_detail['total_hours'] = intdiv($diff, 60) . '.' . ($diff % 60);
+                                    $summary_detail['total_hours'] = sprintf("%02d", intdiv($diff, 60)) . '.' . (sprintf("%02d", $diff % 60));
+                                                            }
+                                    $overall_work_hours[] = $total_working_hours;
                             }
                         }
                         // dd($summary_detail);
@@ -573,6 +580,7 @@ class GigoReportController extends Controller {
                         // dd($mechanic_time_logs);
 
                         $employee_work_hour = '00:00:00';
+                        $total_employee_working_hours = '00:00:00';
 
                         //Employee Detailed Report
                         $work_logs_detail = array();
@@ -581,9 +589,8 @@ class GigoReportController extends Controller {
                             $duration_difference = []; 
                             $lunch_difference = []; 
                             $duration = [];
-                                                        // dump($mechanic_time_logs);
+                            $lunch_hour = '00:00:00';
                             foreach($mechanic_time_logs as $mechanic_time_log){
-                                // dd($mechanic_time_log);
                                 $work_logs_detail['outlet_code'] = $employee->employee_outlet_code;
                                 $work_logs_detail['outlet_name'] = $employee->employee_outlet_ax_name ? $employee->employee_outlet_ax_name : $employee->employee_outlet_name;
                                 $work_logs_detail['date'] = date('d-m-Y', $start);
@@ -631,6 +638,10 @@ class GigoReportController extends Controller {
                                         $worklog_hour = $time_format_change[0];
                                         $worklog_minute = $time_format_change[1];
                                         $worklog_second = $time_format_change[2];
+
+                                        $lunch_hour = $total_hours_worked;
+                                        $overall_lunch_hours[] = $lunch_hour;
+                                        $summary_detail['lunch_hours'] = $worklog_hour . '.' . $worklog_minute;
                                     }
 
                                     $work_logs_detail['rot_hours'] = $worklog_hour . '.' . $worklog_minute;
@@ -647,6 +658,8 @@ class GigoReportController extends Controller {
                                 }
                             }
 
+                            // dump($work_logs_detail);
+
                             //TOTAL WORKING HOURS PER EMPLOYEE
                             $total_duration = sum_mechanic_duration($duration);
                             $total_duration = date("H:i:s", strtotime($total_duration));
@@ -661,19 +674,21 @@ class GigoReportController extends Controller {
                             
                             unset($duration);
 
-                            // //Add Working & Lunch Hours
-                            // $array1 = explode(':', $employee_work_hour);
-                            // $array2 = explode(':', $lunch_hour);
+                            //Add Working & Lunch Hours
+                            $array1 = explode(':', $employee_work_hour);
+                            $array2 = explode(':', $lunch_hour);
 
-                            // $minutes1 = ($array1[0] * 60.0 + $array1[1]);
-                            // $minutes2 = ($array2[0] * 60.0 + $array2[1]);
-                            // $diff = $minutes2 + $minutes1;
+                            $minutes1 = ($array1[0] * 60.0 + $array1[1]);
+                            $minutes2 = ($array2[0] * 60.0 + $array2[1]);
+                            $diff = $minutes2 + $minutes1;
 
-                            // $total_employee_working_hours = intdiv($diff, 60) . ':' . ($diff % 60) . ':00';
+                            $total_employee_working_hours = intdiv($diff, 60) . ':' . ($diff % 60) . ':00';
 
                             if($total_working_hours != '00:00:00'){
                                 //Find Total Idle Hours
-                                $array1 = explode(':', $employee_work_hour);
+                                // dump($total_employee_working_hours,$total_working_hours);
+                                // $array1 = explode(':', $employee_work_hour);
+                                $array1 = explode(':', $total_employee_working_hours);
                                 $array2 = explode(':', $total_working_hours);
 
                                 $minutes1 = ($array1[0] * 60.0 + $array1[1]);
@@ -681,6 +696,7 @@ class GigoReportController extends Controller {
                                 $diff = $minutes2 - $minutes1;
                                 // $total_idle_hours = intdiv($diff, 60) . ':' . ($diff % 60) . ':00';
                                 $total_idle_hours = intdiv($diff, 60) . '.' . ($diff % 60);
+
                                 $summary_detail['idle_hours'] = $total_idle_hours;
                                 $overall_idle_hours[] = intdiv($diff, 60) . ':' . ($diff % 60) . ':00';;
                             }
@@ -707,7 +723,8 @@ class GigoReportController extends Controller {
 
                             if($total_working_hours != '00:00:00'){
                                 //Find Total Idle Hours
-                                $array1 = explode(':', $employee_work_hour);
+                                // $array1 = explode(':', $employee_work_hour);
+                                $array1 = explode(':', $total_employee_working_hours);
                                 $array2 = explode(':', $total_working_hours);
                                 $minutes1 = ($array1[0] * 60.0 + $array1[1]);
                                 $minutes2 = ($array2[0] * 60.0 + $array2[1]);
@@ -724,7 +741,9 @@ class GigoReportController extends Controller {
                         //Add Employees Overall Total
                         if(date('Y-m-d', $start) == date('Y-m-d', $end)){
                             $summary_detail = [];
-                            $summary_detail['date'] = 'Grand Total';
+                            $summary_detail['outlet_code'] = 'Grand Total';
+                            $summary_detail['outlet_name'] = '';
+                            $summary_detail['date'] = '';
                             $summary_detail['employee_code'] = '';
                             $summary_detail['employee_name'] = '';   
                             $summary_detail['shift'] = '';
@@ -754,7 +773,6 @@ class GigoReportController extends Controller {
                             $seconds = $format_change[2];
                             $summary_detail['lunch_hours'] = $hour . '.' . $minutes;
 
-
                             //TOTAL OVERALL IDLE HOURS PER EMPLOYEE
                             $total_duration = sum_mechanic_duration($overall_idle_hours);
                             $format_change = explode(':', $total_duration);
@@ -771,15 +789,16 @@ class GigoReportController extends Controller {
                 }
                 // dd();
             }
-
             // dump('.....');
             // dd($work_logs_details);
             // dd($summary_details);
 
-                ob_end_clean();
-                ob_start();
+            ob_end_clean();
+            ob_start();
 
             $summary_header = [
+                'Outlet Code',
+                'Outlet Name',
                 'Date',
                 'Employee Code',
                 'Employee Name',
@@ -793,59 +812,40 @@ class GigoReportController extends Controller {
             ];
                 
             $detail_worklog_header = [
-                    'Outlet Code',
-                    'Outlet Name',
-                    'Date',
-                    'Employee Code',
-                    'Employee Name',
-                    'ROT Code',
-                    'ROT Name',
-                    'Actual ROT Hours',
-                    'JobCard Number',
-                    'Registration Number',
-                    'Start Time',
-                    'End Time',
-                    'ROT Hours',
-                    'Remarks',
+                'Outlet Code',
+                'Outlet Name',
+                'Date',
+                'Employee Code',
+                'Employee Name',
+                'ROT Code',
+                'ROT Name',
+                'ROT Hours',
+                'JobCard Number',
+                'Registration Number',
+                'Start Time',
+                'End Time',
+                'Total Hours',
+                'Remarks',
             ];
 
             $time_stamp = date('Y_m_d_h_i_s');
             Excel::create('Mechanic Report - ' . $time_stamp, function ($excel) use ($summary_header, $detail_worklog_header, $summary_details, $work_logs_details) {
-                    $excel->sheet('Summary', function ($sheet) use ($summary_header, $summary_details) {
-                            $sheet->fromArray($summary_details, null, 'A1');
-                            $sheet->row(1, $summary_header);
-                            $sheet->row(1, function ($row) {
-                                    $row->setBackground('#bbc0c9');
-                                    $row->setAlignment('center');
-                                    $row->setFontSize(10);
-                                    $row->setFontFamily('Work Sans');
-                                    $row->setFontWeight('bold');
-                            });
-                            $sheet->cell('A:F', function ($row) {
-                                    $row->setAlignment('center');
-                                    $row->setFontFamily('Work Sans');
-                                    $row->setFontSize(10);
-                            });
-                            $sheet->setAutoSize(true);
-                    });
+                $excel->sheet('Summary', function ($sheet) use ($summary_header, $summary_details) {
+                    $sheet->freezeFirstRow();
+                    $sheet->fromArray($summary_details, null, 'A1');
+                    $sheet->row(1, $summary_header);
+                    $sheet->setAutoSize(true);
+                    $sheet->freezePane("E2");
+                });
 
-                    $excel->sheet('Detailed Report', function ($sheet) use ($detail_worklog_header, $work_logs_details) {
-                            $sheet->fromArray($work_logs_details, null, 'A1');
-                            $sheet->row(1, $detail_worklog_header);
-                            $sheet->row(1, function ($row) {
-                                    $row->setBackground('#bbc0c9');
-                                    $row->setAlignment('center');
-                                    $row->setFontSize(10);
-                                    $row->setFontFamily('Work Sans');
-                                    $row->setFontWeight('bold');
-                            });
-                            $sheet->cell('A:F', function ($row) {
-                                    $row->setAlignment('center');
-                                    $row->setFontFamily('Work Sans');
-                                    $row->setFontSize(10);
-                            });
-                            $sheet->setAutoSize(true);
-                    });
+                $excel->sheet('Detailed Report', function ($sheet) use ($detail_worklog_header, $work_logs_details) 
+                {
+                    $sheet->freezeFirstRow();
+                    $sheet->fromArray($work_logs_details, null, 'A1');
+                    $sheet->row(1, $detail_worklog_header);
+                    $sheet->setAutoSize(true);
+                    $sheet->freezePane("E2");
+                });
             })->export('xlsx');
 
         } catch (Exception $e) {
@@ -975,8 +975,18 @@ class GigoReportController extends Controller {
             ])
             ->join('vehicles','vehicles.id','job_orders.vehicle_id')
             ->whereRaw('DATE(job_orders.created_at) between "' . $report_start_date . '" and "' . $report_end_date . '"')
-            ->whereNotNull('job_orders.status_id')
-            ->get();
+            ->whereNotNull('job_orders.status_id');
+            
+            if (!Entrust::can('gigo-report-all-outlet')) {
+                if (Entrust::can('gigo-report-mapped-outlet')) {
+                    $outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
+                    array_push($outlet_ids, Auth::user()->employee->outlet_id);
+                    $job_orders->whereIn('job_orders.outlet_id', $outlet_ids);
+                }else {
+                    $job_orders->where('job_orders.outlet_id', Auth::user()->working_outlet_id);
+                }
+            }
+            $job_orders = $job_orders->get();
 
             $job_order_details = array();            
             if($job_orders){
