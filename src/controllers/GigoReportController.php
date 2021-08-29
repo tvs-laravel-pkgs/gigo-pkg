@@ -591,70 +591,72 @@ class GigoReportController extends Controller {
                             $duration = [];
                             $lunch_hour = '00:00:00';
                             foreach($mechanic_time_logs as $mechanic_time_log){
-                                $work_logs_detail['outlet_code'] = $employee->employee_outlet_code;
-                                $work_logs_detail['outlet_name'] = $employee->employee_outlet_ax_name ? $employee->employee_outlet_ax_name : $employee->employee_outlet_name;
-                                $work_logs_detail['date'] = date('d-m-Y', $start);
-                                $work_logs_detail['employee_code'] = $employee->employee_code;
-                                $work_logs_detail['employee_name'] = $employee->employee_name;
-                                
-                                $work_logs_detail['rot_code'] = $mechanic_time_log->code;
-                                $work_logs_detail['rot_name'] = $mechanic_time_log->name;
-                                $work_logs_detail['actual_rot_hours'] = $mechanic_time_log->hours;
-                                $work_logs_detail['job_card_number'] = $mechanic_time_log->job_card_number;
-                                $work_logs_detail['reg_number'] = $mechanic_time_log->registration_number;
-                                $work_logs_detail['start_time'] = date('h:i', strtotime($mechanic_time_log->start_date_time));
-                                $work_logs_detail['end_time'] = $mechanic_time_log->end_date_time ? date('h:i', strtotime($mechanic_time_log->end_date_time)) : '';
-                                // $work_logs_detail['idle_hours'] = ;
+                                if($mechanic_time_log->start_date_time != $mechanic_time_log->end_date_time){
+                                    $work_logs_detail['outlet_code'] = $employee->employee_outlet_code;
+                                    $work_logs_detail['outlet_name'] = $employee->employee_outlet_ax_name ? $employee->employee_outlet_ax_name : $employee->employee_outlet_name;
+                                    $work_logs_detail['date'] = date('d-m-Y', $start);
+                                    $work_logs_detail['employee_code'] = $employee->employee_code;
+                                    $work_logs_detail['employee_name'] = $employee->employee_name;
+                                    
+                                    $work_logs_detail['rot_code'] = $mechanic_time_log->code;
+                                    $work_logs_detail['rot_name'] = $mechanic_time_log->name;
+                                    $work_logs_detail['actual_rot_hours'] = $mechanic_time_log->hours;
+                                    $work_logs_detail['job_card_number'] = $mechanic_time_log->job_card_number;
+                                    $work_logs_detail['reg_number'] = $mechanic_time_log->registration_number;
+                                    $work_logs_detail['start_time'] = date('h:i', strtotime($mechanic_time_log->start_date_time));
+                                    $work_logs_detail['end_time'] = $mechanic_time_log->end_date_time ? date('h:i', strtotime($mechanic_time_log->end_date_time)) : '';
+                                    // $work_logs_detail['idle_hours'] = ;
 
-                                // dd($work_logs_detail);
-                                if($mechanic_time_log->end_date_time){
-                                    $time1 = strtotime($mechanic_time_log->start_date_time);
-                                    $time2 = strtotime($mechanic_time_log->end_date_time);
-                                    if ($time2 < $time1) {
-                                        $time2 += 86400;
-                                    }
+                                    // dd($work_logs_detail);
+                                    if($mechanic_time_log->end_date_time){
+                                        $time1 = strtotime($mechanic_time_log->start_date_time);
+                                        $time2 = strtotime($mechanic_time_log->end_date_time);
+                                        if ($time2 < $time1) {
+                                            $time2 += 86400;
+                                        }
 
-                                    if($mechanic_time_log->status_id != 8265){
-                                        //TIME DURATION DIFFERENCE PARTICULAR MECHANIC DURATION
-                                        $duration_difference[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
+                                        if($mechanic_time_log->status_id != 8265){
+                                            //TIME DURATION DIFFERENCE PARTICULAR MECHANIC DURATION
+                                            $duration_difference[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
 
-                                        //TOTAL DURATION FOR PARTICLUAR EMPLOEE
-                                        $duration[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
+                                            //TOTAL DURATION FOR PARTICLUAR EMPLOEE
+                                            $duration[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
 
-                                        //OVERALL TOTAL WORKING DURATION
-                                        $overall_total_duration[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
+                                            //OVERALL TOTAL WORKING DURATION
+                                            $overall_total_duration[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
 
-                                        $total_hours_worked = sum_mechanic_duration($duration_difference);
+                                            $total_hours_worked = sum_mechanic_duration($duration_difference);
 
-                                        $time_format_change = explode(':', $total_hours_worked);
-                                        $worklog_hour = $time_format_change[0];
-                                        $worklog_minute = $time_format_change[1];
-                                        $worklog_second = $time_format_change[2];
+                                            $time_format_change = explode(':', $total_hours_worked);
+                                            $worklog_hour = $time_format_change[0];
+                                            $worklog_minute = $time_format_change[1];
+                                            $worklog_second = $time_format_change[2];
+                                        }else{
+                                            $lunch_difference[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
+                                            $total_hours_worked = sum_mechanic_duration($lunch_difference);
+
+                                            $time_format_change = explode(':', $total_hours_worked);
+                                            $worklog_hour = $time_format_change[0];
+                                            $worklog_minute = $time_format_change[1];
+                                            $worklog_second = $time_format_change[2];
+
+                                            $lunch_hour = $total_hours_worked;
+                                            $overall_lunch_hours[] = $lunch_hour;
+                                            $summary_detail['lunch_hours'] = $worklog_hour . '.' . $worklog_minute;
+                                        }
+
+                                        $work_logs_detail['rot_hours'] = $worklog_hour . '.' . $worklog_minute;
+                                        unset($duration_difference);
+
+                                        $work_logs_detail['remarks'] = $mechanic_time_log->status_id == 8265 ? 'Lunch' : 'Work Hours';
+
+                                        $work_logs_details[] = $work_logs_detail;
                                     }else{
-                                        $lunch_difference[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
-                                        $total_hours_worked = sum_mechanic_duration($lunch_difference);
+                                        $work_logs_detail['rot_hours'] = '';
+                                        $work_logs_detail['remarks'] = 'Work InProgress';
 
-                                        $time_format_change = explode(':', $total_hours_worked);
-                                        $worklog_hour = $time_format_change[0];
-                                        $worklog_minute = $time_format_change[1];
-                                        $worklog_second = $time_format_change[2];
-
-                                        $lunch_hour = $total_hours_worked;
-                                        $overall_lunch_hours[] = $lunch_hour;
-                                        $summary_detail['lunch_hours'] = $worklog_hour . '.' . $worklog_minute;
+                                        $work_logs_details[] = $work_logs_detail;
                                     }
-
-                                    $work_logs_detail['rot_hours'] = $worklog_hour . '.' . $worklog_minute;
-                                    unset($duration_difference);
-
-                                    $work_logs_detail['remarks'] = $mechanic_time_log->status_id == 8265 ? 'Lunch' : 'Work Hours';
-
-                                    $work_logs_details[] = $work_logs_detail;
-                                }else{
-                                    $work_logs_detail['rot_hours'] = '';
-                                    $work_logs_detail['remarks'] = 'Work InProgress';
-
-                                    $work_logs_details[] = $work_logs_detail;
                                 }
                             }
 
