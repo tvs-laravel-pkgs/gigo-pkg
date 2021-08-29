@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\HydrometerElectrolyteStatus;
 use App\LoadTestStatus;
 use App\VehicleBattery;
+use App\Vehicle;
 use Auth;
 use DB;
 use Entrust;
@@ -708,11 +709,14 @@ class BatteryController extends Controller
 
         // dd(count($vehicle_battery));
         foreach ($vehicle_battery as $key1 => $value) {
-            $vehicle_battery_details[$key1] = [
+            $vehicle = Vehicle::where('id',$value->vehicle_id)->select('registration_number as regis_number')->first();
+
+            if($vehicle){
+                $vehicle_battery_details[$key1] = [
                     isset($value->outlet->code) ? $value->outlet->code : '',
                     isset($value->outlet->name) ? $value->outlet->name : '',
                     date("d-m-Y", strtotime($value->created_at)),
-                    isset($value->vehicle->registration_number) ? $value->vehicle->registration_number: '',
+                    $vehicle->regis_number,
                     isset($value->vehicle->chassis_number) ? $value->vehicle->chassis_number: '',
                     isset($value->vehicle->engine_number) ? $value->vehicle->engine_number: '',
                     isset($value->vehicle->kmReadingType->name) ? $value->vehicle->kmReadingType->name : '',
@@ -783,12 +787,13 @@ class BatteryController extends Controller
                 }
 
                 array_push($vehicle_battery_details[$key1], $value->job_card_number);
-                array_push($vehicle_battery_details[$key1], $value->job_card_number ? date("d-m-Y", strtotime($value->job_card_date)) : '');
+                array_push($vehicle_battery_details[$key1], $value->job_card_date ? date("d-m-Y", strtotime($value->job_card_date)) : '');
                 array_push($vehicle_battery_details[$key1], isset($value->invoice_number) ? $value->invoice_number : '');
-                array_push($vehicle_battery_details[$key1], $value->invoice_number ? date("d-m-Y", strtotime($value->invoice_date)) : '');
+                array_push($vehicle_battery_details[$key1], $value->invoice_date ? date("d-m-Y", strtotime($value->invoice_date)) : '');
                 array_push($vehicle_battery_details[$key1], $value->invoice_amount);
                 array_push($vehicle_battery_details[$key1], isset($value->batteryStatus->name) ? $value->batteryStatus->name : '');
                 array_push($vehicle_battery_details[$key1],  $value->remarks);
+            }
         }
 
         $time_stamp = date('Y_m_d_h_i_s');
