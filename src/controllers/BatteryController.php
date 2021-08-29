@@ -799,6 +799,8 @@ class BatteryController extends Controller
                     $sheet->row(1, function ($row) {
                         $row->setBackground('#07c63a');
                     });
+                    $sheet->freezeFirstRow();
+                    $sheet->setAutoSize(true);
                 });
             $excel->setActiveSheetIndex(0);
         })->export('xlsx');

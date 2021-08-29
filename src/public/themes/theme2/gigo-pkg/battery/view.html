@@ -1201,7 +1201,7 @@
                                 <div class="form-group">
                                     <label>Invoice Date<sup class="mandatory">*</sup></label>
                                     <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
-                                        <input type="text" class="form-control required" placeholder="Ex: 10-01-2021"
+                                        <input type="text" class="form-control required" placeholder="Ex: 10-01-2021" readonly
                                             value="{{battery.invoice_date}}" name="invoice_date" />
                                         <div class="input-group-addon">
                                             <img class="img-responsive"
@@ -1214,7 +1214,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Invoice Amount<sup class="mandatory">*</sup></label>
-                                    <input type="text" name="invoice_amount" maxlength="10"
+                                    <input type="text" name="invoice_amount" maxlength="6"
                                         class="form-control invoice_amount" placeholder="Ex: 3000"
                                         value="{{battery.invoice_amount}}"
                                         oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
