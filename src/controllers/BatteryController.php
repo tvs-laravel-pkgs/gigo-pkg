@@ -748,8 +748,13 @@ class BatteryController extends Controller
                             
                             array_push($vehicle_battery_details[$key1], $month);
                             array_push($vehicle_battery_details[$key1], $year);
-                            array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->batteryAmphour->name) ? $battery_load_test_result_data->batteryAmphour->name : $battery_load_test_result_data->amp_hour);
-                            array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->batteryVoltage->name) ? $battery_load_test_result_data->batteryVoltage->name :$battery_load_test_result_data->battery_voltage);
+                            if($battery_load_test_result_data->battery_type == 1){
+                                array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->batteryAmphour->name) ? $battery_load_test_result_data->batteryAmphour->name : $battery_load_test_result_data->amp_hour);
+                                array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->batteryVoltage->name) ? $battery_load_test_result_data->batteryVoltage->name :$battery_load_test_result_data->battery_voltage);
+                            }else{
+                                array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->batteryAmphour->name) ? $battery_load_test_result_data->batteryAmphour->name : '');
+                                array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->batteryVoltage->name) ? $battery_load_test_result_data->batteryVoltage->name :'');
+                            }
                             array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->loadTestStatus->name) ? $battery_load_test_result_data->loadTestStatus->name :'');
                             array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->hydrometerElectrolyteStatus->name) ? $battery_load_test_result_data->hydrometerElectrolyteStatus->name :'');
                             array_push($vehicle_battery_details[$key1], isset($battery_load_test_result_data->multimeterTestStatus->name) ? $battery_load_test_result_data->multimeterTestStatus->name :'');

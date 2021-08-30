@@ -1975,6 +1975,9 @@ app.component('jobCardPdf', {
                     $scope.vehicle_inspection_pdf = res.job_card.inspection_pdf;
                     $scope.invoice_pdf = res.job_card.invoice_pdf;
 
+                    $scope.inventory_pdf = res.job_card.inventory_pdf;
+                    $scope.manual_job_order_pdf = res.job_card.manual_job_order_pdf;
+
                     $scope.$apply();
                 })
                 .fail(function (xhr) {

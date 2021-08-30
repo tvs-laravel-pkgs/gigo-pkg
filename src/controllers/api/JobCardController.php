@@ -827,6 +827,22 @@ class JobCardController extends Controller
                 $job_card->invoice_pdf = '';
             }
 
+             //Check Inventory PDF Available or not
+            $directoryPath = storage_path('app/public/gigo/pdf/' . $job_card->jobOrder->id . '_inward_inventory.pdf');
+            if (file_exists($directoryPath)) {
+                $job_card->inventory_pdf = url('storage/app/public/gigo/pdf/' . $job_card->jobOrder->id . '_inward_inventory.pdf');
+            } else {
+                $job_card->inventory_pdf = '';
+            }
+
+             //Check Manual JO PDF Available or not
+            $directoryPath = storage_path('app/public/gigo/pdf/' . $job_card->jobOrder->id . '_manual_job_order.pdf');
+            if (file_exists($directoryPath)) {
+                $job_card->manual_job_order_pdf = url('storage/app/public/gigo/pdf/' . $job_card->jobOrder->id . '_manual_job_order.pdf');
+            } else {
+                $job_card->manual_job_order_pdf = '';
+            }
+
             return response()->json([
                 'success' => true,
                 'job_card' => $job_card,
