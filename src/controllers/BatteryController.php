@@ -762,7 +762,7 @@ class BatteryController extends Controller
 
                             if ($battery_load_test_result_data->is_battery_replaced == 1) {
                                 $battery_replaced_status = 'Yes';
-                            } elseif ($battery_load_test_result_data->is_battery_replaced == 2) {
+                            } elseif ($battery_load_test_result_data->is_battery_replaced == 0) {
                                 $battery_replaced_status = 'No';
                             } else {
                                 $battery_replaced_status = '';
@@ -773,7 +773,7 @@ class BatteryController extends Controller
 
                             if ($battery_load_test_result_data->is_buy_back_opted == 1) {
                                 $is_buy_back_opted = 'Yes';
-                            } elseif ($battery_load_test_result_data->is_buy_back_opted == 2) {
+                            } elseif ($battery_load_test_result_data->is_buy_back_opted == 0) {
                                 $is_buy_back_opted = 'No';
                             } else {
                                 $is_buy_back_opted = '';
