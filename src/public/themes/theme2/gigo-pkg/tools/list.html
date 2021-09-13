@@ -1,0 +1,142 @@
+<div class="content-wrap">
+    <table class="table" id="tools-table" style="width: 100% !important;">
+        <thead>
+            <tr>
+                <th>Product Code</th>
+                <th>Product Name</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div><!-- Content Wrap -->
+<div class="modal fade modal-center" id="import-tools" data-keyboard="false" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <form id="import_tools_form" autocomplete="off">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                    <h5 class="modal-title" id="myModalLabel">Import Tools Shift</h5>
+                </div><!-- Modal Header -->
+                <div class="modal-body">
+                    <div class="modal-form">
+                        <form id="cty_import_form" style="margin-bottom: 20px;">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p class="text-center">Import</p>
+                                    <div class="form-group">
+                                        <div class="file-upload-wrapper">
+                                            <input type="file" name="input_excel" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" id="file_upload" class="file-upload-field" placeholder="Enter Click to upload" />
+                                        </div><!-- File Upload Wrapper -->
+                                    </div><!-- Feild -->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <a href="./public/templates/employee-shift-import-template.xlsx" download="sample_document_employee_shift.xlsx" class="btn-link"><img class="img-responsive import-img" src="./public/theme/img/content/download-red.svg" alt="Calendar Image" /> Download Template</a>
+                                        </div><!-- Column -->
+                                        <div class="col-md-6">
+                                            <div class="text-right">
+                                                <button class="btn btn-primary">Upload</button>
+                                            </div>
+                                        </div><!-- Column -->
+                                    </div><!-- Row -->
+                                </div><!-- Column -->
+                            </div><!-- Row -->
+                        </form>
+                        <div class="card-transition">
+                            <div class="card-boxed">
+                                <div class="">
+                                    <div class="mue_errortable_body" id="import_errors" style="width: 600; height: 80px; overflow-y: auto;border: 1px solid pink;padding: 10px;border-radius: 6px; ">
+                                    </div>
+                                    <br>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h5 class="progress-title">Upload Progress</h5>
+                                        <div class="progress" id="import_progress">
+                                            <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" style="width:0%">
+                                                New <span>0%</span>
+                                            </div>
+                                            <div class="progress-bar progress-bar-warning progress-bar-striped active" role="progressbar" style="width:0%">
+                                                Updated <span>0%</span>
+                                            </div>
+                                            <div class="progress-bar progress-bar-danger progress-bar-striped active" role="progressbar" style="width:0%">
+                                                Errors <span>0%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card-block">
+                                            <p class="color-secondary-light">Total Records : <span id='total_count'>Calculating</span></p>
+                                        </div><!-- Card Block -->
+                                    </div><!-- Column -->
+                                    <div class="col-md-6">
+                                        <div class="card-block">
+                                            <p class="color-green">New Records : <span id='new_count'>0</span></p>
+                                        </div><!-- Card Block -->
+                                    </div><!-- Column -->
+                                    <div class="col-md-3 ng-hide">
+                                        <div class="card-block">
+                                            <p class="color-orange">Update Records : <span id='updated_count'>0</span></p>
+                                        </div><!-- Card Block -->
+                                    </div><!-- Column -->
+                                    <div class="col-md-3 ng-hide">
+                                        <div class="card-block">
+                                            <p class="color-red">Error Records : <span id='error_count'>0</span></p>
+                                        </div><!-- Card Block -->
+                                    </div><!-- Column -->
+                                    <div class="col-md-12">
+                                        <div class="text-center mt-20">
+                                            <a type="button" ng-click="popup_close()" class="btn progress-close">Close</a>
+                                            <a href="#!" type="button" id="download_error_report" download="error_report.xlsx" class="btn btn-red"><i class="icon ion-md-download"></i> Download Error Report</a>
+                                        </div>
+                                    </div><!-- Column -->
+                                </div><!-- Row -->
+                            </div><!-- Card Boxed -->
+                        </div><!-- Card Transition -->
+                    </div><!-- Modal Form -->
+                </div><!-- Modal Body -->
+            </div><!-- Modal Content -->
+        </form>
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->
+<!-- FILTER EMPLOYEE -->
+<div class="modal fade filter" id="filter-employee" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <h5 class="modal-title" id="myModalLabel">Filter</h5>
+            </div><!-- Modal Header -->
+            <div class="modal-body">
+                <div class="modal-form mb-30">
+                    <div class="row modal-row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Date</label>
+                                <div class="input-group date">
+                                    <input class="form-control daterange" placeholder="Select a Date Range"
+                                        name="export_date" id="date_range" autocomplete="off">
+                                    <span class="input-group-addon">
+                                        <img class="img-responsive"
+                                            src="./public/theme/img/content/calender-gray-icon.svg"
+                                            alt="Calendar Image" />
+                                    </span>
+                                </div><!-- Input Group -->
+                            </div><!-- Feild -->
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                    <div class="row modal-row">
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-rose my-tooltip" ng-click="reset_filter(); $ctrl.employeeSearchText=''" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">Reset Filter</button>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <button type="button" class="btn btn-primary btn-md" ng-click="applyFilter()">
+                                Apply
+                            </button>
+                        </div><!-- Column -->
+                    </div>
+                </div><!-- Modal Form -->
+            </div><!-- Modal Body -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div>

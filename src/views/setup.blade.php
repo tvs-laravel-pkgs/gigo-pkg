@@ -452,6 +452,11 @@
 </script>
 
 <script type='text/javascript'>
+    //GIGO Tools
+    var gigo_tools_list_template_url  = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/tools/list.html')}}';
+</script>
+
+<script type='text/javascript'>
 
 	var view_img = './public/theme/img/table/cndn/view.svg';
 	var gate_out_img = './public/theme/img/table/cndn/gateout.svg';

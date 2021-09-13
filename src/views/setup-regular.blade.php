@@ -2038,3 +2038,21 @@ app.config(['$routeProvider', function($routeProvider) {
 	var import_gigo_template_url  = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/import/list.html')}}';
 </script>
 <script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/import/controller.js')}}"></script>
+
+<!-- GIGO Tools Import -->
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
+		when('/tools/list', {
+			template: '<gigo-tools-list></gigo-tools-list>',
+			title: 'Tools List',
+		}).
+		when('/gigo-import/form/:id',{
+			template:'<gigo-import-form></gigo-import-form>',
+			title:'GIGO Import',
+		});
+	}]);
+
+	var gigo_tools_list_template_url  = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/tools/list.html')}}';
+</script>
+<script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/tools/controller.js')}}"></script>

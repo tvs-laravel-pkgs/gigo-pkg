@@ -392,5 +392,8 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
     Route::post('gigo-support/vehicle-model/get-search-list', 'GigoSupportController@getVehicleModelSearchList')->name('gigoSupportGetVehicleModel');
     Route::post('gigo-support/customer/get-search-list', 'GigoSupportController@getCustomerSearchList')->name('gigoSupportCustomerSearchList');
     Route::get('gigo-support/get-filter-data', 'GigoSupportController@getVehicleInwardFilter')->name('gigoSupportGetVehicleInwardFilter');
-
+    
+    Route::get('tools/get-list', 'ToolsController@getList')->name('getGIGOToolsList');
+    Route::post('/tools/import', 'ToolsController@importTools')->name('importGIGOTools');
+	Route::post('/tools/chunk-import', 'ToolsController@chunkImportTools')->name('chunkImportGIGOTools');
 });
