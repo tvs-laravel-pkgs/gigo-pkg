@@ -8,6 +8,7 @@ use Abs\GigoPkg\ServiceOrderType;
 use Abs\GigoPkg\ShortUrl;
 use Abs\SerialNumberPkg\SerialNumberGroup;
 use Abs\TaxPkg\Tax;
+use App\Address;
 use App\Attachment;
 use App\Campaign;
 use App\Config;
@@ -308,6 +309,7 @@ class VehicleInwardController extends Controller
                 'gateInSecuritySign',
                 'gateOutDriverSign',
                 'gateOutSecuritySign',
+                'serviceAdviser',
             ])
                 ->select([
                     'job_orders.*',
@@ -326,7 +328,6 @@ class VehicleInwardController extends Controller
                     ],
                 ]);
             }
-
             //GET CAMPAIGNS
             $nameSpace = '\\App\\';
             $entity = 'JobOrderCampaign';
@@ -647,8 +648,21 @@ class VehicleInwardController extends Controller
             $extras = [
                 'inspection_results' => Config::getDropDownList($params), //VEHICLE INSPECTION RESULTS
                 'inward_cancel_status' => $inward_cancel_status,
+                'service_advisor_list' => collect(User::select([
+                    'users.id',
+                    DB::RAW('CONCAT(users.ecode," / ",users.name) as name'),
+                ])
+                        ->join('role_user','role_user.user_id','users.id')
+                        ->join('permission_role','permission_role.role_id','role_user.role_id')
+                        ->where('permission_role.permission_id', 5601) 
+                        ->where('users.user_type_id', 1) //EMPLOYEE
+                        ->where('users.company_id', $job_order->company_id)
+                        ->where('users.working_outlet_id', $job_order->outlet_id)
+                        ->groupBy('users.id')
+                        ->orderBy('users.name','asc')
+                        ->get())->prepend(['id' => '', 'name' => 'Select Service Advisor']),
             ];
-
+            
             $inventory_params['field_type_id'] = [11, 12];
 
             //PDF
@@ -868,6 +882,7 @@ class VehicleInwardController extends Controller
 
     public function getInwardPartIndentViewData(Request $r)
     {
+        // dd($r->all());
         try {
             $job_order = JobOrder::with([
                 'jobOrderRepairOrders' => function ($q) {
@@ -930,6 +945,7 @@ class VehicleInwardController extends Controller
                         $part_details[$key]['job_order_part_id'] = $value->id;
                         $part_details[$key]['code'] = $value->part->code;
                         $part_details[$key]['name'] = $value->part->name;
+                        $part_details[$key]['part_status'] = $value->status->name;
                         $part_details[$key]['part_detail'] = $value->part->code . ' | ' . $value->part->name;
                         $part_details[$key]['type'] = $value->part->taxCode ? $value->part->taxCode->code : '-';
                         $part_details[$key]['rate'] = $value->rate;
@@ -2336,8 +2352,69 @@ class VehicleInwardController extends Controller
                 ]);
             }
 
+            //Check GSTIN Valid Or Not
+            if ($request->gst_number && Auth::user()->company->gst_verification == 1) {
+                $gstin = Customer::getGstDetail($request->gst_number);
+
+                $gstin_encode = json_encode($gstin);
+                $gst_data = json_decode($gstin_encode, true);
+                $gst_response = $gst_data['original'];
+
+                if (isset($gst_response) && $gst_response['success'] == true) {
+                    $customer_name = strtolower($request->name);
+                    $trade_name = strtolower($gst_response['trade_name']);
+                    $legal_name = strtolower($gst_response['legal_name']);
+
+                    if ($trade_name || $legal_name) {
+                        if ($customer_name === $legal_name) {
+                            $e_invoice_registration = 1;
+                        } elseif ($customer_name === $trade_name) {
+                            $e_invoice_registration = 1;
+                        } else {
+                            $message = 'GSTIN Registered Legal Name: ' . strtoupper($legal_name) . ', and GSTIN Registered Trade Name: ' . strtoupper($trade_name) . '. Check GSTIN Number and Customer details';
+                            return response()->json([
+                                'success' => false,
+                                'error' => 'Validation Error',
+                                'errors' => [
+                                    $message,
+                                ],
+                            ]);
+
+                        }
+                    } else {
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'Validation Error',
+                            'errors' => [
+                                'Check GSTIN Number!',
+                            ],
+                        ]);
+
+                    }
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => [
+                            $gst_response['error'],
+                        ],
+                    ]);
+                }
+            } else {
+                $e_invoice_registration = 0;
+            }
+
             $customer = Customer::saveCustomer($request->all());
-            $customer->saveAddress($request->all());
+            // $customer->saveAddress($request->all());
+            $address = Address::firstOrNew([
+                'company_id' => Auth::user()->company_id,
+                'address_of_id' => 24, //CUSTOMER
+                'entity_id' => $customer->id,
+                'address_type_id' => 40, //PRIMARY ADDRESS
+            ]);
+
+            $address->fill($request->all());
+            $address->save();
 
             if (!$request->id) {
                 //NEW OWNER
@@ -2365,6 +2442,8 @@ class VehicleInwardController extends Controller
             $job_order->inwardProcessChecks()->where('tab_id', 8701)->update(['is_form_filled' => 1]);
             //CUSTOMER MAPPING
             $job_order->customer_id = $customer->id;
+            $job_order->address_id = $address->id;
+            $job_order->e_invoice_registration = $e_invoice_registration;
             $job_order->save();
 
             //Mapped customer to vehicle
@@ -2700,6 +2779,7 @@ class VehicleInwardController extends Controller
                         ->where('users.user_type_id', 1)->where('users.company_id', Auth::user()->company_id)
                         ->where('employees.outlet_id', Auth::user()->employee->outlet_id)->select('users.id',
                         DB::RAW('CONCAT(users.ecode," / ",users.name) as name'))->get())->prepend(['id' => '', 'name' => 'Select Employee']),
+                'floor_superviser_list' => collect(Employee::where('id',2377)->get())->prepend(['id' => '', 'name' => 'Select Floor Supervisor']),
             ];
 
             //Job card details need to get future
@@ -3204,7 +3284,7 @@ class VehicleInwardController extends Controller
                         'success' => false,
                         'error' => 'Validation Error',
                         'errors' => [
-                            'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $branch->state->code . ', Outlet : ' . $outlet->code,
+                            'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
                         ],
                     ]);
                 }
@@ -3262,12 +3342,17 @@ class VehicleInwardController extends Controller
             $job_order_part->split_order_type_id = $request->split_order_type_id;
             $job_order_part->amount = $request_qty * $part_mrp;
 
-            if (!$request->split_order_type_id || in_array($request->split_order_type_id, $customer_paid_type)) {
+            if ($request->split_order_type_id) {
+                if(in_array($request->split_order_type_id, $customer_paid_type)){
+                    $job_order_part->status_id = 8200; //Customer Approval Pending
+                    $job_order_part->is_customer_approved = 0;
+                }else{
+                    $job_order_part->is_customer_approved = 1;
+                    $job_order_part->status_id = 8201; //Not Issued
+                } 
+            } else {
                 $job_order_part->status_id = 8200; //Customer Approval Pending
                 $job_order_part->is_customer_approved = 0;
-            } else {
-                $job_order_part->is_customer_approved = 1;
-                $job_order_part->status_id = 8201; //Not Issued
             }
 
             $job_order_part->save();
@@ -3340,6 +3425,15 @@ class VehicleInwardController extends Controller
                         $job_order_part->status_id = 8200; //Customer Approval Pending
                         $job_order_part->is_customer_approved = 0;
                         $job_order_part->save();
+
+                        if($job_order->is_sms_notification != 1){
+                            if($job_order->serviceAdviser && $job_order->serviceAdviser->contact_number){
+                                $message = 'New ROT / Parts added to the Job Card number '.$job_order->jobCard->job_card_number.', get a revised estimate approval from the customer and update in GIGO - TVS';
+                                $msg = sendOTPSMSNotification($job_order->serviceAdviser->contact_number, $message);
+                            }
+                            $job_order->is_sms_notification = 1;
+                            $job_order->save();
+                        }
                     }
                 } else {
                     // $job_order_part->is_customer_approved = 1;
@@ -3347,12 +3441,299 @@ class VehicleInwardController extends Controller
                     JobOrderPart::where('job_order_id', $job_order->id)->where('is_customer_approved', 0)->where('status_id', 8200)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8201, 'updated_at' => Carbon::now()]);
 
                     JobOrderRepairOrder::where('job_order_id', $job_order->id)->where('is_customer_approved', 0)->where('status_id', 8180)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8181, 'updated_at' => Carbon::now()]);
+
+                    $job_order->is_sms_notification = 0;
+                    $job_order->save();
                 }
             }
 
             return response()->json([
                 'success' => true,
                 'message' => 'Part detail saved Successfully!!',
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Server Error',
+                'errors' => [
+                    'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+                ],
+            ]);
+        }
+    }
+
+    public function saveBulkPart(Request $request){
+        // dd($request->all());
+        try{
+            foreach ($request->parts as $key => $part) {
+                $validator = Validator::make($part, [
+                    'part_id' => [
+                        'required',
+                        'integer',
+                        'exists:parts,id',
+                    ],
+                    'part_qty' => [
+                        'required',
+                        'numeric',
+                    ],
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => [
+                            'Row ' . ($key +1). ' : '. implode($validator->errors()->all(),''),
+                        ]
+                    ]);
+                }
+            }
+
+            $job_order = JobOrder::with(['jobCard'])->find($request->job_order_id);
+            if (!$job_order) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => [
+                        'Job Order Not Found!',
+                    ],
+                ]);
+            }
+
+            DB::beginTransaction();
+            if (!$job_order->jobCard) {
+                $job_order->is_customer_approved = 0;
+                $job_order->is_customer_agreed = 0;
+                $job_order->save();
+            }
+
+            $estimate_id = JobOrderEstimate::where('job_order_id', $job_order->id)
+                ->where('status_id', 10071)
+                ->first();
+            if ($estimate_id) {
+                $estimate_order_id = $estimate_id->id;
+            } else {
+                if (date('m') > 3) {
+                    $year = date('Y') + 1;
+                } else {
+                    $year = date('Y');
+                }
+                //GET FINANCIAL YEAR ID
+                $financial_year = FinancialYear::where('from', $year)
+                    ->where('company_id', Auth::user()->company_id)
+                    ->first();
+                if (!$financial_year) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => [
+                            'Fiancial Year Not Found',
+                        ],
+                    ]);
+                }
+
+                //GET BRANCH/OUTLET
+                $branch = Outlet::where('id', $job_order->outlet_id)->first();
+
+                //GENERATE GATE IN VEHICLE NUMBER
+                $generateNumber = SerialNumberGroup::generateNumber(104, $financial_year->id, $branch->state_id, $branch->id);
+                if (!$generateNumber['success']) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => [
+                            'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
+                        ],
+                    ]);
+                }
+
+                $estimate = new JobOrderEstimate;
+                $estimate->job_order_id = $job_order->id;
+                $estimate->number = $generateNumber['number'];
+                $estimate->status_id = 10071;
+                $estimate->created_by_id = Auth::user()->id;
+                $estimate->created_at = Carbon::now();
+                $estimate->save();
+
+                $estimate_order_id = $estimate->id;
+            }
+
+            $customer_paid_type = SplitOrderType::where('paid_by_id', '10013')
+                ->pluck('id')
+                ->toArray();
+
+            if ($request->type == 'scheduled') {
+                $is_oem_recommended = 1;
+            } else {
+                $is_oem_recommended = 0;
+            }
+
+            foreach ($request->parts as $part_value) {
+                $part = Part::with(['partStock'])->where('id', $part_value['part_id'])->first();
+                $request_qty = $part_value['part_qty'];
+
+                if (!empty($part_value['job_order_part_id'])) {
+                    $job_order_part = JobOrderPart::find($part_value['job_order_part_id']);
+                    $job_order_part->updated_by_id = Auth::user()->id;
+                    $job_order_part->updated_at = Carbon::now();
+                } else {
+                    //Check Request parts are already requested or not.
+                    $job_order_part = JobOrderPart::where('job_order_id', $request->job_order_id)
+                        ->where('part_id', $part_value['part_id'])
+                        ->where('is_free_service', 0)
+                        ->where('status_id', 8200)
+                        ->where('is_oem_recommended', $is_oem_recommended)
+                        ->where('is_fixed_schedule', 0)
+                        ->where('is_customer_approved', 0)
+                        ->whereNull('removal_reason_id')
+                        ->first();
+                    
+                    if ($job_order_part) {
+                        $request_qty = $job_order_part->qty + $part_value['part_qty'];
+                        $job_order_part->updated_by_id = Auth::user()->id;
+                        $job_order_part->updated_at = Carbon::now();
+                    } else {
+                        $job_order_part = new JobOrderPart;
+                        $job_order_part->created_by_id = Auth::user()->id;
+                        $job_order_part->created_at = Carbon::now();
+                    }
+                    $job_order_part->estimate_order_id = $estimate_order_id;
+                }
+
+                $part_mrp = $part_value['part_mrp'] ? $part_value['part_mrp'] : 0;
+                $job_order_part->job_order_id = $request->job_order_id;
+                $job_order_part->part_id = $part_value['part_id'];
+
+                $job_order_part->rate = $part_mrp;
+                $job_order_part->is_free_service = 0;
+                $job_order_part->qty = $request_qty;
+                $job_order_part->is_oem_recommended = $is_oem_recommended;
+                $job_order_part->customer_voice_id = null; 
+                $job_order_part->split_order_type_id = $part_value['split_order_type_id'];
+                $job_order_part->amount = $request_qty * $part_mrp;
+
+                if ($part_value['split_order_type_id']) {
+                    if(in_array($part_value['split_order_type_id'], $customer_paid_type)){
+                        $job_order_part->status_id = 8200; //Customer Approval Pending
+                        $job_order_part->is_customer_approved = 0;
+                    }else{
+                        $job_order_part->is_customer_approved = 1;
+                        $job_order_part->status_id = 8201; //Not Issued
+                    } 
+                } else {
+                    $job_order_part->status_id = 8200; //Customer Approval Pending
+                    $job_order_part->is_customer_approved = 0;
+                }
+
+                $job_order_part->save();
+
+                // $repair_order_part_array = [];
+                // $trim_data = str_replace('[', '', $request->repair_orders); //DOUBT
+                // $trim_data = str_replace(']', '', $trim_data);
+                // if ($trim_data != '') {
+                //     $repair_orders = explode(',', $trim_data);
+                // } else {
+                //     $repair_orders = [];
+                // }
+
+                // $repair_order_part_obj = Part::find($part_value['part_id']);
+                // $repair_order_part_obj->repair_order_parts()->sync([]);
+                // if (sizeof($repair_orders) > 0) {
+                //     foreach ($repair_orders as $key => $value) {
+                //         $repair_order_part_array[$key]['repair_order_id'] = $value;
+                //         // $job_order_repair_order_part_array[$key]['job_order_part_id'] = $job_order_part->id;
+                //         $repair_order_part_array[$key]['part_id'] = $part_value['part_id'];
+                //     }
+                //     // $repair_order_part_obj = Part::find($request->part_id);
+                //     // $repair_order_part_obj->repair_order_parts()->detach();
+
+                //     $repair_order_part_obj->repair_order_parts()->sync($repair_order_part_array);
+                // }
+
+                $job_order_part->taxes()->sync([]);
+
+                if ($job_order->vehicle->currentOwner->customer->primaryAddress) {
+                    //Check which tax applicable for customer
+                    if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
+                        $tax_type = 1160; //Within State
+                    } else {
+                        $tax_type = 1161; //Inter State
+                    }
+                } else {
+                    $tax_type = 1160; //Within State
+                }
+
+                $taxes = Tax::whereIn('id', [1, 2, 3])->get();
+                if ($part->taxCode) {
+                    foreach ($part->taxCode->taxes as $tax_key => $value) {
+                        if ($value->type_id == $tax_type) {
+                            $percentage_value = ($job_order_part->amount * $value->pivot->percentage) / 100;
+                            $percentage_value = number_format((float) $percentage_value, 2, '.', '');
+
+                            if ($percentage_value >= 0 && $value->pivot->percentage >= 0) {
+                                $job_order_part->taxes()->attach($value->id, [
+                                    'percentage' => $value->pivot->percentage,
+                                    'amount' => $percentage_value,
+                                ]);
+                            }
+                        }
+                    }
+                }
+            
+
+                // if (in_array($request->split_order_type_id, $customer_paid_type) && $job_order->jobCard) {
+                if ($job_order->jobCard) {
+                    $total_invoice_amount = $this->getApprovedLabourPartsAmount($job_order->id);
+
+                    if ($total_invoice_amount) {
+                        if (in_array($part_value['split_order_type_id'], $customer_paid_type)) {
+                            $job_order_part->status_id = 8200; //Customer Approval Pending
+                            $job_order_part->is_customer_approved = 0;
+                            $job_order_part->save();
+
+                            if($job_order->is_sms_notification != 1){
+                                if($job_order->serviceAdviser && $job_order->serviceAdviser->contact_number){
+                                    $message = 'New ROT / Parts added to the Job Card number '.$job_order->jobCard->job_card_number.', get a revised estimate approval from the customer and update in GIGO - TVS';
+                                    $msg = sendOTPSMSNotification($job_order->serviceAdviser->contact_number, $message);
+                                }
+                                $job_order->is_sms_notification = 1;
+                                $job_order->save();
+                            }
+                        }
+                    } else {
+                        // $job_order_part->is_customer_approved = 1;
+                        // $job_order_part->status_id = 8201; //Not Issued
+                        JobOrderPart::where('job_order_id', $job_order->id)
+                            ->where('is_customer_approved', 0)
+                            ->where('status_id', 8200)
+                            ->whereNull('removal_reason_id')
+                            ->update([
+                                'is_customer_approved' => 1,
+                                'status_id' => 8201,
+                                'updated_at' => Carbon::now()
+                            ]);
+
+                        JobOrderRepairOrder::where('job_order_id', $job_order->id)
+                            ->where('is_customer_approved', 0)
+                            ->where('status_id', 8180)
+                            ->whereNull('removal_reason_id')
+                            ->update([
+                                'is_customer_approved' => 1,
+                                'status_id' => 8181,
+                                'updated_at' => Carbon::now()
+                            ]);
+
+                        $job_order->is_sms_notification = 0;
+                        $job_order->save();
+                    }
+                }
+            }
+             
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Part details saved Successfully!!',
             ]);
 
         } catch (\Exception $e) {
@@ -3651,6 +4032,15 @@ class VehicleInwardController extends Controller
                         $job_order_repair_order->status_id = 8180; //Customer Approval Pending
                         $job_order_repair_order->is_customer_approved = 0;
                         $job_order_repair_order->save();
+
+                        if($job_order->is_sms_notification != 1){
+                            if($job_order->serviceAdviser && $job_order->serviceAdviser->contact_number){
+                                $message = 'New ROT / Parts added to the Job Card number '.$job_order->jobCard->job_card_number.', get a revised estimate approval from the customer and update in GIGO - TVS';
+                                $msg = sendOTPSMSNotification($job_order->serviceAdviser->contact_number, $message);
+                            }
+                            $job_order->is_sms_notification = 1;
+                            $job_order->save();
+                        }
                     }
                 } else {
                     // $job_order_repair_order->is_customer_approved = 1;
@@ -3658,6 +4048,9 @@ class VehicleInwardController extends Controller
                     JobOrderPart::where('job_order_id', $job_order->id)->where('is_customer_approved', 0)->where('status_id', 8200)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8201, 'updated_at' => Carbon::now()]);
 
                     JobOrderRepairOrder::where('job_order_id', $job_order->id)->where('is_customer_approved', 0)->where('status_id', 8180)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8181, 'updated_at' => Carbon::now()]);
+
+                    $job_order->is_sms_notification = 0;
+                    $job_order->save();
                 }
 
             }
@@ -3737,8 +4130,8 @@ class VehicleInwardController extends Controller
                         }
                     }
 
-                    // $total_amount = $tax_amount + $labour->amount;
-                    $total_amount = $labour->amount;
+                    $total_amount = $tax_amount + $labour->amount;
+                    // $total_amount = $labour->amount;
                     $total_amount = number_format((float) $total_amount, 2, '.', '');
                     $labour_amount += $total_amount;
                 }
@@ -3750,19 +4143,19 @@ class VehicleInwardController extends Controller
                 if ($parts->is_free_service != 1 && (in_array($parts->split_order_type_id, $customer_paid_type) || !$parts->split_order_type_id)) {
                     $total_amount = 0;
 
-                    $tax_amount = 0;
-                    if ($parts->part->taxCode) {
-                        if (count($parts->part->taxCode->taxes) > 0) {
-                            foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
-                                $percentage_value = 0;
-                                if ($value->type_id == $tax_type) {
-                                    $percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
-                                    $percentage_value = number_format((float) $percentage_value, 2, '.', '');
-                                }
-                                $tax_amount += $percentage_value;
-                            }
-                        }
-                    }
+                    // $tax_amount = 0;
+                    // if ($parts->part->taxCode) {
+                    //     if (count($parts->part->taxCode->taxes) > 0) {
+                    //         foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
+                    //             $percentage_value = 0;
+                    //             if ($value->type_id == $tax_type) {
+                    //                 $percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
+                    //                 $percentage_value = number_format((float) $percentage_value, 2, '.', '');
+                    //             }
+                    //             $tax_amount += $percentage_value;
+                    //         }
+                    //     }
+                    // }
 
                     // $total_amount = $tax_amount + $parts->amount;
                     $total_amount = $parts->amount;
@@ -5942,6 +6335,7 @@ class VehicleInwardController extends Controller
 
             $job_order = JobOrder::with([
                 'vehicle',
+                'customerAddress',
                 'vehicle.model',
                 'jobOrderRepairOrders' => function ($q) use ($customer_paid_type_id) {
                     $q->whereNull('removal_reason_id');
@@ -5982,9 +6376,9 @@ class VehicleInwardController extends Controller
                 ]);
             }
 
-            if ($job_order->vehicle->currentOwner->customer->primaryAddress) {
+            if ($job_order->customerAddress) {
                 //Check which tax applicable for customer
-                if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
+                if ($job_order->outlet->state_id == $job_order->customerAddress->state_id) {
                     $tax_type = 1160; //Within State
                 } else {
                     $tax_type = 1161; //Inter State
@@ -6052,8 +6446,8 @@ class VehicleInwardController extends Controller
                                     $tax_amount += $percentage_value;
                                 }
                                 $total_payable_labour_tax += $tax_amount;
-                                // $total_amount = $tax_amount + $labour->amount;
-                                $total_amount = $labour->amount;
+                                $total_amount = $tax_amount + $labour->amount;
+                                // $total_amount = $labour->amount;
                                 $total_payable_labour_amount += $total_amount;
                             } else {
                                 $total_payable_labour_amount += $labour->amount;
@@ -6234,7 +6628,7 @@ class VehicleInwardController extends Controller
             }
 
             //CHECK ALL INWARD MANDATORY FORM ARE FILLED
-            $job_order = jobOrder::with(['vehicle'])->find($request->job_order_id);
+            $job_order = jobOrder::with(['vehicle', 'customer', 'customerAddress'])->find($request->job_order_id);
 
             $inward_process_check = $job_order->inwardProcessChecks()
                 ->where('tab_id', '!=', 8706)
@@ -6308,6 +6702,58 @@ class VehicleInwardController extends Controller
                 ]);
             }
 
+            //Check GST Eligile or Not
+            if ($job_order->customerAddress) {
+                if ($job_order->customerAddress->gst_number && Auth::user()->company->gst_verification == 1) {
+                    $gstin = Customer::getGstDetail($job_order->customerAddress->gst_number);
+
+                    $gstin_encode = json_encode($gstin);
+                    $gst_data = json_decode($gstin_encode, true);
+                    $gst_response = $gst_data['original'];
+
+                    if (isset($gst_response) && $gst_response['success'] == true) {
+                        $customer_name = strtolower($job_order->customer->name);
+                        $trade_name = strtolower($gst_response['trade_name']);
+                        $legal_name = strtolower($gst_response['legal_name']);
+
+                        if ($trade_name || $legal_name) {
+                            if ($customer_name === $legal_name) {
+                            } elseif ($customer_name === $trade_name) {
+                            } else {
+                                $message = 'GSTIN Registered Legal Name: ' . strtoupper($legal_name) . ', and GSTIN Registered Trade Name: ' . strtoupper($trade_name) . '. Check GSTIN Number and Customer details';
+                                return response()->json([
+                                    'success' => false,
+                                    'error' => 'Validation Error',
+                                    'errors' => [
+                                        $message,
+                                    ],
+                                ]);
+                            }
+                        } else {
+                            return response()->json([
+                                'success' => false,
+                                'error' => 'Validation Error',
+                                'errors' => [
+                                    'Check GSTIN Number and Customer Details!',
+                                ],
+                            ]);
+
+                        }
+                    } else {
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'Validation Error',
+                            'errors' => [
+                                $gst_response['error'],
+                            ],
+                        ]);
+                    }
+
+                }
+            }
+            if(!$job_order->customer_id){
+                $job_order->customer_id = $job_order->vehicle->currentOwner->customer->id;
+            }
             $job_order->estimated_amount = $request->estimated_amount;
             $estimated_delivery_date = $request->est_delivery_date . ' ' . $request->est_delivery_time;
             $job_order->estimated_delivery_date = date('Y-m-d H:i:s', strtotime($estimated_delivery_date));
@@ -6436,7 +6882,7 @@ class VehicleInwardController extends Controller
 
             $message = 'OTP is ' . $otp_no . ' for Job Order Estimate. Please show this SMS to Our Service Advisor to verify your Job Order Estimate - TVS';
 
-            $msg = sendSMSNotification($customer_mobile, $message);
+            $msg = sendOTPSMSNotification($customer_mobile, $message);
 
             return response()->json([
                 'success' => true,
@@ -6621,7 +7067,7 @@ class VehicleInwardController extends Controller
 
             $message = 'Dear Customer, Kindly click on this link to approve for TVS job order ' . $short_url . $number . ' : ' . $vehicle_no . ' - TVS';
 
-            $msg = sendSMSNotification($customer_mobile, $message);
+            $msg = sendOTPSMSNotification($customer_mobile, $message);
 
             //Update JobOrder Estimate
             $job_order_estimate = JobOrderEstimate::where('job_order_id', $job_order->id)->orderBy('id', 'DESC')->first();
@@ -6873,7 +7319,7 @@ class VehicleInwardController extends Controller
 
                 $message = 'Dear Customer, Kindly click on this link to pay for the TVS job order ' . $short_url . '. Vehicle Reg Number : ' . $job_order->vehicle->registration_number . ' - TVS';
 
-                $msg = sendSMSNotification($mobile_number, $message);
+                $msg = sendOTPSMSNotification($mobile_number, $message);
 
                 $success_message = 'Estimation Details Sent to Customer Successfully';
 
@@ -6911,7 +7357,7 @@ class VehicleInwardController extends Controller
                     ]);
                 }
 
-                $job_order->status_id = 8470; // VEHICLE INWARD COMPLETED
+                $job_order->status_id = 12220; // VEHICLE INWARD COMPLETED
                 $job_order->is_customer_agreed = 0;
                 $job_order->is_customer_approved = 0;
                 $job_order->estimation_type_id = null;
@@ -7189,7 +7635,7 @@ class VehicleInwardController extends Controller
                     $user_images_des = storage_path('app/public/gigo/job_order/');
                     File::makeDirectory($user_images_des, $mode = 0777, true, true);
 
-                    $filename = "webcam_customer_sign_" . strtotime("now") . ".png";
+                    $filename = $request->job_order_id."_customer_esign.png";
 
                     File::put($attachment_path . $filename, base64_decode($customer_sign));
 
@@ -7212,11 +7658,21 @@ class VehicleInwardController extends Controller
                     saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
                 }
                 if (!empty($request->customer_e_sign)) {
-                    $attachment = $request->customer_e_sign;
-                    $entity_id = $request->job_order_id;
-                    $attachment_of_id = 227; //JOB ORDER
-                    $attachment_type_id = 253; //CUSTOMER E SIGN
-                    saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
+                    $image = $request->customer_e_sign;
+                    $extension = $image->getClientOriginalExtension();
+                    $signature_extension = $extension;
+                    $file_name = $request->job_order_id . '_customer_esign.'. $extension;
+                    $image->move(storage_path('app/public/gigo/job_order/'), $file_name);
+
+                    //SAVE ATTACHMENT
+                    $attachment = new Attachment;
+                    $attachment->attachment_of_id = 227; //JOB ORDER
+                    $attachment->attachment_type_id = 253; //CUSTOMER E SIGN
+                    $attachment->entity_id = $request->job_order_id;
+                    $attachment->name = $file_name;
+                    $attachment->created_by = Auth()->user()->id;
+                    $attachment->created_at = Carbon::now();
+                    $attachment->save();
                 }
             }
 
@@ -7261,7 +7717,7 @@ class VehicleInwardController extends Controller
 
                 $upload_filename = $uploads_directory . $filename;
 
-                $new_filename = "webcam_customer_sign_" . strtotime("now") . $request->job_order_id . 'ESign.jpg';
+                $new_filename = $request->job_order_id."_customer_esign.jpg";
 
                 $converted_filename = $uploads_directory . $new_filename;
 
@@ -7285,6 +7741,42 @@ class VehicleInwardController extends Controller
                 imagedestroy($new_pic);
 
                 $attachment = Attachment::where('attachment_of_id', 227)->where('attachment_type_id', 253)->where('entity_id', $request->job_order_id)->update(['name' => $new_filename]);
+            }else{
+                if (!empty($request->customer_e_sign)) {
+                    if($signature_extension == 'png'){
+                        $attachment_path = storage_path('app/public/gigo/job_order/');
+                        Storage::makeDirectory($attachment_path, 0777);
+
+                        $uploads_directory = storage_path('app/public/gigo/job_order/');
+
+                        $upload_filename = $uploads_directory . $file_name;
+
+                        $new_filename = $request->job_order_id."_customer_esign.jpg";
+
+                        $converted_filename = $uploads_directory . $new_filename;
+
+                        $new_pic = imagecreatefrompng($upload_filename);
+
+                        // Create a new true color image with the same size
+                        $w = imagesx($new_pic);
+                        $h = imagesy($new_pic);
+                        $white = imagecreatetruecolor($w, $h);
+
+                        // Fill the new image with white background
+                        $bg = imagecolorallocate($white, 255, 255, 255);
+                        imagefill($white, 0, 0, $bg);
+
+                        // Copy original transparent image onto the new image
+                        imagecopy($white, $new_pic, 0, 0, 0, 0, $w, $h);
+
+                        $new_pic = $white;
+
+                        imagejpeg($new_pic, $converted_filename);
+                        imagedestroy($new_pic);
+
+                        $attachment = Attachment::where('attachment_of_id', 227)->where('attachment_type_id', 253)->where('entity_id', $request->job_order_id)->update(['name' => $new_filename]);
+                    }
+                }
             }
             return response()->json([
                 'success' => true,
@@ -7477,7 +7969,7 @@ class VehicleInwardController extends Controller
 
             if ($floating_gate_pass > 0) {
 
-                $job_order->status_id = 8470;
+                $job_order->status_id = 12220;
                 $job_order->save();
 
                 DB::commit();
@@ -7522,7 +8014,7 @@ class VehicleInwardController extends Controller
                         $job_card->floor_supervisor_id = null;
                         $job_card->status_id = 8220; //Waiting for Bay Allocation
 
-                        $job_order->status_id = 8470; // Inward Completed
+                        $job_order->status_id = 12220; // Inward Completed
                         $job_order->save();
                     }
 
@@ -7835,4 +8327,80 @@ class VehicleInwardController extends Controller
     //         ]);
     //     }
     // }
+    
+    public function serviceAdvisorSave(Request $request){
+        // dd($request->all());
+        try {
+
+            if($request->type_id == 2){
+                $validator = Validator::make($request->all(), [
+                    'floor_supervisor_id' => [
+                        'required_if:floor_supervisor_change_required ,==, 1',
+                        'integer',
+                    ],
+                   
+                ]);
+                if ($validator->fails()) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => $validator->errors()->all(),
+                    ]);
+                }
+
+                DB::beginTransaction();
+
+                $job_card = JobCard::find($request->job_card_id);
+                $job_card->floor_supervisor_id = $request->floor_supervisor_id;
+                $job_card->save();
+
+                DB::commit();
+
+                $message = 'Floor Supervisor updated Successfully';
+            }else{
+                $validator = Validator::make($request->all(), [
+                    'service_advisor_id' => [
+                        'required_if:assign_service_advisor ,==, 1',
+                        'integer',
+                    ],
+                    'job_order_id' => [
+                        'required',
+                        'integer',
+                        'exists:job_orders,id',
+                    ],
+                ]);
+                if ($validator->fails()) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => $validator->errors()->all(),
+                    ]);
+                }
+
+                DB::beginTransaction();
+
+                $job_order = JobOrder::find($request->job_order_id);
+                $job_order->service_advisor_id = $request->service_advisor_id;
+                $job_order->save();
+
+                $job_order->gateLog()->update(['service_advisor_id' => $request->service_advisor_id]);
+
+                DB::commit();
+
+                $message = 'Service Advisor updated Successfully';
+            }
+                return response()->json([
+                    'success' => true,
+                    'message' => $message,
+                ]);
+
+        }catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+            ]);
+        }
+        
+    
+    }
 }

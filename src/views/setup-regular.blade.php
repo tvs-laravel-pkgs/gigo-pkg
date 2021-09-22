@@ -326,6 +326,7 @@
      var parts_indent_customer_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/customer.html')}}";
      var parts_indent_repair_order_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/repair-order.html')}}";
      var parts_indent_parts_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/parts.html')}}";
+     var parts_indent_add_bulk_part_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/add-bulk-part.html')}}";
      var parts_indent_issue_part_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/issue-part.html')}}";
      var parts_indent_issue_bulk_part_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/issue-bulk-part.html')}}";
      var parts_indent_edit_parts_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/edit-parts.html')}}";
@@ -1049,6 +1050,11 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var inward_vehicle_vehicle_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/vehicle-detail-view.html')}}';
     var inward_vehicle_customer_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/customer-detail-view.html')}}';
 
+	//GIGO Support TEMPLATES
+    var gigo_support_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gigo-support/list.html')}}';
+	var gigo_support_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gigo-support/view.html')}}';
+	var gigo_support_customer_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gigo-support/customer-detail.html')}}';
+
 
     //PARTIALS
     var job_order_header_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/job-order-header.html')}}';
@@ -1345,6 +1351,11 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        template: '<job-card-part-indent-form></job-card-part-indent-form>',
 	        title: 'Job Card Part Indent',
 	    }).
+		 //Added To Change Floor Supervisor
+		when('/job-card/change-floor-supervisor/:job_card_id', {
+			template: '<job-card-change-floor-supervisor-form></job-card-change-floor-supervisor-form>',
+			title: 'Change Floor Supervisor',
+		}).
 	    when('/gigo-pkg/job-card/schedule-maintenance/:job_card_id', {
 	        template: '<job-card-schedule-maintenance-form></job-card-schedule-maintenance-form>',
 	        title: 'Job Card Scheduled Maintenance',
@@ -1442,6 +1453,10 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var job_card_parts_labour_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/labour.html')}}';
     var job_card_parts_part_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/part.html')}}';
     var job_card_estimate_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/estimate.html')}}';
+
+	//Newly Added For Floor-Supervisor-Template By B.Surya from 09-08-2021
+    var job_card_floor_supervisor_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/floor-supervisor-form.html')}}';
+	
     var job_card_estimate_status_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/estimate-status.html')}}';
     var job_card_gatein_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/gatein-detail.html')}}';
     var job_card_vehicle_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/vehicle-detail.html')}}';
@@ -1862,7 +1877,7 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 			template: '<manual-vehicle-delivery-list></manual-vehicle-delivery-list>',
 			title: 'Manual Vehicle Delivery',
 		}).
-		
+
 		when('/manual-vehicle-delivery/form/:id', {
 			template: '<manual-vehicle-delivery-form></manual-vehicle-delivery-form>',
 			title: 'Manual Vehicle Delivery Form',
@@ -1959,3 +1974,67 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 </script>
 <script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/battery/controller.js')}}'></script>
 
+<!-- GIGO Report -->
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
+		//Report
+		when('/mechanic/report', {
+			template: '<mechanic-report></mechanic-report>',
+			title: 'Mechanic Report',
+		}).
+		when('/attendance/report', {
+			template: '<attendance-report></attendance-report>',
+			title: 'Attendance Report',
+		}).
+		when('/job-order/report', {
+        	template: '<job-order-report></job-order-report>',
+        	title: 'Job Order Report',
+    	});
+	}]);
+
+//GIGO SUPPORT URLS
+app.config(['$routeProvider', function($routeProvider) {
+    $routeProvider.
+    //Gigo Support List
+    when('/gigo-support/table-list', {
+        template: '<gigo-support-list></gigo-support-list>',
+        title: 'Gigo Support List',
+    })
+	when('/gigo-support-list/card-list', {
+		template: '<gigo-support-card-list></gigo-support-card-list>',
+		title: 'Gigo Support - Card List',
+	}).
+	 when('/gigo-support/view/:job_order_id', {
+        template: '<gigo-support-view></gigo-support-view>',
+        title: 'Gigo Support Inward Vehicle - View',
+    }).
+	 when('/gigo-support/customer-detail/:job_order_id/:type_id?', {
+		template: '<gigo-support-customer-detail></gigo-support-customer-detail>',
+		title: 'Inward Vehicle - Customer Detail',
+	})
+    ;
+
+}]);
+	//Report
+    var gigo_mechanic_report_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/report/mechanic-list.html')}}';
+</script>
+<script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/report/controller.js')}}"></script>
+
+<!-- GIGO Import -->
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
+		when('/gigo-import/list', {
+			template: '<gigo-import-list></gigo-import-list>',
+			title: 'Import List',
+		}).
+		when('/gigo-import/form/:id',{
+			template:'<gigo-import-form></gigo-import-form>',
+			title:'GIGO Import',
+		});
+	}]);
+
+	var import_gigo_template_url  = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/import/list.html')}}';
+</script>
+<script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/import/controller.js')}}"></script>

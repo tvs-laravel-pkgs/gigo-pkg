@@ -1,0 +1,90 @@
+<div class="content-wrap cndn-wrap">
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content title-block">
+                    <h1 class="title type-2">SAP Import</h1>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+            <div class="page-header-content-right">
+                <div class="page-header-content search-block">
+                    <div class="search_filter">
+                        <label>
+                            <input type="search" id="search" class="form-control" placeholder="Search" />
+                            <button class="btn-clear search_clear">Clear</button>
+                        </label>
+                    </div><!-- Search Filter -->
+                </div><!-- Page Header Content -->
+                <div class="page-header-content button-block">
+                    <button type="button" class="btn btn-refresh refresh_table">
+                        <img src="./public/theme/img/content/refresh-arrow.png" class="img-responsive btn-refresh-icon">
+                    </button>
+                </div>
+                <div class="page-header-content button-block">
+                    <a href="{{$ctrl.execute_cron_job_import}}" class="btn btn-primary" target="_blank">
+                        Execute
+                    </a>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content button-block">
+                    <div class="dropdown">
+                        <a class="btn-extension dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="true">
+                            <img class="img-responsive" src="./public/theme/img/content/extension-white.svg"
+                                alt="Extension" />
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+                            <li>
+                                <a href="#!/gigo-import/form/11560">
+                                    Job Card Details Import
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#!/gigo-import/form/11561">
+                                    Inside Vehicle Import
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#!/gigo-import/form/11562">
+                                    JC Details Report Import
+                                </a>
+                            </li>
+                            <li>
+
+                            </li>
+                        </ul>
+                    </div>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Right -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <div class="page-main-content list-page-content">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table" id="gigo-import" style="width: 100% !important;">
+                    <thead>
+                        <tr>
+                            <th class="actions">Action</th>
+                            <th>Created On</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Error Details</th>
+                            <th>Entity</th>
+                            <th>Total Records</th>
+                            <th>Processed Records</th>
+                            <th>Pending Records</th>
+                            <th>New</th>
+                            <th>Updated</th>
+                            <th>Error Count</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Duration</th>
+                            <th>Created By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div><!-- Column -->
+        </div><!-- Row -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->

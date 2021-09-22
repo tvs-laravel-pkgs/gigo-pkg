@@ -60,7 +60,7 @@ class OnSiteVisitController extends Controller
 
         $vehicle_inwards = OnSiteOrder::join('customers', 'customers.id', 'on_site_orders.customer_id')
             ->join('outlets', 'outlets.id', 'on_site_orders.outlet_id')
-            ->join('users', 'users.id', 'on_site_orders.on_site_visit_user_id')
+            ->leftjoin('users', 'users.id', 'on_site_orders.on_site_visit_user_id')
             ->leftjoin('on_site_order_statuses', 'on_site_order_statuses.id', 'on_site_orders.status_id')
             ->select(
                 'on_site_orders.id',
@@ -130,8 +130,8 @@ class OnSiteVisitController extends Controller
             }
         }
 
-        if (Entrust::can('parts-view-site-visit')) {
-            $vehicle_inwards->whereIn('on_site_orders.status_id', [4]);
+        if (Entrust::can('site-visit-parts-issue')) {
+            $vehicle_inwards->whereIn('on_site_orders.status_id', [4, 13, 14, 15, 16]);
         }
 
         $vehicle_inwards->orderBy('on_site_orders.planned_visit_date', 'DESC');

@@ -35,18 +35,18 @@ class ShortUrl extends BaseModel {
 		return $randString;
 	}
 
-	public static function createShortLink($url, $maxlength) {
+	public static function createShortLink($url, $maxlength, $created_by = null) {
 
 		$shortCode = self::generateRandomString($maxlength);
 
 		//Check URL already exist
 		$link = ShortUrl::where('url', $url)->first();
 		if ($link) {
-			$link->updated_by_id = Auth::user()->id;
+			$link->updated_by_id = $created_by ? $created_by : Auth::user()->id;
 			$link->updated_at = Carbon::now();
 		} else {
 			$link = new ShortUrl;
-			$link->created_by_id = Auth::user()->id;
+			$link->created_by_id =  $created_by ? $created_by : Auth::user()->id;
 			$link->created_at = Carbon::now();
 			$link->url = $url;
 		}

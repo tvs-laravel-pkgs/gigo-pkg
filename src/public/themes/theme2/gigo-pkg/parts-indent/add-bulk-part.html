@@ -1,0 +1,150 @@
+<!--Content Wrap -->
+<style>
+    /* Chrome, Safari, Edge, Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Firefox */
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+</style>
+<div class="content-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href=".#!/part-indent/parts/view/{{$ctrl.job_order_id}}" type="button" class="btn-back btn-img">
+                        <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
+                    </a>
+                </div>
+                <div class="page-header-content title-block">
+                    <h1 class="title">Add Bulk Part</h1>
+                    <p class="subtitle">Parts / Add Bulk Part</p>
+                </div>
+            </div>
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content">
+        <form id="add_bulk_part_form" autocomplete="off">
+            <input type="hidden" name="job_order_id" value="{{$ctrl.job_order_id}}">
+            <input type="hidden" name="part_type" value="3">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="page-form pb-60">
+                           <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-dark-grey">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center">Action</th>
+                                                    <th class="text-center">Part Code</th>
+                                                    <th>Part Description</th>
+                                                    <th>Available</th>
+                                                    <th>Split Order Type</th>
+                                                    <th style="min-width:70px;width:70px;">Quantity</th>
+                                                    <th style="min-width:100px;width:100px;">MRP</th>
+                                                    <!-- <th style="width: 10%;">UOM</th> -->
+                                                    <th style="min-width: 50px;">Amount</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="(index, part_detail) in $ctrl.part_details">
+                                                    <td>
+                                                        <button type="button" class="btn btn-delete" ng-click="removepart(index)">
+                                                            <img class="img-responsive" src="./public/theme/img/table/cndn/delete.svg" alt="Delete" />
+                                                        </button>
+                                                    </td>
+                                                    <td> 
+                                                        <md-autocomplete md-selected-item="part_detail.part" md-search-text="partSearchKey" md-items="part in searchParts(partSearchKey)" md-item-text="part.code" md-min-length="3" md-escape-options="clear" md-selected-item-change="onPartSelect(index,part)" md-input-id="userAutoCompleteId" placeholder="Search Part" md-search-text-change="onPartTextChange(index)">
+                                                                    <md-item-template>
+                                                                        <span>
+                                                                            {{part.code}} / {{part.name}}
+                                                                        </span>
+                                                                    </md-item-template>
+                                                                    <md-not-found>
+                                                                        No records matching "{{partSearchKey}}" were found.
+                                                                    </md-not-found>
+                                                                </md-autocomplete>
+                                                        <input type="hidden" name="parts[{{index}}][part_id]" class="required" value="{{part_detail.part.id}}" id="selected_part_{{index}}">
+                                                        <input type="hidden" name="parts[{{index}}][job_order_part_id]" value="{{part_detail.job_order_part_id}}">
+                                                    </td>
+                                                    <td>
+                                                        <span>{{part_detail.part_description}}</span>
+                                                         <!-- <input type="text" class="form-control" name="parts[{{index}}][part_description]" ng-model="part_detail.part_description" autocomplete="off" readonly /> -->
+                                                         <input type="hidden" name="parts[{{index}}][part_description]" value="{{part_detail.part_description}}" />
+                                                    </td>
+                                                    <td>
+                                                        <span>{{part_detail.part_available_quantity}}</span>
+                                                        <!-- <input type="text" name="parts[{{index}}][part_available_quantity]" ng-model="part_detail.part_available_quantity" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" autocomplete="off" readonly /> -->
+                                                        <input type="hidden" name="parts[{{index}}][part_available_quantity]" value="{{part_detail.part_available_quantity}}" />
+                                                    </td>
+                                                    <td>
+                                                        <md-select ng-model="part_detail.split_order_type" placeholder="Select Split Order Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                                            <md-select-header class="demo-select-header">
+                                                                <input ng-model="searchSplitOrderTypeKey" type="search" placeholder="Search Split Order Type.." class="demo-header-searchbox md-text">
+                                                            </md-select-header>
+                                                            <md-optgroup>
+                                                                <md-option ng-value="split_order_type" ng-repeat="split_order_type in options.split_order_types | filter:searchSplitOrderTypeKey">
+                                                                    {{split_order_type.name}} / {{split_order_type.code}}
+                                                                </md-option>
+                                                            </md-optgroup>
+                                                        </md-select>
+                                                        <input type="hidden" id="" name="parts[{{index}}][split_order_type_id]" value="{{part_detail.split_order_type.id}}">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="parts[{{index}}][part_qty]" ng-model="part_detail.part_qty" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control required" placeholder="Ex: 2" maxlength="2" autocomplete="off" ng-keyup="onKeyUpQuantity()" style="min-width:70px;width:70px;"/>
+
+                                                    </td>
+                                                    <td style="min-width:100px;width:100px;">
+                                                        <span style="min-width:100px;" ng-if="part_detail.mrp_change == 0">{{part_detail.part_mrp}}
+                                                            <input type="hidden" name="parts[{{index}}][part_mrp]" value="{{part_detail.part_mrp}}" ng-if="part_detail.mrp_change == 0"/>
+                                                        </span>
+                                                        <input type="text" ng-if="part_detail.mrp_change == 1" name="parts[{{index}}][part_mrp]" maxlength="6" ng-model="part_detail.part_mrp" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" autocomplete="off" ng-keyup="onKeyUpQuantity()" style="min-width:100px;width:100px;"/>
+                                                    </td>
+                                                    <!-- <td>
+                                                        <input type="text" name="parts[{{index}}][part_uom]" ng-model="part_detail.part_uom" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="UOM" autocomplete="off" readonly />
+                                                    </td> -->
+                                                    <td style="min-width:50px;width:70px;">
+                                                        <span>{{part_detail.part_total_amount}}</span>
+                                                        <!-- <input type="text" name="parts[{{index}}][part_total_amount]" ng-model="part_detail.part_total_amount" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" autocomplete="off" readonly /> -->
+                                                        <input type="hidden" name="parts[{{index}}][part_total_amount]" value="{{part_detail.part_total_amount}}" />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="5">
+                                                        <button type="button" class="btn btn-primary-light btn-square" ng-click="addNewpart()">{{$ctrl.part_details.length == 0 ? 'Add' : '+ Add More'}}</button>
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div><!-- Table Responsive -->
+                                </div>            
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="page-form-footer">
+                <div class="row">
+                    <div class="col-md-12">
+                        <a href=".#!/part-indent/parts/view/{{$ctrl.job_order_id}}"
+                            class="btn btn-bordered btn-grey">Cancel</a>
+                        <button type="submit" class="btn btn-secondary-dark submit" ng-disabled="$ctrl.part_details.length == 0"
+                            ng-click="saveBulkPartForm()">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div><!-- Container -->
+</div><!-- Content Wrap -->

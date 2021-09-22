@@ -71,6 +71,11 @@
                                         Gate In Details
                                     </a>
                                 </li>
+                                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-estimate-view') && (job_order.status_id == 8463 || job_order.status_id == 8469 || job_order.status_id == 8471 || job_order.status_id == 8472 || job_order.status_id == 8473 ||job_order.status_id == 8474)">
+                                    <a data-target="#service_advisor" data-toggle="tab" aria-expanded="true" class="filter">
+                                        Service Advisor
+                                    </a>
+                                </li>
                                 <li ng-if="$ctrl.hasPermission('inward-job-card-tab-vehicle-details-view')">
                                     <a class="filter" data-target="#vehicle_details" data-toggle="tab"
                                         aria-expanded="true">
@@ -154,8 +159,7 @@
                                         Estimation Status
                                     </a>
                                 </li>
-                                <li
-                                    ng-if="$ctrl.hasPermission('inward-job-card-tab-pdf') && (job_order.status_id == 8461 || job_order.status_id == 8468 || job_order.status_id == 8470)">
+                                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-pdf') && (job_order.status_id == 8461 || job_order.status_id == 8468 || job_order.status_id == 8470 || job_order.status_id == 12220)">
                                     <a data-target="#inward_pdf" data-toggle="tab" aria-expanded="true" class="filter">
                                         PDF
                                     </a>
@@ -2432,8 +2436,7 @@
                                                             </div>
                                                         </div>
                                                     </li>
-                                                    <li
-                                                        ng-if="job_order.status_id == 8470 && job_order.is_customer_agreed != 1 && job_order.is_customer_approved != 1">
+                                                    <li ng-if="(job_order.status_id == 8470 || job_order.status_id == 12220 ) && job_order.is_customer_agreed != 1 && job_order.is_customer_approved != 1">
                                                         <div class="checklist-item-wrap pad-big">
                                                             <div class="checklist-item-value">
                                                                 Gatepass
@@ -2445,8 +2448,7 @@
                                                             </div>
                                                         </div>
                                                     </li>
-                                                    <li
-                                                        ng-if="job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468 ">
+                                                    <li ng-if="job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468  || job_order.status_id == 12220 ">
                                                         <div class="checklist-item-wrap pad-big">
                                                             <div class="checklist-item-value">
                                                                 Estimate
@@ -2458,8 +2460,7 @@
                                                             </div>
                                                         </div>
                                                     </li>
-                                                    <li
-                                                        ng-if="(job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468) && total_estimate > 1">
+                                                    <li ng-if="(job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468 || job_order.status_id == 12220 ) && total_estimate > 1">
                                                         <div class="checklist-item-wrap pad-big">
                                                             <div class="checklist-item-value">
                                                                 Revised Estimate
@@ -2472,8 +2473,7 @@
                                                             </div>
                                                         </div>
                                                     </li>
-                                                    <li
-                                                        ng-if="(job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468) && inspection_pdf">
+                                                    <li ng-if="(job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468 || job_order.status_id == 12220 ) && inspection_pdf">
                                                         <div class="checklist-item-wrap pad-big">
                                                             <div class="checklist-item-value">
                                                                 Inspection
@@ -2485,8 +2485,7 @@
                                                             </div>
                                                         </div>
                                                     </li>
-                                                    <li
-                                                        ng-if="job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468 ">
+                                                    <li ng-if="job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468 || job_order.status_id == 12220 ">
                                                         <div class="checklist-item-wrap pad-big">
                                                             <div class="checklist-item-value">
                                                                 Inventory
@@ -2498,8 +2497,7 @@
                                                             </div>
                                                         </div>
                                                     </li>
-                                                    <li
-                                                        ng-if="job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468 ">
+                                                    <li ng-if="job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468 || job_order.status_id == 12220 ">
                                                         <div class="checklist-item-wrap pad-big">
                                                             <div class="checklist-item-value">
                                                                 Manual Job Order
@@ -2611,6 +2609,77 @@
                                         </div><!-- Tab Footer -->
                                     </form>
                                 </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                        <div class="tab-pane fade" id="service_advisor" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <form id="service_advisor_form">
+                                    <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+                                    <input type="hidden" name="type_id" value="1">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10">
+                                                <b>
+                                                    Service Advisor
+                                                </b>
+                                            </h5>
+                                            <hr class="hr-15">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Current Service Advisor 
+                                                        </label>
+                                                        <input type="text" class="form-control" value="{{job_order.service_adviser.ecode}} / {{job_order.service_adviser.name}}" readonly>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Change  Service Advisor
+                                                        </label>
+                                                        <div class="common-radio-button type-4">
+                                                            <input type="radio" id="service_advisor_assign" name="assign_service_advisor" ng-model="$ctrl.assign_service_advisor" ng-value="1">
+                                                            <label for="service_advisor_assign">Yes</label>
+                                                            <input type="radio" id="service_advisor_not_assign" name="assign_service_advisor" ng-model="$ctrl.assign_service_advisor" ng-value="0">
+                                                            <label for="service_advisor_not_assign">No</label>
+                                                        </div>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-4" ng-if="$ctrl.assign_service_advisor">
+                                                    <div class="form-group">
+                                                        <label>
+                                                        Select Service Advisor
+                                                            <sup class="mandatory">
+                                                                *
+                                                            </sup>
+                                                        </label>
+                                                        <md-select ng-model="job_order.service_advisor_id" placeholder="Service Advisor" data-md-container-class="selectdemoSelectHeader">
+                                                            <md-select-header class="demo-select-header">
+                                                                <input ng-model="searchSA" type="search" placeholder="Search for Service Advisor" class="demo-header-searchbox md-text">
+                                                            </md-select-header>
+                                                            <md-optgroup>
+                                                                <md-option ng-value="option" ng-repeat="option in extras.service_advisor_list | filter:searchSA">
+                                                                    {{option.name}}
+                                                                </md-option>
+                                                            </md-optgroup>
+                                                        </md-select>
+                                                        <input type="hidden" name="service_advisor_id" class="required" value="{{job_order.service_advisor_id.id}}">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                            </div><!-- Row -->
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                    <input type="submit" name="add_service_advisor" ng-if="$ctrl.assign_service_advisor" ng-click="saveServiceAdvisor()" class="btn btn-red" value="Save">
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </form>
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
                     </div><!-- Tab Content -->

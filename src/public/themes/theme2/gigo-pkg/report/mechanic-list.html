@@ -1,0 +1,51 @@
+<!-- Content Wrap -->
+<div class="content-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content title-block">
+                    <h1 class="title">Mechanic Worklog Report</h1>
+                </div>
+            </div>
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content">
+        <form method="POST" name="mechanic_export_form" action="{{$ctrl.export_url}}">
+            <input type="hidden" name="_token" value="{{ $ctrl.csrf_token}}" />
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="page-form pb-40">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Date<span class="mandatory">*</span></label>
+                                        <div class="input-group date">
+                                            <input class="form-control daterange required" placeholder="01-08-2021 to 31-08-2021"
+                                                name="export_date" id="date_range" autocomplete="off" readonly required>
+                                            <span class="input-group-addon">
+                                                <img class="img-responsive"
+                                                    src="./public/theme/img/content/calender-gray-icon.svg"
+                                                    alt="Calendar Image" />
+                                            </span>
+                                        </div><!-- Input Group -->
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="opacity-zero">Submit</label>
+                                        <button type="submit" class="btn btn-primary btn-square btn-md mr-10" id="submit">
+                                            Submit
+                                        </button>
+                                    </div><!-- Field -->
+                                </div><!-- Column -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

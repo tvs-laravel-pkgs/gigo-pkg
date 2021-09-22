@@ -172,10 +172,26 @@ class JobOrderController extends Controller {
 			}
 
 			$job_order->attachment_path = 'storage/app/public/gigo/job_card/attachments';
+			$extras = [
+                'floor_supervisor_list' => collect(User::select([
+                    'users.id',
+                    DB::RAW('CONCAT(users.ecode," / ",users.name) as name'),
+                ])
+				->join('role_user','role_user.user_id','users.id')
+				->join('permission_role','permission_role.role_id','role_user.role_id')
+				->where('permission_role.permission_id', 5608) 
+				->where('users.user_type_id', 1) //EMPLOYEE
+				->where('users.company_id', $job_order->company_id)
+				->where('users.working_outlet_id', $job_order->outlet_id)
+				->groupBy('users.id')
+				->orderBy('users.name','asc')
+				->get())->prepend(['id' => '', 'name' => 'Select Floor Supervisor']),
+            ];
 
 			return response()->json([
 				'success' => true,
 				'job_order' => $job_order,
+				'extras' => $extras,
 			]);
 		} catch (Exception $e) {
 			return response()->json([

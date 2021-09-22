@@ -2052,6 +2052,12 @@ class GigoPkgPermissionSeeder extends Seeder
                 'name' => 'otp-own-outlet',
                 'display_name' => 'View Own Outlet',
             ],
+            [
+                'display_order' => 3,
+                'parent' => 'otp',
+                'name' => 'otp-mapped-outlet',
+                'display_name' => 'View Mapped Outlet',
+            ],
 
             //GIGO Dashboard
             [
@@ -2201,8 +2207,14 @@ class GigoPkgPermissionSeeder extends Seeder
             [
                 'display_order' => 4,
                 'parent' => 'gigo-site-visit',
-                'name' => 'parts-view-site-visit',
-                'display_name' => 'Parts View',
+                'name' => 'site-visit-parts-issue',
+                'display_name' => 'Parts Issue',
+            ],
+            [
+                'display_order' => 4,
+                'parent' => 'gigo-site-visit',
+                'name' => 'site-visit-approve',
+                'display_name' => 'Approve',
             ],
             [
                 'display_order' => 5,
@@ -2315,6 +2327,78 @@ class GigoPkgPermissionSeeder extends Seeder
                 'parent' => 'gigo-battery',
                 'name' => 'export-battery-result',
                 'display_name' => 'Export',
+            ],
+
+            //GIGO REPORTs
+            [
+                'display_order' => 100,
+                'parent' => 'gigo-pages',
+                'name' => 'gigo-reports',
+                'display_name' => 'Reports',
+            ],
+            [
+                'display_order' => 1,
+                'parent' => 'gigo-reports',
+                'name' => 'mechanic-worklog',
+                'display_name' => 'Mechanic Work Log',
+            ],
+            [
+                'display_order' => 2,
+                'parent' => 'gigo-reports',
+                'name' => 'job-order-report',
+                'display_name' => 'Job Order Report',
+            ],
+            [
+                'display_order' => 3,
+                'parent' => 'gigo-reports',
+                'name' => 'gigo-report-all-outlet',
+                'display_name' => 'View All Outlet',
+            ],
+            [
+                'display_order' => 4,
+                'parent' => 'gigo-reports',
+                'name' => 'gigo-report-own-outlet',
+                'display_name' => 'View Own Outlet',
+            ],
+            [
+                'display_order' => 5,
+                'parent' => 'gigo-reports',
+                'name' => 'gigo-report-mapped-outlet',
+                'display_name' => 'View Mapped Outlet',
+            ],
+
+            //GIGO Support
+            [
+                'display_order' => 100,
+                'parent' => 'gigo-pages',
+                'name' => 'gigo-support',
+                'display_name' => 'Support',
+            ],
+            [
+                'display_order' => 1,
+                'parent' => 'gigo-support',
+                'name' => 'gigo-support-all-outlet',
+                'display_name' => 'View All Outlet',
+            ],
+            [
+                'display_order' => 2,
+                'parent' => 'gigo-support',
+                'name' => 'gigo-support-own-outlet',
+                'display_name' => 'View Own Outlet',
+            ],
+            [
+                'display_order' => 2,
+                'parent' => 'gigo-support',
+                'name' => 'gigo-support-mapped-outlet',
+                'display_name' => 'View Mapped Outlet',
+            ],
+
+            //GIGO Import
+            [
+                'display_order' => 2,
+                'parent' => 'gigo-pages',
+                'name' => 'gigo-sap-import',
+                'display_name' => 'SAP Import',
             ],
         ];
         Permission::createFromArrays($permissions);

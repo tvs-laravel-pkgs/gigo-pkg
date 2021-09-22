@@ -8,6 +8,11 @@
                         Job Order 
                     </a>
                 </li> -->
+                <li ng-class="{active:active_tab == 'floor-supervisor'}"  ng-if="$ctrl.hasPermission('inward-job-card-tab-split-order') && (job_card.status_id == 8221 || job_card.status_id == 8222 || job_card.status_id == 8223)">
+                    <a class="filter" href=".#!/job-card/change-floor-supervisor/{{job_card_id}}">
+                        Floor Supervisor
+                    </a>
+                </li>
                 <li ng-class="{active:active_tab == 'schedule-maintendance'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-scheduled-maintenance-view')">
                     <a class="filter" href=".#!/job-card/schedule-maintenance/{{job_card_id}}">
                         Scheduled Maintenance
@@ -31,6 +36,16 @@
                 <li ng-class="{active:active_tab == 'schedules'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-schedules')">
                     <a class="filter" href=".#!/job-card/schedule/{{job_card_id}}">
                         Schedules</a>
+                </li>
+                <li ng-class="{active:active_tab == 'vehicle-inspection'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-vehicle-inspection-report-view')">
+                    <a class="filter" href=".#!/job-card/vehicle-inspection/{{job_card_id}}">
+                        Vehicle Inspection Report
+                    </a>
+                </li>
+                <li ng-class="{active:active_tab == 'expert-diagnosis'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-expert-diagnosis-report-view')">
+                    <a class="filter" href=".#!/job-card/expert-diagnosis/{{job_card_id}}">
+                        Expert Diagnosis
+                    </a>
                 </li>
                 <li ng-class="{active:active_tab == 'floating-work'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-floating-work')">
                     <a class="filter" href=".#!/job-card/floating-work/{{job_card_id}}">
@@ -67,16 +82,6 @@
                     </a>
                 </li>
                 -->
-                <li ng-class="{active:active_tab == 'vehicle-inspection'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-vehicle-inspection-report-view')">
-                    <a class="filter" href=".#!/job-card/vehicle-inspection/{{job_card_id}}">
-                        Vehicle Inspection Report
-                    </a>
-                </li>
-                <li ng-class="{active:active_tab == 'expert-diagnosis'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-expert-diagnosis-report-view')">
-                    <a class="filter" href=".#!/job-card/expert-diagnosis/{{job_card_id}}">
-                        Expert Diagnosis
-                    </a>
-                </li>
                 <li ng-class="{active:active_tab == 'dms-checklist'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-service-package-details-view')">
                     <a class="filter" href=".#!/job-card/dms-checklist/{{job_card_id}}">
                         Service Package Details

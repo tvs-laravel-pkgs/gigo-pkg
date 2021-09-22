@@ -109,6 +109,22 @@ class GateInController extends Controller
                 ]);
             }
 
+            //CHECK VEHICLE PREVIOUS JOBCARD STATUS
+            $previous_job_order = JobOrder::join('outlets','outlets.id','job_orders.outlet_id')->where('job_orders.vehicle_id', $vehicle->id)->orderBy('job_orders.id', 'DESC')->select('outlets.ax_name','outlets.code','job_orders.status_id')->first();
+
+            if ($previous_job_order) {
+                if ($previous_job_order->status_id != 8470 && $previous_job_order->status_id != 8476 && $previous_job_order->status_id != 8467 && $previous_job_order->status_id != 8468 && $previous_job_order->status_id != '') {
+                    $outlet_code = $previous_job_order->ax_name ? $previous_job_order->ax_name : $previous_job_order->code;
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Validation Error',
+                        'errors' => [
+                            'Previous Job Order is not completed on the '.$outlet_code.' outlet!',
+                        ],
+                    ]);
+                }
+            }
+
             if (date('m') > 3) {
                 $year = date('Y') + 1;
             } else {
@@ -786,6 +802,7 @@ class GateInController extends Controller
             if ($vehicle->currentOwner) {
                 $job_order->customer_id = $vehicle->currentOwner->customer_id;
             }
+            $job_order->sbu_id = Auth::user()->employee ? Auth::user()->employee->sbu_id : null;
             $job_order->save();
             // $job_order->vehicleInventoryItem()->sync([]);
             //Remove already saved gatelog inventories
@@ -902,33 +919,35 @@ class GateInController extends Controller
                     $soap_number = $vehicle->registration_number;
                 }
 
-                $membership_data = $this->getSoap->GetTVSONEVehicleDetails($soap_number);
-                // dd($membership_data);
-                //Save API Response
-                $api_log = new ApiLog;
-                $api_log->type_id = 11780;
-                $api_log->entity_number = $soap_number;
-                $api_log->entity_id = $vehicle->id;
-                $api_log->url = 'https: //tvsapp.tvs.in/tvsone/tvsoneapi/WebService1.asmx?wsdl';
-                $api_log->src_data = 'https: //tvsapp.tvs.in/tvsone/tvsoneapi/WebService1.asmx?wsdl';
-                $api_log->response_data = json_encode(array($membership_data));
-                $api_log->user_id = Auth::user()->id;
-                $api_log->status_id = isset($membership_data) ? $membership_data['success'] == 'true' ? 11271 : 11272 : 11272;
-                $api_log->errors = null;
-                $api_log->created_by_id = Auth::user()->id;
-                $api_log->save();
+            $membership_data = $this->getSoap->GetTVSONEVehicleDetails($soap_number);
+            // dd($membership_data);
+            //Save API Response
+            $api_log = new ApiLog;
+            $api_log->type_id = 11780;
+            $api_log->entity_number = $soap_number;
+            $api_log->entity_id = $vehicle->id;
+            $api_log->url = 'https: //tvsapp.tvs.in/tvsone/tvsoneapi/WebService1.asmx?wsdl';
+            $api_log->src_data = 'https: //tvsapp.tvs.in/tvsone/tvsoneapi/WebService1.asmx?wsdl';
+            $api_log->response_data = json_encode(array($membership_data));
+            $api_log->user_id = Auth::user()->id;
+            // $api_log->status_id = isset($membership_data) ? $membership_data['success'] == 'true' ? 11271 : 11272 : 11272;
+            $api_log->status_id = 11271;
+            $api_log->errors = null;
+            $api_log->created_by_id = Auth::user()->id;
+            $api_log->save();
 
-                if ($membership_data && $membership_data['success'] == 'true') {
-                    // dump($membership_data);
-                    $amc_customer_id = null;
-                    if ($membership_data['tvs_one_customer_code']) {
-                        $amc_customer = AmcCustomer::firstOrNew(['tvs_one_customer_code' => $membership_data['tvs_one_customer_code']]);
+            if ($membership_data && $membership_data['success'] == 'true') {
+                // dump($membership_data);
+                $amc_customer_id = null;
+                if ($membership_data['tvs_one_customer_code']) {
+                    $amc_customer = AmcCustomer::firstOrNew(['tvs_one_customer_code' => $membership_data['tvs_one_customer_code']]);
 
-                        if (!$amc_customer->customer_id) {
-                            $customer = Customer::where('code', ltrim($membership_data['al_dms_code'], '0'))->first();
-                            if ($customer) {
-                                $amc_customer->customer_id = $customer->id;
-                            }
+                    if (!$amc_customer->customer_id) {
+                        $customer = Customer::where('code', ltrim($membership_data['al_dms_code'], '0'))->first();
+                        if ($customer) {
+                            $amc_customer->customer_id = $customer->id;
+                            $job_order->customer_id = $customer->id;
+                            $job_order->save();
                         }
 
                         if ($amc_customer->exists) {
@@ -1004,7 +1023,7 @@ class GateInController extends Controller
 
             $url = url('/') . '/vehicle/track/' . $job_order->id;
 
-            $short_url = ShortUrl::createShortLink($url, $maxlength = "8");
+            $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
             $tracking_message = 'Greetings from TVS & Sons! Kindly click on this link to track vehicle service status: ' . $short_url . ' - TVS';
 

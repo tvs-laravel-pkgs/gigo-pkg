@@ -274,6 +274,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
         Route::post('vehicle-inward/job_order-part/get-form-data', 'VehicleInwardController@getJobOrderPartData');
         Route::post('vehicle-inward/add-part/save', 'VehicleInwardController@saveAddtionalPart');
 
+        Route::post('vehicle-inward/add-bulk-part/save', 'VehicleInwardController@saveBulkPart');
+
         Route::post('vehicle-inward/addtional-rot-part/save', 'VehicleInwardController@saveAddtionalRotPart');
 
         //SEND REQUEST TO STOCK INCHARGE FOR ADD PART
@@ -282,6 +284,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
         //ESTIMATE GET FORM DATA AND SAVE
         Route::post('vehicle-inward/estimate/get-form-data', 'VehicleInwardController@getEstimateFormData');
         Route::post('vehicle-inward/estimate/save', 'VehicleInwardController@saveEstimate');
+
+        //ADDED FOR FLOORSUPERVISOR-SAVE -> Added By B Surya
+        Route::post('vehicle-inward/service-advisor/save', 'VehicleInwardController@serviceAdvisorSave');
 
         //ESTIMATION DENIED GET FORM DATA AND SAVE
         Route::post('vehicle-inward/estimation-denied/get-form-data', 'VehicleInwardController@getEstimationDeniedFormData');
@@ -415,6 +420,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
         Route::post('jobcard/inventory/get', 'JobCardController@getInventory');
         Route::post('jobcard/capture-voc/get', 'JobCardController@getCaptureVoc');
 
+        //FloorSupervisor-Get-Details Added by B.Surya from 09-08-2021
+        Route::post('jobcard/floor-supervisor-get-details/get', 'JobCardController@floorSupervisorGetDetails');
+
         //Material-GatePass Details Save
         Route::post('save-material-gate-pass-detail', 'JobCardController@saveMaterialGatePassDetail');
 
@@ -485,7 +493,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
         Route::post('on-site-visit/get-bulk-form-data', 'OnSiteVisitController@getBulkIssuePartFormData');
         Route::post('on-site-visit/bulk-form-data/save', 'OnSiteVisitController@saveIssuedPart');
         Route::post('on-site-visit/get-parts-data', 'OnSiteVisitController@getPartsData');
-        Route::post('on-site-visit/request/parts', 'OnSiteVisitController@sendRequestPartsIntent');
+        Route::post('on-site-visit/status/update', 'OnSiteVisitController@updateStatus');
+        Route::post('on-site-visit/request/save', 'OnSiteVisitController@saveRequest');
         Route::post('on-site-visit/return/parts', 'OnSiteVisitController@returnParts');
         Route::post('on-site-visit/get/time-log', 'OnSiteVisitController@getTimeLog');
         Route::post('on-site-visit/save/time-log', 'OnSiteVisitController@saveTimeLog');
@@ -495,9 +504,11 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
         Route::post('on-site-visit/labour-part/process', 'OnSiteVisitController@processLabourPart');
         Route::post('/on-site-visit/amc-customer/save', 'OnSiteVisitController@amcCustomerSave');
         Route::post('/on-site-visit/get/part/stock-details', 'OnSiteVisitController@getPartStockDetails');
+        Route::post('/on-site-visit/get/customer/address', 'OnSiteVisitController@getCustomerAddress');
 
         //Battery
         Route::post('/battery/get-form-data', 'BatteryController@getFormData');
         Route::post('/battery/save', 'BatteryController@save');
+        Route::post('/battery/payment/save', 'BatteryController@paymentSave');
     });
 });

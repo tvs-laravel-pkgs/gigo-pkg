@@ -65,14 +65,15 @@ app.component('jobCardTableList', {
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
                 { data: 'created_at', },
+                { data: 'status', searchable: false },
                 { data: 'outlet_code', name: 'outlets.code' },
                 { data: 'job_card_number', name: 'job_cards.job_card_number' },
+                { data: 'bay_name', name: 'bays.name' },
                 { data: 'registration_number', name: 'vehicles.registration_number' },
                 { data: 'customer_name', name: 'customers.name' },
                 { data: 'job_order_type', name: 'service_order_types.name' },
                 { data: 'quote_type', name: 'quote_types.name' },
                 { data: 'service_type', name: 'service_types.name' },
-                { data: 'status', searchable: false },
 
             ],
             "infoCallback": function (settings, start, end, max, total, pre) {
@@ -1972,6 +1973,10 @@ app.component('jobCardPdf', {
                     $scope.gate_pass_pdf = res.job_card.gate_pass_pdf;
 
                     $scope.vehicle_inspection_pdf = res.job_card.inspection_pdf;
+                    $scope.invoice_pdf = res.job_card.invoice_pdf;
+
+                    $scope.inventory_pdf = res.job_card.inventory_pdf;
+                    $scope.manual_job_order_pdf = res.job_card.manual_job_order_pdf;
 
                     $scope.$apply();
                 })
@@ -3999,7 +4004,95 @@ app.component('jobCardFloatingForm', {
         }, 1000);
     }
 });
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+//Chnage Floor Supervisor Change
+app.component('jobCardChangeFloorSupervisorForm', {
+    templateUrl: job_card_floor_supervisor_template_url,
+    controller: function ($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $route) {
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        self.angular_routes = angular_routes;
+        self.view_only_part_indent = self.hasPermission('view-only-parts-indent');
 
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+        $scope.job_card_id = $routeParams.job_card_id;
+        //FETCH DATA
+        $scope.fetchData = function () {
+            $.ajax({
+                url: base_url + '/api/jobcard/floor-supervisor-get-details/get',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_card_id
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
+                .done(function (res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    console.log(res);
+                    $scope.job_card_id = $routeParams.job_card_id;
+                    $scope.job_card = res.job_card;
+                    $scope.extras = res.extras;
+
+                    $scope.$apply();
+                })
+                .fail(function (xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function () {
+            scrollableTabs();
+        }, 1000);
+
+
+        $scope.saveFloorSupervisor = function () {
+            var form_id = '#floor_supervisor_change_form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'type_id': {
+                        required: true,
+                    },
+                },
+                submitHandler: function (form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $.ajax({
+                        url: base_url + '/api/vehicle-inward/service-advisor/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
+                        .done(function (res) {
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            
+                            // $scope.fetchData();
+                            $route.reload();
+                            $scope.$apply();
+                        })
+                        .fail(function (xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+    }
+});
 //---------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------
 //SCHEDULES

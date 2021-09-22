@@ -56,9 +56,10 @@
                                 <th>Outlet</th>
                                 <th>Customer Name</th>
                                 <th>Vehicle Reg Number</th>
-                                <th>Battery Make</th>
+                                <!-- <th>Battery Make</th>
                                 <th>Load Test Status</th>
-                                <th>Hydrometer Electrolyte Status</th>
+                                <th>Hydrometer Electrolyte Status</th> -->
+                                <th>Battery Status</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -89,7 +90,7 @@
                                     <label>Date</label>
                                     <div class="input-group date">
                                         <input class="form-control daterange" placeholder="Select a Date Range"
-                                            name="export_date" id="date_range">
+                                            name="export_date" id="date_range" autocomplete="off">
                                         <span class="input-group-addon">
                                             <img class="img-responsive"
                                                 src="./public/theme/img/content/calender-gray-icon.svg"
@@ -119,7 +120,7 @@
                                 </div>
                             </div>
                             <div class="col-md-12"></div>
-                            <div class="col-md-6">
+                            <!-- <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Battery Make</label>
                                     <md-select ng-model="$ctrl.export_battery_make_id" md-on-close="clearSearchTerm()"
@@ -137,9 +138,9 @@
                                     </md-select>
                                     <input type="hidden" class="form-control type-sm" name="export_battery_make_id"
                                         id="export_battery_make_id" value="{{$ctrl.export_battery_make_id}}">
-                                </div><!-- Field -->
-                            </div><!-- Column -->
-                            <div class="col-md-6">
+                                </div>
+                            </div> -->
+                            <!-- <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Load Test Status</label>
                                     <md-select ng-model="$ctrl.export_load_test_status_id"
@@ -158,9 +159,9 @@
                                     </md-select>
                                     <input type="hidden" class="form-control type-sm" name="export_load_test_status_id"
                                         id="export_load_test_status_id" value="{{$ctrl.export_load_test_status_id}}">
-                                </div><!-- Field -->
-                            </div><!-- Column -->
-                            <div class="col-md-6">
+                                </div>
+                            </div> -->
+                            <!-- <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Hydrometer Electrolyte Status</label>
                                     <md-select ng-model="$ctrl.export_hydro_status_id" md-on-close="clearSearchTerm()"
@@ -178,9 +179,9 @@
                                     </md-select>
                                     <input type="hidden" class="form-control type-sm" name="export_hydro_status_id"
                                         id="export_hydro_status_id" value="{{$ctrl.export_hydro_status_id}}">
-                                </div><!-- Field -->
-                            </div><!-- Column -->
-                            <div class="col-md-6">
+                                </div>
+                            </div> -->
+                            <!-- <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Overall Status</label>
                                     <md-select ng-model="$ctrl.export_overall_status_id" md-on-close="clearSearchTerm()"
@@ -198,8 +199,8 @@
                                     </md-select>
                                     <input type="hidden" class="form-control type-sm" name="export_overall_status_id"
                                         id="export_overall_status_id" value="{{$ctrl.export_overall_status_id}}">
-                                </div><!-- Field -->
-                            </div><!-- Column -->
+                                </div>
+                            </div> -->
                         </div><!-- Row -->
                     </div><!-- Modal Form -->
                 </div><!-- Modal Body -->

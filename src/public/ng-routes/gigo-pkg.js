@@ -197,6 +197,10 @@ app.config(['$routeProvider', function($routeProvider) {
         template: '<parts-indent-issue-bulk-part-form></parts-indent-issue-bulk-part-form>',
         title: 'Issue Bulk Part',
     }).
+    when('/part-indent/add-bulk-part/form/:job_order_id', {
+        template: '<parts-indent-add-bulk-part-form></parts-indent-add-bulk-part-form>',
+        title: 'Add Bulk Part',
+    }).
 
     //Complaint Group
     when('/gigo-pkg/complaint-group/list', {
@@ -714,6 +718,10 @@ app.config(['$routeProvider', function($routeProvider) {
     when('/inward-vehicle/customer-detail-view/:job_order_id', {
         template: '<inward-vehicle-customer-detail-view></inward-vehicle-customer-detail-view>',
         title: 'Inward Vehicle - Customer Detail View',
+    }).
+    when('/inward-vehicle/floor-supervisor/:job_order_id', {
+        template: '<inward-vehicle-floor-supervisor></inward-vehicle-floor-supervisor>',
+        title: 'Inward Vehicle - Floor Supervisor',
     });
 }]);
 
@@ -953,6 +961,11 @@ app.config(['$routeProvider', function($routeProvider) {
         template: '<job-card-part-indent-form></job-card-part-indent-form>',
         title: 'Job Card Part Indent',
 
+    }).
+    //Added To Change Floor Supervisor
+    when('/job-card/change-floor-supervisor/:job_card_id', {
+        template: '<job-card-change-floor-supervisor-form></job-card-change-floor-supervisor-form>',
+        title: 'Job Card Floor Supervisor Change',
     }).
     when('/job-card/schedule-maintenance/:job_card_id', {
         template: '<job-card-schedule-maintenance-form></job-card-schedule-maintenance-form>',
@@ -1361,5 +1374,45 @@ app.config(['$routeProvider', function($routeProvider) {
     when('/battery/view/:id', {
         template: '<battery-view></battery-view>',
         title: 'Battery Status View',
+    }).
+    //Import
+    when('/gigo-import/list',{
+        template:'<gigo-import-list></gigo-import-list>',
+        title:'GIGO Import',
+    }).
+    when('/gigo-import/form/:id',{
+        template:'<gigo-import-form></gigo-import-form>',
+        title:'GIGO Import',
     });
+}]);
+
+app.config(['$routeProvider', function($routeProvider) {
+    $routeProvider.
+    //Report
+    when('/mechanic/report', {
+        template: '<mechanic-report></mechanic-report>',
+        title: 'Mechanic Report',
+    }).
+    when('/attendance/report', {
+        template: '<attendance-report></attendance-report>',
+        title: 'Attendance Report',
+    }).
+    when('/job-order/report', {
+        template: '<job-order-report></job-order-report>',
+        title: 'Job Order Report',
+    });
+}]);
+
+//GIGO SUPPORT
+app.config(['$routeProvider', function($routeProvider) {
+    $routeProvider.
+    when('/gigo-support/table-list', {
+        template: '<gigo-support-list></gigo-support-list>',
+        title: 'Gigo Support List',
+    }).
+    when('/gigo-support/view/:job_order_id', {
+        template: '<gigo-support-view></gigo-support-view>',
+        title: 'Gigo Support Inward Vehicle - View',
+    })
+    ;
 }]);

@@ -9,7 +9,7 @@ app.component('onSiteVisitList', {
         $('.master_link').addClass('active').trigger('click');
 
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('gigo-manual-vehicle-delivery')) {
+        if (!self.hasPermission('gigo-site-visit')) {
             window.location = "#!/page-permission-denied";
             return false;
         }
@@ -281,54 +281,6 @@ app.component('onSiteVisitList', {
             $(this).val('');
         });
 
-        $scope.vehicleStatusSave = function () {
-            var split_form_id = '#vehicle_status_form';
-            var v = jQuery(split_form_id).validate({
-                ignore: '',
-                rules: {
-                    'job_order_id': {
-                        required: true,
-                    },
-                    'vehicle_delivery_status_id': {
-                        required: true,
-                    },
-                },
-                submitHandler: function (form) {
-                    let formData = new FormData($(split_form_id)[0]);
-                    $('.submit').button('loading');
-                    $.ajax({
-                        url: base_url + '/api/manual-vehicle-delivery/update/vehicle-status',
-                        method: "POST",
-                        data: formData,
-                        beforeSend: function (xhr) {
-                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                        },
-                        processData: false,
-                        contentType: false,
-                    })
-                        .done(function (res) {
-                            $('.submit').button('reset');
-                            if (!res.success) {
-                                showErrorNoty(res);
-                                return;
-                            }
-                            custom_noty('success', res.message);
-                            $scope.job_order_id = '';
-                            $scope.vehicle_delivery_status_id = '';
-                            $('#change_vehicle_status').modal('hide');
-                            $('#job_order_id').val('');
-                            $('#vehicle_delivery_status_id').val('');
-                            dataTables.fnFilter();
-                        })
-                        .fail(function (xhr) {
-                            $('.submit').button('reset');
-                            custom_noty('error', 'Something went wrong at server');
-                            dataTables.fnFilter();
-                        });
-                }
-            });
-        }
-
         $rootScope.loading = false;
     }
 });
@@ -343,7 +295,7 @@ app.component('onSiteVisitView', {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         $scope.hasPerm = HelperService.hasPerm;
-        if (!self.hasPermission('view-manual-vehicle-delivery')) {
+        if (!self.hasPermission('view-site-visit')) {
             window.location = "#!/page-permission-denied";
             return false;
         }
@@ -514,6 +466,7 @@ app.component('onSiteVisitView', {
                     $("#billing_confirmation_modal").modal('hide');
                     $("#estimate_confirmation_modal").modal('hide');
                     $("#work_complete_confirmation_modal").modal('hide');
+                    $("#parts_confirmation_modal").modal('hide');
                     $('#send_otp_customer_modal').modal('hide');
                     $('#otp').modal('hide');
                     $('#otp_no').val('');
@@ -878,10 +831,34 @@ app.component('onSiteVisitView', {
             }
         }
 
+        $scope.sendInvoiceConfirm = function (type_id) {
+            $('.send_confirm').button('loading');
+            $.ajax({
+                url: base_url + '/api/on-site-visit/request/save',
+                method: "POST",
+                data: {
+                    id: $scope.site_visit.id,
+                    type_id: type_id,
+                },
+            })
+                .done(function (res) {
+                    if (!res.success) {
+                        $('.send_confirm').button('reset');
+                        showErrorNoty(res);
+                        return;
+                    }
+                    custom_noty('success', res.message);
+                    $scope.fetchData();
+                })
+                .fail(function (xhr) {
+                    $('.send_confirm').button('reset');
+                });
+        }
+
         $scope.sendConfirm = function (type_id) {
             $('.send_confirm').button('loading');
             $.ajax({
-                url: base_url + '/api/on-site-visit/request/parts',
+                url: base_url + '/api/on-site-visit/status/update',
                 method: "POST",
                 data: {
                     id: $scope.site_visit.id,
@@ -921,12 +898,19 @@ app.component('onSiteVisitView', {
                         return;
                     }
                     custom_noty('success', res.message);
-                    $('#send_otp_customer_modal').modal('hide');
-                    $('body').removeClass('modal-open');
-                    $('.modal-backdrop').remove();
-                    $('#otp').modal('show');
-                    $('.send_otp_confirm').button('reset');
-                    $('.resend_otp').button('reset');
+
+                    if (res.notify_type == 1) {
+                        $('.send_otp_confirm').button('reset');
+                        $scope.fetchData();
+                    } else {
+                        $('#send_otp_customer_modal').modal('hide');
+                        $('body').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
+                        $('#otp').modal('show');
+                        $('.send_otp_confirm').button('reset');
+                        $('.resend_otp').button('reset');
+                    }
+
                 })
                 .fail(function (xhr) {
                     $('.send_otp_confirm').button('reset');
@@ -1125,6 +1109,9 @@ app.component('onSiteVisitView', {
                         on_site_order_id: $scope.site_visit.id,
                         type_id: id,
                         work_log_type: work_log_type,
+                        latitude: $('.latitude').val(),
+                        longitude: $('.longitude').val(),
+                        location_error: $('.location_error').val(),
                     },
                 })
                     .done(function (res) {
@@ -1366,7 +1353,7 @@ app.component('onSiteVisitForm', {
         });
         var self = this;
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('add-manual-vehicle-delivery') && !self.hasPermission('edit-manual-vehicle-delivery')) {
+        if (!self.hasPermission('add-site-visit') && !self.hasPermission('edit-site-visit')) {
             window.location = "#!/page-permission-denied";
             return false;
         }
@@ -1405,6 +1392,8 @@ app.component('onSiteVisitForm', {
 
                     $scope.customer = $scope.site_visit ? $scope.site_visit.customer : [];
                     console.log($scope.customer);
+                    $scope.address = $scope.site_visit ? $scope.site_visit.address : [];
+                    console.log($scope.address);
                     $scope.part_details = res.part_details;
                     $scope.labour_details = res.labour_details;
                     $scope.total_amount = res.total_amount;
@@ -1429,31 +1418,63 @@ app.component('onSiteVisitForm', {
         $scope.fetchData();
 
         $scope.searchCustomer = function (query) {
-            return new Promise(function (resolve, reject) {
-                CustomerSvc.options({
-                    filter: {
-                        search: query
-                    }
-                })
-                    .then(function (response) {
-                        console.log(response);
-                        resolve(response.data.options);
-                    });
-            });
+            // return new Promise(function (resolve, reject) {
+            //     CustomerSvc.options({
+            //         filter: {
+            //             search: query
+            //         }
+            //     })
+            //         .then(function (response) {
+            //             console.log(response);
+            //             resolve(response.data.options);
+            //         });
+            // });
+            if (query) {
+                return new Promise(function (resolve, reject) {
+                    $http
+                        .post(
+                            search_parts_customer_url, {
+                            key: query,
+                        }
+                        )
+                        .then(function (response) {
+                            resolve(response.data);
+                        });
+                });
+            } else {
+                $scope.customer = [];
+                return [];
+            }
         }
 
         $scope.customerChanged = function (customer) {
             $scope.customer = {};
-            CustomerSvc.read(customer.id)
-                .then(function (response) {
-                    console.log(response);
-                    $scope.customer = response.data.customer;
-                    $country_id = response.data.customer.primary_address ? response.data.customer.primary_address.country_id : '1';
-                    if (typeof response.data.customer.primary_address != null && typeof response.data.customer.primary_address != 'string') {
-                        $scope.customer.address = response.data.customer.primary_address;
-                    }
-                    $scope.countryChanged();
-                });
+            $scope.address = {};
+            if (customer.id) {
+                $('.pace').show();
+                $.ajax({
+                    url: base_url + '/api/on-site-visit/get/customer/address',
+                    method: "POST",
+                    data: {
+                        customer_id: customer.id,
+                        customer_code: customer.code,
+                    },
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                    .done(function (response) {
+                        $('.pace').hide();
+                        console.log(response)
+                        $scope.customer = response.customer;
+                        $scope.address = response.customer_address;
+                        $scope.$apply();
+                        $scope.countryChanged();
+                    })
+                    .fail(function (xhr) {
+                        custom_noty('error', 'Something went wrong at server');
+                    });
+            }
         }
 
         $scope.countryChanged = function (country_id) {
@@ -1471,16 +1492,8 @@ app.component('onSiteVisitForm', {
                     }
                     $scope.extras.state_list = res.state_list;
                     console.log($scope.extras.state_list);
-                    //ADD NEW OWNER TYPE
-                    // if ($scope.type_id == 2) {
-                    //     self.state = $scope.job_order.state;
-                    // } else {
-                    // if (!$scope.customer) {
-                    // self.state = $scope.job_order.state;
-                    // } else {
-                    self.state = $scope.customer ? $scope.customer.address.state : [];
-                    // }
-                    // }
+
+                    self.state = $scope.address ? $scope.address.state : [];
 
                     $scope.$apply();
                 })

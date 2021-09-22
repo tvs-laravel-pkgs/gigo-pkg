@@ -5,10 +5,12 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a target="_blank" href="#!/part-indent/list" type="button" class="btn-back btn-img" ng-if="$ctrl.view_only_part_indent">
+                    <a target="_blank" href="#!/part-indent/list" type="button" class="btn-back btn-img"
+                        ng-if="$ctrl.view_only_part_indent">
                         <img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" />
                     </a>
-                    <a target="_blank" href="#!/job-card/card-list" type="button" class="btn-back btn-img" ng-if="!$ctrl.view_only_part_indent">
+                    <a target="_blank" href="#!/job-card/card-list" type="button" class="btn-back btn-img"
+                        ng-if="!$ctrl.view_only_part_indent">
                         <img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" />
                     </a>
                 </div><!-- Page Header Content -->
@@ -39,11 +41,17 @@
                                                         <div class="checklist-item-value">
                                                             Covering Letter
                                                         </div>
-                                                        <div class="checklist-item-value-sm" ng-if="!covering_letter_pdf">
-                                                            <a target="_blank" href="{{covering_letter_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                        <div class="checklist-item-value-sm"
+                                                            ng-if="!covering_letter_pdf">
+                                                            <a target="_blank" href="{{covering_letter_url}}"
+                                                                class="btn btn-secondary-dark btn-square btn-block"
+                                                                href="#">PDF</a>
                                                         </div>
-                                                        <div class="checklist-item-value-sm" ng-if="covering_letter_pdf">
-                                                            <a target="_blank" href="{{covering_letter_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                        <div class="checklist-item-value-sm"
+                                                            ng-if="covering_letter_pdf">
+                                                            <a target="_blank" href="{{covering_letter_pdf}}"
+                                                                class="btn btn-secondary-dark btn-square btn-block"
+                                                                href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -53,10 +61,14 @@
                                                             Gatepass
                                                         </div>
                                                         <div class="checklist-item-value-sm" ng-if="!gate_pass_pdf">
-                                                            <a target="_blank" href="{{gate_pass_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <a target="_blank" href="{{gate_pass_url}}"
+                                                                class="btn btn-secondary-dark btn-square btn-block"
+                                                                href="#">PDF</a>
                                                         </div>
                                                         <div class="checklist-item-value-sm" ng-if="gate_pass_pdf">
-                                                            <a target="_blank" href="{{gate_pass_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <a target="_blank" href="{{gate_pass_pdf}}"
+                                                                class="btn btn-secondary-dark btn-square btn-block"
+                                                                href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -66,7 +78,33 @@
                                                             Vehicle Inspection
                                                         </div>
                                                         <div class="checklist-item-value-sm">
-                                                            <a target="_blank" href="{{vehicle_inspection_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <a target="_blank" href="{{vehicle_inspection_pdf}}"
+                                                                class="btn btn-secondary-dark btn-square btn-block"
+                                                                href="#">PDF</a>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <!-- <li ng-if="inventory_pdf">
+                                                    <div class="checklist-item-wrap pad-big">
+                                                        <div class="checklist-item-value">
+                                                            Vehicle Inventory
+                                                        </div>
+                                                        <div class="checklist-item-value-sm">
+                                                            <a target="_blank" href="{{inventory_pdf}}"
+                                                                class="btn btn-secondary-dark btn-square btn-block"
+                                                                href="#">PDF</a>
+                                                        </div>
+                                                    </div>
+                                                </li> -->
+                                                <li ng-if="manual_job_order_pdf">
+                                                    <div class="checklist-item-wrap pad-big">
+                                                        <div class="checklist-item-value">
+                                                            Manual Job Order
+                                                        </div>
+                                                        <div class="checklist-item-value-sm">
+                                                            <a target="_blank" href="{{manual_job_order_pdf}}"
+                                                                class="btn btn-secondary-dark btn-square btn-block"
+                                                                href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -76,10 +114,14 @@
                                                             Estimate
                                                         </div>
                                                         <div class="checklist-item-value-sm" ng-if="!estimate_pdf">
-                                                            <a target="_blank" href="{{estimate_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <a target="_blank" href="{{estimate_url}}"
+                                                                class="btn btn-secondary-dark btn-square btn-block"
+                                                                href="#">PDF</a>
                                                         </div>
                                                         <div class="checklist-item-value-sm" ng-if="estimate_pdf">
-                                                            <a target="_blank" href="{{estimate_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <a target="_blank" href="{{estimate_pdf}}"
+                                                                class="btn btn-secondary-dark btn-square btn-block"
+                                                                href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -98,11 +140,17 @@
                                                         <div class="checklist-item-value">
                                                             Revised Estimate
                                                         </div>
-                                                        <div class="checklist-item-value-sm" ng-if="!revised_estimate_pdf">
-                                                            <a target="_blank" href="{{revised_estimate_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                        <div class="checklist-item-value-sm"
+                                                            ng-if="!revised_estimate_pdf">
+                                                            <a target="_blank" href="{{revised_estimate_url}}"
+                                                                class="btn btn-secondary-dark btn-square btn-block"
+                                                                href="#">PDF</a>
                                                         </div>
-                                                        <div class="checklist-item-value-sm" ng-if="revised_estimate_pdf">
-                                                            <a target="_blank" href="{{revised_estimate_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                        <div class="checklist-item-value-sm"
+                                                            ng-if="revised_estimate_pdf">
+                                                            <a target="_blank" href="{{revised_estimate_pdf}}"
+                                                                class="btn btn-secondary-dark btn-square btn-block"
+                                                                href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -112,7 +160,9 @@
                                                             Job Card
                                                         </div>
                                                         <div class="checklist-item-value-sm">
-                                                            <a target="_blank" href="{{job_card_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <a target="_blank" href="{{job_card_pdf_url}}"
+                                                                class="btn btn-secondary-dark btn-square btn-block"
+                                                                href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -176,59 +226,92 @@
                                                         </div>
                                                     </div>
                                                 </li> -->
-                                                <li ng-if="job_card.status_id == 8226 || job_card.status_id == 8228 || job_card.status_id == 8225">
+                                                <li
+                                                    ng-if="job_card.status_id == 8226 || job_card.status_id == 8228 || job_card.status_id == 8225">
                                                     <div class="checklist-item-wrap pad-big">
                                                         <div class="checklist-item-value">
                                                             Tax Invoice
                                                         </div>
                                                         <div class="checklist-item-value-sm">
-                                                            <a target="_blank" href="{{tax_invoice_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <a target="_blank" href="{{tax_invoice_pdf_url}}"
+                                                                class="btn btn-secondary-dark btn-square btn-block"
+                                                                href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
-                                                <li ng-if="job_card.status_id == 8226 || job_card.status_id == 8228 || job_card.status_id == 8225">
+                                                <li
+                                                    ng-if="job_card.status_id == 8226 || job_card.status_id == 8228 || job_card.status_id == 8225">
                                                     <div class="checklist-item-wrap pad-big">
                                                         <div class="checklist-item-value">
                                                             Service Proforma
                                                         </div>
                                                         <div class="checklist-item-value-sm">
-                                                            <a target="_blank" href="{{service_proforma_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <a target="_blank" href="{{service_proforma_pdf_url}}"
+                                                                class="btn btn-secondary-dark btn-square btn-block"
+                                                                href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
-                                                <li ng-if="job_card.status_id == 8226 || job_card.status_id == 8228 || job_card.status_id == 8225">
+                                                <li
+                                                    ng-if="job_card.status_id == 8226 || job_card.status_id == 8228 || job_card.status_id == 8225">
                                                     <div class="checklist-item-wrap pad-big">
                                                         <div class="checklist-item-value">
                                                             Service Proforma Cumulative
                                                         </div>
                                                         <div class="checklist-item-value-sm">
-                                                            <a target="_blank" href="{{service_proforma_cumulative_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <a target="_blank"
+                                                                href="{{service_proforma_cumulative_pdf_url}}"
+                                                                class="btn btn-secondary-dark btn-square btn-block"
+                                                                href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
-                                                <li ng-if="job_card.status_id == 8226 || job_card.status_id == 8228 || job_card.status_id == 8225">
+                                                <li
+                                                    ng-if="(job_card.status_id == 8226 || job_card.status_id == 8228 || job_card.status_id == 8225) && invoice_pdf">
+                                                    <div class="checklist-item-wrap pad-big">
+                                                        <div class="checklist-item-value">
+                                                            Invoice
+                                                        </div>
+                                                        <div class="checklist-item-value-sm">
+                                                            <a target="_blank" href="{{invoice_pdf}}"
+                                                                class="btn btn-secondary-dark btn-square btn-block"
+                                                                href="#">PDF</a>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li
+                                                    ng-if="job_card.status_id == 8226 || job_card.status_id == 8228 || job_card.status_id == 8225">
                                                     <div class="checklist-item-wrap pad-big">
                                                         <div class="checklist-item-value">
                                                             Labour Invoice
                                                         </div>
                                                         <div class="checklist-item-value-sm" ng-if="!labour_pdf">
-                                                            <a target="_blank" href="{{labour_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <a target="_blank" href="{{labour_url}}"
+                                                                class="btn btn-secondary-dark btn-square btn-block"
+                                                                href="#">PDF</a>
                                                         </div>
                                                         <div class="checklist-item-value-sm" ng-if="labour_pdf">
-                                                            <a target="_blank" href="{{labour_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <a target="_blank" href="{{labour_pdf}}"
+                                                                class="btn btn-secondary-dark btn-square btn-block"
+                                                                href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
-                                                <li ng-if="job_card.status_id == 8226 || job_card.status_id == 8228 || job_card.status_id == 8225">
+                                                <li
+                                                    ng-if="job_card.status_id == 8226 || job_card.status_id == 8228 || job_card.status_id == 8225">
                                                     <div class="checklist-item-wrap pad-big">
                                                         <div class="checklist-item-value">
                                                             Parts Invoice
                                                         </div>
                                                         <div class="checklist-item-value-sm" ng-if="!parts_pdf">
-                                                            <a target="_blank" href="{{parts_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <a target="_blank" href="{{parts_url}}"
+                                                                class="btn btn-secondary-dark btn-square btn-block"
+                                                                href="#">PDF</a>
                                                         </div>
                                                         <div class="checklist-item-value-sm" ng-if="parts_pdf">
-                                                            <a target="_blank" href="{{parts_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <a target="_blank" href="{{parts_pdf}}"
+                                                                class="btn btn-secondary-dark btn-square btn-block"
+                                                                href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -239,7 +322,8 @@
                                     <div class="tab-pane-footer">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <a target="_blank" href=".#!/job-card/gatein-detail/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <a target="_blank" href=".#!/job-card/gatein-detail/{{job_card_id}}"
+                                                    class="btn btn-secondary-dark btn-prev">Previous</a>
                                             </div>
                                         </div>
                                     </div><!-- Tab Footer -->

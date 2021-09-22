@@ -1,0 +1,109 @@
+<!-- Content Wrap -->
+<div class="content-wrap cndn-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/job-card/road-test-observation/{{job_card_id}}" type="button" class="btn-back btn-img">
+                        <img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" />
+                    </a>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content title-block">
+                    <h1 class="title"><b>Floor Supervisor</b></h1>
+                    <p class="subtitle">Job Card / Floor Supervisor</p>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form pb-70">
+            <jobcard-header></jobcard-header>
+            <div class="tab-form-wrap type-2 side-tab-open">
+                <jobcard-tabs ng-init="active_tab = 'floor-supervisor'"></jobcard-tabs>
+                <div class="tab-form-body side-tab-open">
+                    <div class="tab-content">
+                        <!-- TAB PANEL -->
+                        <div class="tab-pane fade in active" id="floor_supervisor_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <form id="floor_supervisor_change_form">
+                                        <input type="hidden" name="job_order_id" value="{{job_card.job_order_id}}">
+                                        <input type="hidden" name="job_card_id" value="{{job_card.id}}">
+                                        <input type="hidden" name="type_id" value="2">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10">
+                                                <b>
+                                                    Floor Supervisor
+                                                </b>
+                                            </h5>
+                                            <hr class="hr-15">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Current Floor Supervisor 
+                                                        </label>
+                                                        <input type="text" class="form-control" value="{{job_card.floor_supervisor.ecode}} / {{job_card.floor_supervisor.name}}" readonly>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3" id="floor_supervisor_change_required_id">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Change Floor Supervisor
+                                                        </label>
+                                                        <div class="common-radio-button type-4">
+                                                            <input type="radio" id="change_floor_supervisor_yes" name="floor_supervisor_change_required" ng-value="1" value="1" ng-model="floor_supervisor_change_required" ng-checked="floor_supervisor_change_required">
+                                                            <label for="change_floor_supervisor_yes">
+                                                                Yes
+                                                            </label>
+                                                            <input type="radio" id="change_floor_supervisor_no" name="floor_supervisor_change_required" ng-value="0" value="0" ng-model="floor_supervisor_change_required" ng-checked="!floor_supervisor_change_required">
+                                                            <label for="change_floor_supervisor_no">
+                                                                No
+                                                            </label>
+                                                        </div>
+                                                        <div id="errorRoadTestRequired"></div>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-4" ng-if="floor_supervisor_change_required == 1">
+                                                    <div class="form-group">
+                                                        <label>
+                                                        Select Floor Supervisor
+                                                            <sup class="mandatory">
+                                                                *
+                                                            </sup>
+                                                        </label>
+                                                        <md-select ng-model="job_order.job_card.floor_supervisor_id" placeholder="Select Floor Supervisor" data-md-container-class="selectdemoSelectHeader">
+                                                            <md-select-header class="demo-select-header">
+                                                                <input ng-model="searchType" type="search" placeholder="Search for Floor Supervisor." class="demo-header-searchbox md-text">
+                                                            </md-select-header>
+                                                            <md-optgroup>
+                                                                <md-option ng-value="option.id" ng-repeat="option in extras.floor_supervisor_list | filter:searchType">
+                                                                    {{option.name}}
+                                                                </md-option>
+                                                            </md-optgroup>
+                                                        </md-select>
+                                                        <input type="hidden" name="floor_supervisor_id" class="required" value="{{job_order.job_card.floor_supervisor_id}}">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                            </div><!-- Row -->
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a href=".#!/job-card/schedule-maintenance/{{job_card_id}}" class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                    <input ng-if="floor_supervisor_change_required == 1" type="submit"  name="save_close" ng-click="saveFloorSupervisor(1)" class="btn btn-red submit" value=" Save">
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </form>
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                    </div><!-- Tab Content -->
+                </div><!-- Tab Form Body -->
+            </div><!-- Tab Form Wrap -->
+        </div><!-- Page Form -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->

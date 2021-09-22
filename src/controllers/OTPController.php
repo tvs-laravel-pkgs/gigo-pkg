@@ -41,7 +41,13 @@ class OTPController extends Controller {
 		;
 
 		if (!Entrust::can('otp-all-outlet')) {
-			$otps->where('otps.outlet_id', Auth::user()->employee->outlet_id);
+			if (Entrust::can('otp-mapped-outlet')) {
+				$outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
+				array_push($outlet_ids, Auth::user()->employee->outlet_id);
+				$otps->whereIn('otps.outlet_id', $outlet_ids);
+			}else{
+				$otps->where('otps.outlet_id', Auth::user()->employee->outlet_id);
+			}
 		}
 
 		$otps->orderBy('otps.id', 'DESC')->get();

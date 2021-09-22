@@ -60,6 +60,8 @@ app.component('partsIndentList', {
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
                 { data: 'job_order_number', name: 'job_orders.number', searchable: true },
+                { data: 'job_card_number', name: 'job_cards.job_card_number', searchable: true },
+                { data: 'status', searchable: false },
                 { data: 'job_order_date_time', searchable: false },
                 { data: 'vehicle', name: 'vehicles.registration_number', searchable: true },
                 // { data: 'job_card_number', name: 'job_cards.job_card_number' , searchable: true },
@@ -72,7 +74,6 @@ app.component('partsIndentList', {
                 { data: 'state_name', name: 'states.name', searchable: true },
                 { data: 'region_name', name: 'regions.name', searchable: true },
                 { data: 'outlet_name', name: 'outlets.code', searchable: true },
-                { data: 'status', searchable: false },
             ],
             "infoCallback": function (settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)
@@ -1070,6 +1071,192 @@ app.component('partsIndentPartsView', {
                 $(".btn-nxt").removeAttr("disabled");
                 $(".submit").removeAttr("disabled");
             }
+        }
+    }
+});
+
+app.component('partsIndentAddBulkPartForm', {
+    templateUrl: parts_indent_add_bulk_part_form_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, PartSvc,SplitOrderTypeSvc, VendorSvc) {
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        self.angular_routes = angular_routes;
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+        self.job_order_id = $routeParams.job_order_id;
+
+        self.part_details = [];
+
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+
+        
+        $scope.init = function () {
+            $rootScope.loading = true;
+
+            let promises = {
+                split_order_type_options: SplitOrderTypeSvc.options(),
+                // repair_order_options: RepairOrderSvc.options($scope.job_order_id),
+            };
+
+            $scope.options = {};
+            $q.all(promises)
+                .then(function (responses) {
+                    $scope.options.split_order_types = responses.split_order_type_options.data.options;
+                    // $scope.options.repair_orders = responses.repair_order_options.data.options;
+                    $rootScope.loading = false;
+                });
+        };
+        $scope.init();
+
+
+         //FETCH DATA
+        $scope.fetchData = function () {
+            $.ajax({
+                url: base_url + '/api/inward-part-indent/get-view-data',
+                method: "POST",
+                data: {
+                    id: self.job_order_id
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
+                .done(function (res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    self.job_order = res.job_order;
+
+                    $scope.$apply();
+                })
+                .fail(function (xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+
+        // ADD NEW PART
+        $scope.addNewpart = function() {
+            self.part_details.push({
+                part : '',
+                job_order_part_id : '',
+                part_available_quantity : '',
+                split_order_type_id : '',
+                part_qty : '',
+                part_description : '',
+                part_mrp : '',
+                part_uom : '',
+                part_total_amount : '',
+                mrp_change : 0,
+
+            });
+        }
+
+        $scope.removepart = function(index) {
+            self.part_details.splice(index, 1);
+        }
+
+        $scope.onPartTextChange = function(index){
+            self.part_details[index].job_order_part_id = '';
+            self.part_details[index].part_available_quantity = '';
+            self.part_details[index].part_description = '';
+            self.part_details[index].part_mrp = '';
+            self.part_details[index].part_uom = '';
+            self.part_details[index].part_total_amount = '';
+            self.part_details[index].mrp_change = 0;
+        }
+
+        $scope.searchParts = function (query) {
+            return new Promise(function (resolve, reject) {
+                PartSvc.options({ filter: { search: query } })
+                    .then(function (response) { 
+                        console.log("result")
+                        console.log(response.data)
+                        resolve(response.data.options);
+                    });
+            });
+        }
+
+        $scope.onPartSelect = function (index,part) {
+            if(part){
+                 PartSvc.getFormData({ outletId: self.job_order.outlet_id, partId: part.id })
+                .then(function (response) {
+                    $local_purchase_part = '(L)';
+                    $part_code = response.data.part.code;
+
+                    if ($part_code.indexOf($local_purchase_part) != -1) {
+                        self.part_details[index].part_mrp = 0;
+                        self.part_details[index].mrp_change = 1;
+                    }
+                    else {
+                        self.part_details[index].part_mrp = response.data.part.part_stock ? response.data.part.part_stock.mrp : '0';
+                        self.part_details[index].mrp_change = 0;
+                    }
+
+                    self.part_details[index].part_total_amount = response.data.part.part_stock ? response.data.part.part_stock.mrp : '0';
+                    self.part_details[index].part_available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
+                    self.part_details[index].part_description = part.name;
+                    self.part_details[index].job_order_part_id = part.job_order_part_id;
+
+                    $scope.onKeyUpQuantity();
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }
+        }
+
+        $scope.onKeyUpQuantity = function(){
+            $(self.part_details).each(function(key, part) {
+                if(part.part_qty && part.part_mrp){
+                    part.part_total_amount = (part.part_qty * part.part_mrp).toFixed(2);
+                }else{
+                    part.part_total_amount = '';
+                }
+            });
+        }
+
+        $scope.saveBulkPartForm = function() {
+            var form_id = '#add_bulk_part_form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                messages: {},
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all fields');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/vehicle-inward/add-bulk-part/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            $('.submit').button('reset');
+
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+
+                            setTimeout(function() {
+                                window.location = '#!/part-indent/parts/view/'+ self.job_order_id;
+                            }, 300);
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
         }
     }
 });
