@@ -2,13 +2,20 @@
 
 namespace Abs\GigoPkg\Api;
 
+use Abs\AttributePkg\Models\Field;
+use Abs\BasicPkg\Models\Address;
 use Abs\GigoPkg\AmcMember;
 use Abs\SerialNumberPkg\SerialNumberGroup;
+use Abs\ServiceInvoicePkg\ServiceInvoice;
+use Abs\ServiceInvoicePkg\ServiceInvoiceController;
+use Abs\ServiceInvoicePkg\ServiceInvoiceItem;
+use Abs\ServiceInvoicePkg\ServiceItem;
 use App\AmcAggregateCoupon;
 use App\Attachment;
 use App\Config;
 use App\Customer;
 use App\Employee;
+use App\Entity;
 use App\FinancialYear;
 use App\GateLog;
 use App\GatePass;
@@ -25,6 +32,9 @@ use App\Payment;
 use App\PaymentMode;
 use App\PendingReason;
 use App\Receipt;
+use App\Sbu;
+use App\TvsoneCashbackDetail;
+use App\TvsoneCashbackLog;
 use App\User;
 use Auth;
 use Carbon\Carbon;
@@ -305,13 +315,13 @@ class ManualVehicleDeliveryController extends Controller
 
         $customer_paid_labour_amount = 0;
         if ($labour_amount > 0 && $job_order->labour_discount_amount > 0) {
-            $customer_paid_labour_amount = $labour_amount - $job_order->labour_discount_amount;
+            $customer_paid_labour_amount = $labour_amount; //changed for TVS one Cashback by Parthiban V on 12-10-2021
             $customer_paid_labour_amount = number_format((float) $customer_paid_labour_amount, 2, '.', '');
         }
 
         $customer_paid_parts_amount = 0;
         if ($parts_amount > 0 && $job_order->part_discount_amount > 0) {
-            $customer_paid_parts_amount = $parts_amount - $job_order->part_discount_amount;
+            $customer_paid_parts_amount = $parts_amount;//changed for TVS one Cashback by Parthiban V on 12-10-2021
             $customer_paid_parts_amount = number_format((float) $customer_paid_parts_amount, 2, '.', '');
         }
 
@@ -891,6 +901,23 @@ class ManualVehicleDeliveryController extends Controller
                         if (!$payment_status) {
                             $this->vehiceRequestMail($job_order->id, $type = 1);
                         }
+                        //TVS one Cashback changes by Parthiban V on 12-10-2021
+                        if (!empty($request->customer_cashback_amount) && $request->customer_cashback_amount !='0.00' && $job_order->status_id != 8477 && $job_order->status_id != 8479) {
+                            $job_order->cash_back_amount=$request->customer_cashback_amount;
+                            $job_order->save();
+                            $save_cash_back_detail = TvsoneCashbackDetail::saveCashbackdetail($job_order->customer_id, $request->customer_cashback_amount);
+                            $cash_back=[
+                                'tvsone_cb_detail_id'=>$save_cash_back_detail->id,
+                                'transaction_type'=>'Credit',
+                                'trans_amount'=>$request->customer_cashback_amount,
+                                'trans_ref_no'=>null,
+                                'remarks'=>'GIGO Manual Vehicle Delivery Cashback Credit',
+                                'trans_status'=>10033,
+                            ];
+                            $save_cah_back_logs=TvsoneCashbackLog::saveCashbackLog($cash_back);
+                            $this->createCreditNoteRequest($job_order);
+                        }
+                        //TVS one Cashback changes by Parthiban V on 12-10-2021
 
                     } elseif ($request->billing_type_id == 11523) {
                         $validator = Validator::make($request->all(), [
@@ -1898,4 +1925,158 @@ class ManualVehicleDeliveryController extends Controller
             ]);
         }
     }
+    //TVS one Cashback changes by Parthiban V on 12-10-2021
+   public function createCreditNoteRequest($job_order){
+
+       if (date('m') > 3) {
+           $document_date_year = date('Y') + 1;
+       } else {
+           $document_date_year = date('Y');
+       }
+       $financial_year = FinancialYear::where('from', $document_date_year)
+           ->where('company_id', Auth::user()->company_id)
+           ->first();
+       if (!$financial_year) {
+           return response()->json(['success' => false, 'errors' => ['Financial Year Not Found']]);
+       }
+
+       $type_id=1060;
+       $sbu=Sbu::find($job_order->sbu_id);
+       $branch=Outlet::where('id',$job_order->outlet_id)->first();
+       if (!$sbu) {
+           return response()->json(['success' => false, 'errors' => ['SBU Not Found']]);
+       }
+
+       if (!$sbu->business_id) {
+           return response()->json(['success' => false, 'errors' => ['Business Not Found']]);
+       }
+
+       $generateNumber = SerialNumberGroup::generateNumber(4, $financial_year->id, $branch->state_id, null, null, $sbu->business_id);
+
+
+       $check_invoice_number=ServiceInvoice::where('company_id',Auth::user()->company_id)->where('number',$generateNumber['number'])->first();
+
+       if ($check_invoice_number) {
+           return response()->json(['success' => false, 'errors' => 'Serial Number Already Taken!..']);
+       }
+       $approval_status = Entity::select('entities.name')->where('company_id', Auth::user()->company_id)->where('entity_type_id', 18)->first();
+       $e_invoice_registration=0;
+       $address=Address::where('id',$job_order->address_id)->pluck('gst_number')->first();
+       if ($address){
+           $e_invoice_registration=1;
+       }
+       $service_invoice = new ServiceInvoice();
+       $service_invoice->branch_id = $job_order->outlet_id;
+       $service_invoice->sbu_id = $job_order->sbu_id;
+       $service_invoice->created_at = date("Y-m-d H:i:s");
+       $service_invoice->created_by_id = Auth()->user()->id;
+       $service_invoice->number = $generateNumber['number'];
+       if ($approval_status != '') {
+           $service_invoice->status_id = 1; //$approval_status->name;
+       } else {
+           return response()->json(['success' => false, 'errors' => ['Initial CN/DN Status has not mapped.!']]);
+       }
+       $service_invoice->is_cn_created = 1;
+       $service_invoice->type_id = $type_id;
+       $document_date=date('Y-m-d');
+       $service_invoice_val=[
+        'category_id'=>7,
+        'to_account_type_id'=>1440,
+        'document_date'=>$document_date,
+        'customer_id'=>$job_order->customer_id,
+        'address_id'=>$job_order->address_id,
+        'items_count'=>1,
+       ];
+       $service_invoice->fill($service_invoice_val);
+       $service_invoice->company_id = $job_order->company_id;
+       $service_invoice->address_id = $job_order->address_id;
+       $service_invoice->e_invoice_registration = $e_invoice_registration;
+       $service_invoice->save();
+       $approval_levels = Entity::select('entities.name')->where('company_id', Auth::user()->company_id)->where('entity_type_id', 19)->first();
+       if ($approval_levels != '') {
+           if ($service_invoice->status_id == $approval_levels->name) {
+               $service_invoice_create_pdf=new ServiceInvoiceController();
+               $r = $service_invoice_create_pdf->createPdf($service_invoice->id);
+               if (!$r['success']) {
+                   DB::rollBack();
+                   return response()->json($r);
+               }
+           }
+       } else {
+           return response()->json(['success' => false, 'errors' => ['Final CN/DN Status has not mapped.!']]);
+       }
+       if (!empty($service_invoice)) {
+           $service_item=ServiceItem::where('code','F237')->first();
+           $val=[
+               'service_invoice_id' =>$service_invoice->id,
+               'service_item_id' => $service_item->id,
+               'e_invoice_uom_id' => 25,
+               'description' => 'Cash Back Added to Customer Wallet',
+               'qty' => 1,
+               'rate' => $job_order->cash_back_amount,
+               'sub_total' =>$job_order->cash_back_amount,
+           ];
+               $service_invoice_item = new ServiceInvoiceItem();
+               $service_invoice_item->fill($val);
+               $service_invoice_item->save();
+
+           $gst_values = ServiceItem::leftjoin('tax_code_tax', 'service_items.sac_code_id', 'tax_code_tax.tax_code_id')
+               ->where('service_items.id', $service_item->id)
+               ->select(DB::raw('GROUP_CONCAT(tax_code_tax.tax_id) as all_tax_ids'),
+                   DB::raw('GROUP_CONCAT(tax_code_tax.percentage) as percentages'))->first();
+           $tax_ids = explode(',', $gst_values->all_tax_ids);
+           $percentage = explode(',', $gst_values->percentages);
+           $total_tax_amount=0;
+           $user_state = Outlet::where('id', $job_order->outlet_id)->pluck('state_id')->first();
+           $customer_state = Address::where('id', $job_order->address_id)->pluck('state_id')->first();
+           foreach ($tax_ids as $key => $tax_id) {
+               $tax_percentage=$percentage[$key];
+               if ($user_state == $customer_state){
+                   if ($tax_id==3){
+                       $tax_percentage=0;
+                   }
+               }else{
+                   if ($tax_id == 1 || $tax_id == 2){
+                       $tax_percentage=0;
+                   }
+               }
+               $total_amt = (($tax_percentage) / 100) * $service_invoice_item->sub_total;
+               $total_tax_amount+=$total_amt;
+               $service_invoice_item_tax= DB::table('service_invoice_item_tax')->updateorinsert(['service_invoice_item_id' => $service_invoice_item->id, 'tax_id' => $tax_id], [
+                   'service_invoice_item_id' => $service_invoice_item->id,
+                   'tax_id' => $tax_id,
+                   'percentage' => $tax_percentage,
+                   'amount' => $total_amt,
+               ]);
+           }
+           $total_amount=$service_invoice_item->sub_total+$total_tax_amount;
+           $service_invoice->amount_total=$service_invoice_item->sub_total;
+           $service_invoice->tax_total=$total_tax_amount;
+           $service_invoice->sub_total=$service_invoice_item->sub_total;
+           $service_invoice->total=$total_amount;
+           $final_amount = floor($total_amount);
+           $round_off = $total_amount - $final_amount;
+           if ($total_amount > $final_amount) {
+               $service_invoice->round_off_amount = $round_off;
+           } elseif ($total_amount < $final_amount) {
+               $service_invoice->round_off_amount;
+           } else {
+               $service_invoice->round_off_amount = 0;
+           }
+
+           $service_invoice->round_off_amount=$round_off;
+           $service_invoice->final_amount=$final_amount;
+           $service_invoice->save();
+
+               //SAVE SERVICE INVOICE ITEMS FIELD GROUPS AND RESPECTIVE FIELDS
+               $fields = Field::get()->keyBy('id');
+               $service_invoice_item->eavVarchars()->sync([]);
+               $service_invoice_item->eavInts()->sync([]);
+               $service_invoice_item->eavDatetimes()->sync([]);
+           $service_invoice_item->save();
+
+       }
+
+   }
+    //TVS one Cashback changes by Parthiban V on 12-10-2021
 }

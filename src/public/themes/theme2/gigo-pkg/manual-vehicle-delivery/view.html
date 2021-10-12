@@ -573,7 +573,7 @@
                                                     <span class="view-col-label" style="color:red"
                                                         ng-if="job_order.labour_discount_amount > 0">
                                                         Labour Discount Amount - {{job_order.labour_discount_amount}}
-                                                        (-)
+
                                                     </span>
                                                     <span class="view-col-value"
                                                         ng-if="job_order.labour_discount_amount > 0">
@@ -601,13 +601,23 @@
                                                     </span>
                                                     <span class="view-col-label" style="color:red"
                                                         ng-if="job_order.part_discount_amount > 0">
-                                                        Parts Discount Amount - {{job_order.part_discount_amount}} (-)
+                                                        Parts Discount Amount - {{job_order.part_discount_amount}}
                                                     </span>
                                                     <span class="view-col-value"
                                                         ng-if="job_order.part_discount_amount > 0">
                                                         Customer to be paid -
                                                         <b>
                                                             {{job_order.customer_paid_parts_amount}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-4">
+                                                    <span class="view-col-label">
+                                                        TVSONE Cashback Amount
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        <b>
+                                                            {{job_order.cash_back_amount ? job_order.cash_back_amount : '--'}}
                                                         </b>
                                                     </span>
                                                 </li>

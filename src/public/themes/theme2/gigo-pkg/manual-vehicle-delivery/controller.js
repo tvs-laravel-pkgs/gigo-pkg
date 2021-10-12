@@ -928,13 +928,19 @@ app.component('manualVehicleDeliveryForm', {
                 if (!parts_amount || isNaN(parts_amount)) {
                     parts_amount = 0;
                 }
-
+                total_amount = parseFloat(labour_amount) + parseFloat(parts_amount);
+                total_amount = total_amount.toFixed(2);
+                $('.customer_to_be_paid_amount').val(total_amount);
+                $('.paid_amount_0').val(total_amount);
+                var cash_back_labour_discount_value = 0;
+                var cash_back_part_discount_value = 0;
                 //Labour discount
                 if (labour_amount && $scope.job_order.amc_member && $scope.job_order.amc_member.amc_policy.labour_discount_percentage) {
                     labour_discount_value = (labour_amount * $scope.job_order.amc_member.amc_policy.labour_discount_percentage) / 100;
                     console.log('-----------labour--------------');
                     labour_discount_value = labour_discount_value.toFixed(2);
                     console.log(labour_discount_value);
+                    cash_back_labour_discount_value=labour_discount_value;
 
                     //labour amount after discount
                     labour_amount = labour_amount - labour_discount_value;
@@ -960,6 +966,7 @@ app.component('manualVehicleDeliveryForm', {
                     console.log('-----------part--------------');
                     part_discount_value = part_discount_value.toFixed(2);
                     console.log(part_discount_value);
+                    cash_back_part_discount_value=part_discount_value;
 
                     //part amount after discount
                     parts_amount = parts_amount - part_discount_value;
@@ -978,11 +985,19 @@ app.component('manualVehicleDeliveryForm', {
                     $('.part_pay_amount').hide();
                 }
 
-                total_amount = parseFloat(labour_amount) + parseFloat(parts_amount);
-                total_amount = total_amount.toFixed(2);
+                // total_amount = parseFloat(labour_amount) + parseFloat(parts_amount);
+                console.log(cash_back_part_discount_value);
+                total_cashback_amount = parseFloat(cash_back_labour_discount_value) + parseFloat(cash_back_part_discount_value);
+                total_cashback_amount = total_cashback_amount.toFixed(2);
+                console.log('-----------cashback--------------');
+                console.log(total_cashback_amount);
+                // total_amount = total_amount.toFixed(2);
+                // total_cashback_amount = total_cashback_amount.toFixed(2);
 
-                $('.paid_amount_0').val(total_amount);
-                $('.customer_to_be_paid_amount').val(total_amount);
+                // $('.paid_amount_0').val(total_amount);
+                // $('.customer_to_be_paid_amount').val(total_amount);
+
+                $('.customer_cashback_amount').val(total_cashback_amount);
 
                 $scope.$apply();
             }, 100);
