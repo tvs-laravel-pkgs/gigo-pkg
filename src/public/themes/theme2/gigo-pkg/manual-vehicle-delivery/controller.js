@@ -106,6 +106,10 @@ app.component('manualVehicleDeliveryList', {
                 name: 'gate_logs.number'
             },
             {
+                data: 'cn_number',
+                name: 'job_orders.cn_number'
+            },
+            {
                 data: 'status',
                 name: 'configs.name'
             },

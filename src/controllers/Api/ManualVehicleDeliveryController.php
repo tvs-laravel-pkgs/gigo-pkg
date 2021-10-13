@@ -4,12 +4,14 @@ namespace Abs\GigoPkg\Api;
 
 use Abs\AttributePkg\Models\Field;
 use Abs\BasicPkg\Models\Address;
+use Abs\GigoPkg\AmcCustomer;
 use Abs\GigoPkg\AmcMember;
 use Abs\SerialNumberPkg\SerialNumberGroup;
 use Abs\ServiceInvoicePkg\ServiceInvoice;
 use Abs\ServiceInvoicePkg\ServiceInvoiceController;
 use Abs\ServiceInvoicePkg\ServiceInvoiceItem;
 use Abs\ServiceInvoicePkg\ServiceItem;
+use Abs\VehiclePkg\Vehicle;
 use App\AmcAggregateCoupon;
 use App\Attachment;
 use App\Config;
@@ -102,6 +104,7 @@ class ManualVehicleDeliveryController extends Controller
                     DB::raw('GROUP_CONCAT(amc_policies.name) as amc_policies'),
                     'status.name as status_name',
                     'customers.name as customer_name',
+                    DB::raw("IFNULL(job_orders.cn_number,'-') as cn_number")
                 ])
                 ->where(function ($query) use ($request) {
                     if (!empty($request->search_key)) {
@@ -1997,7 +2000,7 @@ class ManualVehicleDeliveryController extends Controller
        $service_invoice->fill($service_invoice_val);
        $service_invoice->company_id = $job_order->company_id;
        $service_invoice->address_id = $address_id;
-       $service_invoice->e_invoice_registration = $e_invoice_registration;
+       $service_invoice->e_invoice_registration = 0;
        $service_invoice->save();
        $approval_levels = Entity::select('entities.name')->where('company_id', Auth::user()->company_id)->where('entity_type_id', 19)->first();
        if ($approval_levels != '') {
@@ -2012,13 +2015,29 @@ class ManualVehicleDeliveryController extends Controller
        } else {
            return response()->json(['success' => false, 'errors' => ['Final CN/DN Status has not mapped.!']]);
        }
+       $job_order_details = JobOrder::with([
+           'amcMember',
+           'amcMember.amcPolicy',
+           'vehicle',
+           'manualDeliveryLabourInvoice',
+           'manualDeliveryPartsInvoice'
+       ])->find($job_order->id);
+       $vehicle_registration_no = isset($job_order_details->vehicle->registration_number) ? $job_order_details->vehicle->registration_number : null;
+       $vehicle_chassis_no = isset($job_order_details->vehicle->chassis_number) ? $job_order_details->vehicle->chassis_number : null;
+       $amc_customer_number = isset($job_order_details->amcMember->number) ? $job_order_details->amcMember->number : null;
+       $amc_customer_policy = isset($job_order_details->amcMember->amcPolicy->name) ? $job_order_details->amcMember->amcPolicy->name : null . ',' . isset($job_order_details->amcMember->amcPolicy->type) ? $job_order_details->amcMember->amcPolicy->type : null;
+       $labour_amount = isset($job_order_details->manualDeliveryLabourInvoice->amount) ? $job_order_details->manualDeliveryLabourInvoice->amount : null;
+       $labout_invoice_number = isset($job_order_details->manualDeliveryLabourInvoice->number) ? $job_order_details->manualDeliveryLabourInvoice->number : null;
+       $part_amount = isset($job_order_details->manualDeliveryPartsInvoice->amount) ? $job_order_details->manualDeliveryPartsInvoice->amount : null;
+       $part_invoice_number = isset($job_order_details->manualDeliveryPartsInvoice->number) ? $job_order_details->manualDeliveryPartsInvoice->number : null;
+       $description = 'CB-Customer-' . $amc_customer_policy . '-' . $amc_customer_number . ',' . $vehicle_registration_no . ',' . $vehicle_chassis_no . ',Labour-' . $labout_invoice_number . ',' . $labour_amount . ',Part-' . $part_invoice_number . ',' . $part_amount;
        if (!empty($service_invoice)) {
            $service_item=ServiceItem::where('code','F237')->first();
            $val=[
                'service_invoice_id' =>$service_invoice->id,
                'service_item_id' => $service_item->id,
                'e_invoice_uom_id' => 25,
-               'description' => 'Cash Back Added to Customer Wallet',
+               'description' => $description,
                'qty' => 1,
                'rate' => $job_order->cash_back_amount,
                'sub_total' =>$job_order->cash_back_amount,
@@ -2083,6 +2102,9 @@ class ManualVehicleDeliveryController extends Controller
            $service_invoice_item->save();
 
        }
+       $update_cn_number=JobOrder::find($job_order->id);
+       $update_cn_number->cn_number=$service_invoice->number;
+       $update_cn_number->save();
 
    }
     //TVS one Cashback changes by Parthiban V on 12-10-2021

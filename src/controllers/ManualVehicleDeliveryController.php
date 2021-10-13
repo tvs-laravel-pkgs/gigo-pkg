@@ -93,7 +93,8 @@ class ManualVehicleDeliveryController extends Controller
                 // DB::raw('COALESCE(customers.name, "-") as customer_name'),
                 DB::raw('CONCAT(customers.code, " / ",customers.name) as customer_name'),
                 'job_orders.vehicle_delivery_status_id',
-                DB::raw('IF(job_orders.vehicle_delivery_status_id IS NULL,"WIP",vehicle_delivery_statuses.name) as vehicle_status')
+                DB::raw('IF(job_orders.vehicle_delivery_status_id IS NULL,"WIP",vehicle_delivery_statuses.name) as vehicle_status'),
+                DB::raw("IFNULL(job_orders.cn_number,'-') as cn_number")
             )
         // ->where(function ($query) use ($start_date, $end_date) {
         //     $query->whereDate('gate_logs.gate_in_date', '>=', $start_date)
