@@ -1961,7 +1961,14 @@ class ManualVehicleDeliveryController extends Controller
        }
        $approval_status = Entity::select('entities.name')->where('company_id', Auth::user()->company_id)->where('entity_type_id', 18)->first();
        $e_invoice_registration=0;
-       $address=Address::where('id',$job_order->address_id)->pluck('gst_number')->first();
+       $address_id=$job_order->address_id;
+       if (!$job_order->address_id) {
+           $address_id = Address::where('entity_id', $job_order->customer_id)->where('address_of_id', 24)->pluck('id')->first();
+       }
+       if (!$address_id) {
+           return response()->json(['success' => false, 'errors' => ['Customer Address Not Found']]);
+       }
+       $address=Address::where('id',$address_id)->pluck('gst_number')->first();
        if ($address){
            $e_invoice_registration=1;
        }
@@ -1984,12 +1991,12 @@ class ManualVehicleDeliveryController extends Controller
         'to_account_type_id'=>1440,
         'document_date'=>$document_date,
         'customer_id'=>$job_order->customer_id,
-        'address_id'=>$job_order->address_id,
+        'address_id'=>$address_id,
         'items_count'=>1,
        ];
        $service_invoice->fill($service_invoice_val);
        $service_invoice->company_id = $job_order->company_id;
-       $service_invoice->address_id = $job_order->address_id;
+       $service_invoice->address_id = $address_id;
        $service_invoice->e_invoice_registration = $e_invoice_registration;
        $service_invoice->save();
        $approval_levels = Entity::select('entities.name')->where('company_id', Auth::user()->company_id)->where('entity_type_id', 19)->first();
@@ -2028,7 +2035,7 @@ class ManualVehicleDeliveryController extends Controller
            $percentage = explode(',', $gst_values->percentages);
            $total_tax_amount=0;
            $user_state = Outlet::where('id', $job_order->outlet_id)->pluck('state_id')->first();
-           $customer_state = Address::where('id', $job_order->address_id)->pluck('state_id')->first();
+           $customer_state = Address::where('id', $address_id)->pluck('state_id')->first();
            foreach ($tax_ids as $key => $tax_id) {
                $tax_percentage=$percentage[$key];
                if ($user_state == $customer_state){
