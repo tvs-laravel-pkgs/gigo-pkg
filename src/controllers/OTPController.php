@@ -6,6 +6,7 @@ use App\GatePass;
 // use App\Otp;
 use App\Http\Controllers\Controller;
 use App\JobOrder;
+use App\OTP;
 use Auth;
 use Carbon\Carbon;
 use Entrust;
@@ -28,9 +29,12 @@ class OTPController extends Controller {
 
 	public function getOTPList(Request $request) {
 		// dd($request->all());
-		$otps = Config::join('otps', 'otps.entity_type_id', 'configs.id')->select('otps.entity_type_id', 'otps.entity_id', 'otps.otp_no', 'otps.created_at', 'otps.expired_at', 'configs.name as type')
+		// $otps = Config::join('otps', 'otps.entity_type_id', 'configs.id')->select('otps.entity_type_id', 'otps.entity_id', 'otps.otp_no', 'otps.created_at', 'otps.expired_at', 'configs.name as type')
+			// ->where('otps.expired_at', '>=', Carbon::now())
 
-			->where('otps.expired_at', '>=', Carbon::now())
+			$otps = OTP::join('configs','configs.id','otps.entity_type_id')->select('otps.entity_type_id', 'otps.entity_id', 'otps.otp_no', 'otps.created_at', 'otps.expired_at', 'configs.name as type')
+			
+			->where('otps.expired_at', '>=', date('Y-m-d H:i:s'))
 
 			->where(function ($query) use ($request) {
 				if (!empty($request->event_id) && $request->event_id != '<%$ctrl.event_id%>') {
@@ -50,7 +54,7 @@ class OTPController extends Controller {
 			}
 		}
 
-		$otps->orderBy('otps.id', 'DESC')->get();
+		$otps->orderBy('otps.id', 'DESC');
 
 		return Datatables::of($otps)
 
