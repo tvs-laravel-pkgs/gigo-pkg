@@ -1010,7 +1010,7 @@ class GigoReportController extends Controller {
 
                     if(empty($job_order->gateLog->gate_out_time)){
                         if(!empty($job_card)){
-                            $status = isset($job_card->status) ? $job_card->status->name : $job_order->status->name;
+                            $status = isset($job_card->status) ? $job_card->status : $job_order->status->name;
                         }else{
                            $status = isset($job_order->status->name) ? $job_order->status->name : '';
                         }
