@@ -3,10 +3,9 @@
 namespace Abs\GigoPkg;
 use App\Config;
 use App\GatePass;
-// use App\Otp;
+use App\Otp;
 use App\Http\Controllers\Controller;
 use App\JobOrder;
-use App\OTP;
 use Auth;
 use Carbon\Carbon;
 use Entrust;
@@ -32,7 +31,7 @@ class OTPController extends Controller {
 		// $otps = Config::join('otps', 'otps.entity_type_id', 'configs.id')->select('otps.entity_type_id', 'otps.entity_id', 'otps.otp_no', 'otps.created_at', 'otps.expired_at', 'configs.name as type')
 			// ->where('otps.expired_at', '>=', Carbon::now())
 
-			$otps = OTP::join('configs','configs.id','otps.entity_type_id')->select('otps.entity_type_id', 'otps.entity_id', 'otps.otp_no', 'otps.created_at', 'otps.expired_at', 'configs.name as type')
+			$otps = Otp::join('configs','configs.id','otps.entity_type_id')->select('otps.entity_type_id', 'otps.entity_id', 'otps.otp_no', 'otps.created_at', 'otps.expired_at', 'configs.name as type')
 			
 			->where('otps.expired_at', '>=', date('Y-m-d H:i:s'))
 
