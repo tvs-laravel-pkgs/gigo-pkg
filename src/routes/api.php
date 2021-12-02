@@ -366,6 +366,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
         // JOB CARD TIME LOG
         Route::post('get-job-card-time-log', 'JobCardController@getJobCardTimeLog');
 
+        //JOB CARD - Mechanic Reschedule
+        Route::post('job-card/mechanic-schedule', 'JobCardController@mechanicReschedule');
+
         //JOB CARD WORK COMPLETED
         Route::post('job-card/update-status', 'JobCardController@updateJobCardStatus');
 

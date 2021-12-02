@@ -1889,19 +1889,23 @@ class JobCardController extends Controller
                 $job_order_repair_order->fault_id = null;
             }
 
-            $job_order_repair_order->save();
-
+            
             //Change Mechnanic status completed into rework
             if ($request->status_id == 8186) {
-                $mechnic = RepairOrderMechanic::where('job_order_repair_order_id', $request->job_order_repair_order_id)
-                    ->update([
-                        'status_id' => 8264, //Rework
-                        'updated_by_id' => Auth::user()->id,
-                        'updated_at' => Carbon::now(),
-                    ]);
+                // $mechnic = RepairOrderMechanic::where('job_order_repair_order_id', $request->job_order_repair_order_id)
+                //     ->update([
+                    //         'status_id' => 8264, //Rework
+                    //         'updated_by_id' => Auth::user()->id,
+                    //         'updated_at' => Carbon::now(),
+                    //     ]);
+                $job_order_repair_order->status_id = 8186;
             }
-
+            $job_order_repair_order->save();
+            
             if ($request->status_id == 8187) {
+                
+                $job_order_repair_order->status_id = 8187;
+                $job_order_repair_order->save();
 
                 //Check OSL Work
                 $osl_work_id = JobOrderRepairOrder::join('repair_orders', 'repair_orders.id', 'job_order_repair_orders.repair_order_id')->where('repair_orders.is_editable', 1)->where('job_order_repair_orders.job_order_id', $job_order_repair_order->job_order_id)->pluck('job_order_repair_orders.id')->toArray();
@@ -1973,6 +1977,75 @@ class JobCardController extends Controller
         }
     }
 
+    public function mechanicReschedule(Request $request){
+        // dd($request->all());
+        try {
+            $validator = Validator::make($request->all(), [
+                'job_order_id' => [
+                    'required',
+                    'integer',
+                    'exists:job_orders,id',
+                ],
+                'job_card_id' => [
+                    'required',
+                    'integer',
+                    'exists:job_cards,id',
+                ],
+                'repair_order_mechanic_id' => [
+                    'required',
+                    'integer',
+                    'exists:repair_order_mechanics,id',
+                ],
+            ]);
+
+            if ($validator->fails()) {
+                $errors = $validator->errors()->all();
+                $success = false;
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => $validator->errors()->all(),
+                ]);
+            }
+
+            DB::beginTransaction();
+
+            //Update Mechanic Status
+            $mechnic = RepairOrderMechanic::where('id', $request->repair_order_mechanic_id)->first();
+            $mechanic->status_id = 8264;
+            $mechanic->updated_at = Carbon::now();
+            $mechanic->updated_by_id = Auth::user()->id;
+            $mechanic->save();
+
+            //Update Repair Order Status
+            $job_order_repair_order = JobOrderRepairOrder::find($mechnic->job_order_repair_order_id);
+            $job_order_repair_order->status_id = 8186;
+            $job_order_repair_order->updated_at = Carbon::now();
+            $job_order_repair_order->updated_by_id = Auth::user()->id;
+            $job_order_repair_order->save();
+            
+            $job_card = JobCard::where('id', $request->job_card_id)
+                ->update([
+                    'status_id' => 8221, //Work In Progress
+                    'updated_by' => Auth::user()->id,
+                    'updated_at' => Carbon::now(),
+                ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Mechanic Rescheduled Successfully!!',
+            ]);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Server Network Down!',
+                'errors' => ['Exception Error' => $e->getMessage()],
+            ]);
+        }
+    }
     public function updateJobCardStatus(Request $request)
     {
         // dd($request->all());

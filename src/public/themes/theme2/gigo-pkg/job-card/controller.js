@@ -4397,6 +4397,44 @@ app.component('jobCardScheduleForm', {
                 });
         }
 
+        $scope.mechanicReschedule = function (repair_order_mechanic_id) {
+            self.repair_order_mechanic_id = repair_order_mechanic_id;
+            $('#mechanic_reschedule').modal('show');
+        }
+
+        $scope.saveMechanicReschedule = function (repair_order_mechanic_id) {
+            $('.mechanic_reschedule').button('loading');
+            $.ajax({
+                url: base_url + '/api/job-card/mechanic-schedule',
+                method: "POST",
+                data: {
+                    job_order_id: $scope.job_card.job_order.id,
+                    job_card_id: $scope.job_card.id,
+                    repair_order_mechanic_id: repair_order_mechanic_id,
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
+                .done(function (res) {
+                    $('.mechanic_reschedule').button('reset');
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    custom_noty('success', res.message);
+                    $("#mechanic_reschedule").modal('hide');
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+                    $route.reload();
+                    $scope.$apply();
+                })
+                .fail(function (xhr) {
+                    $('.mechanic_reschedule').button('reset');
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+
         //Scrollable Tabs
         setTimeout(function () {
             scrollableTabs();
