@@ -3105,7 +3105,7 @@ class JobCardController extends Controller
             }
 
             //Overall invoice
-            $invoice_pdf = JobCard::generateInvoicePDF($job_card->id);
+            // $invoice_pdf = JobCard::generateInvoicePDF($job_card->id);
 
             $job_card->status_id = 8225; //Waiting for Customer Payment
             $job_card->save();
