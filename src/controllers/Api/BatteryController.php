@@ -6,6 +6,7 @@ use Abs\SerialNumberPkg\SerialNumberGroup;
 use App\BatteryLoadTestResult;
 use App\BatteryLoadTestStatus;
 use App\BatteryMake;
+use App\Business;
 use App\Config;
 use App\Country;
 use App\Customer;
@@ -532,8 +533,11 @@ class BatteryController extends Controller
 
             }
 
+            //Get Business
+            $business = Business::where('code','ALSERV')->where('company_id',Auth::user()->company_id)->first();
+
             $vehicle_battery->company_id = Auth::user()->company_id;
-            $vehicle_battery->business_id = 16;
+            $vehicle_battery->business_id = isset($business) ? $business->id : 16;
             $vehicle_battery->vehicle_id = $vehicle->id;
             $vehicle_battery->customer_id = $customer->id;
             $vehicle_battery->battery_status_id = $request->battery_status_id;

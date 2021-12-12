@@ -8263,7 +8263,7 @@ class VehicleInwardController extends Controller
                     ;
                 })
             // ->orderBy('parts.name','ASC')
-                ->where('parts.business_id', 16)
+                // ->where('parts.business_id', 16)
                 ->orderBy('part_stocks.stock', 'DESC')
                 ->get();
         }
