@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use PDF;
 use PHPExcel_Style_NumberFormat;
 use Storage;
+use Carbon\Carbon;
 
 class JobOrder extends BaseModel
 {
