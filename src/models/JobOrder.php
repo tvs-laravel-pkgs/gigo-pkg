@@ -2100,4 +2100,205 @@ class JobOrder extends BaseModel
             $job->save();
         }
     }
+
+    public static function importWIPVehicleDetails($index, $record,$created_by_id)
+    {
+        $skip = false;
+		$success = true;
+		$record_errors = [];
+
+        $vehicle_inside_workshop = new VehicleInsideWorkshop;
+
+        if (empty($record['Plant Name'])) {
+            $record_errors[] = 'Plant Name is empty';
+            $skip = true;
+        } else {
+            $vehicle_inside_workshop->plant_name = $record['Plant Name'];
+        }
+
+        if (empty($record['Company Code'])) {
+            $record_errors[] = 'Company Code is empty';
+            $skip = true;
+        } else {
+            $vehicle_inside_workshop->company_code = $record['Company Code'];
+        }
+
+        if (empty($record['Company Name'])) {
+            $record_errors[] = 'Company Name is empty';
+            $skip = true;
+        } else {
+            $vehicle_inside_workshop->company_name = $record['Company Name'];
+        }
+
+        if (empty($record['Company GSTIN'])) {
+            $record_errors[] = 'Company GSTIN is empty';
+            $skip = true;
+        } else {
+            $vehicle_inside_workshop->company_gstin = $record['Company GSTIN'];
+        }
+
+        if (empty($record['SAC Code'])) {
+            $record_errors[] = 'SAC Code is empty';
+            $skip = true;
+        } else {
+            $vehicle_inside_workshop->sac_code = $record['SAC Code'];
+        }
+
+        if (empty($record['Model'])) {
+            // $record_errors[] = 'Model is empty';
+        } else {
+            $vehicle_inside_workshop->model = $record['Model'];
+        }
+
+        if (empty($record['Document No'])) {
+            $record_errors[] = 'Document No is empty';
+            $skip = true;
+        } else {
+            $vehicle_inside_workshop->document_no = $record['Document No'];
+        }
+
+        if (empty($record['Plant Code'])) {
+            $record_errors[] = 'Plant Code is empty';
+            $skip = true;
+        } else {
+            $vehicle_inside_workshop->plant_code = $record['Plant Code'];
+        }
+
+        if (empty($record['Date Of Sale'])) {
+            // $record_errors[] = 'Date Of Sale is empty';
+        } else {
+            $date_of_sale = PHPExcel_Style_NumberFormat::toFormattedString($record['Date Of Sale'], PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDD2);
+            $vehicle_inside_workshop->date_of_sale = $date_of_sale;
+        }
+
+        if (empty($record['VOR NO'])) {
+            // $record_errors[] = 'VOR NO is empty';
+        } else {
+            $vehicle_inside_workshop->vor_number = $record['VOR NO'];
+        }
+
+        if (empty($record['Doc Date'])) {
+            $record_errors[] = 'Doc Date is empty';
+            $skip = true;
+        } else {
+            $doc_date = PHPExcel_Style_NumberFormat::toFormattedString($record['Doc Date'], PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDD2);
+            $vehicle_inside_workshop->document_date = $doc_date;
+        }
+
+        if (empty($record['Dealer Order Number'])) {
+            $record_errors[] = 'Dealer Order Number is empty';
+            $skip = true;
+        } else {
+            $vehicle_inside_workshop->dealer_order_number = $record['Dealer Order Number'];
+        }
+
+        if (empty($record['Reg No.'])) {
+            // $record_errors[] = 'Reg No is empty';
+        } else {
+            $vehicle_inside_workshop->registration_number = $record['Reg No.'];
+        }
+        if (empty($record['Chassis No.'])) {
+            // $record_errors[] = 'Chassis No is empty';
+        } else {
+            $vehicle_inside_workshop->chassis_number = $record['Chassis No.'];
+        }
+        if (empty($record['Engine No.'])) {
+            // $record_errors[] = 'Engine No is empty';
+        } else {
+            $vehicle_inside_workshop->engine_number = $record['Engine No.'];
+        }
+        if (empty($record['Aggregate No.'])) {
+            // $record_errors[] = 'Aggregate No is empty';
+        } else {
+            $vehicle_inside_workshop->aggregate_number = $record['Aggregate No.'];
+        }
+
+        if (empty($record['Customer Code'])) {
+            $record_errors[] = 'Customer Code is empty';
+            $skip = true;
+        } else {
+            $vehicle_inside_workshop->customer_code = $record['Customer Code'];
+        }
+
+        if (empty($record['Customer Name'])) {
+            // $record_errors[] = 'Customer Name is empty';
+        } else {
+            $vehicle_inside_workshop->customer_name = $record['Customer Name'];
+        }
+
+        if (empty($record['KAM Status'])) {
+            $record_errors[] = 'KAM Status is empty';
+            $skip = true;
+        } else {
+            $vehicle_inside_workshop->kam_status = $record['KAM Status'];
+        }
+        if (empty($record['Order Type'])) {
+            $record_errors[] = 'Order Type is empty';
+            $skip = true;
+        } else {
+            $vehicle_inside_workshop->order_type = $record['Order Type'];
+        }
+        if (empty($record['Inward/Quote Date Time'])) {
+            $record_errors[] = 'Inward/Quote Date Time is empty';
+            $skip = true;
+        } else {
+            $date = $record['Inward/Quote Date Time'];
+            $vehicle_inside_workshop->inward_quote_date_time = date('Y-m-d H:i:s', strtotime("$date"));
+        }
+        if (empty($record['No of Days Inside Workshop'])) {
+            // $record_errors[] = 'No of Days Inside Workshop is empty';
+        } else {
+            $vehicle_inside_workshop->no_of_days_inside_workshop = $record['No of Days Inside Workshop'];
+        }
+        if (empty($record['Status'])) {
+            $record_errors[] = 'Status is empty';
+            $skip = true;
+        } else {
+            $vehicle_inside_workshop->status = $record['Status'];
+        }
+        if (empty($record['Service Advisor'])) {
+            // $record_errors[] = 'Service Advisor is empty';
+        } else {
+            $vehicle_inside_workshop->service_advisor = $record['Service Advisor'];
+        }
+        if (empty($record['Supervisor'])) {
+            // $record_errors[] = 'Supervisor is empty';
+        } else {
+            $vehicle_inside_workshop->supervisor = $record['Supervisor'];
+        }
+
+        if (empty($record['Quotation Type'])) {
+            // $record_errors[] = 'Quotation Type is empty';
+        } else {
+            $vehicle_inside_workshop->quotation_type = $record['Quotation Type'];
+        }
+
+        if (empty($record['Delay Remarks'])) {
+            // $record_errors[] = 'Delay Remarks is empty';
+        } else {
+            $vehicle_inside_workshop->delay_remarks = $record['Delay Remarks'];
+        }
+
+        if (empty($record['Vehicle Status'])) {
+            // $record_errors[] = 'Vehicle Status is empty';
+        } else {
+            $vehicle_inside_workshop->vehicle_status = $record['Vehicle Status'];
+        }
+
+        if (!$skip) {
+            $vehicle_inside_workshop->created_by_id = $created_by_id;
+            $vehicle_inside_workshop->updated_at = null;
+            $vehicle_inside_workshop->created_at = Carbon::now();
+            $vehicle_inside_workshop->save();
+        }
+
+		$status['skip'] = $skip;
+		$status['errors'] = $record_errors;
+		$status['data'] = $record;
+		// $status['created_by'] = Auth::id();
+
+		return $status;
+        
+                  
+    }
 }
