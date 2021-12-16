@@ -1715,8 +1715,8 @@ class JobCard extends BaseModel
             $job_detail_report->uom = $record['UOM'];
         }
         if (empty($record['Cost'])) {
-            $record_errors[] = 'Cost is empty';
-            $skip = true;
+            // $record_errors[] = 'Cost is empty';
+            // $skip = true;
         } else {
             $job_detail_report->cost = $record['Cost'];
         }
