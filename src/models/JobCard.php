@@ -1578,7 +1578,7 @@ class JobCard extends BaseModel
         }
         if (empty($record['Job card Billed date'])) {
             // $record_errors[] = 'Job card Billed date is empty';
-            # $skip = true;
+            // $skip = true;
         } else {
             $job_card_bill_date = PHPExcel_Style_NumberFormat::toFormattedString($record['Job card Billed date'], PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDD2);
             $job_detail_report->job_card_billed_date = $job_card_bill_date;
