@@ -1703,7 +1703,7 @@ class ManualVehicleDeliveryController extends Controller
             }
             //GET FINANCIAL YEAR ID
             $financial_year = FinancialYear::where('from', $year)
-                ->where('company_id', $gate_log->company_id)
+                // ->where('company_id', $gate_log->company_id)
                 ->first();
 
             $branch = Outlet::where('id', $gate_log->outlet_id)->first();

@@ -483,7 +483,7 @@ class BatteryController extends Controller
                 }
                 //GET FINANCIAL YEAR ID
                 $financial_year = FinancialYear::where('from', $year)
-                    ->where('company_id', Auth::user()->company_id)
+                    // ->where('company_id', Auth::user()->company_id)
                     ->first();
                 if (!$financial_year) {
                     return response()->json([
