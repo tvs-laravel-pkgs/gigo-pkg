@@ -2936,11 +2936,13 @@ class JobCardController extends Controller
                 $qr_images_des = storage_path('app/public/gigo/job_order/qr_images');
                 File::makeDirectory($qr_images_des, $mode = 0777, true, true);
 
-                $url = QRCode::text($final_json_decode->SignedQRCode)->setSize(4)->setOutfile('storage/app/public/gigo/job_order/IRN_images/' . $job_order->number . '.png')->png();
+                $qr_code_name = $job_order->company_id . $job_order->number;
 
-                $qr_attachment_path = base_path("storage/app/public/gigo/job_order/IRN_images/" . $job_order->number . '.png');
+                $url = QRCode::text($final_json_decode->SignedQRCode)->setSize(4)->setOutfile('storage/app/public/gigo/job_order/IRN_images/' . $qr_code_name . '.png')->png();
+
+                $qr_attachment_path = base_path("storage/app/public/gigo/job_order/IRN_images/" . $qr_code_name . '.png');
                 if (file_exists($qr_attachment_path)) {
-                    $ext = pathinfo(base_path("storage/app/public/gigo/job_order/IRN_images/" . $job_order->number . '.png'), PATHINFO_EXTENSION);
+                    $ext = pathinfo(base_path("storage/app/public/gigo/job_order/IRN_images/" . $qr_code_name . '.png'), PATHINFO_EXTENSION);
                     if ($ext == 'png') {
                         $image = imagecreatefrompng($qr_attachment_path);
                         $bg = imagecreatetruecolor(imagesx($image), imagesy($image));
@@ -2948,13 +2950,13 @@ class JobCardController extends Controller
                         imagealphablending($bg, true);
                         imagecopy($bg, $image, 0, 0, 0, 0, imagesx($image), imagesy($image));
                         $quality = 70; // 0 = worst / smaller file, 100 = better / bigger file
-                        imagejpeg($bg, 'storage/app/public/gigo/job_order/qr_images/' . $job_order->number . '.jpg', 100);
+                        imagejpeg($bg, 'storage/app/public/gigo/job_order/qr_images/' . $qr_code_name . '.jpg', 100);
 
-                        if (File::exists('storage/app/public/gigo/job_order/qr_images/' . $job_order->number . '.png')) {
-                            File::delete('storage/app/public/gigo/job_order/qr_images/' . $job_order->number . '.png');
+                        if (File::exists('storage/app/public/gigo/job_order/qr_images/' . $qr_code_name . '.png')) {
+                            File::delete('storage/app/public/gigo/job_order/qr_images/' . $qr_code_name . '.png');
                         }
 
-                        $qr_image = $job_order->number . '.jpg';
+                        $qr_image = $qr_code_name . '.jpg';
                     }
                 } else {
                     $qr_image = '';
@@ -3011,12 +3013,14 @@ class JobCardController extends Controller
                 $B2C_images_des = storage_path('app/public/gigo/job_order/qr_images');
                 File::makeDirectory($B2C_images_des, $mode = 0777, true, true);
 
-                $url = QRCode::URL($base_url_with_invoice_details)->setSize(4)->setOutfile('storage/app/public/gigo/job_order/qr_images/' . $job_order->number . '.png')->png();
+                $qr_code_name = $job_order->company_id . $job_order->number;
 
-                $qr_attachment_path = base_path("storage/app/public/gigo/job_order/qr_images/" . $job_order->number . '.png');
+                $url = QRCode::URL($base_url_with_invoice_details)->setSize(4)->setOutfile('storage/app/public/gigo/job_order/qr_images/' . $qr_code_name . '.png')->png();
+
+                $qr_attachment_path = base_path("storage/app/public/gigo/job_order/qr_images/" . $qr_code_name . '.png');
 
                 if (file_exists($qr_attachment_path)) {
-                    $ext = pathinfo(base_path("storage/app/public/gigo/job_order/qr_images/" . $job_order->number . '.png'), PATHINFO_EXTENSION);
+                    $ext = pathinfo(base_path("storage/app/public/gigo/job_order/qr_images/" . $qr_code_name . '.png'), PATHINFO_EXTENSION);
                     if ($ext == 'png') {
                         $image = imagecreatefrompng($qr_attachment_path);
                         $bg = imagecreatetruecolor(imagesx($image), imagesy($image));
@@ -3024,15 +3028,15 @@ class JobCardController extends Controller
                         imagealphablending($bg, true);
                         imagecopy($bg, $image, 0, 0, 0, 0, imagesx($image), imagesy($image));
 
-                        imagejpeg($bg, 'storage/app/public/gigo/job_order/qr_images/' . $job_order->number . '.jpg', 100);
+                        imagejpeg($bg, 'storage/app/public/gigo/job_order/qr_images/' . $qr_code_name . '.jpg', 100);
 
-                        if (File::exists('storage/app/public/gigo/job_order/qr_images/' . $job_order->number . '.png')) {
-                            File::delete('storage/app/public/gigo/job_order/qr_images/' . $job_order->number . '.png');
+                        if (File::exists('storage/app/public/gigo/job_order/qr_images/' . $qr_code_name . '.png')) {
+                            File::delete('storage/app/public/gigo/job_order/qr_images/' . $qr_code_name . '.png');
                         }
                     }
                 }
 
-                $job_order->qr_image = $job_order->number . '.jpg';
+                $job_order->qr_image = $qr_code_name . '.jpg';
             }
 
             $params['job_card_id'] = $request->job_card_id;
