@@ -401,7 +401,7 @@ class ManualVehicleDeliveryController extends Controller
                 'orderBy' => 'id',
                 'default_text' => 'Select Category',
             ]),
-            'payment_modes' => collect(PaymentMode::where('company_id', Auth::user()->company_id)->whereNotIn('id', [9, 10, 11])
+            'payment_modes' => collect(PaymentMode::whereNotIn('id', [9, 10, 11])
                     ->select('payment_modes.id', 'payment_modes.name')->get())->prepend(['id' => '', 'name' => 'Select Payment Mode']),
             'pending_reasons' => $pending_reasons,
             'billing_types' => Config::getDropDownList([
