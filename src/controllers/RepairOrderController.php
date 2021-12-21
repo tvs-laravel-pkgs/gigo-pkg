@@ -104,7 +104,7 @@ class RepairOrderController extends Controller {
 					$query->whereNotNull('repair_orders.deleted_at');
 				}
 			})
-			->where('repair_orders.company_id', Auth::user()->company_id)
+			// ->where('repair_orders.company_id', Auth::user()->company_id)
 		;
 
 		return Datatables::of($repair_orders)

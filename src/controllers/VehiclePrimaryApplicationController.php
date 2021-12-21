@@ -38,7 +38,7 @@ class VehiclePrimaryApplicationController extends Controller {
 
 				DB::raw('IF(vehicle_primary_applications.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
-			->where('vehicle_primary_applications.company_id', Auth::user()->company_id)
+			// ->where('vehicle_primary_applications.company_id', Auth::user()->company_id)
 
 			->where(function ($query) use ($request) {
 				if (!empty($request->code)) {

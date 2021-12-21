@@ -379,12 +379,12 @@ class ManualVehicleDeliveryController extends Controller
 
         if ($vehicle_membership) {
             if (strtotime($invoice_date) > strtotime($vehicle_membership->expiry_date)) {
-                $pending_reasons = collect(PendingReason::where('company_id', Auth::user()->company_id)->where('id', '!=', 2)->select('pending_reasons.id', 'pending_reasons.name')->get())->prepend(['id' => '', 'name' => 'Select Reason']);
+                $pending_reasons = collect(PendingReason::where('id', '!=', 2)->select('pending_reasons.id', 'pending_reasons.name')->get())->prepend(['id' => '', 'name' => 'Select Reason']);
             } else {
-                $pending_reasons = collect(PendingReason::where('company_id', Auth::user()->company_id)->select('pending_reasons.id', 'pending_reasons.name')->get())->prepend(['id' => '', 'name' => 'Select Reason']);
+                $pending_reasons = collect(PendingReason::select('pending_reasons.id', 'pending_reasons.name')->get())->prepend(['id' => '', 'name' => 'Select Reason']);
             }
         } else {
-            $pending_reasons = collect(PendingReason::where('company_id', Auth::user()->company_id)->where('id', '!=', 2)->select('pending_reasons.id', 'pending_reasons.name')->get())->prepend(['id' => '', 'name' => 'Select Reason']);
+            $pending_reasons = collect(PendingReason::where('id', '!=', 2)->select('pending_reasons.id', 'pending_reasons.name')->get())->prepend(['id' => '', 'name' => 'Select Reason']);
         }
 
         $extras = [

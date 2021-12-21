@@ -38,7 +38,7 @@ class PartSupplierController extends Controller {
 
 				DB::raw('IF(part_suppliers.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
-			->where('part_suppliers.company_id', Auth::user()->company_id)
+			// ->where('part_suppliers.company_id', Auth::user()->company_id)
 
 			->where(function ($query) use ($request) {
 				if (!empty($request->code)) {

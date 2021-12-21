@@ -43,7 +43,7 @@ class CustomerVoiceController extends Controller {
 			])
 			->leftJoin('lv_main_types', 'lv_main_types.id', 'customer_voices.lv_main_type_id')
 			->leftJoin('repair_orders', 'repair_orders.id', 'customer_voices.repair_order_id')
-			->where('customer_voices.company_id', Auth::user()->company_id)
+			// ->where('customer_voices.company_id', Auth::user()->company_id)
 			->where(function ($query) use ($request) {
 				if (!empty($request->name)) {
 					$query->where('customer_voices.name', 'LIKE', '%' . $request->name . '%');

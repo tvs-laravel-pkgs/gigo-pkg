@@ -39,7 +39,7 @@ class VehicleServiceScheduleController extends Controller {
 
 				DB::raw('IF(vehicle_service_schedules.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
-			->where('vehicle_service_schedules.company_id', Auth::user()->company_id)
+			// ->where('vehicle_service_schedules.company_id', Auth::user()->company_id)
 			->where(function ($query) use ($request) {
 				if (!empty($request->code)) {
 					$query->where('vehicle_service_schedules.code', 'LIKE', '%' . $request->code . '%');
