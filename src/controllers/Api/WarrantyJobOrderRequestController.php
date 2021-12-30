@@ -451,7 +451,7 @@ class WarrantyJobOrderRequestController extends Controller {
 	public function getFormData() {
 		try {
 			$employee_outlets = Auth::user()->employee ? Auth::user()->employee->employee_outlets : [];
-			$models = VehicleModel::where('company_id', Auth::user()->company_id)->get();
+			$models = VehicleModel::get();
 			$bharat_stages = BharatStage::where('company_id', Auth::user()->company_id)->get();
 			$split_order_types = SplitOrderType::where('company_id', Auth::user()->company_id)->where('claim_category_id', 11112)->get();
 			$aggregates = Aggregate::all();
