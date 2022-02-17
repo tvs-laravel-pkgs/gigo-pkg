@@ -1642,13 +1642,13 @@ class ManualVehicleDeliveryController extends Controller
         // dd($total_amount, $discount_amount);
 
         if ($job_order) {
-            $user_details = MailConfiguration::where('config_id', 3011)->pluck('to_email')->first();
+            $user_details = MailConfiguration::where('company_id', $job_order->company_id)->where('config_id', 3011)->pluck('to_email')->first();
             $to_email = explode(',', $user_details);
             if (!$user_details || count($to_email) == 0) {
                 $to_email = ['0' => 'parthiban@uitoux.in'];
             }
 
-            $user_details = MailConfiguration::where('config_id', 3011)->pluck('cc_email')->first();
+            $user_details = MailConfiguration::where('company_id', $job_order->company_id)->where('config_id', 3011)->pluck('cc_email')->first();
             $cc_email = explode(',', $user_details);
             if (!$user_details || count($cc_email) == 0) {
                 $cc_email = ['0' => 'parthiban@uitoux.in'];
