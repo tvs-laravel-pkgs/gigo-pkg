@@ -616,7 +616,7 @@ class BatteryController extends Controller
                     $first_battery_part_code = '001OTHER'.$first_battery_amp_hour;
                 }
 
-                $first_battery_part_id = Part::where('code',$first_battery_part_code)->pluck('id')->first();
+                $first_battery_part_id = Part::where(['company_id'=>Auth::user()->company_id])->where('code',$first_battery_part_code)->pluck('id')->first();
                 $battery_result->part_id = isset($first_battery_part_id) ? $first_battery_part_id : null;
                 $battery_result->save();  
             }
