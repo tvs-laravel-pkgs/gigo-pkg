@@ -84,11 +84,13 @@ class BatteryController extends Controller
 
         $this->data['user'] = $user;
 
+        //Auth::user()->company_id
+
         $extras = [
-            'battery_list' => collect(BatteryMake::where('company_id', Auth::user()->company_id)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Battery']),
-            'battery_load_test_status_list' => collect(BatteryLoadTestStatus::where('company_id', Auth::user()->company_id)->where('id', '!=', 3)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Status']),
-            'load_test_result_status_list' => collect(LoadTestStatus::where('company_id', Auth::user()->company_id)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Status']),
-            'hydrometer_status_list' => collect(HydrometerElectrolyteStatus::where('company_id', Auth::user()->company_id)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Status']),
+            'battery_list' => collect(BatteryMake::where('company_id', 1)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Battery']),
+            'battery_load_test_status_list' => collect(BatteryLoadTestStatus::where('company_id', 1)->where('id', '!=', 3)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Status']),
+            'load_test_result_status_list' => collect(LoadTestStatus::where('company_id', 1)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Status']),
+            'hydrometer_status_list' => collect(HydrometerElectrolyteStatus::where('company_id', 1)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Status']),
             'country_list' => Country::getDropDownList(),
             'state_list' => [], //State::getDropDownList(),
             'city_list' => [], //City::getDropDownList(),
@@ -98,10 +100,10 @@ class BatteryController extends Controller
                 'default_text' => 'Select Reading type',
             ]),
             'battery_not_replace_reasons' => collect(Config::where('config_type_id', 477)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Reason']),
-            'replaced_battery_list' => collect(BatteryMake::where('id', 4)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Battery']),
+            'replaced_battery_list' => collect(BatteryMake::where('company_id', 1)->whereIn('id', [4, 15])->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Battery']),
             'amp_hour' => collect(Config::where('config_type_id', 480)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select AMP Hour']),
             'battery_voltage' => collect(Config::where('config_type_id', 479)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Battery Voltage']),
-            'multimeter_status_list' => collect(MultimeterTestStatus::where('company_id', Auth::user()->company_id)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Status']),
+            'multimeter_status_list' => collect(MultimeterTestStatus::where('company_id', 1)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Status']),
             'over_all_status_list' => collect(config::where('config_type_id', 481)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Status']),
         ];
         $this->data['extras'] = $extras;
@@ -607,7 +609,8 @@ class BatteryController extends Controller
                 $first_battery_amp_hour = str_replace(' AH','',$first_battery_amp_hour);
 
                 //First Battery part
-                if($battery_load_test['battery_make_id'] == 1 || $battery_load_test['battery_make_id'] == 2 || $battery_load_test['battery_make_id'] == 4 ){
+
+                if(in_array($battery_load_test['battery_make_id'], [1,2,4,12,13,15])){
                     $first_battery_part_code = '001'.$first_battery_make.$first_battery_amp_hour;
                 }else{
                     $first_battery_part_code = '001OTHER'.$first_battery_amp_hour;
