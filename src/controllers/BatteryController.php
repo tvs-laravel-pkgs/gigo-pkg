@@ -92,20 +92,20 @@ class BatteryController extends Controller
 
         // dd($battery_list);
         if ($request->date_range) {
-            $battery_list->whereDate('vehicle_batteries.created_at', '>=', $start_date)->whereDate('vehicle_batteries.created_at', '<=', $end_date);
+            $battery_list = $battery_list->whereDate('vehicle_batteries.created_at', '>=', $start_date)->whereDate('vehicle_batteries.created_at', '<=', $end_date);
         }
 
         if (!Entrust::can('view-all-outlet-battery-result')) {
             if (Entrust::can('view-mapped-outlet-battery-result')) {
                 $outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
                 array_push($outlet_ids, Auth::user()->employee->outlet_id);
-                $battery_list->whereIn('vehicle_batteries.outlet_id', $outlet_ids);
+                $battery_list = $battery_list->whereIn('vehicle_batteries.outlet_id', $outlet_ids);
             } else {
-                $battery_list->where('vehicle_batteries.outlet_id', Auth::user()->working_outlet_id);
+                $battery_list = $battery_list->where('vehicle_batteries.outlet_id', Auth::user()->working_outlet_id);
             }
         }
 
-        $battery_list->orderBy('vehicle_batteries.created_at', 'DESC');
+        $battery_list = $battery_list->orderBy('vehicle_batteries.created_at', 'DESC');
 
         return Datatables::of($battery_list)
             ->editColumn('status', function ($battery_list) {
