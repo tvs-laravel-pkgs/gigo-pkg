@@ -431,7 +431,7 @@ class BatteryController extends Controller
 
             //Save Customer
             // $customer = Customer::saveCustomer($request->all());
-            $customer = Customer::firstOrNew(['code' => $values['code'],'company_id'=>Auth::user()->company_id]);
+            $customer = Customer::firstOrNew(['code' => $request->code,'company_id'=>Auth::user()->company_id]);
             $customer->fill($request->all());
             $customer->save();
             $customer->saveAddress($request->all());
