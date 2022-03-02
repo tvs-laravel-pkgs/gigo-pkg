@@ -144,7 +144,7 @@
                                                                             md-item-text="vehicle.chassis_number +' / '+ vehicle.registration_number"
                                                                             md-min-length="3" md-escape-options="clear"
                                                                             placeholder="Chassis # / Registration # / Engine #"
-                                                                            md-input-id="vehicle_ac" md-no-cache="true">
+                                                                            md-input-id="vehicle_ac" md-no-cache="true" md-requires="true">
                                                                             <!-- md-autofocus  -->
                                                                             <md-item-template>
                                                                                 <span>
@@ -221,7 +221,7 @@
                                                                             md-item-text="option.model_name"
                                                                             md-min-length="3"
                                                                             placeholder="Vehicle Model Name"
-                                                                            md-autofocus>
+                                                                            md-autofocus  md-requires="true">
                                                                             <md-item-template>
                                                                                 <span>
                                                                                     {{option.model_name}} /
@@ -570,7 +570,7 @@
                                                                             maxlength="6" placeholder="Enter PIN Code"
                                                                             autocomplete="off"
                                                                             ng-model="customer.address.pincode"
-                                                                            name="pincode" />
+                                                                            name="pincode" required />
                                                                     </div><!-- Feild -->
                                                                 </li><!-- Column -->
                                                                 <li class="col-md-3">
