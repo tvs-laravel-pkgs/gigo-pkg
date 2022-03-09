@@ -2865,7 +2865,7 @@ class JobCardController extends Controller
                     'src_data' => $params,
                     'response_data' => $generate_irn_output_data,
                     'user_id' => Auth::user()->id,
-                    'status_id' => $bdo_login_check->status == 0 ? 11272 : 11271,
+                    'status_id' => (!$authToken["success"]) ? 11272 : 11271,
                     // 'errors' => !empty($errors) ? NULL : json_encode($errors),
                     'created_by_id' => Auth::user()->id,
                 ];
