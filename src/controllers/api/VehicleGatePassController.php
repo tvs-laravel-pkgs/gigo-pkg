@@ -462,7 +462,7 @@ class VehicleGatePassController extends Controller
 
                                 $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
-                                $message = 'Greetings from TVS & Sons! Thank you for having your vehicle serviced from TVS & Sons.Kindly click on this link to give Service Feedback: ' . $short_url;
+                                $message = 'Greetings from TVS Mob! Thank you for having your vehicle serviced from TVS Mob.Kindly click on this link to give Service Feedback: ' . $short_url;
 
                                 if ($gate_log->jobOrder->driver_mobile_number) {
                                     $msg = sendSMSNotification($gate_log->jobOrder->driver_mobile_number, $message);
@@ -539,7 +539,7 @@ class VehicleGatePassController extends Controller
 
                                 $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
-                                $message = 'Greetings from TVS & Sons! Thank you for having your vehicle serviced from TVS & Sons.Kindly click on this link to give Service Feedback: ' . $short_url;
+                                $message = 'Greetings from TVS Mob! Thank you for having your vehicle serviced from TVS Mob.Kindly click on this link to give Service Feedback: ' . $short_url;
 
                                 $contact_number = $gate_log->jobOrder->contact_number ? $gate_log->jobOrder->contact_number : $gate_log->jobOrder->customer->mobile_no;
                                 $msg = sendSMSNotification($contact_number, $message);
@@ -685,7 +685,7 @@ class VehicleGatePassController extends Controller
                 }
             }
 
-            $message = 'Greetings from TVS & Sons! Your vehicle ' . $number . ' has successfully Gate out from TVS Service Center - ' . Auth::user()->employee->outlet->ax_name . ' at ' . date('d-m-Y h:i A') . ' - TVS';
+            $message = 'Greetings from TVS Mob! Your vehicle ' . $number . ' has successfully Gate out from TVS Service Center - ' . Auth::user()->employee->outlet->ax_name . ' at ' . date('d-m-Y h:i A') . ' - TVS';
 
             //Send SMS to Driver
             if ($gate_log->jobOrder->driver_mobile_number) {

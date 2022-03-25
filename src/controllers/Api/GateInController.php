@@ -827,7 +827,7 @@ class GateInController extends Controller
 
             $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
-            $tracking_message = 'Greetings from TVS & Sons! Kindly click on this link to track vehicle service status: ' . $short_url . ' - TVS';
+            $tracking_message = 'Greetings from TVS Mob! Kindly click on this link to track vehicle service status: ' . $short_url . ' - TVS';
 
             //Save Driver & Security Signature
             if ($request->web == 'website') {
@@ -942,7 +942,7 @@ class GateInController extends Controller
 
             $gate_in_data['number'] = $gate_log->number;
 
-            $message = 'Greetings from TVS & Sons! Your vehicle ' . $number . ' has arrived in TVS Service Center - ' . Auth::user()->employee->outlet->ax_name . ' at ' . date('d-m-Y h:i A') . $membership_message;
+            $message = 'Greetings from TVS Mob! Your vehicle ' . $number . ' has arrived in TVS Service Center - ' . Auth::user()->employee->outlet->ax_name . ' at ' . date('d-m-Y h:i A') . $membership_message;
 
             //Send SMS to Driver
             if (preg_match('/^\d{10}$/', $request->driver_mobile_number)) {
