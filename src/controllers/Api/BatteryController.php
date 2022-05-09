@@ -563,7 +563,7 @@ class BatteryController extends Controller
             foreach ($request->battery_load_test_detail as $key => $battery_load_test) {
                 // dump($battery_load_test);
                 if (isset($battery_load_test['id']) && !empty($battery_load_test['id'])) {
-                    $is_existing_battery = BatteryLoadTestResult::withTrashed()-where('id','!=',$battery_load_test['id'])
+                    $is_existing_battery = BatteryLoadTestResult::withTrashed()->where('id','!=',$battery_load_test['id'])
                     ->where('battery_serial_number',$battery_load_test['battery_serial_number']);
                     if ($is_existing_battery) {
                         return response()->json([
