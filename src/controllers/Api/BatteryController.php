@@ -562,32 +562,12 @@ class BatteryController extends Controller
 
             foreach ($request->battery_load_test_detail as $key => $battery_load_test) {
                 // dump($battery_load_test);
-                if (isset($battery_load_test['id']) && !empty($battery_load_test['id'])) {
-                    if(isset($battery_load_test['battery_serial_number']) && !empty($battery_load_test['id'])){
-                        $is_existing_battery = BatteryLoadTestResult::withTrashed()
-                    ->where('battery_serial_number',$battery_load_test['battery_serial_number']);
-                    if ($is_existing_battery) {
-                        return response()->json([
-                            'success' => false,
-                            'error' => 'Battery Serial Number Aready Exist!'
-                        ]);
-                    }
-                    }                    
+                if (isset($battery_load_test['id']) && !empty($battery_load_test['id'])) {                    
                     $battery_result = BatteryLoadTestResult::withTrashed()->find($battery_load_test['id']);
                     $battery_result->updated_by_id = Auth::user()->id;
                     $battery_result->updated_at = Carbon::now();
                     $battery_result->deleted_at = null;
                 } else {
-                    if(isset($battery_load_test['battery_serial_number']) && !empty($battery_load_test['id']))
-                    {
-                    $is_existing_battery = BatteryLoadTestResult::withTrashed()->where('battery_serial_number',$battery_load_test['battery_serial_number']);
-                    if ($is_existing_battery) {
-                        return response()->json([
-                            'success' => false,
-                            'error' => 'Battery Serial Number Aready Exist!'
-                        ]);
-                    }
-                    }
                     $battery_result = new BatteryLoadTestResult;
                     $battery_result->created_by_id = Auth::user()->id;
                     $battery_result->created_at = Carbon::now();
