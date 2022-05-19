@@ -35,7 +35,7 @@ class ShortUrl extends BaseModel {
 		return $randString;
 	}
 
-	public static function createShortLink($url, $maxlength, $created_by = null) {
+	public static function createShortLink($url, $maxlength, $created_by = null, $base_link = null) {
 
 		$shortCode = self::generateRandomString($maxlength);
 
@@ -52,6 +52,8 @@ class ShortUrl extends BaseModel {
 		}
 
 		$short_url = url('/link/' . $shortCode);
+		if (isset($base_link) && $base_link)
+			$short_url = $base_link . 'link/' . $shortCode;
 
 		$link->token = $short_url;
 		$link->save();
