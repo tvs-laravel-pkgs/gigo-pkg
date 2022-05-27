@@ -622,6 +622,64 @@
                                 data-animation-delay="300">
                                 <div class="tab-pane-wrap">
                                     <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>
+                                                    Application
+                                                    <sup class="mandatory">*</sup>
+                                                </label>
+                                                <md-select ng-model="$ctrl.application_id" ng-change="applicationChangeHandler()" placeholder="Select Application"
+                                                    data-md-container-class="selectdemoSelectHeader"
+                                                    >
+                                                    <md-select-header
+                                                        class="demo-select-header">
+                                                        <input ng-model="searchApplication"
+                                                            type="search"
+                                                            placeholder="Search for a application.."
+                                                            class="demo-header-searchbox md-text"
+                                                            ng-keydown="$event.stopPropagation()">
+                                                    </md-select-header>
+                                                    <md-optgroup>
+                                                        <md-option ng-value="application.id"
+                                                            ng-repeat="application in extras.application_list | filter:searchApplication">
+                                                            {{application.name}}
+                                                        </md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" name="application_id"
+                                                    class="required" value="{{$ctrl.application_id}}">
+                                            </div><!-- Feild -->
+                                        </div>
+                                        
+                                        <div class="col-md-3" ng-if="$ctrl.application_id">
+                                            <div class="form-group">
+                                                <label>
+                                                    Model
+                                                    <sup class="mandatory">*</sup>
+                                                </label>
+                                                <md-autocomplete
+                                                    md-items="option in $ctrl.searchApplicationModel($ctrl.appModelSearchText)"
+                                                    md-selected-item="$ctrl.model_detail" md-selected-item-change="appModelSelectHandler($ctrl.model_detail.id,$ctrl.application_id)"
+                                                    md-search-text="$ctrl.appModelSearchText"
+                                                    md-item-text="option.model_name"
+                                                    md-min-length="3"
+                                                    placeholder="Model Name"
+                                                    md-autofocus  md-requires="true">
+                                                    <md-item-template>
+                                                        <span>
+                                                            {{option.model_name}} /
+                                                            {{option.number}}
+                                                        </span>
+                                                    </md-item-template>
+                                                    <md-not-found>
+                                                        No Vehicle Model matching
+                                                        "{{$ctrl.appModelSearchText}}" were found.
+                                                    </md-not-found>
+                                                </md-autocomplete>
+                                                <input type="hidden" name="app_model_id"
+                                                    value="{{$ctrl.model_detail.id}}">
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
                                         <div class="col-md-12" style="padding-left: 0px;">
                                             <h5 class="color-primary mb-10">
                                                 <b>

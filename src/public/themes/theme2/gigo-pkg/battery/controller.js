@@ -834,6 +834,57 @@ app.component('batteryForm', {
             }
         };
 
+        $scope.applicationChangeHandler = function(){
+            self.appModelSearchText = '';
+            self.model_detail = [];
+        }
+
+         self.searchApplicationModel = function (query) {
+            if (query) {
+                return new Promise(function (resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getApplicationModelList'], {
+                            key: query,
+                            application_id: self.application_id,
+                        }
+                        )
+                        .then(function (response) {
+                            resolve(response.data);
+                        });
+                });
+            } else {
+                return [];
+            }
+        }
+
+        $scope.appModelSelectHandler = function (model_id,application_id) {
+            if(model_id && application_id){
+                $.ajax({
+                    url: laravel_routes['getApplicationBatteryDetail'],
+                    method: "POST",
+                    data: {
+                        model_id: model_id,
+                        application_id: application_id,
+                    },
+                })
+                    .done(function (res) {
+                        if (!res.success) {
+                            showErrorNoty(res);
+                            return;
+                        }
+                        self.no_of_batteries = res.data.no_of_battery;
+                        setTimeout(function () {
+                            $scope.battery_status_check();
+                        }, 900);
+                        $scope.$apply();
+                    })
+                    .fail(function (xhr) {
+                        custom_noty('error', 'Something went wrong at server');
+                    });
+            }   
+        }
+
         //Save Form Data 
         $scope.saveBatteryStatus = function () {
             var form_id = '#battery_status_form';

@@ -26,6 +26,8 @@ use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 use Validator;
+use Abs\GigoPkg\BatteryApplication;
+use Abs\GigoPkg\ApplicationBatteryDetail;
 
 class BatteryController extends Controller
 {
@@ -105,6 +107,7 @@ class BatteryController extends Controller
             'battery_voltage' => collect(Config::where('config_type_id', 479)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Battery Voltage']),
             'multimeter_status_list' => collect(MultimeterTestStatus::where('company_id', 1)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Status']),
             'over_all_status_list' => collect(config::where('config_type_id', 481)->select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Status']),
+            'application_list' => collect(BatteryApplication::select('id', 'name')->get())->prepend(['id' => '', 'name' => 'Select Application']),
         ];
         $this->data['extras'] = $extras;
         // $this->data['battery_load_test_details'] = $battery_load_test_details;
