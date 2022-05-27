@@ -180,7 +180,7 @@ class BatteryController extends Controller
         // dd($request->all());
         try {
 
-            $error_messages = [
+            $error_messages = [ 
                 'battery_serial_number.required_if' => "Battery Serial Number required",
                 'load_test_status_id.required' => "Load Test Status required",
                 'hydrometer_electrolyte_status_id.required' => "Hydrometer Electrolyte Status required",
@@ -301,6 +301,7 @@ class BatteryController extends Controller
                         'battery_serial_number' => [
                             // 'required_if:overall_status_id,==,3',
                             'required_if:is_buy_back_opted,==,1',
+                            'unique:battery_load_test_results,battery_serial_number,' . $value['id'] . ',id,company_id,' . Auth::user()->company_id,
                         ],
                         'battery_amp_hour_id' => [
                             'required',
@@ -332,6 +333,11 @@ class BatteryController extends Controller
 
                         'battery_not_replaced_reason_id' => [
                             'required_if:is_battery_replaced,==,0',
+                        ],
+
+                        'replaced_battery_serial_number' => [
+                            'required_if:is_battery_replaced,==,1',
+                            'unique:battery_load_test_results,replaced_battery_serial_number,' . $value['id'] . ',id,company_id,' . Auth::user()->company_id,
                         ],
                     ], $error_messages);
 
