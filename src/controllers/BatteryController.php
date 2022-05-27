@@ -950,20 +950,25 @@ class BatteryController extends Controller
 
     public function searchApplicationModel(Request $request) {
         $key = $request->key;
-        $list = VehicleModel::where('company_id', Auth::user()->company_id)
+        $search_models = VehicleModel::where('company_id', Auth::user()->company_id)
             ->select(
-                'models.id',
-                'models.model_name',
-                'models.model_number as number'
+                'id',
             )
             ->where(function ($q) use ($key) {
-                $q->where('models.model_name', 'like', $key . '%')
-                    ->orWhere('models.model_number', 'like', $key . '%')
+                $q->where('model_name', 'like', $key . '%')
+                    ->orWhere('model_number', 'like', $key . '%')
                 ;
-            })
-            ->join('application_battery_details','application_battery_details.model_id','models.id')
-            ->where('application_battery_details.application_id',$request->application_id)
-            ->get();
+            })->pluck('id');
+
+            $application_models = ApplicationBatteryDetail::where('application_id',$request->application_id)
+                ->whereIn('model_id',$search_models)
+                ->pluck('model_id');
+
+           $list = VehicleModel::whereIn('id',$application_models)->select(
+                'id',
+                'model_name',
+                'model_number as number'
+            )->get();
         return response()->json($list);
     }
 

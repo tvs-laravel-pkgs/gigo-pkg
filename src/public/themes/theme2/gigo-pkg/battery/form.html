@@ -650,7 +650,7 @@
                                                     class="required" value="{{$ctrl.application_id}}">
                                             </div><!-- Feild -->
                                         </div>
-                                        
+
                                         <div class="col-md-3" ng-if="$ctrl.application_id">
                                             <div class="form-group">
                                                 <label>
@@ -663,8 +663,7 @@
                                                     md-search-text="$ctrl.appModelSearchText"
                                                     md-item-text="option.model_name"
                                                     md-min-length="3"
-                                                    placeholder="Model Name"
-                                                    md-autofocus  md-requires="true">
+                                                    placeholder="Model Name" md-requires="true" md-no-cache="true">
                                                     <md-item-template>
                                                         <span>
                                                             {{option.model_name}} /
