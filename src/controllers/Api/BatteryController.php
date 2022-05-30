@@ -556,6 +556,8 @@ class BatteryController extends Controller
             $vehicle_battery->customer_id = $customer->id;
             $vehicle_battery->battery_status_id = $request->battery_status_id;
             $vehicle_battery->no_of_batteries = $request->no_of_batteries;
+            $vehicle_battery->application_id = isset($request->application_id) ? $request->application_id : null;
+            $vehicle_battery->app_model_id = isset($request->app_model_id) ? $request->app_model_id : null;
 
             //To save job card details in vehicle_battery
             $vehicle_battery->job_card_number = $request->job_card_number;

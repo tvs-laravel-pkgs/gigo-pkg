@@ -480,7 +480,8 @@ app.component('batteryForm', {
                                 hydrometer_electrolyte_status_id: '',
                                 overall_status_id: '',
                                 is_battery_replaced: 0,
-                                replaced_battery_make_id: '',
+                                // replaced_battery_make_id: '',
+                                replaced_battery_make_id: 4,
                                 replaced_battery_serial_number: '',
                                 is_buy_back_opted: 0,
                                 battery_not_replaced_reason_id: '',
@@ -498,7 +499,8 @@ app.component('batteryForm', {
                                 hydrometer_electrolyte_status_id: '',
                                 overall_status_id: '',                                
                                 is_battery_replaced: 0,
-                                replaced_battery_make_id: '',
+                                // replaced_battery_make_id: '',
+                                replaced_battery_make_id: 4,
                                 replaced_battery_serial_number: '',
                                 is_buy_back_opted: 0,
                                 battery_not_replaced_reason_id: '',
@@ -521,7 +523,8 @@ app.component('batteryForm', {
                                 hydrometer_electrolyte_status_id: '',
                                 overall_status_id: '',                                
                                 is_battery_replaced: 0,
-                                replaced_battery_make_id: '',
+                                // replaced_battery_make_id: '',
+                                replaced_battery_make_id: 4,
                                 replaced_battery_serial_number: '',
                                 is_buy_back_opted: 0,
                                 battery_not_replaced_reason_id: '',
@@ -800,14 +803,34 @@ app.component('batteryForm', {
             }
         }
 
+        $scope.batteryReplaceChangeHandler = function(arr_index,selected_value){
+            if(self.model_no_of_batteries == 2){
+                $.each(self.battery_load_tests, function( index, data ) {
+                    if(index != arr_index){
+                        data.overall_status_id = 2; 
+                        data.is_battery_replaced = selected_value; 
+                        data.is_battery_replaced_disable = true; 
+                    }
+                });
+            }
+        }
+
+
         $scope.battery_status_check=function(){
             var no_of_batteries = $('input[name="no_of_batteries"]:checked').val();
             if(no_of_batteries == 1){
                 console.log("self.battery_load_tests")
                 console.log(self.battery_load_tests)
+                self.battery_load_tests[0].battery_voltage_id = 12140; 
+
                 if(self.battery_load_tests[1]){
+                    $(".battery_two_tab").removeClass("active");
+                    $(".battery_one_tab").addClass("active");
+                    $('.battery_one_tab').trigger('click');
+
                     $.each(self.battery_load_tests, function( index, value ) {
                         if(index == 1){
+                            $('.battery_load_content'+index).removeClass('active');
                             value.id = '';
                             value.battery_make_id = '';
                             value.battery_serial_number = '';
@@ -819,11 +842,14 @@ app.component('batteryForm', {
                             value.hydrometer_electrolyte_status_id = '';
                             value.overall_status_id = '';                                
                             value.is_battery_replaced = 0;
-                            value.replaced_battery_make_id = '';
+                            // value.replaced_battery_make_id = '';
+                            value.replaced_battery_make_id = 4;
                             value.replaced_battery_serial_number = '';
                             value.is_buy_back_opted = 0;
                             value.battery_not_replaced_reason_id = '';
                             value.hide_battery_section = true;
+                        }else{
+                            $('.battery_load_content'+index).addClass('active');
                         }
                     });
 
@@ -831,12 +857,18 @@ app.component('batteryForm', {
                 }
             }else if(no_of_batteries == 2){
                self.battery_load_tests[1].hide_battery_section = false;
+               self.battery_load_tests[0].battery_voltage_id = 12141;
+               self.battery_load_tests[1].battery_voltage_id = 12141;
             }
+
+            setTimeout(function () {
+                $scope.$apply();
+            }, 800);
         };
 
         $scope.applicationChangeHandler = function(){
             self.appModelSearchText = '';
-            self.model_detail = [];
+            self.battery.app_model = [];
         }
 
          self.searchApplicationModel = function (query) {
@@ -846,7 +878,7 @@ app.component('batteryForm', {
                         .post(
                             laravel_routes['getApplicationModelList'], {
                             key: query,
-                            application_id: self.application_id,
+                            application_id: self.battery.application_id,
                         }
                         )
                         .then(function (response) {
@@ -873,10 +905,13 @@ app.component('batteryForm', {
                             showErrorNoty(res);
                             return;
                         }
-                        self.no_of_batteries = res.data.no_of_battery;
+                        $('input[name="no_of_batteries"]').attr('disabled', 'disabled');
+                        self.model_no_of_batteries = res.data.no_of_battery;
+                        self.no_of_batteries = self.model_no_of_batteries;
+
                         setTimeout(function () {
                             $scope.battery_status_check();
-                        }, 900);
+                        }, 1000);
                         $scope.$apply();
                     })
                     .fail(function (xhr) {

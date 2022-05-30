@@ -628,7 +628,7 @@
                                                     Application
                                                     <sup class="mandatory">*</sup>
                                                 </label>
-                                                <md-select ng-model="$ctrl.application_id" ng-change="applicationChangeHandler()" placeholder="Select Application"
+                                                <md-select ng-model="$ctrl.battery.application_id" ng-change="applicationChangeHandler()" placeholder="Select Application"
                                                     data-md-container-class="selectdemoSelectHeader"
                                                     >
                                                     <md-select-header
@@ -647,11 +647,11 @@
                                                     </md-optgroup>
                                                 </md-select>
                                                 <input type="hidden" name="application_id"
-                                                    class="required" value="{{$ctrl.application_id}}">
+                                                    class="required" value="{{$ctrl.battery.application_id}}">
                                             </div><!-- Feild -->
                                         </div>
 
-                                        <div class="col-md-3" ng-if="$ctrl.application_id">
+                                        <div class="col-md-3" ng-if="$ctrl.battery.application_id">
                                             <div class="form-group">
                                                 <label>
                                                     Model
@@ -659,7 +659,7 @@
                                                 </label>
                                                 <md-autocomplete
                                                     md-items="option in $ctrl.searchApplicationModel($ctrl.appModelSearchText)"
-                                                    md-selected-item="$ctrl.model_detail" md-selected-item-change="appModelSelectHandler($ctrl.model_detail.id,$ctrl.application_id)"
+                                                    md-selected-item="$ctrl.battery.app_model" md-selected-item-change="appModelSelectHandler($ctrl.battery.app_model.id,$ctrl.battery.application_id)"
                                                     md-search-text="$ctrl.appModelSearchText"
                                                     md-item-text="option.model_name"
                                                     md-min-length="3"
@@ -675,8 +675,8 @@
                                                         "{{$ctrl.appModelSearchText}}" were found.
                                                     </md-not-found>
                                                 </md-autocomplete>
-                                                <input type="hidden" name="app_model_id"
-                                                    value="{{$ctrl.model_detail.id}}">
+                                                <input type="hidden" required="true" name="app_model_id"
+                                                    value="{{$ctrl.battery.app_model.id}}">
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-12" style="padding-left: 0px;">
@@ -733,7 +733,7 @@
                                                                     <div class="tab-page-body">
                                                                         <div class="tab-content">
                                                                                     
-                                                                                <div ng-repeat="(index,battery_load_test) in $ctrl.battery_load_tests" ng-class="{active : index == 0}" class="tab-pane" id="battery{{index}}" data-animation="fadeInUp" data-animation-delay="300">
+                                                                                <div ng-repeat="(index,battery_load_test) in $ctrl.battery_load_tests" ng-class="{active : index == 0}" class="tab-pane battery_load_content{{index}}" id="battery{{index}}" data-animation="fadeInUp" data-animation-delay="300">
                                                                                 <div class="tab-pane-wrap" ng-if="!battery_load_test.hide_battery_section">
                                                                                 <input type="hidden" name="battery_load_test_detail[{{index}}][id]" value="{{battery_load_test.id}}">
                                                                                     <div class="row">
@@ -885,10 +885,15 @@
                                                                                                                                     ng-keydown="$event.stopPropagation()">
                                                                                                                             </md-select-header>
                                                                                                                             <md-optgroup>
-                                                                                                                                <md-option
+                                                                                                                               <!--  <md-option
                                                                                                                                     ng-value="list.id"
                                                                                                                                     ng-repeat="list in extras.battery_voltage | filter:searchStatus"
                                                                                                                                     ng-selected='list.name=="12V * 1"'>
+                                                                                                                                    {{list.name}}
+                                                                                                                                </md-option> -->
+                                                                                                                                <md-option
+                                                                                                                                    ng-value="list.id"
+                                                                                                                                    ng-repeat="list in extras.battery_voltage | filter:searchStatus">
                                                                                                                                     {{list.name}}
                                                                                                                                 </md-option>
                                                                                                                             </md-optgroup>
@@ -1193,7 +1198,7 @@
                                                                                                                                 name="battery_load_test_detail[{{index}}][is_battery_replaced]"
                                                                                                                                 ng-model="battery_load_test.is_battery_replaced"
                                                                                                                                 ng-value="1"
-                                                                                                                                ng-change="onChangeBatteryReplaceStatus()">
+                                                                                                                                ng-change="onChangeBatteryReplaceStatus(); batteryReplaceChangeHandler(index,battery_load_test.is_battery_replaced);" ng-disabled="battery_load_test.is_battery_replaced_disable == true">
                                                                                                                             <label
                                                                                                                                 for="is_battery_replaced_yes{{index}}">
                                                                                                                                 Yes<span
@@ -1205,7 +1210,7 @@
                                                                                                                                 name="battery_load_test_detail[{{index}}][is_battery_replaced]"
                                                                                                                                 ng-model="battery_load_test.is_battery_replaced"
                                                                                                                                 ng-value="0"
-                                                                                                                                ng-change="onChangeBatteryReplaceStatus()">
+                                                                                                                                ng-change="onChangeBatteryReplaceStatus(); batteryReplaceChangeHandler(index,battery_load_test.is_battery_replaced);" ng-disabled="battery_load_test.is_battery_replaced_disable == true">
                                                                                                                             <label
                                                                                                                                 for="is_battery_replaced_no{{index}}">
                                                                                                                                 No<span
@@ -1259,7 +1264,7 @@
                                                                                                                     <div
                                                                                                                         class="form-group">
                                                                                                                         <label>
-                                                                                                                            Replaced
+                                                                                                                            Replaced(New)
                                                                                                                             Battery
                                                                                                                             Serial
                                                                                                                             Number
