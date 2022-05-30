@@ -1,3 +1,10 @@
+<style type="text/css">
+.disabled_radio {
+  pointer-events:none;
+  opacity:0.5;
+}
+</style>
+
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
     <div class="page-header">
@@ -691,7 +698,7 @@
                                                         Number of Batteries
                                                         <sup class="mandatory">*</sup>
                                                     </label>
-                                                    <div class="common-radio-button type-4">
+                                                    <div class="common-radio-button type-4 no_of_battery_section">
                                                         <input type="radio" id="no_of_batteries_1"
                                                             name="no_of_batteries" ng-model="$ctrl.no_of_batteries"
                                                             ng-click="battery_status_check();"
@@ -1191,14 +1198,14 @@
                                                                                                                                 class="mandatory">*</sup>
                                                                                                                         </label>
                                                                                                                         <div
-                                                                                                                            class="common-radio-button type-4">
+                                                                                                                            class="common-radio-button type-4" ng-class="{disabled_radio : battery_load_test.new_battery_replace_sec_disable == true}">
                                                                                                                             <input
                                                                                                                                 type="radio"
                                                                                                                                 id="is_battery_replaced_yes{{index}}"
                                                                                                                                 name="battery_load_test_detail[{{index}}][is_battery_replaced]"
                                                                                                                                 ng-model="battery_load_test.is_battery_replaced"
                                                                                                                                 ng-value="1"
-                                                                                                                                ng-change="onChangeBatteryReplaceStatus(); batteryReplaceChangeHandler(index,battery_load_test.is_battery_replaced);" ng-disabled="battery_load_test.is_battery_replaced_disable == true">
+                                                                                                                                ng-change="onChangeBatteryReplaceStatus(); batteryReplaceChangeHandler(index,battery_load_test.is_battery_replaced);" ng-readonly="battery_load_test.is_battery_replaced_disable == true">
                                                                                                                             <label
                                                                                                                                 for="is_battery_replaced_yes{{index}}">
                                                                                                                                 Yes<span
@@ -1210,7 +1217,7 @@
                                                                                                                                 name="battery_load_test_detail[{{index}}][is_battery_replaced]"
                                                                                                                                 ng-model="battery_load_test.is_battery_replaced"
                                                                                                                                 ng-value="0"
-                                                                                                                                ng-change="onChangeBatteryReplaceStatus(); batteryReplaceChangeHandler(index,battery_load_test.is_battery_replaced);" ng-disabled="battery_load_test.is_battery_replaced_disable == true">
+                                                                                                                                ng-change="onChangeBatteryReplaceStatus(); batteryReplaceChangeHandler(index,battery_load_test.is_battery_replaced);" ng-readonly="battery_load_test.is_battery_replaced_disable == true">
                                                                                                                             <label
                                                                                                                                 for="is_battery_replaced_no{{index}}">
                                                                                                                                 No<span

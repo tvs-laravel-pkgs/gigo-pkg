@@ -58,6 +58,7 @@ class BatteryController extends Controller
                 'batteryLoadTestResult.hydrometerElectrolyteStatus',
                 'batteryLoadTestResult.replacedBatteryMake',
                 'batteryLoadTestResult.batteryNotReplacedReason',
+                'appModel',
             ])->find($request->id);
 
             $action = 'Edit';

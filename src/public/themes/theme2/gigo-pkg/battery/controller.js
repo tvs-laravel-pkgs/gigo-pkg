@@ -509,6 +509,16 @@ app.component('batteryForm', {
                         );
                     }else{
                         self.battery_load_tests = self.battery.battery_load_test_result;
+                        if(self.battery.application_id && self.battery.app_model_id){
+                            $('input[name="no_of_batteries"]').attr('readonly', true);
+                            $('.no_of_battery_section').addClass('disabled_radio');
+
+                            if(self.battery_load_tests && (self.battery_load_tests).length > 1){
+                                self.battery_load_tests[1].is_battery_replaced_disable = true; 
+                                self.battery_load_tests[1].new_battery_replace_sec_disable = true; 
+                            }
+                        }
+
                         if(self.battery_load_tests && (self.battery_load_tests).length == 1 ){
                             //FOR SEC BATTERY
                            self.battery_load_tests.push({
@@ -804,12 +814,13 @@ app.component('batteryForm', {
         }
 
         $scope.batteryReplaceChangeHandler = function(arr_index,selected_value){
-            if(self.model_no_of_batteries == 2){
+            if(self.no_of_batteries == 2){
                 $.each(self.battery_load_tests, function( index, data ) {
                     if(index != arr_index){
                         data.overall_status_id = 2; 
                         data.is_battery_replaced = selected_value; 
                         data.is_battery_replaced_disable = true; 
+                        data.new_battery_replace_sec_disable = true; 
                     }
                 });
             }
@@ -905,7 +916,9 @@ app.component('batteryForm', {
                             showErrorNoty(res);
                             return;
                         }
-                        $('input[name="no_of_batteries"]').attr('disabled', 'disabled');
+                        // $('input[name="no_of_batteries"]').attr('disabled', 'disabled');
+                        $('input[name="no_of_batteries"]').attr('readonly', true);
+                        $('.no_of_battery_section').addClass('disabled_radio');
                         self.model_no_of_batteries = res.data.no_of_battery;
                         self.no_of_batteries = self.model_no_of_batteries;
 
