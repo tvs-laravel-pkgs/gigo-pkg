@@ -952,7 +952,7 @@ class BatteryController extends Controller
         $key = $request->key;
         $search_models = VehicleModel::where('company_id', Auth::user()->company_id)
             ->select(
-                'id',
+                'id'
             )
             ->where(function ($q) use ($key) {
                 $q->where('model_name', 'like', $key . '%')
