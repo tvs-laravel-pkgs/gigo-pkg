@@ -1205,7 +1205,7 @@
                                                                                                                                 name="battery_load_test_detail[{{index}}][is_battery_replaced]"
                                                                                                                                 ng-model="battery_load_test.is_battery_replaced"
                                                                                                                                 ng-value="1"
-                                                                                                                                ng-change="onChangeBatteryReplaceStatus(); batteryReplaceChangeHandler(index,battery_load_test.is_battery_replaced);" ng-readonly="battery_load_test.is_battery_replaced_disable == true">
+                                                                                                                                ng-change="onChangeBatteryReplaceStatus();" ng-readonly="battery_load_test.is_battery_replaced_disable == true">
                                                                                                                             <label
                                                                                                                                 for="is_battery_replaced_yes{{index}}">
                                                                                                                                 Yes<span
@@ -1217,7 +1217,7 @@
                                                                                                                                 name="battery_load_test_detail[{{index}}][is_battery_replaced]"
                                                                                                                                 ng-model="battery_load_test.is_battery_replaced"
                                                                                                                                 ng-value="0"
-                                                                                                                                ng-change="onChangeBatteryReplaceStatus(); batteryReplaceChangeHandler(index,battery_load_test.is_battery_replaced);" ng-readonly="battery_load_test.is_battery_replaced_disable == true">
+                                                                                                                                ng-change="onChangeBatteryReplaceStatus();" ng-readonly="battery_load_test.is_battery_replaced_disable == true">
                                                                                                                             <label
                                                                                                                                 for="is_battery_replaced_no{{index}}">
                                                                                                                                 No<span

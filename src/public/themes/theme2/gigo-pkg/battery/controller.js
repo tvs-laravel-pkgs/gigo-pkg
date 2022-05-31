@@ -507,8 +507,10 @@ app.component('batteryForm', {
                                 hide_battery_section: true,
                             },
                         );
+                        self.model_no_of_batteries = 0;
                     }else{
                         self.battery_load_tests = self.battery.battery_load_test_result;
+                        self.model_no_of_batteries = self.battery.no_of_batteries;
                         if(self.battery.application_id && self.battery.app_model_id){
                             $('input[name="no_of_batteries"]').attr('readonly', true);
                             $('.no_of_battery_section').addClass('disabled_radio');
@@ -772,7 +774,8 @@ app.component('batteryForm', {
                     battery_status_found_ok_count ++;
 
                     value.is_battery_replaced = 0;
-                    value.replaced_battery_make_id = '';
+                    // value.replaced_battery_make_id = '';
+                    value.replaced_battery_make_id = 4;
                     value.replaced_battery_serial_number = '';
                     value.is_buy_back_opted = 0;
                 }
@@ -789,13 +792,21 @@ app.component('batteryForm', {
 
         $scope.onChangeBatteryReplaceStatus = function(){
             console.log("onChangeBatteryReplaceStatus")
+            if(self.model_no_of_batteries && self.model_no_of_batteries == 2){
+                if(self.battery_load_tests[0] && self.battery_load_tests[0].is_battery_replaced == 0 || self.battery_load_tests[0].is_battery_replaced == 1){
+                    self.battery_load_tests[1].overall_status_id = 2; //NEED TO REPLACE BATTERY
+                    self.battery_load_tests[1].is_battery_replaced = self.battery_load_tests[0].is_battery_replaced; 
+                    self.battery_load_tests[1].is_battery_replaced_disable = true; 
+                    self.battery_load_tests[1].new_battery_replace_sec_disable = true; 
+                }
+            }
+
             var new_battery_replaced_yes_count = 0;
             $.each(self.battery_load_tests, function( index, value ) {
                 if(value.is_battery_replaced == 1){
                     new_battery_replaced_yes_count ++;
                 }
             });
-
 
             if(new_battery_replaced_yes_count){
                 self.show_job_card_details_section = true;
@@ -813,18 +824,18 @@ app.component('batteryForm', {
             }
         }
 
-        $scope.batteryReplaceChangeHandler = function(arr_index,selected_value){
-            if(self.no_of_batteries == 2){
-                $.each(self.battery_load_tests, function( index, data ) {
-                    if(index != arr_index){
-                        data.overall_status_id = 2; 
-                        data.is_battery_replaced = selected_value; 
-                        data.is_battery_replaced_disable = true; 
-                        data.new_battery_replace_sec_disable = true; 
-                    }
-                });
-            }
-        }
+        // $scope.batteryReplaceChangeHandler = function(arr_index,selected_value){
+            // if(self.no_of_batteries == 2){
+            //     $.each(self.battery_load_tests, function( index, data ) {
+            //         if(index != arr_index){
+            //             data.overall_status_id = 2; 
+            //             data.is_battery_replaced = selected_value; 
+            //             data.is_battery_replaced_disable = true; 
+            //             data.new_battery_replace_sec_disable = true; 
+            //         }
+            //     });
+            // }
+        // }
 
 
         $scope.battery_status_check=function(){
@@ -924,7 +935,14 @@ app.component('batteryForm', {
 
                         setTimeout(function () {
                             $scope.battery_status_check();
-                        }, 1000);
+                        }, 800);
+
+                        if(self.model_no_of_batteries == 2){
+                            setTimeout(function () {
+                                $scope.onChangeBatteryReplaceStatus();
+                            }, 800);
+                        }
+
                         $scope.$apply();
                     })
                     .fail(function (xhr) {
