@@ -519,6 +519,10 @@ app.component('batteryForm', {
                                 self.battery_load_tests[1].is_battery_replaced_disable = true; 
                                 self.battery_load_tests[1].new_battery_replace_sec_disable = true; 
                             }
+
+                            self.battery_information_visibility = true;
+                        }else{
+                            self.battery_information_visibility = true;
                         }
 
                         if(self.battery_load_tests && (self.battery_load_tests).length == 1 ){
@@ -927,11 +931,19 @@ app.component('batteryForm', {
                             showErrorNoty(res);
                             return;
                         }
-                        // $('input[name="no_of_batteries"]').attr('disabled', 'disabled');
-                        $('input[name="no_of_batteries"]').attr('readonly', true);
-                        $('.no_of_battery_section').addClass('disabled_radio');
-                        self.model_no_of_batteries = res.data.no_of_battery;
-                        self.no_of_batteries = self.model_no_of_batteries;
+                        self.battery_information_visibility = true;
+
+                            // $('input[name="no_of_batteries"]').attr('disabled', 'disabled');
+                            $('input[name="no_of_batteries"]').attr('readonly', true);
+                            $('.no_of_battery_section').addClass('disabled_radio');
+                            self.model_no_of_batteries = res.data.no_of_battery;
+                            self.no_of_batteries = self.model_no_of_batteries;
+
+                        // // $('input[name="no_of_batteries"]').attr('disabled', 'disabled');
+                        // $('input[name="no_of_batteries"]').attr('readonly', true);
+                        // $('.no_of_battery_section').addClass('disabled_radio');
+                        // self.model_no_of_batteries = res.data.no_of_battery;
+                        // self.no_of_batteries = self.model_no_of_batteries;
 
                         setTimeout(function () {
                             $scope.battery_status_check();
