@@ -690,8 +690,8 @@ app.component('batteryForm', {
 
         $scope.customerChanged = function (customer) {
             if (customer.id) {
-                // self.customer_search_type = false;
-                self.customer_search_type = true;
+                self.customer_search_type = false;
+                // self.customer_search_type = true;
                 $scope.customer = [];
                 CustomerSvc.read(customer.id)
                     .then(function (response) {
@@ -722,9 +722,15 @@ app.component('batteryForm', {
                             return;
                         }
                         $scope.extras.state_list = res.state_list;
-                        console.log($scope.customer.address);
+                        // console.log($scope.customer.address);
 
-                        self.state = $scope.customer ? $scope.customer.address.state ? $scope.customer.address.state : [] : [];
+                        let state_id = [];
+                        if($scope.customer && $scope.customer.address && $scope.customer.address.state){
+                            state_id = $scope.customer.address.state;
+                        }
+                        self.state = state_id;
+
+                        // self.state = $scope.customer ? $scope.customer.address.state ? $scope.customer.address.state : [] : [];
 
                         self.customer_search_type = true;
 
