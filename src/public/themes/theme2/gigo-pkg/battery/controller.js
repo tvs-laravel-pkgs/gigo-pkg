@@ -690,7 +690,8 @@ app.component('batteryForm', {
 
         $scope.customerChanged = function (customer) {
             if (customer.id) {
-                self.customer_search_type = false;
+                // self.customer_search_type = false;
+                self.customer_search_type = true;
                 $scope.customer = [];
                 CustomerSvc.read(customer.id)
                     .then(function (response) {
