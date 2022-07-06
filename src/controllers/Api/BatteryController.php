@@ -365,6 +365,26 @@ class BatteryController extends Controller
                 ]);
             }
 
+            if(count($request->battery_load_test_detail) > 1){
+                $battery_makes_arr = array_column($request->battery_load_test_detail, 'battery_make_id');
+                $battery_makes = array_map('strtolower', $battery_makes_arr);
+
+                if(count(array_unique($battery_makes)) < count($battery_makes_arr)){
+                    $battery_sno_arr = array_column($request->battery_load_test_detail, 'battery_serial_number');
+                    $battery_snos = array_map('strtolower', $battery_sno_arr);
+
+                    if(count(array_unique($battery_snos)) < count($battery_sno_arr)){
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'Validation Error',
+                            'errors' => [
+                                'The battery serial number should be different.',
+                            ],
+                        ]);
+                    }
+                }
+            }
+
             DB::beginTransaction();
 
             $registration_number = $request->registration_number ? str_replace([' ', '-'], '', $request->registration_number) : null;
