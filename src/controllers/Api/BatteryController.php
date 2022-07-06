@@ -305,7 +305,8 @@ class BatteryController extends Controller
                         'battery_serial_number' => [
                             // 'required_if:overall_status_id,==,3',
                             'required_if:is_buy_back_opted,==,1',
-                            'unique:battery_load_test_results,battery_serial_number,' . $value['id'] . ',id,company_id,' . Auth::user()->company_id,
+                            // 'unique:battery_load_test_results,battery_serial_number,' . $value['id'] . ',id,company_id,' . Auth::user()->company_id,
+                            'unique:battery_load_test_results,battery_serial_number,' . $value['id'] . ',id,company_id,' . Auth::user()->company_id . ',battery_make_id,' . $value['battery_make_id'],
                         ],
                         'battery_amp_hour_id' => [
                             'required',
