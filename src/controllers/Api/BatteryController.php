@@ -342,7 +342,8 @@ class BatteryController extends Controller
 
                         'replaced_battery_serial_number' => [
                             'required_if:is_battery_replaced,==,1',
-                            'unique:battery_load_test_results,replaced_battery_serial_number,' . $value['id'] . ',id,company_id,' . Auth::user()->company_id,
+                            // 'unique:battery_load_test_results,replaced_battery_serial_number,' . $value['id'] . ',id,company_id,' . Auth::user()->company_id,
+                            'unique:battery_load_test_results,replaced_battery_serial_number,' . $value['id'] . ',id,company_id,' . Auth::user()->company_id . ',replaced_battery_make_id,' . $value['replaced_battery_make_id'],
                         ],
                     ], $error_messages);
 
@@ -367,6 +368,7 @@ class BatteryController extends Controller
             }
 
             if(count($request->battery_load_test_detail) > 1){
+                //BATTERY SERIAL NUMBER VALIDAITON
                 $battery_makes_arr = array_column($request->battery_load_test_detail, 'battery_make_id');
                 $battery_makes = array_map('strtolower', $battery_makes_arr);
 
@@ -380,6 +382,25 @@ class BatteryController extends Controller
                             'error' => 'Validation Error',
                             'errors' => [
                                 'The battery serial number should be different.',
+                            ],
+                        ]);
+                    }
+                }
+
+                //REPLACED BATTERY SERIAL NUMBER VALIDAITON
+                $replaced_battery_makes_arr = array_column($request->battery_load_test_detail, 'replaced_battery_make_id');
+                $replaced_battery_makes = array_map('strtolower', $replaced_battery_makes_arr);
+
+                if(count(array_unique($replaced_battery_makes)) < count($replaced_battery_makes_arr)){
+                    $replaced_battery_sno_arr = array_column($request->battery_load_test_detail, 'replaced_battery_serial_number');
+                    $replaced_battery_snos = array_map('strtolower', $replaced_battery_sno_arr);
+
+                    if(count(array_unique($replaced_battery_snos)) < count($replaced_battery_sno_arr)){
+                        return response()->json([
+                            'success' => false,
+                            'error' => 'Validation Error',
+                            'errors' => [
+                                'The Replaced battery serial number should be different.',
                             ],
                         ]);
                     }
