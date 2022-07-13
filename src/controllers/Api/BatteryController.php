@@ -294,6 +294,8 @@ class BatteryController extends Controller
                 ]);
             }
 
+            $auth_company_id = Auth::user()->company_id;
+
             if($request->battery_load_test_detail){
                 foreach ($request->battery_load_test_detail as $key => $value) {
                     $battery_load_test_validator = Validator::make($value, [
