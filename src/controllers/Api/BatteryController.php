@@ -540,7 +540,16 @@ class BatteryController extends Controller
 
                     $vehicle_owner->updated_at = Carbon::now();
                 } else {
-                    $ownership_id = 8160 + $ownership_count;
+                    // $ownership_id = 8160 + $ownership_count;
+                    if($ownership_count == 0){
+                        $ownership_id = 8160 + $ownership_count;
+                    }else{
+                        $last_vehicle_owner = VehicleOwner::where('vehicle_id', $vehicle->id)
+                            ->orderBy('ownership_id', 'DESC')
+                            ->first();
+                        $ownership_id = $last_vehicle_owner->ownership_id + 1;
+                    }
+
                     $vehicle_owner->ownership_id = $ownership_id;
                     $vehicle_owner->from_date = Carbon::now();
                     $vehicle_owner->created_at = Carbon::now();
