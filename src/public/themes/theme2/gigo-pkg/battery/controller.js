@@ -805,7 +805,9 @@ app.component('batteryForm', {
             console.log("onChangeBatteryReplaceStatus")
             if(self.model_no_of_batteries && self.model_no_of_batteries == 2){
                 if(self.battery_load_tests[0] && self.battery_load_tests[0].is_battery_replaced == 0 || self.battery_load_tests[0].is_battery_replaced == 1){
-                    self.battery_load_tests[1].overall_status_id = 2; //NEED TO REPLACE BATTERY
+                        
+                    // self.battery_load_tests[1].overall_status_id = 2; //NEED TO REPLACE BATTERY
+                    self.battery_load_tests[1].overall_status_id = self.battery_load_tests[0].overall_status_id; //NEED TO REPLACE BATTERY
                     self.battery_load_tests[1].is_battery_replaced = self.battery_load_tests[0].is_battery_replaced; 
                     self.battery_load_tests[1].is_battery_replaced_disable = true; 
                     self.battery_load_tests[1].new_battery_replace_sec_disable = true; 
