@@ -534,6 +534,19 @@ class BatteryController extends Controller
 
                     if ($last_vehicle_owner->customer_id != $customer->id) {
                         $ownership_id = $last_vehicle_owner->ownership_id + 1;
+
+                        $owner_config = Config::where('id', $ownership_id)
+                            ->where('config_type_id', 39)
+                            ->first();
+                        if(!$owner_config){
+                            return response()->json([
+                                'success' => false,
+                                'error' => 'Validation Error',
+                                'errors' => [
+                                    'The vehicle ownership configuration not found.',
+                                ],
+                            ]);
+                        }
                         $vehicle_owner->ownership_id = $ownership_id;
                         $vehicle_owner->from_date = Carbon::now();
                     }
@@ -548,6 +561,19 @@ class BatteryController extends Controller
                             ->orderBy('ownership_id', 'DESC')
                             ->first();
                         $ownership_id = $last_vehicle_owner->ownership_id + 1;
+
+                        $owner_config = Config::where('id', $ownership_id)
+                            ->where('config_type_id', 39)
+                            ->first();
+                        if(!$owner_config){
+                            return response()->json([
+                                'success' => false,
+                                'error' => 'Validation Error',
+                                'errors' => [
+                                    'The vehicle ownership configuration not found.',
+                                ],
+                            ]);
+                        }
                     }
 
                     $vehicle_owner->ownership_id = $ownership_id;
