@@ -424,7 +424,7 @@ class BatteryController extends Controller
 
                             $replaced_battery_serial_check = BatteryLoadTestResult::where('battery_serial_number',$value['replaced_battery_serial_number'])
                                 ->where('company_id',$auth_company_id)
-                                ->where('replaced_battery_make_id',$value['replaced_battery_make_id'])
+                                ->where('battery_make_id',$value['replaced_battery_make_id'])
                                 ->count();
                             if($replaced_battery_serial_check > 0){
                                 return response()->json([
@@ -453,7 +453,7 @@ class BatteryController extends Controller
 
                             $replaced_battery_serial_check = BatteryLoadTestResult::where('battery_serial_number',$value['replaced_battery_serial_number'])
                                 ->where('company_id',$auth_company_id)
-                                ->where('replaced_battery_make_id',$value['replaced_battery_make_id'])
+                                ->where('battery_make_id',$value['replaced_battery_make_id'])
                                 ->where('id','!=',$value['id'])
                                 ->count();
                             if($replaced_battery_serial_check > 0){
