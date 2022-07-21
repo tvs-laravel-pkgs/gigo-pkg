@@ -308,7 +308,7 @@ class BatteryController extends Controller
                             // 'required_if:overall_status_id,==,3',
                             'required_if:is_buy_back_opted,==,1',
                             // 'unique:battery_load_test_results,battery_serial_number,' . $value['id'] . ',id,company_id,' . Auth::user()->company_id,
-                            'unique:battery_load_test_results,battery_serial_number,' . $value['id'] . ',id,company_id,' . Auth::user()->company_id . ',battery_make_id,' . $value['battery_make_id'],
+                            // 'unique:battery_load_test_results,battery_serial_number,' . $value['id'] . ',id,company_id,' . Auth::user()->company_id . ',battery_make_id,' . $value['battery_make_id'],
                         ],
                         'battery_amp_hour_id' => [
                             'required',
@@ -374,6 +374,20 @@ class BatteryController extends Controller
                                     ]
                                 ]);
                             }
+
+                            $replaced_battery_serial_check = BatteryLoadTestResult::where('battery_serial_number',$value['replaced_battery_serial_number'])
+                                ->where('company_id',$auth_company_id)
+                                ->where('replaced_battery_make_id',$value['replaced_battery_make_id'])
+                                ->count();
+                            if($replaced_battery_serial_check > 0){
+                                return response()->json([
+                                    'success' => false,
+                                    'error' => 'Validation Error',
+                                    'errors' => [
+                                        'Battery ' . ($key + 1). ' : The replaced battery serial number is invalid',
+                                    ]
+                                ]);
+                            }
                         }else{
                             $replaced_battery_serial_exist = BatteryLoadTestResult::where('replaced_battery_serial_number',$value['replaced_battery_serial_number'])
                                 ->where('company_id',$auth_company_id)
@@ -386,6 +400,21 @@ class BatteryController extends Controller
                                     'error' => 'Validation Error',
                                     'errors' => [
                                         'Battery ' . ($key + 1). ' : The replaced battery serial number has already been taken',
+                                    ]
+                                ]);
+                            }
+
+                            $replaced_battery_serial_check = BatteryLoadTestResult::where('battery_serial_number',$value['replaced_battery_serial_number'])
+                                ->where('company_id',$auth_company_id)
+                                ->where('replaced_battery_make_id',$value['replaced_battery_make_id'])
+                                ->where('id','!=',$value['id'])
+                                ->count();
+                            if($replaced_battery_serial_check > 0){
+                                return response()->json([
+                                    'success' => false,
+                                    'error' => 'Validation Error',
+                                    'errors' => [
+                                        'Battery ' . ($key + 1). ' : The replaced battery serial number is invalid',
                                     ]
                                 ]);
                             }
