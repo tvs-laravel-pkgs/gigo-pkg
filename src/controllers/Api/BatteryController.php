@@ -360,6 +360,53 @@ class BatteryController extends Controller
                     }
 
                     if(isset($value['is_battery_replaced']) && $value['is_battery_replaced'] == 1){
+                        $battery_s_no = strtolower($value['battery_serial_number']);
+                        $replaced_battery_s_no = strtolower($value['replaced_battery_serial_number']);
+
+                        if($value['replaced_battery_make_id'] == $value['battery_make_id'] && $replaced_battery_s_no == $battery_s_no){
+                             return response()->json([
+                                'success' => false,
+                                'error' => 'Validation Error',
+                                'errors' => [
+                                    'The replaced battery serial number should be different.',
+                                ],
+                            ]);   
+                        }
+
+                        if($key == 0){
+                            if(count($request->battery_load_test_detail) > 1){
+                                $sec_battery_s_no = strtolower($request->battery_load_test_detail[1]['battery_serial_number']);
+                                $sec_battery_make = $request->battery_load_test_detail[1]['battery_make_id'];
+
+                                if($value['replaced_battery_make_id'] == $sec_battery_make && $replaced_battery_s_no == $sec_battery_s_no){
+                                     return response()->json([
+                                        'success' => false,
+                                        'error' => 'Validation Error',
+                                        'errors' => [
+                                            'The replaced battery serial number should be different.',
+                                        ],
+                                    ]);  
+                                }
+                            }
+                        }else{
+                            if(count($request->battery_load_test_detail) > 1){ 
+                                $fir_battery_s_no = strtolower($request->battery_load_test_detail[0]['battery_serial_number']);
+                                $fir_battery_make = $request->battery_load_test_detail[0]['battery_make_id'];
+
+                                if($value['replaced_battery_make_id'] == $fir_battery_make && $replaced_battery_s_no == $fir_battery_s_no){
+                                     return response()->json([
+                                        'success' => false,
+                                        'error' => 'Validation Error',
+                                        'errors' => [
+                                            'The replaced battery serial number should be different.',
+                                        ],
+                                    ]);   
+                                }
+                            }
+                        }
+                    }
+
+                    if(isset($value['is_battery_replaced']) && $value['is_battery_replaced'] == 1){
                         if(empty($value['id'])){
                             $replaced_battery_serial_exist = BatteryLoadTestResult::where('replaced_battery_serial_number',$value['replaced_battery_serial_number'])
                                 ->where('company_id',$auth_company_id)
