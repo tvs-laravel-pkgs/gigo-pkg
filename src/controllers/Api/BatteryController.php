@@ -359,6 +359,7 @@ class BatteryController extends Controller
                         ]);
                     }
 
+                    //CHECK IF REPLACED BATTERY SERIAL NUMBER AND BATTERY SERIAL NUMBER IS SAME OR NOT
                     if(isset($value['is_battery_replaced']) && $value['is_battery_replaced'] == 1){
                         $battery_s_no = strtolower($value['battery_serial_number']);
                         $replaced_battery_s_no = strtolower($value['replaced_battery_serial_number']);
@@ -442,6 +443,7 @@ class BatteryController extends Controller
                         }
                     }
 
+                    //CHECK REPLACED BATTERY SERIAL NUMBER ALREADY ADDED
                     if(isset($value['is_battery_replaced']) && $value['is_battery_replaced'] == 1){
                         if(empty($value['id'])){
                             $replaced_battery_serial_exist = BatteryLoadTestResult::where('replaced_battery_serial_number',$value['replaced_battery_serial_number'])
