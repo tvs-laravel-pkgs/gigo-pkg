@@ -408,7 +408,7 @@ class BatteryController extends Controller
                     }
 
                     //CHECK BATTERY ALREADY REPLACED
-                    if(isset($value['is_battery_replaced']) && ($value['is_battery_replaced'] == 0 || $value['is_battery_replaced'] == 1)){
+                    if((isset($value['is_battery_replaced']) && $value['is_battery_replaced'] == 0) || ($value['overall_status_id'] == 1)){
                         if(empty($value['id'])){
                             $battery_replaced_check = BatteryLoadTestResult::where('battery_serial_number',$value['battery_serial_number'])
                                 ->where('company_id',$auth_company_id)
