@@ -406,6 +406,42 @@ class BatteryController extends Controller
                         }
                     }
 
+                    //CHECK BATTERY ALREADY REPLACED
+                    if(isset($value['is_battery_replaced']) && $value['is_battery_replaced'] == 0){
+                        if(empty($value['id'])){
+                            $battery_replaced_check = BatteryLoadTestResult::where('battery_serial_number',$value['battery_serial_number'])
+                                ->where('company_id',$auth_company_id)
+                                ->where('battery_make_id',$value['battery_make_id'])
+                                ->where('is_battery_replaced',1) // REPLACED
+                                ->count();
+                            if($battery_replaced_check > 0){
+                                return response()->json([
+                                    'success' => false,
+                                    'error' => 'Validation Error',
+                                    'errors' => [
+                                        'Battery ' . ($key + 1). ' : The battery has already been replaced',
+                                    ]
+                                ]);
+                            }
+                        }else{
+                            $battery_replaced_check = BatteryLoadTestResult::where('battery_serial_number',$value['battery_serial_number'])
+                                ->where('company_id',$auth_company_id)
+                                ->where('battery_make_id',$value['battery_make_id'])
+                                ->where('is_battery_replaced',1) // REPLACED
+                                ->where('id','!=',$value['id'])
+                                ->count();
+                            if($battery_replaced_check > 0){
+                                return response()->json([
+                                    'success' => false,
+                                    'error' => 'Validation Error',
+                                    'errors' => [
+                                        'Battery ' . ($key + 1). ' : The battery has already been replaced',
+                                    ]
+                                ]);
+                            }
+                        }
+                    }
+
                     if(isset($value['is_battery_replaced']) && $value['is_battery_replaced'] == 1){
                         if(empty($value['id'])){
                             $replaced_battery_serial_exist = BatteryLoadTestResult::where('replaced_battery_serial_number',$value['replaced_battery_serial_number'])
