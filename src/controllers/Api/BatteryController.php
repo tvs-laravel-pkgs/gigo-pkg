@@ -531,7 +531,7 @@ class BatteryController extends Controller
                     $filtered_batt_sno_arr = array_filter($battery_sno_arr);
 
                     // if(count(array_unique($battery_snos)) < count($battery_sno_arr)){
-                    if(count(array_unique($filtered_batt_snos)) < count($filtered_batt_sno_arr)){
+                    if(!empty($filtered_batt_snos) && !empty($filtered_batt_sno_arr) && count(array_unique($filtered_batt_snos)) < count($filtered_batt_sno_arr)){
                         return response()->json([
                             'success' => false,
                             'error' => 'Validation Error',
@@ -554,7 +554,7 @@ class BatteryController extends Controller
                     $filtered_replaced_batt_sno_arr = array_filter($replaced_battery_sno_arr);
 
                     // if(count(array_unique($replaced_battery_snos)) < count($replaced_battery_sno_arr)){
-                    if(count(array_unique($filtered_replaced_batt_snos)) < count($filtered_replaced_batt_sno_arr)){
+                    if(!empty($filtered_replaced_batt_snos) && !empty($filtered_replaced_batt_sno_arr) && count(array_unique($filtered_replaced_batt_snos)) < count($filtered_replaced_batt_sno_arr)){
                         return response()->json([
                             'success' => false,
                             'error' => 'Validation Error',
