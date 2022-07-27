@@ -59,11 +59,21 @@ app.component('kanbanAppAttendanceScanQr', {
 
         $scope.Punch = function(data) {
             if (data) {
+                
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position){
+                    latitude = position.coords.latitude;
+                    longitude = position.coords.longitude;
+                    });   
+                } else {
+                    console.log("Geolocation not supported by browser.");
                 $.ajax({
                         url: base_url + '/api/employee-pkg/punch',
                         method: "POST",
                         data: {
                             encrypted_id: data,
+                            latitude: latitude,
+                            longitude: longitude,
                         },
                         beforeSend: function(xhr) {
                             xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);

@@ -882,6 +882,9 @@ class GigoReportController extends Controller {
                 'attendance_logs.in_time as punch_in_time',
                 'attendance_logs.out_time as punch_out_time',
                 'attendance_logs.punch_in_outlet_id as punch_in_outlet_id',
+                'attendance_logs.ip_addr as ip_addr',
+                'attendance_logs.location as location',
+
             ])
             ->join('users', 'users.id', 'attendance_logs.user_id')
             ->join('employees', 'employees.id', 'users.entity_id')
@@ -942,9 +945,12 @@ class GigoReportController extends Controller {
                         !empty($attendance_log->outlet_ax_name) ? $attendance_log->outlet_ax_name : $attendance_log->outlet_name,
                         !empty($employee_shift->shift_name) ? $employee_shift->shift_name : '',
                         !empty($attendance_log->punch_in_time) ? date('d-m-Y H:i:s', strtotime($attendance_log->date.' '.$attendance_log->punch_in_time)) : '',
-                        !empty($attendance_log->punch_out_time) ? date('d-m-Y H:i:s', strtotime($attendance_log->date.''$punch_out_time)) : '',
+                        !empty($attendance_log->punch_out_time) ? date('d-m-Y H:i:s', strtotime($attendance_log->date.''$attendance_log->punch_out_time)) : '',
                         !empty($delay_hrs) ? $delay_hrs : '',
                         !empty($ot_hrs)? $ot_hrs : '',
+                        !empty($attendance_log->ip_addr)? $attendance_log->ip_addr : '',
+                        !empty($attendance_log->location)? $attendance_log->location : '',
+
                     ];    
                 }
             }
@@ -962,6 +968,8 @@ class GigoReportController extends Controller {
                 'Punch Out Date',
                 'Delay Hrs',
                 'OT hours',
+                'IP Address',
+                'Location',
             ];
 
             $time_stamp = date('Y_m_d_h_i_s');
