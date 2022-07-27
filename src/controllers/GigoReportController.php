@@ -941,8 +941,8 @@ class GigoReportController extends Controller {
                         $attendance_log->outlet_code,                        
                         !empty($attendance_log->outlet_ax_name) ? $attendance_log->outlet_ax_name : $attendance_log->outlet_name,
                         !empty($employee_shift->shift_name) ? $employee_shift->shift_name : '',
-                        !empty($attendance_log->punch_in_time) ? date('d-m-Y', strtotime($attendance_log->date.' '.$attendance_log->punch_in_time)) : '',
-                        !empty($attendance_log->punch_out_time) ? date('d-m-Y', strtotime($attendance_log->punch_out_time)) : '',
+                        !empty($attendance_log->punch_in_time) ? date('d-m-Y H:i:s', strtotime($attendance_log->date.' '.$attendance_log->punch_in_time)) : '',
+                        !empty($attendance_log->punch_out_time) ? date('d-m-Y H:i:s', strtotime($attendance_log->date.''$punch_out_time)) : '',
                         !empty($delay_hrs) ? $delay_hrs : '',
                         !empty($ot_hrs)? $ot_hrs : '',
                     ];    
