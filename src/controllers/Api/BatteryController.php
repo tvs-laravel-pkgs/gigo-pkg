@@ -408,12 +408,13 @@ class BatteryController extends Controller
                     }
 
                     //CHECK BATTERY ALREADY REPLACED
-                    if((isset($value['is_battery_replaced']) && $value['is_battery_replaced'] == 0 || $value['is_battery_replaced'] == 1) || ($value['overall_status_id'] == 1)){
+                    if((isset($value['is_battery_replaced']) && ($value['is_battery_replaced'] == 0 || $value['is_battery_replaced'] == 1)) || ($value['overall_status_id'] == 1)){
                         if(empty($value['id'])){
                             $battery_replaced_check = BatteryLoadTestResult::where('battery_serial_number',$value['battery_serial_number'])
                                 ->where('company_id',$auth_company_id)
                                 ->where('battery_make_id',$value['battery_make_id'])
                                 ->where('is_battery_replaced',1) // REPLACED
+                                ->whereNotNull('battery_serial_number')
                                 ->count();
                             if($battery_replaced_check > 0){
                                 return response()->json([
@@ -430,6 +431,7 @@ class BatteryController extends Controller
                                 ->where('battery_make_id',$value['battery_make_id'])
                                 ->where('is_battery_replaced',1) // REPLACED
                                 ->where('id','!=',$value['id'])
+                                ->whereNotNull('battery_serial_number')
                                 ->count();
                             if($battery_replaced_check > 0){
                                 return response()->json([
@@ -525,7 +527,11 @@ class BatteryController extends Controller
                     $battery_sno_arr = array_column($request->battery_load_test_detail, 'battery_serial_number');
                     $battery_snos = array_map('strtolower', $battery_sno_arr);
 
-                    if(count(array_unique($battery_snos)) < count($battery_sno_arr)){
+                    $filtered_batt_snos = array_filter($battery_snos);
+                    $filtered_batt_sno_arr = array_filter($battery_sno_arr);
+
+                    // if(count(array_unique($battery_snos)) < count($battery_sno_arr)){
+                    if(!empty($filtered_batt_snos) && !empty($filtered_batt_sno_arr) && count(array_unique($filtered_batt_snos)) < count($filtered_batt_sno_arr)){
                         return response()->json([
                             'success' => false,
                             'error' => 'Validation Error',
@@ -544,7 +550,11 @@ class BatteryController extends Controller
                     $replaced_battery_sno_arr = array_column($request->battery_load_test_detail, 'replaced_battery_serial_number');
                     $replaced_battery_snos = array_map('strtolower', $replaced_battery_sno_arr);
 
-                    if(count(array_unique($replaced_battery_snos)) < count($replaced_battery_sno_arr)){
+                    $filtered_replaced_batt_snos = array_filter($replaced_battery_snos);
+                    $filtered_replaced_batt_sno_arr = array_filter($replaced_battery_sno_arr);
+
+                    // if(count(array_unique($replaced_battery_snos)) < count($replaced_battery_sno_arr)){
+                    if(!empty($filtered_replaced_batt_snos) && !empty($filtered_replaced_batt_sno_arr) && count(array_unique($filtered_replaced_batt_snos)) < count($filtered_replaced_batt_sno_arr)){
                         return response()->json([
                             'success' => false,
                             'error' => 'Validation Error',
@@ -871,7 +881,7 @@ class BatteryController extends Controller
                 'message' => $message,
             ]);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'error' => 'Server Error',
