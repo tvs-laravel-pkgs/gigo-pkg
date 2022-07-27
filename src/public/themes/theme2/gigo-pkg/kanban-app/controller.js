@@ -42,6 +42,7 @@ app.component('kanbanAppAttendanceScanQr', {
             $scope.showCheckInSuccess = false;
             $scope.showCheckOutConfirmation = false;
             $scope.showCheckOut = false;
+            $scope.showMealModal = false;
         }, 1000);
 
 
@@ -80,6 +81,7 @@ app.component('kanbanAppAttendanceScanQr', {
                             $scope.showCheckInSuccess = false;
                             $scope.showCheckOutConfirmation = false;
                             $scope.showCheckOut = true;
+                            $scope.showMealModal = false;
                             $scope.punch_out = res.data.punch_out;
                             $scope.punch_out_method_list = res.data.punch_out_method_list;
                         } else {
@@ -87,6 +89,7 @@ app.component('kanbanAppAttendanceScanQr', {
                             $scope.showCheckInSuccess = true;
                             $scope.showCheckOutConfirmation = false;
                             $scope.showCheckOut = false;
+                            $scope.showMealModal = true;
                             $scope.punch_in = res.data.punch_in;
                         }
                         $scope.punch_user = res.data.punch_user;
@@ -129,6 +132,7 @@ app.component('kanbanAppAttendanceScanQr', {
                             self.response = res.data;
                             $scope.showQrScan = false;
                             $scope.showCheckInSuccess = false;
+                            $scope.showMealModal = false;
                             $scope.showCheckOutConfirmation = true;
                             $scope.showCheckOut = false;
                             $scope.punch_user = res.data.punch_user;
@@ -142,7 +146,32 @@ app.component('kanbanAppAttendanceScanQr', {
                 }
             });
         }
-
+        $scope.mealUpdateToEmployee = function(data) {
+            if (data) {
+                $.ajax({
+                        url: base_url + '/api/employee-pkg/mealUpdateToEmployee',
+                        method: "POST",
+                        data: {
+                            punch_id: data,
+                        },
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                    })
+                    .done(function(res) {
+                        if (!res.success) {
+                            showErrorNoty(res);
+                            return;
+                        } 
+                        $scope.$apply();
+                    })
+                    .fail(function(xhr) {
+                        custom_noty('error', 'Something went wrong at server');
+                    });
+            } else {
+                custom_noty('error', 'Wrong QR Code!');
+            }
+        }
         $scope.reloadPage = function() {
             window.location = base_url + '#!/kanban-app';
         }

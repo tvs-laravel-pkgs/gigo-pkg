@@ -878,8 +878,10 @@ class GigoReportController extends Controller {
                 'outlets.code as outlet_code',
                 'outlets.name as outlet_name',
                 'outlets.ax_name as outlet_ax_name',
-                'attendance_logs.in_date_time as punch_in_date',
-                'attendance_logs.out_date_time as punch_out_date',
+                'attendance_logs.date as date',
+                'attendance_logs.in_time as punch_in_time',
+                'attendance_logs.out_time as punch_out_time',
+                'attendance_logs.punch_in_outlet_id as punch_in_outlet_id',
             ])
             ->join('users', 'users.id', 'attendance_logs.user_id')
             ->join('employees', 'employees.id', 'users.entity_id')
@@ -896,14 +898,53 @@ class GigoReportController extends Controller {
                         ->where('employee_id', $attendance_log->employee_id)
                         ->select('shifts.name as shift_name','employee_shifts.shift_id')
                         ->first();
+                $date = date('Y-m-d' , strtotime($attendance_log->date));
+                if(date("l",strtotime($date)) == 'Sunday'){
+                        $shift_type_id = 12282;
+                }elseif(date("l",strtotime($date)) == 'Saturday'){
+                        $shift_type_id = 12281;
+                }else{
+                        $shift_type_id = 12280;
+                }
+                        
+                $shift_timing = OutletShift::join('employee_shifts','employee_shifts.shift_id','outlet_shift.shift_id')->where('outlet_shift.outlet_id', $attendance_log->punch_in_outlet_id)->where('employee_shifts.date',$date)->where('outlet_shift.shift_type_id',$shift_type_id)->where('employee_shifts.employee_id',$attendance_log->employee_id)->first();
+
+                if($shift_timing){
+                     $in_time = strtotime($attendance_log->punch_in_time);
+                                            $out_time =  strtotime($date .' '. $attendance_log->punch_out_time);
+                     $shift_start_time = strtotime($shift_timing->start_time); 
+                                           $shift_end_time = strtotime($date.' '.$shift_timing->end_time);
+                    $ot_hrs = '';
+                    $delay_hrs  = '';
+                    if($shift_start_time <  $in_time){
+                        $result = $in_time - $shift_start_time;
+                        $delay_hrs = gmdate("H:i:s", $result);
+
+                    }else{
+                        $result  = $shift_start_time - $in_time;
+                        $ot_hrs  = gmdate("H:i:s", $result);
+                    }
+                    if($shift_end_time <  $out_time){
+                        $result = $out_time - $shift_end_time;
+                        $ot_hr = gmdate("H:i:s", $result);
+                        $ot_hrs =  $ot_hrs .'-'. $ot_hr;
+                    }else{
+                        $result = $shift_end_time - $out_time;
+                        $delay_hr = gmdate("H:i:s", $result);
+                        $delay_hrs = $delay_hrs  .'-'. $delay_hr; 
+                    }
+                        
+                }
                     $attendance_details[] = [
                         $attendance_log->employee_code,                        
                         $attendance_log->employee_name,                        
                         $attendance_log->outlet_code,                        
                         !empty($attendance_log->outlet_ax_name) ? $attendance_log->outlet_ax_name : $attendance_log->outlet_name,
                         !empty($employee_shift->shift_name) ? $employee_shift->shift_name : '',
-                        !empty($attendance_log->punch_in_date) ? date('d-m-Y', strtotime($attendance_log->punch_in_date)) : '',
-                        !empty($attendance_log->punch_out_date) ? date('d-m-Y', strtotime($attendance_log->punch_out_date)) : '',
+                        !empty($attendance_log->punch_in_time) ? date('d-m-Y', strtotime($attendance_log->date.' '.$attendance_log->punch_in_time)) : '',
+                        !empty($attendance_log->punch_out_time) ? date('d-m-Y', strtotime($attendance_log->punch_out_time)) : '',
+                        !empty($delay_hrs) ? $delay_hrs : '',
+                        !empty($ot_hrs)? $ot_hrs : '',
                     ];    
                 }
             }
@@ -919,6 +960,8 @@ class GigoReportController extends Controller {
                 'Shift',
                 'Punch In Date',
                 'Punch Out Date',
+                'Delay Hrs',
+                'OT hours',
             ];
 
             $time_stamp = date('Y_m_d_h_i_s');
