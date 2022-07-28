@@ -67,6 +67,7 @@ app.component('kanbanAppAttendanceScanQr', {
                     });   
                 } else {
                     console.log("Geolocation not supported by browser.");
+                }
                 $.ajax({
                         url: base_url + '/api/employee-pkg/punch',
                         method: "POST",
