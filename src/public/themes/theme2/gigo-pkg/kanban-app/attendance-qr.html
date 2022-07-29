@@ -20,7 +20,7 @@
                     <div class="col-md-4">
                         <p class="location"><img class="img-responsive map-marker" src="./public/theme/img/content/map-marker.svg" alt="Location" />{{user.employee.outlet.ax_name ? user.employee.outlet.ax_name : ''}}</p>
                     </div><!-- Column -->
-                    <div class="col-md-4">
+                    <div class="col-md-4"> 
                         <div class="page-header-content-right">
                             <span class="date">{{date |date:'dd/MM/yyyy'}} - {{date |date:'EEEE'}}</span>
                             <span class="time">{{time |date:'shortTime'}}</span>
@@ -239,16 +239,20 @@
 </div><!-- Content Wrap -->
 
 <!--Meal modal -->
+
+<!--Meal modal -->
 <div class="modal fade alert-modal failure in" id="modal-delete" role="dialog" aria-labelledby="myModalLabel" ng-show="showMealModal == true"   style="display: block; padding-right: 15px;">
     <div class="modal-dialog" role="document">
-    <form id="meal_need_form" method="post" autocomplete="off">
-        <div class="modal-content"> 
+<button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+    <form id="meal_need_form">
+        <div class="modal-content">
             <div class="modal-body">
                  <p>Are you sure do you want a meal today?</p>
-                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">No</button>
-               <button type="submit" id="gigo_meal_submit" ng-click="mealUpdateToEmployee({{punch_user.punch_data.id}})" class="btn btn-bordered save my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s">Yes</button>
+                <input type="button" ng-click="reloadPage()"  value="No" />
+               <input type="submit" id="gigo_meal_submit" class="btn btn-bordered" value="Yes" />
             </div>
         </div>
         </form>
     </div>
 </div>
+

@@ -157,32 +157,34 @@ app.component('kanbanAppAttendanceScanQr', {
                 }
             });
         }
-        $scope.mealUpdateToEmployee = function(data) {
-            if (data) {
-                $.ajax({
-                        url: base_url + '/api/employee-pkg/mealUpdateToEmployee',
-                        method: "POST",
-                        data: {
-                            punch_id: data,
-                        },
-                        beforeSend: function(xhr) {
-                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                        },
-                    })
-                    .done(function(res) {
-                        if (!res.success) {
-                            showErrorNoty(res);
-                            return;
-                        } 
-                        $scope.$apply();
-                    })
-                    .fail(function(xhr) {
-                        custom_noty('error', 'Something went wrong at server');
-                    });
-            } else {
-                custom_noty('error', 'Wrong QR Code!');
-            }
-        }
+        var form_id1 = '#meal_need_form';
+                var v = jQuery(form_id1).validate({
+                    ignore: [],
+                    submitHandler: function (form) {
+                        let formData = new FormData($(form_id1)[0]);
+                        console.log(formData);
+                      
+                        $.ajax({
+                            url: base_url + '/api/employee-pkg/mealUpdateToEmployee',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                           .done(function(res) {
+                                if (!res.success) {
+                                    showErrorNoty(res);
+                                    return;
+                                } 
+                                $scope.$apply();
+                            })
+                            .fail(function (xhr) {
+                                $scope.showMealModal = false;
+                                custom_noty('error', 'Something went wrong at server');
+                            });
+                    },
+                });
+       
         $scope.reloadPage = function() {
             window.location = base_url + '#!/kanban-app';
         }
