@@ -1510,7 +1510,7 @@ class ManualVehicleDeliveryController extends Controller
                 // }
 
                 DB::beginTransaction();
-
+                $job_order->billing_type_id = 11524;
                 $job_order->vehicle_payment_status = 1;
                 $job_order->updated_by_id = Auth::user()->id;
                 $job_order->updated_at = Carbon::now();
