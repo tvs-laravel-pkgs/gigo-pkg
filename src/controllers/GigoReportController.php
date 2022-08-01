@@ -9,6 +9,7 @@ use App\JobOrder;
 use App\OutletShift;
 use App\JobCard;
 use App\GateLog;
+use App\GatePass;
 use App\EmployeeShift;
 use App\Employee;
 use App\Part;
@@ -1017,6 +1018,9 @@ class GigoReportController extends Controller {
                     }else{
                         $status = isset($job_order->status->name) ? $job_order->status->name : '';
                     }
+
+                    $gate_pass = GatePass::select('configs.name as status') ->leftjoin('configs', 'configs.id', 'gate_passes.status_id')->where('gate_passes.job_order_id', $job_order->id)->first();
+                    $gate_pass_status = isset($gate_pass->status) ? $gate_pass->status : '';
                     
                     $job_order_details[] = [
                         isset($job_order->outlet->state->code) ? $job_order->outlet->state->code : '',                        
@@ -1040,6 +1044,7 @@ class GigoReportController extends Controller {
                         isset($job_card->floor_supervisor_code) ? $job_card->floor_supervisor_code :'',  
                         isset($job_card->floor_supervisor_name) ? $job_card->floor_supervisor_name :'',  
                         $status,
+                        $gate_pass_status,
                     ];    
                 }
             }
@@ -1069,6 +1074,7 @@ class GigoReportController extends Controller {
                 'Floor Supervisor Code',
                 'Floor Supervisor Name',
                 'Status',
+                'Gate Pass Status',
             ];
 
             $time_stamp = date('Y_m_d_h_i_s');
