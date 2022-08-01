@@ -48,7 +48,7 @@ class VehicleGatePassController extends Controller
                 'gate_logs.id as gate_log_id',
                 'configs.name as status',
                 'gate_passes.status_id',
-                DB::raw('DATE_FORMAT(gate_passes.created_at,"%d/%m/%Y, %h:%s %p") as date_and_time'),
+                DB::raw('DATE_FORMAT(gate_passes.created_at,"%d/%m/%Y, %h:%i %p") as date_and_time'),
             ])
                 ->join('job_orders', 'job_orders.id', 'gate_passes.job_order_id')
                 ->leftJoin('job_cards', 'job_cards.id', 'gate_passes.job_card_id')
