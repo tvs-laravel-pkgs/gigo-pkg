@@ -34,6 +34,7 @@ use Illuminate\Http\Request;
 use Storage;
 use Validator;
 use Yajra\Datatables\Datatables;
+use Abs\GigoPkg\GatePass;
 
 class GateInController extends Controller
 {
@@ -542,6 +543,39 @@ class GateInController extends Controller
             $gate_log->number = $generateNumber['number'];
             $gate_log->save();
 
+            $gate_pass = GatePass::firstOrNew(['job_order_id' => $job_order->id, 'type_id' => 8280]); //VEHICLE GATE PASS
+
+            //GENERATE GATE IN VEHICLE NUMBER
+            $generateNumber = SerialNumberGroup::generateNumber(29, $financial_year->id, $branch->state_id, $branch->id);
+            if (!$generateNumber['success']) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => [
+                        'No Gate Pass Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
+                    ],
+                ]);
+            }
+            if ($generateNumber['success']) {
+
+                if (!$gate_pass->exists) {
+                    $gate_pass->updated_at = Carbon::now();
+                } else {
+                    $gate_pass->created_at = Carbon::now();
+                }
+
+                $gate_pass->company_id = $gate_log->company_id;
+                $gate_pass->number = $generateNumber['number'];
+                $gate_pass->status_id = 8340; //GATE OUT PENDING
+                $gate_pass->gate_out_date = Carbon::now();
+                $gate_pass->save();
+
+                $gate_log->gate_pass_id = $gate_pass->id;
+                $gate_log->status_id = 8123; //GATE OUT PENDING
+                $gate_log->save();
+            }
+
+                     
             //CREATE DIRECTORY TO STORAGE PATH
             $attachment_path = storage_path('app/public/gigo/gate_in/attachments/');
             Storage::makeDirectory($attachment_path, 0777);
