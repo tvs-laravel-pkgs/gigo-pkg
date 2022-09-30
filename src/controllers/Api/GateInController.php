@@ -34,7 +34,8 @@ use Illuminate\Http\Request;
 use Storage;
 use Validator;
 use Yajra\Datatables\Datatables;
-
+use Abs\GigoPkg\GatePass;
+use Illuminate\Support\Str;
 class GateInController extends Controller
 {
     public $successStatus = 200;
@@ -159,11 +160,11 @@ class GateInController extends Controller
                     'mimes:jpeg,jpg,png',
                     // 'max:3072',
                 ],
-                'driver_photo' => [
-                    'required',
-                    'mimes:jpeg,jpg,png',
+                //'driver_photo' => [
+                  //  'required',
+                    //'mimes:jpeg,jpg,png',
                     // 'max:3072',
-                ],
+                //],
                 // 'chassis_photo' => [
                 //     'required',
                 //     'mimes:jpeg,jpg,png',
@@ -401,7 +402,6 @@ class GateInController extends Controller
             $generate_number_status = 0;
             if ($floating_gate_pass && $floating_gate_pass->job_order_id) {
                 $job_order = JobOrder::find($floating_gate_pass->job_order_id);
-
                 if ($job_order && ($job_order->outlet_id != Auth::user()->employee->outlet_id)) {
                     $job_order = new JobOrder;
                     $job_order->company_id = Auth::user()->company_id;
@@ -542,6 +542,39 @@ class GateInController extends Controller
             $gate_log->number = $generateNumber['number'];
             $gate_log->save();
 
+            $gate_pass = GatePass::firstOrNew(['job_order_id' => $job_order->id, 'type_id' => 8280]); //VEHICLE GATE PASS
+
+            //GENERATE GATE IN VEHICLE NUMBER
+            $generateNumber = SerialNumberGroup::generateNumber(29, $financial_year->id, $branch->state_id, $branch->id);
+            if (!$generateNumber['success']) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => [
+                        'No Gate Pass Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
+                    ],
+                ]);
+            }
+            if ($generateNumber['success']) {
+
+                if (!$gate_pass->exists) {
+                    $gate_pass->updated_at = Carbon::now();
+                } else {
+                    $gate_pass->created_at = Carbon::now();
+                }
+
+                $gate_pass->company_id = $gate_log->company_id;
+                $gate_pass->number = $generateNumber['number'];
+                $gate_pass->status_id = 8340; //GATE OUT PENDING
+                $gate_pass->gate_out_date = Carbon::now();
+                $gate_pass->save();
+
+                $gate_log->gate_pass_id = $gate_pass->id;
+                $gate_log->status_id = 8123; //GATE OUT PENDING
+                $gate_log->save();
+            }
+
+                     
             //CREATE DIRECTORY TO STORAGE PATH
             $attachment_path = storage_path('app/public/gigo/gate_in/attachments/');
             Storage::makeDirectory($attachment_path, 0777);
@@ -721,9 +754,41 @@ class GateInController extends Controller
             } else {
                 $soap_number = $vehicle->registration_number;
             }
+ 
+            $membership_det = Vehicle::select('customer_memberships.membership_code','customer_memberships.start_date','customer_memberships.membership_number',
+                            DB::raw('COALESCE(DATE_FORMAT(customer_memberships.start_date,"%d-%m-%Y"), "") as start_date'),
+                            DB::raw('COALESCE(DATE_FORMAT(customer_memberships.expiry_date,"%d-%m-%Y"), "") as expiry_date'),
+                            'memberships.title',DB::raw('GROUP_CONCAT(customer_membership_coupons.coupon_code) as aggregate_coupon'),'vehicles.registration_number','vehicles.chassis_number','vehicles.engine_number','customers.code', 'customers.mobile_no' )
+                            ->join('customer_membership_vehicles','customer_membership_vehicles.vehicle_id','vehicles.id')
+                            ->join('customer_memberships','customer_memberships.id','customer_membership_vehicles.customer_membership_id')
+                            ->join('memberships','memberships.id','customer_memberships.membership_id')
+                            ->leftjoin('customer_membership_coupons','customer_membership_coupons.customer_membership_id' , 'customer_memberships.id')
+                             ->leftjoin('customers','customers.id' , 'vehicles.customer_id')
+                            ->where('vehicles.company_id', Auth::user()->company_id)
+                            ->where('customer_membership_vehicles.vehicle_id' ,$vehicle->id)
+                            ->where('customer_memberships.is_active',1)->first();
 
-            $membership_data = $this->getSoap->GetTVSONEVehicleDetails($soap_number);
-            // dd($membership_data);
+            if($membership_det->membership_code) {
+
+                $membership_data['success'] = 'true';           
+                $membership_data['vehicle_reg_number'] = $membership_det->registration_number;
+                $membership_data['chassis_number'] = $membership_det->chassis_number;
+                $membership_data['engine_number'] = $membership_det->engine_number;
+                $membership_data['al_dms_code'] = isset($membership_det->code) ? $membership_det->code : '';  
+                $membership_data['mobile_no'] = isset($membership_det->mobile_no) ? $membership_det->mobile_no : '';
+                $membership_data['membership_number'] = $membership_det->membership_code;
+                $membership_data['start_date'] = $membership_det->start_date;
+                $membership_data['end_date'] = $membership_det->expiry_date;
+                if($membership_det->membership_code && (Str::startsWith( $membership_det->membership_code , 'TVSONE') ) )
+                    $membership_data['membership_name'] = "TVS ONE";
+                else
+                    $membership_data['membership_name'] = "";
+                $membership_data['membership_type'] = $membership_det->title;
+                $membership_data['aggregate_coupon'] = $membership_det->aggregate_coupon;
+                $membership_data['tvs_one_customer_code'] =  $membership_det->tvs_one_employee_code;
+            }else
+                $membership_data = $this->getSoap->GetTVSONEVehicleDetails($soap_number);
+
             //Save API Response
             $api_log = new ApiLog;
             $api_log->type_id = 11780;
@@ -819,6 +884,12 @@ class GateInController extends Controller
                 $job_order->save();
 
                 $membership_message = '. TVS Membership Number is ' . $membership_data['membership_number'] . ' - TVS';
+               
+               if($membership_data['membership_name'] == 'TVS ONE') {
+                     $days = now()->diffInDays(Carbon::parse($membership_data['end_date']));
+                    $membership_message_WH_SA = "TVSONE ".$membership_data['membership_type'] ." membership Vehicle Registration No ".$membership_data['vehicle_reg_number']." reported to our workshop today, his membership expires on ".date('d/m/Y', strtotime($membership_data['end_date'])) ." - ". $days ." days left speak with customer for membership renewal - TVS";
+                }
+
             } else {
                 $membership_message = ' - TVS';
             }
@@ -996,6 +1067,31 @@ class GateInController extends Controller
             $notifications['data'] = ['title' => $title, 'message' => $message, 'redirection_id' => 1, 'vehicle_data' => null, 'outlet_id' => Auth::user()->employee->outlet_id];
 
             Notification::dispatch($notifications);
+
+            //SMS Send To Service Advisor regarding Membership details
+
+           $getSAList = DB::table('roles')->select('users.mobile_number')->join('role_user', 'roles.id' , 'role_user.role_id')
+                            ->join('users','users.id','role_user.user_id')
+                            ->join('outlets','outlets.id','users.working_outlet_id')
+                            ->where('roles.name', 'GIGO Service Advisor')
+                            ->where('outlets.id', $job_order->outlet_id)->get();
+            if(!empty($getSAList) && isset($membership_message_WH_SA)){ 
+
+                foreach ($getSAList as $key => $value) {  
+                    if($value->mobile_number){
+                        $sms_params=[];
+                        $sms_params['mobile_number'] = $value->mobile_number;
+                        $sms_params['sms_url'] = config('services.mob_sms_url');
+                        $sms_params['sms_user'] = config('services.mob_sms_user');
+                        $sms_params['sms_password'] = config('services.mob_sms_password');
+                        $sms_params['sms_sender_id'] = config('services.mob_sms_sender_id');
+                        $sms_params['message'] = $membership_message_WH_SA;
+                        tvsoneSendSMS($sms_params);
+                    }
+                }
+
+            }
+
 
             return response()->json([
                 'success' => true,

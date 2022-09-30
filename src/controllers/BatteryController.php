@@ -16,6 +16,8 @@ use Entrust;
 use Excel;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
+use App\VehicleModel;
+use Validator;
 
 class BatteryController extends Controller
 {
@@ -944,5 +946,72 @@ class BatteryController extends Controller
             });
             $excel->setActiveSheetIndex(0);
         })->export('xlsx');
+    }
+
+    public function searchApplicationModel(Request $request) {
+        $key = $request->key;
+        $search_models = VehicleModel::where('company_id', Auth::user()->company_id)
+            ->select(
+                'id'
+            )
+            ->where(function ($q) use ($key) {
+                $q->where('model_name', 'like', $key . '%')
+                    ->orWhere('model_number', 'like', $key . '%')
+                ;
+            })->pluck('id');
+
+            $application_models = ApplicationBatteryDetail::where('application_id',$request->application_id)
+                ->whereIn('model_id',$search_models)
+                ->pluck('model_id');
+
+           $list = VehicleModel::whereIn('id',$application_models)->select(
+                'id',
+                'model_name',
+                'model_number as number'
+            )->get();
+        return response()->json($list);
+    }
+
+    public function getApplicationBatteryInfo(Request $request){
+        try{
+            $error_messages = [
+                'model_id.required' => 'Model ID is required',
+                'application_id.required' => 'Application ID is required',
+            ];
+
+            $validator = Validator::make($request->all(), [
+                'model_id' => [
+                    'required',
+                    'exists:models,id',
+                ],
+                'application_id' => [
+                    'required',
+                    'exists:battery_applications,id',
+                ],
+            ], $error_messages);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => $validator->errors()->all(),
+                ]);
+            }
+            $application_battery = ApplicationBatteryDetail::where('model_id',$request->model_id)
+                ->where('application_id',$request->application_id)
+                ->first();
+            return response()->json([
+                'success' => true,
+                'data' => $application_battery,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Server Error',
+                'errors' => [
+                    'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+                ],
+            ]);
+        }
     }
 }
