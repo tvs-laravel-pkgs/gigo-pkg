@@ -318,7 +318,7 @@ class VehicleGatePassController extends Controller
                 if ($balance_amount > 0) {
                     $job_order->status_id = 8467; // Payment Pending
                 }
-
+                $job_order->status_id = 8468;
                 $job_order->save();
 
                 $inventories = DB::table('job_order_vehicle_inventory_item')->where('gate_log_id', $gate_log->id)->where('entry_type_id', 11301)->delete();

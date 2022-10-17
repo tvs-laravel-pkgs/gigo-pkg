@@ -1009,9 +1009,6 @@ class GateInController extends Controller
                 }
             }
 
-            $job_order->status_id = 8468; 
-            $job_order->save();
-
             DB::commit();
 
             $gate_in_data['number'] = $gate_log->number;
