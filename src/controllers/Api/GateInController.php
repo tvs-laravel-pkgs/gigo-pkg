@@ -361,7 +361,7 @@ class GateInController extends Controller
             $previous_job_order = JobOrder::join('outlets','outlets.id','job_orders.outlet_id')->where('job_orders.vehicle_id', $vehicle->id)->where('job_orders.company_id', Auth::user()->company_id)->orderBy('job_orders.id', 'DESC')->select('outlets.ax_name','outlets.code','job_orders.status_id')->first();
 
             if ($previous_job_order) {
-                if ($previous_job_order->status_id != 8470 && $previous_job_order->status_id != 8476 && $previous_job_order->status_id != 8467 && $previous_job_order->status_id != 8468 && $previous_job_order->status_id != '') {
+                if ($previous_job_order->status_id != 8460 && $previous_job_order->status_id != 8470 && $previous_job_order->status_id != 8476 && $previous_job_order->status_id != 8467 && $previous_job_order->status_id != 8468 && $previous_job_order->status_id != '') {
                     $outlet_code = $previous_job_order->ax_name ? $previous_job_order->ax_name : $previous_job_order->code;
                     return response()->json([
                         'success' => false,
