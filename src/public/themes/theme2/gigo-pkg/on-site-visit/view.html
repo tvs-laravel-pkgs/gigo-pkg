@@ -556,7 +556,7 @@
                                                                 ng-class="labour_details.removal_reason_id == 10022 ? 'my-disable' : ''">
                                                                 <button type="button"
                                                                     ng-if="(labour_details.status_id == 8180 || labour_details.status_id == 8181 ) && site_visit.status_id != 6 && site_visit.status_id != 9 && site_visit.status_id != 10 && site_visit.status_id != 16 && !$ctrl.hasPermission('site-visit-parts-issue')"
-                                                                    ng-click="showLabourForm(index,labour_details)"
+                                                                    ng-click="showLabourRotForm(index,labour_details)"
                                                                     class="btn img-btn btn-delete">
                                                                     <img class="img-responsive radius-50"
                                                                         src="./public/theme/img/table/cndn/edit-blue.svg"
@@ -607,7 +607,7 @@
                                                                     ng-if="!$ctrl.hasPermission('site-visit-parts-issue') && site_visit.status_id != 6 && site_visit.status_id != 9 && site_visit.status_id != 10 && site_visit.status_id != 16"
                                                                     type="button"
                                                                     class="btn btn-md type2 btn-green btn-square"
-                                                                    ng-click="showLabourForm(false)">
+                                                                    ng-click="showLabourRotForm(false)">
                                                                     Add Labour
                                                                 </button>
                                                             </td>
@@ -1280,6 +1280,129 @@
                                         ng-model="on_site_order_ro.repair_order.amount" type="text"
                                         name="repair_order_amount" value="{{on_site_order_ro.repair_order.amount}}"
                                         onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="7">
+                                </li>
+                            </ul>
+                        </div><!-- View Data -->
+                    </div><!-- Modal Form -->
+                </div><!-- Modal Body -->
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                        </div><!-- Column -->
+                        <div class="col-md-6 text-right">
+                            <button type="button" data-dismiss="modal"
+                                class="btn btn-primary btn-bordered cancel_modal_btn">
+                                Cancel
+                            </button>
+                            <button type="submit" ng-click="saveLabour()"
+                                class="btn btn-bordered save_labour">Submit</button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Modal Footer -->
+            </div><!-- Modal Content -->
+        </form>
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->
+<div class="modal fade filter" id="labour_form_rot_modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <form id="labour_rot_form" autocomplete="off">
+            <input type="hidden" name="on_site_order_id" value="{{site_visit.id}}">
+            <input type="hidden" name="on_site_repair_order_id" value="{{on_site_repair_order_id}}">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i
+                            class="icon ion-md-close"></i></button>
+                    <h5 class="modal-title" id="myModalLabel">
+                        {{modal_action}} Labour
+                    </h5>
+                </div><!-- Modal Header -->
+                <div class="modal-body">
+                    <div class="modal-form">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>
+                                        ROT IEM Group <sup class="mandatory">*</sup>
+                                    </label>
+                                    <md-autocomplete md-selected-item="rot_on_site_order_ro.rot_item_group"
+                                        md-search-text="rotIemGroupSearchKey"
+                                        md-items="rot_item_group in searchRotIemGroups(rotIemGroupSearchKey)"
+                                        md-item-text="rot_item_group.job_group" md-min-length="3" md-escape-options="clear"
+                                        placeholder="Ex. ABS100"
+                                        md-selected-item-change="rotIemSelected(rot_on_site_order_ro.rot_item_group)"
+                                        md-input-id="repairOrderAutoCompleteId" md-no-cache="true">
+                                        <md-item-template>
+                                            <span>
+                                                {{rot_item_group.job_group}}
+                                            </span>
+                                        </md-item-template>
+                                        <md-not-found>
+                                            No records matching "{{rotIemGroupSearchKey}}" were found.
+                                        </md-not-found>
+                                    </md-autocomplete>
+                                    <input type="hidden" class="required" name="rot_iem_group_id"
+                                        value="{{rot_on_site_order_ro.rot_item_group.id}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>
+                                        ROT IEM Code <sup class="mandatory">*</sup>
+                                    </label>
+                                    <md-autocomplete md-selected-item="rot_on_site_order_ro.rot_item_order"
+                                        md-search-text="rotIemSearchKey"
+                                        md-items="rot_item_order in searchRotIems(rotIemSearchKey)"
+                                        md-item-text="rot_item_order.code_and_name" md-min-length="3" md-escape-options="clear"
+                                        placeholder="Ex. ABS100"
+                                        md-selected-item-change="rotIemSelected(rot_on_site_order_ro.rot_item_order)"
+                                        md-input-id="repairOrderAutoCompleteId" md-no-cache="true">
+                                        <md-item-template>
+                                            <span>
+                                                {{rot_item_order.code_and_name}}
+                                            </span>
+                                        </md-item-template>
+                                        <md-not-found>
+                                            No records matching "{{rotIemSearchKey}}" were found.
+                                        </md-not-found>
+                                    </md-autocomplete>
+                                    <input type="hidden" class="required" name="rot_iem_id"
+                                        value="{{rot_on_site_order_ro.rot_item_order.id}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                        </div><!-- Row -->
+                        <div class="view-details mb-no" ng-if="rot_on_site_order_ro.rot_item_order">
+                            <ul class="view-row mb-no pad-tb-none">
+                                <li class="view-col-4">
+                                    <span class="view-col-label">Description</span>
+                                    <span class="view-data-list-value">{{rot_on_site_order_ro.rot_item_order.name || '-'}}</span>
+                                </li>
+                                <li class="view-col-4">
+                                    <span class="view-col-label">KM</span>
+                                    <span class="view-data-list-value">{{rot_on_site_order_ro.rot_item_order.km || '-'}}</span>
+                                </li>
+                                <li class="view-col-4">
+                                    <span class="view-col-label">Man Days</span>
+                                    <span class="view-data-list-value">{{rot_on_site_order_ro.rot_item_order.man_days || '-'}}</span>
+                                </li>
+                                <li class="view-col-4">
+                                    <span class="view-col-label">Working Hrs Start Time</span>
+                                    <span class="view-data-list-value">{{rot_on_site_order_ro.rot_item_order.working_hrs_start_time || '-'}}</span>
+                                </li>
+                                <li class="view-col-4">
+                                    <span class="view-col-label">Working Hrs Close Time</span>
+                                    <span class="view-data-list-value">{{rot_on_site_order_ro.rot_item_order.working_hrs_close_time || '-'}}</span>
+                                </li>
+                                <li class="view-col-4">
+                                    <span class="view-col-label">Total Working Hrs</span>
+                                    <span class="view-data-list-value">{{rot_on_site_order_ro.rot_item_order.total_working_hrs || '-'}}</span>
+                                </li>
+                                <li class="view-col-4">
+                                    <span class="view-col-label">Onsite Price</span>
+                                    <span class="view-data-list-value">{{rot_on_site_order_ro.rot_item_order.onsite_price || '-'}}</span>
+                                </li>
+                                <li class="view-col-4">
+                                    <span class="view-col-label">Rehab Price</span>
+                                    <span class="view-data-list-value">{{rot_on_site_order_ro.rot_item_order.rehab_price || '-'}}</span>
                                 </li>
                             </ul>
                         </div><!-- View Data -->

@@ -567,6 +567,48 @@ app.component('onSiteVisitView', {
             // console.log($scope.on_site_order_ro.repair_order);
             // console.log($scope.on_site_order_ro.repair_order.repair_order_type);
         }
+        $scope.showLabourRotForm = (labour_index, labour = null) => {
+            console.log(labour);
+            $scope.rot_on_site_order_ro = [];
+            $scope.rot_on_site_order_ro_id = '';
+            if (labour_index === false) {
+                // $scope.labour_details = {};
+            } else {
+                
+            }
+
+            $scope.labour_index = labour_index;
+            $scope.labour_modal_action = labour_index === false ? 'Add' : 'Edit';
+            $('#labour_form_rot_modal').modal('show');
+            console.log($scope.rot_on_site_order_ro);
+        }
+        $scope.searchRotIemGroups = key => {
+            return new Promise((resolve, reject) => {
+                $http({
+                    url:  laravel_routes['gigoRotIemGroupSearch'],
+                    method: 'GET',
+                    params: { key }
+                }).then(res => {
+                    resolve(res.data)
+                })
+            })
+        }
+        $scope.searchRotIems = key => {
+            if (!$scope.rot_on_site_order_ro?.rot_item_group?.id) {
+                custom_noty('error', 'Kidly select group first!')
+                return []
+            }
+
+            return new Promise((resolve, reject) => {
+                $http({
+                    url:  laravel_routes['gigoRotIemSearch'],
+                    method: 'GET',
+                    params: { key, 'group_id': $scope.rot_on_site_order_ro?.rot_item_group?.id }
+                }).then(res => {
+                    resolve(res.data)
+                })
+            })
+        }
 
         $scope.init = function () {
             $rootScope.loading = true;

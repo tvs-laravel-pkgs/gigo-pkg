@@ -395,4 +395,11 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
     Route::post('gigo-support/customer/get-search-list', 'GigoSupportController@getCustomerSearchList')->name('gigoSupportCustomerSearchList');
     Route::get('gigo-support/get-filter-data', 'GigoSupportController@getVehicleInwardFilter')->name('gigoSupportGetVehicleInwardFilter');
 
+    // On site visit
+    Route::group(['prefix' => 'on-site-visit'], function () {
+        Route::get('/get-rot-iem-group', 'OnSiteVisitController@getRotIemGroup')->name('gigoRotIemGroupSearch');
+        Route::get('/get-rot-iem', 'OnSiteVisitController@getRotIem')->name('gigoRotIemSearch');
+    });
+    // On site visit
+
 });
