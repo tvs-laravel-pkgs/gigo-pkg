@@ -2,6 +2,7 @@
 
 namespace Abs\GigoPkg;
 
+use Abs\GigoPkg\RotIemDetail;
 use App\Config;
 use App\Customer;
 use App\Http\Controllers\Controller;
@@ -344,5 +345,31 @@ class OnSiteVisitController extends Controller
             });
             $excel->setActiveSheetIndex(0);
         })->export('xlsx');
+    }
+    public function getRotIemGroup(Request $r) {
+        $rotIemGroups = RotIemDetail::select(
+                'id',
+                'job_group'
+            )->where('job_group', 'like', '%' . $r->key . '%')
+			->where('company_id', Auth::user()->company_id)
+            ->groupBy('job_group')
+			->limit(10)
+			->get();
+		return response()->json($rotIemGroups);
+    }
+    public function getRotIem(Request $r) {
+        // dd($r->all());
+        $groupName = RotIemDetail::withTrashed()->where('id', $r->group_id)->pluck('job_group')->first();
+
+        $rotIemGroups = RotIemDetail::where(function($q) use ($r) {
+                $q->where('rot_code', 'like', '%' . $r->key . '%')
+                ->orWhere('name', 'like', '%' . $r->key . '%');
+            })->where('job_group', $groupName)
+			->where('company_id', Auth::user()->company_id)
+            ->groupBy('id')
+            ->orderBy('id', 'DESC')
+			->limit(10)
+			->get();
+		return response()->json($rotIemGroups);
     }
 }

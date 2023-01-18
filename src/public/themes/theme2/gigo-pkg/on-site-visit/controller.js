@@ -5,6 +5,7 @@ app.component('onSiteVisitList', {
         $('#search_inward_vehicle').focus();
         var self = this;
         HelperService.isLoggedIn()
+        console.log(HelperService.getLoggedUser())
         $('li').removeClass('active');
         $('.master_link').addClass('active').trigger('click');
 
@@ -665,6 +666,45 @@ app.component('onSiteVisitView', {
                         })
                         .fail(function (xhr) {
                             $('.save_labour').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+        //Save ROT Labour
+        $scope.saveRotLabour = function () {
+            var form_id = '#labour_rot_form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'rot_iem_group_id': {
+                        required: true,
+                    },
+                    'rot_iem_id': {
+                        required: true,
+                    },
+                },
+                submitHandler: function (form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.save_rot_labour').button('loading');
+                    $.ajax({
+                        url: base_url + '/api/on-site-visit/rot-repair-order/save',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
+                        .done(function (res) {
+                            if (!res.success) {
+                                $('.save_rot_labour').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            $scope.fetchData();
+                        })
+                        .fail(function (xhr) {
+                            $('.save_rot_labour').button('reset');
                             custom_noty('error', 'Something went wrong at server');
                         });
                 }

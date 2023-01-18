@@ -510,5 +510,10 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
         Route::post('/battery/get-form-data', 'BatteryController@getFormData');
         Route::post('/battery/save', 'BatteryController@save');
         Route::post('/battery/payment/save', 'BatteryController@paymentSave');
+
+        // ROT IEM
+        Route::group(['prefix' => 'on-site-visit'], function () {
+            Route::post('/rot-repair-order/save', 'OnSiteVisitController@saveRotLabourDetail');
+        });
     });
 });
