@@ -26,7 +26,7 @@ class RotIemDetail extends Model
         'remarks',
         'created_by_id ',
     ];
-    protected $appends = ['code_and_name'];
+    protected $appends = ['code_and_name'];  
 
     public function company(){
         return $this->belongsTo(Company::class, 'company_id');

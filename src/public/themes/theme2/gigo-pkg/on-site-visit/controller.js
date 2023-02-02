@@ -524,7 +524,7 @@ app.component('onSiteVisitView', {
         }
 
         $scope.showLabourForm = function (labour_index, labour = null) {
-            console.log(labour);
+            //console.log(labour);
             $scope.on_site_order_ro = [];
             $scope.on_site_repair_order_id = '';
             if (labour_index === false) {
@@ -571,17 +571,21 @@ app.component('onSiteVisitView', {
         $scope.showLabourRotForm = (labour_index, labour = null) => {
             console.log(labour);
             $scope.rot_on_site_order_ro = [];
-            $scope.rot_on_site_order_ro_id = '';
+            $scope.on_site_repair_order_id = '';
             if (labour_index === false) {
                 // $scope.labour_details = {};
-            } else {
                 
+            } else {
+                $scope.rot_on_site_order_ro.rot_item_group = labour?.rot_item_order || null;
+                $scope.rot_on_site_order_ro.rot_item_order = labour?.rot_item_order || null;
+                $scope.on_site_repair_order_id = labour.id;
             }
-
+            
+            
             $scope.labour_index = labour_index;
             $scope.labour_modal_action = labour_index === false ? 'Add' : 'Edit';
             $('#labour_form_rot_modal').modal('show');
-            console.log($scope.rot_on_site_order_ro);
+            //console.log($scope.rot_on_site_order_ro);
         }
         $scope.searchRotIemGroups = key => {
             return new Promise((resolve, reject) => {
@@ -695,11 +699,15 @@ app.component('onSiteVisitView', {
                         contentType: false,
                     })
                         .done(function (res) {
+                            $('.save_rot_labour').button('reset');
                             if (!res.success) {
-                                $('.save_rot_labour').button('reset');
+                               
                                 showErrorNoty(res);
                                 return;
                             }
+                            $("#labour_form_rot_modal").modal('hide');
+                            $('body').removeClass('modal-open');    
+                            $('.modal-backdrop').remove();
                             custom_noty('success', res.message);
                             $scope.fetchData();
                         })

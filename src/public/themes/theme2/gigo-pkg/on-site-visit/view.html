@@ -1307,6 +1307,7 @@
     <div class="modal-dialog" role="document">
         <form id="labour_rot_form" autocomplete="off">
             <input type="hidden" name="on_site_order_id" value="{{site_visit.id}}">
+            <!-- <input type="hidden" name="on_site_repair_order_id" value="{{on_site_repair_order_id}}"> -->
             <input type="hidden" name="on_site_repair_order_id" value="{{on_site_repair_order_id}}">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1340,7 +1341,7 @@
                                             No records matching "{{rotIemGroupSearchKey}}" were found.
                                         </md-not-found>
                                     </md-autocomplete>
-                                    <input type="hidden" class="required" name="rot_iem_group_id"
+                                    <input type="hidden" class="required" name="rot_iem_group_id" 
                                         value="{{rot_on_site_order_ro.rot_item_group.id}}">
                                 </div><!-- Field -->
                             </div><!-- Column -->

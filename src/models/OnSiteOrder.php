@@ -81,7 +81,10 @@ class OnSiteOrder extends BaseModel
     {
         return $this->hasMany('App\OnSiteOrderRepairOrder', 'on_site_order_id');
     }
-
+    public function RotIemDetail()
+    {
+        return $this->hasMany('App\OnSiteOrderRepairOrder', 'rot_iem_id');
+    }
     public function onSiteOrderParts()
     {
         return $this->hasMany('App\OnSiteOrderPart', 'on_site_order_id');
@@ -525,9 +528,9 @@ class OnSiteOrder extends BaseModel
             foreach ($site_visit->onSiteOrderRepairOrders as $key => $labour) {
                 $total_amount = 0;
                 $labour_details[$key]['sno'] = $i;
-                $labour_details[$key]['code'] = $labour->repairOrder->code;
-                $labour_details[$key]['name'] = $labour->repairOrder->name;
-                $labour_details[$key]['hsn_code'] = $labour->repairOrder->taxCode ? $labour->repairOrder->taxCode->code : '-';
+                $labour_details[$key]['code'] = $labour->iemrepairOrder->rot_code;
+                $labour_details[$key]['name'] = $labour->iemrepairOrder->name;
+                $labour_details[$key]['hsn_code'] = $labour->iemrepairOrder->tax_code ? $labour->iemrepairOrder->taxCode->code : '-';
                 $labour_details[$key]['qty'] = '1.00'; //$labour->qty;
                 $labour_details[$key]['price'] = $labour->amount;
                 $labour_details[$key]['mrp'] = $labour->amount;
@@ -739,7 +742,7 @@ class OnSiteOrder extends BaseModel
         $data['total_parts_qty'] = number_format((float) $total_parts_qty, 2, '.', '');
         $data['total_parts_mrp'] = number_format((float) $total_parts_mrp, 2, '.', '');
         $data['total_parts_price'] = number_format((float) $total_parts_price, 2, '.', '');
-        $data['total_parts_taxable_amount'] = number_format((float) $total_parts_taxable_amount, 2, '.', '');
+        $data['total_parts_tax'] = number_format((float) $total_parts_taxable_amount, 2, '.', '');
         $data['parts_total_amount'] = number_format($parts_amount, 2);
         $data['labour_total_amount'] = number_format($labour_amount, 2);
 
@@ -842,9 +845,9 @@ class OnSiteOrder extends BaseModel
             foreach ($site_visit->onSiteOrderRepairOrders as $key => $labour) {
                 $total_amount = 0;
                 $labour_details[$key]['sno'] = $i;
-                $labour_details[$key]['code'] = $labour->repairOrder->code;
-                $labour_details[$key]['name'] = $labour->repairOrder->name;
-                $labour_details[$key]['hsn_code'] = $labour->repairOrder->taxCode ? $labour->repairOrder->taxCode->code : '-';
+                $labour_details[$key]['code'] = $labour->iemrepairOrder->code;
+                $labour_details[$key]['name'] = $labour->iemrepairOrder->name;
+                $labour_details[$key]['hsn_code'] = $labour->iemrepairOrder->taxCode ? $labour->iemrepairOrder->taxCode->code : '-';
                 $labour_details[$key]['qty'] = '1.00'; //$labour->qty;
                 $labour_details[$key]['price'] = $labour->amount;
                 $labour_details[$key]['mrp'] = $labour->amount;
@@ -857,7 +860,7 @@ class OnSiteOrder extends BaseModel
                 $tax_values = array();
 
                 if (in_array($labour->split_order_type_id, $customer_paid_type_id)) {
-                    if ($labour->repairOrder->taxCode) {
+                    if ($labour->iemrepairOrder->taxCode) {
                         $count = 1;
 
                         foreach ($labour->repairOrder->taxCode->taxes as $tax_key => $value) {
@@ -925,7 +928,8 @@ class OnSiteOrder extends BaseModel
             }
         }
         $data['tax_percentage_wise_amount'] = $tax_percentage_wise_amount;
-
+        // $data['tax_percentage'] = $tax_percentage;
+        $data['type'] = $type;
         $total_amount = $labour_amount;
         $data['taxes'] = $taxes;
         $data['labour_details'] = $labour_details;

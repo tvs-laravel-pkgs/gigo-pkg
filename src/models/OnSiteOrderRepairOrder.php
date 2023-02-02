@@ -14,7 +14,9 @@ class OnSiteOrderRepairOrder extends BaseModel {
 	public function repairOrder() {
 		return $this->belongsTo('Abs\GigoPkg\RepairOrder', 'repair_order_id');
 	}
-
+	public function iemrepairOrder() {
+		return $this->belongsTo('Abs\GigoPkg\RotIemDetail', 'rot_iem_id');
+	}
 	public function splitOrderType() {
 		return $this->belongsTo('App\SplitOrderType', 'split_order_type_id');
 	}
