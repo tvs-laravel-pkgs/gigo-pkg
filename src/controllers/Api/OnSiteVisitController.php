@@ -1091,7 +1091,7 @@ class OnSiteVisitController extends Controller
                 if ($labour->is_free_service != 1 && (in_array($labour->split_order_type_id, $customer_paid_type) || !$labour->split_order_type_id)) {
                     $total_amount = 0;
                     $tax_amount = 0;
-                    if ($labour->repairOrder->taxCode) {
+                    if (isset($labour->repairOrder->taxCode) && $labour->repairOrder->taxCode) { 
                         foreach ($labour->repairOrder->taxCode->taxes as $tax_key => $value) {
                             $percentage_value = 0;
                             if ($value->type_id == $tax_type) {
