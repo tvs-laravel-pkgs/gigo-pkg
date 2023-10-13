@@ -567,7 +567,7 @@ class GateInController extends Controller
                 $gate_pass->company_id = $gate_log->company_id;
                 $gate_pass->number = $generateNumber['number'];
                 $gate_pass->status_id = 8340; //GATE OUT PENDING
-                $gate_pass->gate_out_date = Carbon::now();
+                $gate_pass->gate_out_date => Carbon::now();
                 $gate_pass->save();
 
                 $gate_log->gate_pass_id = $gate_pass->id;
