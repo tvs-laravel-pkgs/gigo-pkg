@@ -759,7 +759,7 @@ class GateInController extends Controller
                             DB::raw('COALESCE(DATE_FORMAT(customer_memberships.start_date,"%d-%m-%Y"), "") as start_date'),
                             DB::raw('COALESCE(DATE_FORMAT(customer_memberships.expiry_date,"%d-%m-%Y"), "") as expiry_date'),
                             'memberships.title',DB::raw('GROUP_CONCAT(customer_membership_coupons.coupon_code) as aggregate_coupon'),'vehicles.registration_number','vehicles.chassis_number','vehicles.engine_number','customers.code', 'customers.mobile_no' )
-                            ->join('customer_membership_vehicles','customer_membership_vehicles.vehicle_id','vehicles.id')
+                            ->join('customer_membership_vehicles','customer_membership_vehicles.vehicle_id','vehicles.id'
                             ->join('customer_memberships','customer_memberships.id','customer_membership_vehicles.customer_membership_id')
                             ->join('memberships','memberships.id','customer_memberships.membership_id')
                             ->leftjoin('customer_membership_coupons','customer_membership_coupons.customer_membership_id' , 'customer_memberships.id')
@@ -886,8 +886,8 @@ class GateInController extends Controller
                 $membership_message = '. TVS Membership Number is ' . $membership_data['membership_number'] . ' - TVS';
                
                if($membership_data['membership_name'] == 'TVS ONE') {
-                     $days = now()->diffInDays(Carbon::parse($membership_data['end_date']));
-                    $membership_message_WH_SA = "TVSONE ".$membership_data['membership_type'] ." membership Vehicle Registration No ".$membership_data['vehicle_reg_number']." reported to our workshop today, his membership expires on ".date('d/m/Y', strtotime($membership_data['end_date'])) ." - ". $days ." days left speak with customer for membership renewal - TVS";
+                    $days = (int)((strtotime($membership_data['start_date']) - strtotime($membership_data['expiry_date']))/86400);
+                    $membership_message_WH_SA = "TVSONE ".$membership_data['membership_type'] ." membership Vehicle Registration No ".$membership_data['vehicle_reg_number']." reported to our workshop today, his membership expires on ".date('d/m/Y', strtotime($membership_data['expiry_date'])) ." - ". "08 " ."days left speak with customer for membership renewal - TVS";
                 }
 
             } else {
@@ -1070,10 +1070,10 @@ class GateInController extends Controller
 
             //SMS Send To Service Advisor regarding Membership details
 
-           $getSAList = DB::table('roles')->select('users.mobile_number')->join('role_user', 'roles.id' , 'role_user.role_id')
+           $getSAList = DB::table('roles')->join('role_user', 'roles.id' , 'role_user.role_id')
                             ->join('users','users.id','role_user.user_id')
                             ->join('outlets','outlets.id','users.working_outlet_id')
-                            ->where('roles.name', 'GIGO Service Advisor')
+                            ->where('roles.name', 'GIGO Service Advisor(')
                             ->where('outlets.id', $job_order->outlet_id)->get();
             if(!empty($getSAList) && isset($membership_message_WH_SA)){ 
 
