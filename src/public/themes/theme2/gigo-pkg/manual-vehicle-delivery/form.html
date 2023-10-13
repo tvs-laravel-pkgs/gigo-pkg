@@ -495,42 +495,24 @@
                                                             placeholder="Enter Remarks">{{job_order.inward_cancel_reason}}</textarea>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-
-                                                 <div class="col-md-3" ng-if="$ctrl.vehicle_service_status">
-                                                    <div class="form-group"> 
-                                                         <label>Job Card Number
-                                                             <sup class="mandatory" ng-if="(job_order.billing_type_id != 11524)">*</sup>
-                                                        </label>
+                                                <div class="col-md-3" ng-if="$ctrl.vehicle_service_status">
+                                                    <div class="form-group">
+                                                        <label>Job Card Number<sup class="mandatory">*</sup></label>
                                                         <input type="text" class="form-control required"
                                                             placeholder="Ex:12345"
                                                             onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')"
                                                             ng-model="job_order.job_card_number"
                                                             value="{{job_order.job_card_number}}"
-                                                            name="job_card_number"  ng-if="(job_order.billing_type_id != 11524)"/>
-
-                                                        <input type="text" class="form-control"
-                                                            placeholder="Ex:12345"
-                                                            onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')"
-                                                            ng-model="job_order.job_card_number"
-                                                            value="{{job_order.job_card_number}}"
-                                                            name="job_card_number" ng-if="(job_order.billing_type_id == 11524)"/> 
+                                                            name="job_card_number" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
- 
                                                 <div class="col-md-3"
-                                                    ng-if="(job_order.billing_type_id == 11521 || job_order.billing_type_id == 11522 || job_order.billing_type_id == 11524) && $ctrl.vehicle_service_status">
+                                                    ng-if="(job_order.billing_type_id == 11521 || job_order.billing_type_id == 11522) && $ctrl.vehicle_service_status">
                                                     <div class="form-group">
-                                                        <label>Remarks
-                                                            <sup class="mandatory" ng-if="(job_order.billing_type_id != 11524)">*</sup>
-                                                        </label>
+                                                        <label>Remarks<sup class="mandatory">*</sup></label>
                                                         <textarea class="form-control required" name="warranty_reason"
-                                                            rows="4" 
-                                                            placeholder="Enter Remarks" ng-if="(job_order.billing_type_id != 11524)">{{job_order.warranty_reason}}
-                                                        </textarea>
-                                                        <textarea class="form-control" name="warranty_reason"
                                                             rows="4"
-                                                            placeholder="Enter Remarks" ng-if="(job_order.billing_type_id == 11524)">{{job_order.warranty_reason}}
-                                                        </textarea>
+                                                            placeholder="Enter Remarks">{{job_order.warranty_reason}}</textarea>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                             </div>
