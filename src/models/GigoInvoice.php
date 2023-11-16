@@ -9,6 +9,7 @@ use App\Oracle\ArInvoiceExport;
 use App\Oracle\OtherTypeDetail;
 use Abs\GigoPkg\GigoInvoiceItem;
 use Auth;
+use App\BatteryLoadTestResult;
 
 class GigoInvoice extends BaseModel
 {
@@ -73,14 +74,13 @@ class GigoInvoice extends BaseModel
         $res['errors'] = [];
 
         $gigoInvoice = $this;
-        $companyName = null;
-        $companyCode = null;
-
         if (empty($gigoInvoice->invoice_amount) || floatval($gigoInvoice->invoice_amount) == 0.00) {
             $res['errors'] = ['Invoice value should be greater than 0'];
             return $res;
         }
 
+        $companyName = null;
+        $companyCode = null;
         if(!empty($gigoInvoice->company->oem_business_unit)){
             $companyName = $gigoInvoice->company->oem_business_unit->name;
             $companyCode = $gigoInvoice->company->oem_business_unit->code;
@@ -98,12 +98,12 @@ class GigoInvoice extends BaseModel
         //     $transactionTypeName = $transactionDetail->type ? $transactionDetail->type : $transactionTypeName;
         // }
 
-        $arInvoiceExports = ArInvoiceExport::where([
+        $arInvoiceExport = ArInvoiceExport::where([
             'transaction_number' => $gigoInvoice->invoice_number,
             'business_unit' => $companyName,
             'transaction_type_name' => $transactionTypeName,
-        ])->get();
-        if (count($arInvoiceExports) > 0) {
+        ])->first();
+        if (!empty($arInvoiceExport)) {
             $res['errors'] = ['Invoice already exported to oracle table'];
             return $res;
         }
@@ -257,8 +257,8 @@ class GigoInvoice extends BaseModel
             $cessAmt = array_sum(array_column($itemRecords, 'cess_amount'));
             $invoiceTotal = floatval($unitPriceAmt + $cgstAmt + $sgstAmt + $igstAmt + $ugstAmt + $tcsAmt + $cessAmt);
             if (round($gigoInvoice->invoice_amount) != round($invoiceTotal)) {
-                // $res['errors'] = ['Invoice item amount and tax amount not matched with invoice amount.'];
-                // return $res;
+                $res['errors'] = ['Invoice item amount and tax amount not matched with invoice amount.'];
+                return $res;
             }
 
             foreach ($itemRecords as $itemRecord) {
