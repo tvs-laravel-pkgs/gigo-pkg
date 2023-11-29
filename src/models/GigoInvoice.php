@@ -2,10 +2,12 @@
 
 namespace Abs\GigoPkg;
 
+use App\Config;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Oracle\ArInvoiceExport;
+use App\Oracle\ApInvoiceExport;
 use App\Oracle\OtherTypeDetail;
 use Abs\GigoPkg\GigoInvoiceItem;
 use Auth;
@@ -91,12 +93,12 @@ class GigoInvoice extends BaseModel
         $transactionClass = '';
         $transactionBatchName = '';
         $transactionTypeName = '';
-        // $transactionDetail = $serviceInvoice->company ? $serviceInvoice->company->hondaServiceInvoiceTransaction() : null;
-        // if (!empty($transactionDetail)) {
-        //     $transactionClass = $transactionDetail->class ? $transactionDetail->class : $transactionClass;
-        //     $transactionBatchName = $transactionDetail->batch ? $transactionDetail->batch : $transactionBatchName;
-        //     $transactionTypeName = $transactionDetail->type ? $transactionDetail->type : $transactionTypeName;
-        // }
+        $transactionDetail = $gigoInvoice->company ? $gigoInvoice->company->vehicleBatteryPurchaseInvoiceTransaction() : null;
+        if (!empty($transactionDetail)) {
+            $transactionClass = $transactionDetail->class ? $transactionDetail->class : $transactionClass;
+            $transactionBatchName = $transactionDetail->batch ? $transactionDetail->batch : $transactionBatchName;
+            $transactionTypeName = $transactionDetail->type ? $transactionDetail->type : $transactionTypeName;
+        }
 
         $arInvoiceExport = ArInvoiceExport::where([
             'transaction_number' => $gigoInvoice->invoice_number,
@@ -364,6 +366,297 @@ class GigoInvoice extends BaseModel
                 $export_record['accounting_class'] = $roundOffTransaction ? $roundOffTransaction->accounting_class : null;
                 $export_record['natural_account'] = $roundOffTransaction ? $roundOffTransaction->natural_account : null;
                 $storeInOracleTable = ArInvoiceExport::store($export_record);
+            }
+        }
+        $res['success'] = true;
+        return $res;
+    }
+
+    public function vehicleBatteryPurchaseApInvoiceExportToOracle() {
+        $res = [];
+        $res['success'] = false;
+        $res['errors'] = [];
+
+        $gigoInvoice = $this;
+        if (empty($gigoInvoice->invoice_amount) || floatval($gigoInvoice->invoice_amount) == 0.00) {
+            $res['errors'] = ['Invoice value should be greater than 0'];
+            return $res;
+        }
+
+        $gigoInvoiceItemDetails = GigoInvoiceItem::where('invoice_id', $gigoInvoice->id)->get();
+        if (count($gigoInvoiceItemDetails) == 0) {
+            $res['errors'] = ['Invoice item details not found'];
+            return $res;
+        }
+
+        $businessUnit = null;
+        $companyCode = null;
+        if(!empty($gigoInvoice->company->oem_business_unit)){
+            $businessUnit = $gigoInvoice->company->oem_business_unit->name;
+            $companyCode = $gigoInvoice->company->oem_business_unit->code;
+        }
+
+        $invoiceSource = null;
+        $documentType = null;
+        $transactionDetail = $gigoInvoice->company ? $gigoInvoice->company->vehicleBatteryPurchaseInvoiceTransaction() : null;
+        if (!empty($transactionDetail)) {
+            $invoiceSource = $transactionDetail->batch ? $transactionDetail->batch : $invoiceSource;
+            $documentType = $transactionDetail->type ? $transactionDetail->type : $documentType;
+        }
+
+        $apInvoiceExport = ApInvoiceExport::where([
+            'invoice_number' => $gigoInvoice->invoice_number,
+            'business_unit' => $businessUnit,
+            'document_type' => $documentType,
+        ])->first();
+        if ($apInvoiceExport) {
+            $res['errors'] = ['Invoice already exported to oracle table'];
+            return $res;
+        }
+
+        $invoiceNumber = $gigoInvoice->invoice_number;
+        $invoiceDate = $gigoInvoice->invoice_date ? date("Y-m-d", strtotime($gigoInvoice->invoice_date)) : null;
+        $outletCode = $gigoInvoice->outlet ? $gigoInvoice->outlet->oracle_code_l2 : null;
+        $lob = $department = null;
+        $sbu = $gigoInvoice->sbu;
+        if ($sbu) {
+            $lob = $sbu->oracle_code;
+            $department = $sbu->oracle_cost_centre;
+        }
+        $naturalAccount = Config::getConfigName(134400);
+
+        $export_record = [
+            'company_id' => $gigoInvoice->company_id,
+            'business_unit' => $businessUnit,
+            'invoice_source' => $invoiceSource,
+            'invoice_number' => $invoiceNumber,
+            'invoice_date' => $invoiceDate,
+            'supplier_number' => $gigoInvoice->customer ? $gigoInvoice->customer->code : null,
+            'supplier_site_name' => $outletCode,
+            'invoice_type' => 'STANDARD',
+            'accounting_date' => $invoiceDate,
+            'outlet' => $outletCode,
+            'document_type' => $documentType,
+            'line_type' => 'Item',
+            'accounting_class' => 'Purchase/Expense',
+            'company' => $companyCode,
+            'lob' => $lob,
+            'location' => $outletCode,
+            'department' => $department,
+            'natural_account' => $naturalAccount,
+            'created_by_id' => (isset(Auth::user()->id) && Auth::user()->id) ? Auth::user()->id : $this->updated_by_id,
+        ];
+
+        // Item based
+        $itemRecords = [];
+        foreach ($gigoInvoiceItemDetails as $key => $itemDetail) {
+            $taxCodeId = !empty($itemDetail->grnItemData->itemData->tax_code_id) ? $itemDetail->grnItemData->itemData->tax_code_id : 0;
+            if(empty($taxCodeId)){
+                $taxCodeId = 'ws'.$key;
+            }
+
+            $batteryDetails = BatteryLoadTestResult::select([
+                'battery_makes.name as battery_name',
+                'battery_load_test_results.battery_serial_number as battery_serial_number',
+            ])
+                ->join('part_return_items','part_return_items.item_id', 'battery_load_test_results.id')
+                ->join('battery_makes', 'battery_makes.id', 'battery_load_test_results.battery_make_id')
+                ->where('part_return_items.id', $itemDetail->entity_id)
+                ->first();
+            $batterySerialNumber = $batteryName = null;
+            if ($batteryDetails){
+                $batterySerialNumber = $batteryDetails->battery_serial_number;
+                $batteryName = $batteryDetails->battery_name;
+            }
+
+            if (!isset($itemRecords[$taxCodeId]) || !$itemRecords[$taxCodeId]) {
+                $itemRecords[$taxCodeId] = [];
+                $itemRecords[$taxCodeId]['amount'] = 0;
+                $itemRecords[$taxCodeId]['cgst_amount'] = 0;
+                $itemRecords[$taxCodeId]['cgst_percentage'] = 0;
+                $itemRecords[$taxCodeId]['sgst_amount'] = 0;
+                $itemRecords[$taxCodeId]['sgst_percentage'] = 0;
+                $itemRecords[$taxCodeId]['igst_amount'] = 0;
+                $itemRecords[$taxCodeId]['igst_percentage'] = 0;
+                $itemRecords[$taxCodeId]['ugst_amount'] = 0;
+                $itemRecords[$taxCodeId]['ugst_percentage'] = 0;
+                $itemRecords[$taxCodeId]['tcs_amount'] = 0;
+                $itemRecords[$taxCodeId]['tcs_percentage'] = 0;
+                $itemRecords[$taxCodeId]['cess_amount'] = 0;
+                $itemRecords[$taxCodeId]['cess_percentage'] = 0;
+                $itemRecords[$taxCodeId]['hsn_code'] = isset($itemDetail->grnItemData->itemData->taxCode) ? $itemDetail->grnItemData->itemData->taxCode->code : '';
+                $itemRecords[$taxCodeId]['invoice_description'] = 'Bp.Inv:'.$invoiceNumber.',Dt:'.$invoiceDate;
+            }
+
+            //TAXES
+            $cgstDetail = $itemDetail->taxes()->where('tax_id', 1)->select('amount', 'percentage')->first();
+            $sgstDetail = $itemDetail->taxes()->where('tax_id', 2)->select('amount', 'percentage')->first();
+            $igstDetail = $itemDetail->taxes()->where('tax_id', 3)->select('amount', 'percentage')->first();
+            $ugstDetail = $itemDetail->taxes()->where('tax_id', 7)->select('amount', 'percentage')->first();
+            $tcsDetail = $itemDetail->taxes()->where('tax_id', 5)->select('amount', 'percentage')->first();
+            $cessDetail = $itemDetail->taxes()->where('tax_id', 6)->select('amount', 'percentage')->first();
+
+            $unitPrice = floatval($itemDetail->amount);
+            if ($unitPrice && $unitPrice > 0) {
+                $itemRecords[$taxCodeId]['amount'] += $unitPrice;
+            }
+
+            if (isset($cgstDetail->amount) && $cgstDetail->amount > 0) {
+                $itemRecords[$taxCodeId]['cgst_amount'] += floatval($cgstDetail->amount);
+                $itemRecords[$taxCodeId]['cgst_percentage'] = floatval($cgstDetail->percentage);
+            }
+
+            if (isset($sgstDetail->amount) && $sgstDetail->amount > 0) {
+                $itemRecords[$taxCodeId]['sgst_amount'] += floatval($sgstDetail->amount);
+                $itemRecords[$taxCodeId]['sgst_percentage'] = floatval($sgstDetail->percentage);
+            }
+
+            if (isset($igstDetail->amount) && $igstDetail->amount > 0) {
+                $itemRecords[$taxCodeId]['igst_amount'] += floatval($igstDetail->amount);
+                $itemRecords[$taxCodeId]['igst_percentage'] = floatval($igstDetail->percentage);
+            }
+
+            if (isset($ugstDetail->amount) && $ugstDetail->amount > 0) {
+                $itemRecords[$taxCodeId]['ugst_amount'] += floatval($ugstDetail->amount);
+                $itemRecords[$taxCodeId]['ugst_percentage'] = floatval($ugstDetail->percentage);
+            }
+
+            if (isset($tcsDetail->amount) && $tcsDetail->amount > 0) {
+                $itemRecords[$taxCodeId]['tcs_amount'] += floatval($tcsDetail->amount);
+                $itemRecords[$taxCodeId]['tcs_percentage'] = floatval($tcsDetail->percentage);
+            }
+
+            if (isset($cessDetail->amount) && $cessDetail->amount > 0) {
+                $itemRecords[$taxCodeId]['cess_amount'] += floatval($cessDetail->amount);
+                $itemRecords[$taxCodeId]['cess_percentage'] = floatval($cessDetail->percentage);
+            }
+
+            $description = '';
+            if ($batterySerialNumber) {
+                $description .= $batterySerialNumber;   
+            }
+            if ($batteryName) {
+                $description .= ($description ? '-'.($batteryName) : ($batteryName));   
+            }
+            $itemRecords[$taxCodeId]['invoice_description'] .= ',' . ($description);
+        }
+
+        $showInvoiceAmount = true;
+        if (count($itemRecords) > 0) {
+            $unitPriceAmt = array_sum(array_column($itemRecords, 'amount'));
+            $cgstAmt = array_sum(array_column($itemRecords, 'cgst_amount'));
+            $sgstAmt = array_sum(array_column($itemRecords, 'sgst_amount'));
+            $igstAmt = array_sum(array_column($itemRecords, 'igst_amount'));
+            $ugstAmt = array_sum(array_column($itemRecords, 'ugst_amount'));
+            $tcsAmt = array_sum(array_column($itemRecords, 'tcs_amount'));
+            $cessAmt = array_sum(array_column($itemRecords, 'cess_amount'));
+            $invoiceTotal = floatval($unitPriceAmt + $cgstAmt + $sgstAmt + $igstAmt + $ugstAmt + $tcsAmt + $cessAmt);
+
+            foreach ($itemRecords as $itemRecord) {
+                $export_record['amount'] = $itemRecord['amount'];
+                $export_record['hsn_code'] = $itemRecord['hsn_code'];
+                $export_record['cgst'] = $itemRecord['cgst_amount'];
+                $export_record['sgst'] = $itemRecord['sgst_amount'];
+                $export_record['igst'] = $itemRecord['igst_amount'];
+                $export_record['ugst'] = $itemRecord['ugst_amount'];
+                $export_record['tcs'] = $itemRecord['tcs_amount'];
+                $export_record['cess'] = $itemRecord['cess_amount'];
+                $export_record['invoice_description'] = $itemRecord['invoice_description'];
+
+                //TAX CLASSIFICATIONS
+                $taxNames = '';
+                $taxPercentages = '';
+                if (floatval($export_record['cgst']) > 0 && floatval($export_record['sgst']) > 0) {
+                    $taxNames = 'CGST+SGST';
+                    $taxPercentages = round(floatval($itemRecord['cgst_percentage']) + floatval($itemRecord['sgst_percentage']));
+                }
+
+                if (floatval($export_record['igst']) > 0) {
+                    if (!empty($taxNames)) {
+                        $taxNames .= '+IGST';
+                    } else {
+                        $taxNames .= 'IGST';
+                    }
+
+                    if (!empty($taxPercentages)) {
+                        $taxPercentages .= '+' . (round(floatval($itemRecord['igst_percentage'])));
+                    } else {
+                        $taxPercentages .= round(floatval($itemRecord['igst_percentage']));
+                    }
+                }
+
+                if (floatval($export_record['ugst']) > 0) {
+                    if (!empty($taxNames)) {
+                        $taxNames .= '+UGST';
+                    } else {
+                        $taxNames .= 'UGST';
+                    }
+
+                    if (!empty($taxPercentages)) {
+                        $taxPercentages .= '+' . (round(floatval($itemRecord['ugst_percentage'])));
+                    } else {
+                        $taxPercentages .= round(floatval($itemRecord['ugst_percentage']));
+                    }
+                }
+
+                if (floatval($export_record['tcs']) > 0) {
+                    if (!empty($taxNames)) {
+                        $taxNames .= '+TCS';
+                    } else {
+                        $taxNames .= 'TCS';
+                    }
+
+                    if (!empty($taxPercentages)) {
+                        $taxPercentages .= '+' . (round(floatval($itemRecord['tcs_percentage'])));
+                    } else {
+                        $taxPercentages .= round(floatval($itemRecord['tcs_percentage']));
+                    }
+                }
+
+                if (floatval($export_record['cess']) > 0) {
+                    if (!empty($taxNames)) {
+                        $taxNames .= '+CESS';
+                    } else {
+                        $taxNames .= 'CESS';
+                    }
+
+                    if (!empty($taxPercentages)) {
+                        $taxPercentages .= '+' . (round(floatval($itemRecord['cess_percentage'])));
+                    } else {
+                        $taxPercentages .= round(floatval($itemRecord['cess_percentage']));
+                    }
+                }
+
+                $taxClassifications = '';
+                if(!empty($taxNames) || !empty($taxPercentages)){
+                    $taxClassifications = $taxNames . ' REC ' . $taxPercentages;
+                }
+                $export_record['tax_classification'] = $taxClassifications;
+                $taxAmount = $itemRecord['cgst_amount'] + $itemRecord['sgst_amount'] + $itemRecord['igst_amount'] + $itemRecord['ugst_amount'] + $itemRecord['tcs_amount'] + $itemRecord['cess_amount'];
+                $export_record['tax_amount'] = $taxAmount;
+
+                $export_record['invoice_amount'] = null;
+                if ($showInvoiceAmount == true) {
+                    $export_record['invoice_amount'] = round($invoiceTotal);
+                }
+                $storeInOracleTable = ApInvoiceExport::store($export_record);
+                $showInvoiceAmount = false;
+            }
+
+            //ROUND OFF ENTRY
+            $amountDiff = 0;
+            if (!empty($invoiceTotal)) {
+                $amountDiff = number_format((round($invoiceTotal) - $invoiceTotal), 2, '.', '');
+            }
+            if ($amountDiff && floatval($amountDiff) != 0.00) {
+                $roundOffTransaction = OtherTypeDetail::apRoundOffTransaction();
+                $export_record['invoice_amount'] = $export_record['hsn_code'] = $export_record['cgst'] = $export_record['sgst'] = $export_record['igst'] = $export_record['ugst'] = $export_record['tcs'] = $export_record['cess'] = $export_record['tax_amount'] = $export_record['tax_classification'] = null;
+                
+                $export_record['amount'] = $amountDiff;
+                $export_record['accounting_class'] = $roundOffTransaction ? $roundOffTransaction->accounting_class : null;
+                $export_record['natural_account'] = $roundOffTransaction ? $roundOffTransaction->natural_account : null;
+                $export_record['invoice_description'] = $roundOffTransaction ? $roundOffTransaction->name : null;
+                $storeInOracleTable = ApInvoiceExport::store($export_record);
             }
         }
         $res['success'] = true;
