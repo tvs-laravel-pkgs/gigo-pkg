@@ -565,7 +565,8 @@ class GigoInvoice extends BaseModel
                 $export_record['tcs'] = $itemRecord['tcs_amount'];
                 $export_record['cess'] = $itemRecord['cess_amount'];
                 // $export_record['invoice_description'] = $itemRecord['invoice_description'];
-                $export_record['invoice_description'] = 'Purchase of '. $itemRecord['item_count']. ' item'. $itemRecord['invoice_description'];
+                $invoiceDescription = 'Purchase of '. $itemRecord['item_count']. ' item'. $itemRecord['invoice_description'];
+                $export_record['invoice_description'] = substr($invoiceDescription, 0, 250);
 
                 //TAX CLASSIFICATIONS
                 $taxNames = '';
