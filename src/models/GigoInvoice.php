@@ -372,6 +372,7 @@ class GigoInvoice extends BaseModel
         return $res;
     }
 
+    //ORACLE INTEGRATION
     public function vehicleBatteryPurchaseApInvoiceExportToOracle() {
         $res = [];
         $res['success'] = false;
