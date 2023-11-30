@@ -485,7 +485,9 @@ class GigoInvoice extends BaseModel
                 $itemRecords[$taxCodeId]['cess_amount'] = 0;
                 $itemRecords[$taxCodeId]['cess_percentage'] = 0;
                 $itemRecords[$taxCodeId]['hsn_code'] = isset($itemDetail->grnItemData->itemData->taxCode) ? $itemDetail->grnItemData->itemData->taxCode->code : '';
-                $itemRecords[$taxCodeId]['invoice_description'] = 'Bp.Inv:'.$invoiceNumber.',Dt:'.$invoiceDate;
+                // $itemRecords[$taxCodeId]['invoice_description'] = 'Bp.Inv:'.$invoiceNumber.',Dt:'.$invoiceDate;
+                $itemRecords[$taxCodeId]['invoice_description'] = null;
+                $itemRecords[$taxCodeId]['item_count'] = 0;
             }
 
             //TAXES
@@ -539,8 +541,8 @@ class GigoInvoice extends BaseModel
                 $description .= ($description ? '-'.($batteryName) : ($batteryName));   
             }
             $itemRecords[$taxCodeId]['invoice_description'] .= ',' . ($description);
+            $itemRecords[$taxCodeId]['item_count']++;
         }
-
         $showInvoiceAmount = true;
         if (count($itemRecords) > 0) {
             $unitPriceAmt = array_sum(array_column($itemRecords, 'amount'));
@@ -561,7 +563,8 @@ class GigoInvoice extends BaseModel
                 $export_record['ugst'] = $itemRecord['ugst_amount'];
                 $export_record['tcs'] = $itemRecord['tcs_amount'];
                 $export_record['cess'] = $itemRecord['cess_amount'];
-                $export_record['invoice_description'] = $itemRecord['invoice_description'];
+                // $export_record['invoice_description'] = $itemRecord['invoice_description'];
+                $export_record['invoice_description'] = 'Purchase of '. $itemRecord['item_count']. ' item'. $itemRecord['invoice_description'];
 
                 //TAX CLASSIFICATIONS
                 $taxNames = '';
