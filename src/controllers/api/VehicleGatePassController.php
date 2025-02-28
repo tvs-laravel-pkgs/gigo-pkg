@@ -685,17 +685,19 @@ class VehicleGatePassController extends Controller
                 }
             }
 
-            $message = 'Greetings from TVS Mob! Your vehicle ' . $number . ' has successfully Gate out from TVS Service Center - ' . Auth::user()->employee->outlet->ax_name . ' at ' . date('d-m-Y h:i A') . ' - TVS';
+            $message = 'Greetings from TVS VMS! Your vehicle ' . $number . ' has successfully Gate out from TVS Service Center - ' . Auth::user()->employee->outlet->ax_name . ' at ' . date('d-m-Y h:i A') . ' - TVS VMS';
 
             //Send SMS to Driver
             if ($gate_log->jobOrder->driver_mobile_number) {
-                $msg = sendSMSNotification($gate_log->jobOrder->driver_mobile_number, $message);
+                //$msg = sendSMSNotification($gate_log->jobOrder->driver_mobile_number, $message);
+                $msg = sendVMSSMSNotification($gate_log->jobOrder->driver_mobile_number, $message);
             }
 
             //Send SMS to Customer
             if ($gate_log->jobOrder->customer) {
                 if ($gate_log->jobOrder->customer->mobile_no) {
-                    $msg = sendSMSNotification($gate_log->jobOrder->customer->mobile_no, $message);
+                    //$msg = sendSMSNotification($gate_log->jobOrder->customer->mobile_no, $message);
+                    $msg = sendVMSSMSNotification($gate_log->jobOrder->driver_mobile_number, $message);
                 }
             }
 

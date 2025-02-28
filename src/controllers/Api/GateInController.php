@@ -898,7 +898,7 @@ class GateInController extends Controller
 
             $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
-            $tracking_message = 'Greetings from TVS Mobility! Kindly click on this link to track vehicle service status: ' . $short_url . ' - TVS';
+            $tracking_message = 'Greetings from TVS Vehicle Mobility! Kindly click on this link to track vehicle service status: ' . $short_url . ' - TVS VMS';
 
             //Save Driver & Security Signature
             if ($request->web == 'website') {
@@ -1013,7 +1013,7 @@ class GateInController extends Controller
 
             $gate_in_data['number'] = $gate_log->number;
 
-            $message = 'Greetings from TVS Mobility! Your vehicle ' . $number . ' has arrived in TVS Service Center - ' . Auth::user()->employee->outlet->ax_name . ' at ' . date('d-m-Y h:i A') . $membership_message;
+            $message = 'Greetings from TVS Vehicle Mobility! Your vehicle ' . $number . ' has arrived in TVS Service Center - ' . Auth::user()->employee->outlet->ax_name . ' at ' . date('d-m-Y h:i A') . $membership_message;
 
             //Send SMS to Driver
             if (preg_match('/^\d{10}$/', $request->driver_mobile_number)) {
@@ -1081,10 +1081,14 @@ class GateInController extends Controller
                     if($value->mobile_number){
                         $sms_params=[];
                         $sms_params['mobile_number'] = $value->mobile_number;
-                        $sms_params['sms_url'] = config('services.mob_sms_url');
-                        $sms_params['sms_user'] = config('services.mob_sms_user');
-                        $sms_params['sms_password'] = config('services.mob_sms_password');
-                        $sms_params['sms_sender_id'] = config('services.mob_sms_sender_id');
+                        // $sms_params['sms_url'] = config('services.mob_sms_url');
+                        // $sms_params['sms_user'] = config('services.mob_sms_user');
+                        // $sms_params['sms_password'] = config('services.mob_sms_password');
+                        // $sms_params['sms_sender_id'] = config('services.mob_sms_sender_id');
+                        $sms_params['sms_url'] = config('services.vms_sms_url');
+                        $sms_params['sms_user'] = config('services.vms_sms_user');
+                        $sms_params['sms_password'] = config('services.vms_sms_password');
+                        $sms_params['sms_sender_id'] = config('services.vms_sms_sender_id');
                         $sms_params['message'] = $membership_message_WH_SA;
                         tvsoneSendSMS($sms_params);
                     }

@@ -51,9 +51,9 @@ class ShortUrl extends BaseModel {
 			$link->url = $url;
 		}
 
-		$short_url = url('/link/' . $shortCode);
+		$short_url = url('gigo-link?t=' . $shortCode);
 		if (isset($base_link) && $base_link)
-			$short_url = $base_link . 'link/' . $shortCode;
+			$short_url = $base_link . 'gigo-link?t=' . $shortCode;
 
 		$link->token = $short_url;
 		$link->save();

@@ -3123,9 +3123,10 @@ class JobCardController extends Controller
 
             $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
-            $message = 'Dear Customer, Kindly click on this link to pay for the TVS job order ' . $short_url . ' Vehicle Reg Number : ' . $vehicle_no . ' - TVS';
+            $message = 'Dear Customer, Kindly click on this link to pay for the TVS Vehicle Mobility job order ' . $short_url . ' Vehicle Reg Number : ' . $vehicle_no . ' - TVS VMS';
 
-            $msg = sendOTPSMSNotification($customer_mobile, $message);
+            //$msg = sendOTPSMSNotification($customer_mobile, $message);
+            $msg = sendVMSSMSNotification($customer_mobile, $message);
 
             DB::commit();
 
@@ -4867,9 +4868,10 @@ class JobCardController extends Controller
 
                 $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
-                $message = 'Dear Customer, Kindly click on this link to approve for Revised TVS job order ' . $short_url . $number . ' : ' . $vehicle_no . ' - TVS';
+                $message = 'Dear Customer, Kindly click on this link to approve for Revised TVS Vehicle Mobility job order ' . $short_url . $number . ' : ' . $vehicle_no . ' - TVS VMS';
 
-                $msg = sendOTPSMSNotification($customer_mobile, $message);
+                //$msg = sendOTPSMSNotification($customer_mobile, $message);
+                $msg = sendVMSSMSNotification($customer_mobile, $message);
 
                 //Update JobOrder Estimate
                 $job_order_estimate = JobOrderEstimate::where('job_order_id', $job_order->id)->orderBy('id', 'DESC')->first();
@@ -4909,9 +4911,9 @@ class JobCardController extends Controller
 
                 DB::commit();
 
-                $message = 'OTP is ' . $otp_no . ' for Revised Job Order Estimation. Please show this SMS to Our Floor Supervisor to verify your Revised Job Order Estimate - TVS';
+                $message = 'OTP is ' . $otp_no . ' for Revised Job Order Estimation. Please show this SMS to Our Floor Supervisor to verify your Revised Job Order Estimate - TVS VMS';
 
-                $msg = sendOTPSMSNotification($customer_mobile, $message);
+                $msg = sendVMSSMSNotification($customer_mobile, $message);
 
                 return response()->json([
                     'success' => true,

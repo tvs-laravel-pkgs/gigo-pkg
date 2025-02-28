@@ -1170,9 +1170,9 @@ class OnSiteVisitController extends Controller
                 $otp->outlet_id = Auth::user()->employee->outlet_id;
                 $otp->save();
 
-                $message = 'OTP is ' . $otp_no . ' for Job Order Estimate. Please show this SMS to Our Service Advisor to verify your Job Order Estimate - TVS';
-
-                $msg = sendSMSNotification($customer_mobile, $message);
+                $message = 'OTP is ' . $otp_no . ' for Job Order Estimate. Please show this SMS to Our Service Advisor to verify your Job Order Estimate - TVS VMS';
+                //$msg = sendSMSNotification($customer_mobile, $message);
+                $msg = sendVMSSMSNotification($customer_mobile, $message);
 
                 $message = 'OTP Sent successfully!!';
                 $notify_type = 2;
@@ -2271,7 +2271,7 @@ class OnSiteVisitController extends Controller
                     $url = url('/') . '/on-site-visit/estimate/customer/view/' . $site_visit->id . '/' . $otp_no;
                     $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
-                    $message = 'Dear Customer, Kindly click on this link to approve for TVS job order ' . $short_url . ' Job Order Number : ' . $site_visit->number . ' - TVS';
+                    $message = 'Dear Customer, Kindly click on this link to approve for TVS Vehicle Mobility job order ' . $short_url . ' Job Order Number : ' . $site_visit->number . ' - TVS VMS';
 
                     if (!$site_visit->customer) {
                         return response()->json([
@@ -2290,8 +2290,8 @@ class OnSiteVisitController extends Controller
                             'errors' => ['Customer Mobile Number Not Found!'],
                         ]);
                     }
-
-                    $msg = sendSMSNotification($customer_mobile, $message);
+                    //$msg = sendSMSNotification($customer_mobile, $message);
+                    $msg = sendVMSSMSNotification($customer_mobile, $message);
 
                     $on_site_order_estimate->status_id = 10071;
                     $message = 'Estimation sent to customer successfully!';
@@ -2395,9 +2395,9 @@ class OnSiteVisitController extends Controller
                 $url = url('/') . '/on-site-visit/view/bill-details/' . $site_visit->id . '/' . $otp_no;
                 $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
-                $message = 'Dear Customer, Kindly click on this link to pay for the TVS job order ' . $short_url . ' Job Card Number : ' . $site_visit->number . ' - TVS';
-
-                $msg = sendSMSNotification($customer_mobile, $message);
+                $message = 'Dear Customer, Kindly click on this link to pay for the TVS Vehicle Mobility job order ' . $short_url . ' Job Card Number : ' . $site_visit->number . ' - TVS VMS';
+                //$msg = sendSMSNotification($customer_mobile, $message);
+                $msg = sendVMSSMSNotification($customer_mobile, $message);
 
                 $message = 'On Site Visit Completed Successfully!';
             } else {
@@ -3305,9 +3305,9 @@ class OnSiteVisitController extends Controller
             $url = url('/') . '/on-site-visit/view/bill-details/' . $site_visit->id . '/' . $otp_no;
             $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
-            $message = 'Dear Customer, Kindly click on this link to pay for the TVS job order ' . $short_url . ' Job Card Number : ' . $site_visit->number . ' - TVS';
-
-            $msg = sendSMSNotification($customer_mobile, $message);
+            $message = 'Dear Customer, Kindly click on this link to pay for the TVS Vehicle Mobility job order ' . $short_url . ' Job Card Number : ' . $site_visit->number . ' - TVS VMS';
+            //$msg = sendSMSNotification($customer_mobile, $message);
+            $msg = sendVMSSMSNotification($customer_mobile, $message);
 
             $message = 'On Site Visit Completed Successfully!';
 

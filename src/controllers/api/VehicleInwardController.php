@@ -6873,9 +6873,10 @@ class VehicleInwardController extends Controller
             $otp->outlet_id = Auth::user()->employee->outlet_id;
             $otp->save();
 
-            $message = 'OTP is ' . $otp_no . ' for Job Order Estimate. Please show this SMS to Our Service Advisor to verify your Job Order Estimate - TVS';
+            $message = 'OTP is ' . $otp_no . ' for Job Order Estimate. Please show this SMS to Our Service Advisor to verify your Job Order Estimate - TVS VMS';
 
-            $msg = sendOTPSMSNotification($customer_mobile, $message);
+            //$msg = sendOTPSMSNotification($customer_mobile, $message);
+            $msg = sendVMSSMSNotification($customer_mobile, $message);
 
             return response()->json([
                 'success' => true,
@@ -7058,9 +7059,10 @@ class VehicleInwardController extends Controller
 
             $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
-            $message = 'Dear Customer, Kindly click on this link to approve for TVS job order ' . $short_url . $number . ' : ' . $vehicle_no . ' - TVS';
+            $message = 'Dear Customer, Kindly click on this link to approve for TVS TVS Vehicle Mobility job order ' . $short_url . $number . ' : ' . $vehicle_no . ' - TVS VMS';
 
-            $msg = sendOTPSMSNotification($customer_mobile, $message);
+            //$msg = sendOTPSMSNotification($customer_mobile, $message);
+            $msg = sendVMSSMSNotification($customer_mobile, $message);
 
             //Update JobOrder Estimate
             $job_order_estimate = JobOrderEstimate::where('job_order_id', $job_order->id)->orderBy('id', 'DESC')->first();
@@ -7310,10 +7312,10 @@ class VehicleInwardController extends Controller
 
                 $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
-                $message = 'Dear Customer, Kindly click on this link to pay for the TVS job order ' . $short_url . '. Vehicle Reg Number : ' . $job_order->vehicle->registration_number . ' - TVS';
+                $message = 'Dear Customer, Kindly click on this link to pay for the TVS Vehicle Mobility job order ' . $short_url . '. Vehicle Reg Number : ' . $job_order->vehicle->registration_number . ' - TVS VMS';
 
-                $msg = sendOTPSMSNotification($mobile_number, $message);
-
+                //$msg = sendOTPSMSNotification($mobile_number, $message);
+                $msg = sendVMSSMSNotification($mobile_number, $message);
                 $success_message = 'Estimation Details Sent to Customer Successfully';
 
             } else {
