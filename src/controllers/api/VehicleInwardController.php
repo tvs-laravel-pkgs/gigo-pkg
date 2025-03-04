@@ -7059,7 +7059,7 @@ class VehicleInwardController extends Controller
 
             $short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
-            $message = 'Dear Customer, Kindly click on this link to approve for TVS TVS Vehicle Mobility job order ' . $short_url . $number . ' : ' . $vehicle_no . ' - TVS VMS';
+            $message = 'Dear Customer, Kindly click on this link to approve for TVS TVS Vehicle Mobility job order ' . $short_url . ' Vehicle Reg Number : ' . $vehicle_no . ' - TVS VMS';
 
             //$msg = sendOTPSMSNotification($customer_mobile, $message);
             $msg = sendVMSSMSNotification($customer_mobile, $message);
